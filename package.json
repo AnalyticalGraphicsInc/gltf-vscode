@@ -18,6 +18,12 @@
         "commands": [{
             "command": "extension.sayHello",
             "title": "Hello World"
+        }],
+        "languages": [{
+            "id": "json",
+            "extensions": [
+                ".gltf"
+            ]
         }]
     },
     "scripts": {
