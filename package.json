@@ -28,6 +28,12 @@
                     ".gltf"
                 ]
             }
+        ],
+        "jsonValidation": [
+            {
+                "fileMatch": "*.gltf",
+                "url": "./schemas/gltf-1.0/glTF.schema.json"
+            }
         ]
     },
     "scripts": {
