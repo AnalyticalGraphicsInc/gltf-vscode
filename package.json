@@ -15,16 +15,20 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
-        }],
-        "languages": [{
-            "id": "json",
-            "extensions": [
-                ".gltf"
-            ]
-        }]
+        "commands": [
+            {
+                "command": "extension.sayHello",
+                "title": "Hello World"
+            }
+        ],
+        "languages": [
+            {
+                "id": "json",
+                "extensions": [
+                    ".gltf"
+                ]
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
@@ -33,6 +37,7 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
+        "jshint": "^2.9.4",
         "typescript": "^2.0.3",
         "vscode": "^1.0.0",
         "mocha": "^2.3.3",
