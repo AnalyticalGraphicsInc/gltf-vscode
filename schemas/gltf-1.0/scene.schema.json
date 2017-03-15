@@ -1,0 +1,22 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "scene",
+    "type" : "object",
+    "description" : "The root nodes of a scene.",
+    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "properties" : {
+        "name" : {},
+        "extensions" : {},
+        "extras" : {},
+        "nodes" : {
+            "type" : "array",
+            "description" : "The IDs of each root node.",
+            "items" : {
+                "$ref" : "glTFid.schema.json"
+            },
+            "uniqueItems" : true,
+            "default" : []
+        }
+    },
+    "additionalProperties" : false
+}
