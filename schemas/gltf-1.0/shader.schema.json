@@ -28,13 +28,13 @@
                     "enum" : [
                         35632
                     ],
-                    "description" : "FRAGMENT_SHADER"
+                    "description" : "FRAGMENT_SHADER - The shader stage."
                 },
                 {
                     "enum" : [
                         35633
                     ],
-                    "description" : "VERTEX_SHADER"
+                    "description" : "VERTEX_SHADER - The shader stage."
                 }
             ]
         }

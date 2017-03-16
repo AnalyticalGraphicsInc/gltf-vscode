@@ -63,8 +63,12 @@ function transformEnums(data) {
         var numEnums = data.enum.length;
         var numGltfEnums = data.gltf_enumNames.length;
         if ((numEnums === numGltfEnums) && (numEnums > 0)) {
+            var description = '';
+            if (data.hasOwnProperty('description') && data.description) {
+                description = ' - ' + data.description;
+            }
             for (var i = 0; i < numEnums; ++i) {
-                oneOf.push({ "enum": [data.enum[i]], "description": data.gltf_enumNames[i] });
+                oneOf.push({ "enum": [data.enum[i]], "description": data.gltf_enumNames[i] + description });
             }
             data.oneOf = oneOf;
             delete data.enum;

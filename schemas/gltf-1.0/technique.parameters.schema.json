@@ -35,127 +35,127 @@
                     "enum" : [
                         5120
                     ],
-                    "description" : "BYTE"
+                    "description" : "BYTE - The datatype."
                 },
                 {
                     "enum" : [
                         5121
                     ],
-                    "description" : "UNSIGNED_BYTE"
+                    "description" : "UNSIGNED_BYTE - The datatype."
                 },
                 {
                     "enum" : [
                         5122
                     ],
-                    "description" : "SHORT"
+                    "description" : "SHORT - The datatype."
                 },
                 {
                     "enum" : [
                         5123
                     ],
-                    "description" : "UNSIGNED_SHORT"
+                    "description" : "UNSIGNED_SHORT - The datatype."
                 },
                 {
                     "enum" : [
                         5124
                     ],
-                    "description" : "INT"
+                    "description" : "INT - The datatype."
                 },
                 {
                     "enum" : [
                         5125
                     ],
-                    "description" : "UNSIGNED_INT"
+                    "description" : "UNSIGNED_INT - The datatype."
                 },
                 {
                     "enum" : [
                         5126
                     ],
-                    "description" : "FLOAT"
+                    "description" : "FLOAT - The datatype."
                 },
                 {
                     "enum" : [
                         35664
                     ],
-                    "description" : "FLOAT_VEC2"
+                    "description" : "FLOAT_VEC2 - The datatype."
                 },
                 {
                     "enum" : [
                         35665
                     ],
-                    "description" : "FLOAT_VEC3"
+                    "description" : "FLOAT_VEC3 - The datatype."
                 },
                 {
                     "enum" : [
                         35666
                     ],
-                    "description" : "FLOAT_VEC4"
+                    "description" : "FLOAT_VEC4 - The datatype."
                 },
                 {
                     "enum" : [
                         35667
                     ],
-                    "description" : "INT_VEC2"
+                    "description" : "INT_VEC2 - The datatype."
                 },
                 {
                     "enum" : [
                         35668
                     ],
-                    "description" : "INT_VEC3"
+                    "description" : "INT_VEC3 - The datatype."
                 },
                 {
                     "enum" : [
                         35669
                     ],
-                    "description" : "INT_VEC4"
+                    "description" : "INT_VEC4 - The datatype."
                 },
                 {
                     "enum" : [
                         35670
                     ],
-                    "description" : "BOOL"
+                    "description" : "BOOL - The datatype."
                 },
                 {
                     "enum" : [
                         35671
                     ],
-                    "description" : "BOOL_VEC2"
+                    "description" : "BOOL_VEC2 - The datatype."
                 },
                 {
                     "enum" : [
                         35672
                     ],
-                    "description" : "BOOL_VEC3"
+                    "description" : "BOOL_VEC3 - The datatype."
                 },
                 {
                     "enum" : [
                         35673
                     ],
-                    "description" : "BOOL_VEC4"
+                    "description" : "BOOL_VEC4 - The datatype."
                 },
                 {
                     "enum" : [
                         35674
                     ],
-                    "description" : "FLOAT_MAT2"
+                    "description" : "FLOAT_MAT2 - The datatype."
                 },
                 {
                     "enum" : [
                         35675
                     ],
-                    "description" : "FLOAT_MAT3"
+                    "description" : "FLOAT_MAT3 - The datatype."
                 },
                 {
                     "enum" : [
                         35676
                     ],
-                    "description" : "FLOAT_MAT4"
+                    "description" : "FLOAT_MAT4 - The datatype."
                 },
                 {
                     "enum" : [
                         35678
                     ],
-                    "description" : "SAMPLER_2D"
+                    "description" : "SAMPLER_2D - The datatype."
                 }
             ]
         },

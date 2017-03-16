@@ -23,13 +23,13 @@
                     "enum" : [
                         9728
                     ],
-                    "description" : "NEAREST"
+                    "description" : "NEAREST - Magnification filter."
                 },
                 {
                     "enum" : [
                         9729
                     ],
-                    "description" : "LINEAR"
+                    "description" : "LINEAR - Magnification filter."
                 }
             ]
         },
@@ -44,37 +44,37 @@
                     "enum" : [
                         9728
                     ],
-                    "description" : "NEAREST"
+                    "description" : "NEAREST - Minification filter."
                 },
                 {
                     "enum" : [
                         9729
                     ],
-                    "description" : "LINEAR"
+                    "description" : "LINEAR - Minification filter."
                 },
                 {
                     "enum" : [
                         9984
                     ],
-                    "description" : "NEAREST_MIPMAP_NEAREST"
+                    "description" : "NEAREST_MIPMAP_NEAREST - Minification filter."
                 },
                 {
                     "enum" : [
                         9985
                     ],
-                    "description" : "LINEAR_MIPMAP_NEAREST"
+                    "description" : "LINEAR_MIPMAP_NEAREST - Minification filter."
                 },
                 {
                     "enum" : [
                         9986
                     ],
-                    "description" : "NEAREST_MIPMAP_LINEAR"
+                    "description" : "NEAREST_MIPMAP_LINEAR - Minification filter."
                 },
                 {
                     "enum" : [
                         9987
                     ],
-                    "description" : "LINEAR_MIPMAP_LINEAR"
+                    "description" : "LINEAR_MIPMAP_LINEAR - Minification filter."
                 }
             ]
         },
@@ -89,19 +89,19 @@
                     "enum" : [
                         33071
                     ],
-                    "description" : "CLAMP_TO_EDGE"
+                    "description" : "CLAMP_TO_EDGE - s wrapping mode."
                 },
                 {
                     "enum" : [
                         33648
                     ],
-                    "description" : "MIRRORED_REPEAT"
+                    "description" : "MIRRORED_REPEAT - s wrapping mode."
                 },
                 {
                     "enum" : [
                         10497
                     ],
-                    "description" : "REPEAT"
+                    "description" : "REPEAT - s wrapping mode."
                 }
             ]
         },
@@ -116,19 +116,19 @@
                     "enum" : [
                         33071
                     ],
-                    "description" : "CLAMP_TO_EDGE"
+                    "description" : "CLAMP_TO_EDGE - t wrapping mode."
                 },
                 {
                     "enum" : [
                         33648
                     ],
-                    "description" : "MIRRORED_REPEAT"
+                    "description" : "MIRRORED_REPEAT - t wrapping mode."
                 },
                 {
                     "enum" : [
                         10497
                     ],
-                    "description" : "REPEAT"
+                    "description" : "REPEAT - t wrapping mode."
                 }
             ]
         }

@@ -45,31 +45,31 @@
                     "enum" : [
                         5120
                     ],
-                    "description" : "BYTE"
+                    "description" : "BYTE - The datatype of components in the attribute."
                 },
                 {
                     "enum" : [
                         5121
                     ],
-                    "description" : "UNSIGNED_BYTE"
+                    "description" : "UNSIGNED_BYTE - The datatype of components in the attribute."
                 },
                 {
                     "enum" : [
                         5122
                     ],
-                    "description" : "SHORT"
+                    "description" : "SHORT - The datatype of components in the attribute."
                 },
                 {
                     "enum" : [
                         5123
                     ],
-                    "description" : "UNSIGNED_SHORT"
+                    "description" : "UNSIGNED_SHORT - The datatype of components in the attribute."
                 },
                 {
                     "enum" : [
                         5126
                     ],
-                    "description" : "FLOAT"
+                    "description" : "FLOAT - The datatype of components in the attribute."
                 }
             ]
         },

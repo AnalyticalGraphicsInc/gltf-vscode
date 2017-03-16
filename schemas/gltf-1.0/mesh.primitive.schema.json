@@ -47,43 +47,43 @@
                     "enum" : [
                         0
                     ],
-                    "description" : "POINTS"
+                    "description" : "POINTS - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         1
                     ],
-                    "description" : "LINES"
+                    "description" : "LINES - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         2
                     ],
-                    "description" : "LINE_LOOP"
+                    "description" : "LINE_LOOP - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         3
                     ],
-                    "description" : "LINE_STRIP"
+                    "description" : "LINE_STRIP - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         4
                     ],
-                    "description" : "TRIANGLES"
+                    "description" : "TRIANGLES - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         5
                     ],
-                    "description" : "TRIANGLE_STRIP"
+                    "description" : "TRIANGLE_STRIP - The type of primitives to render."
                 },
                 {
                     "enum" : [
                         6
                     ],
-                    "description" : "TRIANGLE_FAN"
+                    "description" : "TRIANGLE_FAN - The type of primitives to render."
                 }
             ]
         }

@@ -23,31 +23,31 @@
                     "enum" : [
                         6406
                     ],
-                    "description" : "ALPHA"
+                    "description" : "ALPHA - The texture's format."
                 },
                 {
                     "enum" : [
                         6407
                     ],
-                    "description" : "RGB"
+                    "description" : "RGB - The texture's format."
                 },
                 {
                     "enum" : [
                         6408
                     ],
-                    "description" : "RGBA"
+                    "description" : "RGBA - The texture's format."
                 },
                 {
                     "enum" : [
                         6409
                     ],
-                    "description" : "LUMINANCE"
+                    "description" : "LUMINANCE - The texture's format."
                 },
                 {
                     "enum" : [
                         6410
                     ],
-                    "description" : "LUMINANCE_ALPHA"
+                    "description" : "LUMINANCE_ALPHA - The texture's format."
                 }
             ]
         },
@@ -62,31 +62,31 @@
                     "enum" : [
                         6406
                     ],
-                    "description" : "ALPHA"
+                    "description" : "ALPHA - The texture's internal format."
                 },
                 {
                     "enum" : [
                         6407
                     ],
-                    "description" : "RGB"
+                    "description" : "RGB - The texture's internal format."
                 },
                 {
                     "enum" : [
                         6408
                     ],
-                    "description" : "RGBA"
+                    "description" : "RGBA - The texture's internal format."
                 },
                 {
                     "enum" : [
                         6409
                     ],
-                    "description" : "LUMINANCE"
+                    "description" : "LUMINANCE - The texture's internal format."
                 },
                 {
                     "enum" : [
                         6410
                     ],
-                    "description" : "LUMINANCE_ALPHA"
+                    "description" : "LUMINANCE_ALPHA - The texture's internal format."
                 }
             ]
         },
@@ -117,7 +117,7 @@
                     "enum" : [
                         3553
                     ],
-                    "description" : "TEXTURE_2D"
+                    "description" : "TEXTURE_2D - The target that the WebGL texture should be bound to."
                 }
             ]
         },
@@ -132,25 +132,25 @@
                     "enum" : [
                         5121
                     ],
-                    "description" : "UNSIGNED_BYTE"
+                    "description" : "UNSIGNED_BYTE - Texel datatype."
                 },
                 {
                     "enum" : [
                         33635
                     ],
-                    "description" : "UNSIGNED_SHORT_5_6_5"
+                    "description" : "UNSIGNED_SHORT_5_6_5 - Texel datatype."
                 },
                 {
                     "enum" : [
                         32819
                     ],
-                    "description" : "UNSIGNED_SHORT_4_4_4_4"
+                    "description" : "UNSIGNED_SHORT_4_4_4_4 - Texel datatype."
                 },
                 {
                     "enum" : [
                         32820
                     ],
-                    "description" : "UNSIGNED_SHORT_5_5_5_1"
+                    "description" : "UNSIGNED_SHORT_5_5_5_1 - Texel datatype."
                 }
             ]
         }
