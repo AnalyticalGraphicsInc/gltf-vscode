@@ -22,15 +22,21 @@
         "type" : {
             "type" : "integer",
             "description" : "The shader stage.",
-            "enum" : [
-                35632,
-                35633
-            ],
-            "gltf_enumNames" : [
-                "FRAGMENT_SHADER",
-                "VERTEX_SHADER"
-            ],
-            "gltf_detailedDescription" : "The shader stage.  All valid values correspond to WebGL enums."
+            "gltf_detailedDescription" : "The shader stage.  All valid values correspond to WebGL enums.",
+            "oneOf" : [
+                {
+                    "enum" : [
+                        35632
+                    ],
+                    "description" : "FRAGMENT_SHADER"
+                },
+                {
+                    "enum" : [
+                        35633
+                    ],
+                    "description" : "VERTEX_SHADER"
+                }
+            ]
         }
     },
     "additionalProperties" : false,

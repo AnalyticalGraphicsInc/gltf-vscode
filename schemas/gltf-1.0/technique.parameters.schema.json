@@ -29,53 +29,135 @@
         "type" : {
             "type" : "integer",
             "description" : "The datatype.",
-            "enum" : [
-                5120,
-                5121,
-                5122,
-                5123,
-                5124,
-                5125,
-                5126,
-                35664,
-                35665,
-                35666,
-                35667,
-                35668,
-                35669,
-                35670,
-                35671,
-                35672,
-                35673,
-                35674,
-                35675,
-                35676,
-                35678
-            ],
-            "gltf_enumNames" : [
-                "BYTE",
-                "UNSIGNED_BYTE",
-                "SHORT",
-                "UNSIGNED_SHORT",
-                "INT",
-                "UNSIGNED_INT",
-                "FLOAT",
-                "FLOAT_VEC2",
-                "FLOAT_VEC3",
-                "FLOAT_VEC4",
-                "INT_VEC2",
-                "INT_VEC3",
-                "INT_VEC4",
-                "BOOL",
-                "BOOL_VEC2",
-                "BOOL_VEC3",
-                "BOOL_VEC4",
-                "FLOAT_MAT2",
-                "FLOAT_MAT3",
-                "FLOAT_MAT4",
-                "SAMPLER_2D"
-            ],
-            "gltf_detailedDescription" : "The datatype.  All valid values correspond to WebGL enums."
+            "gltf_detailedDescription" : "The datatype.  All valid values correspond to WebGL enums.",
+            "oneOf" : [
+                {
+                    "enum" : [
+                        5120
+                    ],
+                    "description" : "BYTE"
+                },
+                {
+                    "enum" : [
+                        5121
+                    ],
+                    "description" : "UNSIGNED_BYTE"
+                },
+                {
+                    "enum" : [
+                        5122
+                    ],
+                    "description" : "SHORT"
+                },
+                {
+                    "enum" : [
+                        5123
+                    ],
+                    "description" : "UNSIGNED_SHORT"
+                },
+                {
+                    "enum" : [
+                        5124
+                    ],
+                    "description" : "INT"
+                },
+                {
+                    "enum" : [
+                        5125
+                    ],
+                    "description" : "UNSIGNED_INT"
+                },
+                {
+                    "enum" : [
+                        5126
+                    ],
+                    "description" : "FLOAT"
+                },
+                {
+                    "enum" : [
+                        35664
+                    ],
+                    "description" : "FLOAT_VEC2"
+                },
+                {
+                    "enum" : [
+                        35665
+                    ],
+                    "description" : "FLOAT_VEC3"
+                },
+                {
+                    "enum" : [
+                        35666
+                    ],
+                    "description" : "FLOAT_VEC4"
+                },
+                {
+                    "enum" : [
+                        35667
+                    ],
+                    "description" : "INT_VEC2"
+                },
+                {
+                    "enum" : [
+                        35668
+                    ],
+                    "description" : "INT_VEC3"
+                },
+                {
+                    "enum" : [
+                        35669
+                    ],
+                    "description" : "INT_VEC4"
+                },
+                {
+                    "enum" : [
+                        35670
+                    ],
+                    "description" : "BOOL"
+                },
+                {
+                    "enum" : [
+                        35671
+                    ],
+                    "description" : "BOOL_VEC2"
+                },
+                {
+                    "enum" : [
+                        35672
+                    ],
+                    "description" : "BOOL_VEC3"
+                },
+                {
+                    "enum" : [
+                        35673
+                    ],
+                    "description" : "BOOL_VEC4"
+                },
+                {
+                    "enum" : [
+                        35674
+                    ],
+                    "description" : "FLOAT_MAT2"
+                },
+                {
+                    "enum" : [
+                        35675
+                    ],
+                    "description" : "FLOAT_MAT3"
+                },
+                {
+                    "enum" : [
+                        35676
+                    ],
+                    "description" : "FLOAT_MAT4"
+                },
+                {
+                    "enum" : [
+                        35678
+                    ],
+                    "description" : "SAMPLER_2D"
+                }
+            ]
         },
         "semantic" : {
             "type" : "string",

@@ -44,10 +44,47 @@ function parseArguments(args) {
     };
 }
 
+function transformEnums(data) {
+    for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                transformEnums(val);
+            }
+        }
+    }
+
+    // This transforms a "gltf_enumNames" array into a oneOf array, which allows vscode's jsonValidation
+    // to provide hover tooltips and auto-complete descriptions for individual enum values.
+    var hasEnum = data.hasOwnProperty('enum');
+    var hasGltfEnum = data.hasOwnProperty('gltf_enumNames');
+    if (hasEnum && hasGltfEnum) {
+        var oneOf = [];
+        var numEnums = data.enum.length;
+        var numGltfEnums = data.gltf_enumNames.length;
+        if ((numEnums === numGltfEnums) && (numEnums > 0)) {
+            for (var i = 0; i < numEnums; ++i) {
+                oneOf.push({ "enum": [data.enum[i]], "description": data.gltf_enumNames[i] });
+            }
+            data.oneOf = oneOf;
+            delete data.enum;
+            delete data.gltf_enumNames;
+        } else if (numEnums > 0) {
+            console.warn('**** WARNING: enum count differs from gltf_enumNames count.');
+        } else {
+            console.warn('**** WARNING: enum count is zero.');
+        }
+    } else if (hasEnum) {
+        console.log('NOTE: enum present without gltf_enumNames: ' + JSON.stringify(data.enum));
+    } else if (hasGltfEnum) {
+        console.warn('**** WARNING: gltf_enumNames present without enum.');
+    }
+}
+
 function transformFile(inputFile, outputFile) {
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
-    // TODO: Actually transform something!
+    transformEnums(schema);
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }

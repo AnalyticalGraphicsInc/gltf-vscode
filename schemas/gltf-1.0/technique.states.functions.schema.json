@@ -32,15 +32,25 @@
             "description" : "Integer values passed to `blendEquationSeparate()`.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    32774,
-                    32778,
-                    32779
-                ],
-                "gltf_enumNames" : [
-                    "FUNC_ADD",
-                    "FUNC_SUBTRACT",
-                    "FUNC_REVERSE_SUBTRACT"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            32774
+                        ],
+                        "description" : "FUNC_ADD"
+                    },
+                    {
+                        "enum" : [
+                            32778
+                        ],
+                        "description" : "FUNC_SUBTRACT"
+                    },
+                    {
+                        "enum" : [
+                            32779
+                        ],
+                        "description" : "FUNC_REVERSE_SUBTRACT"
+                    }
                 ]
             },
             "minItems" : 2,
@@ -57,39 +67,97 @@
             "description" : "Integer values passed to `blendFuncSeparate()`.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    0,
-                    1,
-                    768,
-                    769,
-                    774,
-                    775,
-                    770,
-                    771,
-                    772,
-                    773,
-                    32769,
-                    32770,
-                    32771,
-                    32772,
-                    776
-                ],
-                "gltf_enumNames" : [
-                    "ZERO",
-                    "ONE",
-                    "SRC_COLOR",
-                    "ONE_MINUS_SRC_COLOR",
-                    "DST_COLOR",
-                    "ONE_MINUS_DST_COLOR",
-                    "SRC_ALPHA",
-                    "ONE_MINUS_SRC_ALPHA",
-                    "DST_ALPHA",
-                    "ONE_MINUS_DST_ALPHA",
-                    "CONSTANT_COLOR",
-                    "ONE_MINUS_CONSTANT_COLOR",
-                    "CONSTANT_ALPHA",
-                    "ONE_MINUS_CONSTANT_ALPHA",
-                    "SRC_ALPHA_SATURATE"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            0
+                        ],
+                        "description" : "ZERO"
+                    },
+                    {
+                        "enum" : [
+                            1
+                        ],
+                        "description" : "ONE"
+                    },
+                    {
+                        "enum" : [
+                            768
+                        ],
+                        "description" : "SRC_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            769
+                        ],
+                        "description" : "ONE_MINUS_SRC_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            774
+                        ],
+                        "description" : "DST_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            775
+                        ],
+                        "description" : "ONE_MINUS_DST_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            770
+                        ],
+                        "description" : "SRC_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            771
+                        ],
+                        "description" : "ONE_MINUS_SRC_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            772
+                        ],
+                        "description" : "DST_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            773
+                        ],
+                        "description" : "ONE_MINUS_DST_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            32769
+                        ],
+                        "description" : "CONSTANT_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            32770
+                        ],
+                        "description" : "ONE_MINUS_CONSTANT_COLOR"
+                    },
+                    {
+                        "enum" : [
+                            32771
+                        ],
+                        "description" : "CONSTANT_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            32772
+                        ],
+                        "description" : "ONE_MINUS_CONSTANT_ALPHA"
+                    },
+                    {
+                        "enum" : [
+                            776
+                        ],
+                        "description" : "SRC_ALPHA_SATURATE"
+                    }
                 ]
             },
             "minItems" : 4,
@@ -124,15 +192,25 @@
             "description" : "Integer value passed to `cullFace()`.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    1028,
-                    1029,
-                    1032
-                ],
-                "gltf_enumNames" : [
-                    "FRONT",
-                    "BACK",
-                    "FRONT_AND_BACK"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            1028
+                        ],
+                        "description" : "FRONT"
+                    },
+                    {
+                        "enum" : [
+                            1029
+                        ],
+                        "description" : "BACK"
+                    },
+                    {
+                        "enum" : [
+                            1032
+                        ],
+                        "description" : "FRONT_AND_BACK"
+                    }
                 ]
             },
             "minItems" : 1,
@@ -148,25 +226,55 @@
             "description" : "Integer values passed to `depthFunc()`.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    512,
-                    513,
-                    515,
-                    514,
-                    516,
-                    517,
-                    518,
-                    519
-                ],
-                "gltf_enumNames" : [
-                    "NEVER",
-                    "LESS",
-                    "LEQUAL",
-                    "EQUAL",
-                    "GREATER",
-                    "NOTEQUAL",
-                    "GEQUAL",
-                    "ALWAYS"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            512
+                        ],
+                        "description" : "NEVER"
+                    },
+                    {
+                        "enum" : [
+                            513
+                        ],
+                        "description" : "LESS"
+                    },
+                    {
+                        "enum" : [
+                            515
+                        ],
+                        "description" : "LEQUAL"
+                    },
+                    {
+                        "enum" : [
+                            514
+                        ],
+                        "description" : "EQUAL"
+                    },
+                    {
+                        "enum" : [
+                            516
+                        ],
+                        "description" : "GREATER"
+                    },
+                    {
+                        "enum" : [
+                            517
+                        ],
+                        "description" : "NOTEQUAL"
+                    },
+                    {
+                        "enum" : [
+                            518
+                        ],
+                        "description" : "GEQUAL"
+                    },
+                    {
+                        "enum" : [
+                            519
+                        ],
+                        "description" : "ALWAYS"
+                    }
                 ]
             },
             "minItems" : 1,
@@ -209,13 +317,19 @@
             "description" : "Integer value passed to `frontFace()`.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    2304,
-                    2305
-                ],
-                "gltf_enumNames" : [
-                    "CW",
-                    "CCW"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            2304
+                        ],
+                        "description" : "CW"
+                    },
+                    {
+                        "enum" : [
+                            2305
+                        ],
+                        "description" : "CCW"
+                    }
                 ]
             },
             "minItems" : 1,

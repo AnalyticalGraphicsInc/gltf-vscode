@@ -16,21 +16,43 @@
             "description" : "WebGL states to enable.",
             "items" : {
                 "type" : "integer",
-                "enum" : [
-                    3042,
-                    2884,
-                    2929,
-                    32823,
-                    32926,
-                    3089
-                ],
-                "gltf_enumNames" : [
-                    "BLEND",
-                    "CULL_FACE",
-                    "DEPTH_TEST",
-                    "POLYGON_OFFSET_FILL",
-                    "SAMPLE_ALPHA_TO_COVERAGE",
-                    "SCISSOR_TEST"
+                "oneOf" : [
+                    {
+                        "enum" : [
+                            3042
+                        ],
+                        "description" : "BLEND"
+                    },
+                    {
+                        "enum" : [
+                            2884
+                        ],
+                        "description" : "CULL_FACE"
+                    },
+                    {
+                        "enum" : [
+                            2929
+                        ],
+                        "description" : "DEPTH_TEST"
+                    },
+                    {
+                        "enum" : [
+                            32823
+                        ],
+                        "description" : "POLYGON_OFFSET_FILL"
+                    },
+                    {
+                        "enum" : [
+                            32926
+                        ],
+                        "description" : "SAMPLE_ALPHA_TO_COVERAGE"
+                    },
+                    {
+                        "enum" : [
+                            3089
+                        ],
+                        "description" : "SCISSOR_TEST"
+                    }
                 ]
             },
             "uniqueItems" : true,
