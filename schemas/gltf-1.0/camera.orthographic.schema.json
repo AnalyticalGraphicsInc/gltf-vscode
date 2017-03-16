@@ -3,7 +3,11 @@
     "title" : "orthographic",
     "type" : "object",
     "description" : "An orthographic camera containing properties to create an orthographic projection matrix.",
-    "allOf" : [ { "$ref" : "glTFProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFProperty.schema.json"
+        }
+    ],
     "properties" : {
         "extensions" : {},
         "extras" : {},
@@ -18,14 +22,19 @@
         "zfar" : {
             "type" : "number",
             "description" : "The floating-point distance to the far clipping plane.",
-            "minimum" : 0.0
+            "minimum" : 0
         },
         "znear" : {
             "type" : "number",
             "description" : "The floating-point distance to the near clipping plane.",
-            "minimum" : 0.0
+            "minimum" : 0
         }
     },
     "additionalProperties" : false,
-    "required": ["xmag", "ymag", "zfar", "znear"]
+    "required" : [
+        "xmag",
+        "ymag",
+        "zfar",
+        "znear"
+    ]
 }

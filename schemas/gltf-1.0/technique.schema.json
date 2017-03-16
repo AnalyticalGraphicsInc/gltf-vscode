@@ -3,16 +3,19 @@
     "title" : "technique",
     "type" : "object",
     "description" : "A template for material appearances.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
-    "properties": {
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
+    "properties" : {
         "name" : {},
         "extensions" : {},
         "extras" : {},
         "parameters" : {
             "type" : "object",
             "description" : "A dictionary object of technique.parameters objects.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "technique.parameters.schema.json"
             },
@@ -22,33 +25,41 @@
         "attributes" : {
             "type" : "object",
             "description" : "A dictionary object of strings that maps GLSL attribute names to technique parameter IDs.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "technique.attribute.schema.json"
             },
             "default" : {}
         },
         "program" : {
-            "allOf" : [ { "$ref" : "glTFid.schema.json" } ],
+            "allOf" : [
+                {
+                    "$ref" : "glTFid.schema.json"
+                }
+            ],
             "description" : "The ID of the program."
         },
         "uniforms" : {
             "type" : "object",
             "description" : "A dictionary object of strings that maps GLSL uniform names to technique parameter IDs.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "technique.uniform.schema.json"
             },
             "default" : {}
         },
         "states" : {
-            "allOf" : [ { "$ref" : "technique.states.schema.json" } ],
+            "allOf" : [
+                {
+                    "$ref" : "technique.states.schema.json"
+                }
+            ],
             "description" : "Fixed-function rendering states.",
             "default" : {}
         }
     },
     "additionalProperties" : false,
-    "required" : ["program"]
+    "required" : [
+        "program"
+    ]
 }

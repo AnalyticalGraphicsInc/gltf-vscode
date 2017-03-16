@@ -3,7 +3,11 @@
     "title" : "buffer",
     "type" : "object",
     "description" : "A buffer points to binary geometry, animation, or skins.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
         "name" : {},
         "extensions" : {},
@@ -24,10 +28,15 @@
         "type" : {
             "type" : "string",
             "description" : "XMLHttpRequest `responseType`.",
-            "enum" : ["arraybuffer", "text"],
+            "enum" : [
+                "arraybuffer",
+                "text"
+            ],
             "default" : "arraybuffer"
         }
     },
     "additionalProperties" : false,
-    "required": ["uri"]
+    "required" : [
+        "uri"
+    ]
 }

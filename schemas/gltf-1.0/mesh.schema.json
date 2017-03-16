@@ -3,7 +3,11 @@
     "title" : "mesh",
     "type" : "object",
     "description" : "A set of primitives to be rendered.  A node can contain one or more meshes.  A node's transform places the mesh in the scene.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
         "name" : {},
         "extensions" : {},

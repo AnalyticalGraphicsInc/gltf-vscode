@@ -3,7 +3,11 @@
     "title" : "glTF",
     "type" : "object",
     "description" : "The root object for a glTF asset.",
-    "allOf" : [ { "$ref" : "glTFProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFProperty.schema.json"
+        }
+    ],
     "properties" : {
         "extensions" : {},
         "extras" : {},
@@ -20,8 +24,7 @@
         "accessors" : {
             "type" : "object",
             "description" : "A dictionary object of accessors.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "accessor.schema.json"
             },
@@ -31,8 +34,7 @@
         "animations" : {
             "type" : "object",
             "description" : "A dictionary object of keyframe animations.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "animation.schema.json"
             },
@@ -40,15 +42,18 @@
             "gltf_detailedDescription" : "A dictionary object of keyframe animations.  The name of each animation is an ID in the global glTF namespace that is used to reference the animation."
         },
         "asset" : {
-            "allOf" : [ { "$ref" : "asset.schema.json" } ],
+            "allOf" : [
+                {
+                    "$ref" : "asset.schema.json"
+                }
+            ],
             "description" : "Metadata about the glTF asset.",
             "default" : {}
         },
         "buffers" : {
             "type" : "object",
             "description" : "A dictionary object of buffers.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "buffer.schema.json"
             },
@@ -58,8 +63,7 @@
         "bufferViews" : {
             "type" : "object",
             "description" : "A dictionary object of bufferViews.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "bufferView.schema.json"
             },
@@ -69,8 +73,7 @@
         "cameras" : {
             "type" : "object",
             "description" : "A dictionary object of cameras.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "camera.schema.json"
             },
@@ -80,8 +83,7 @@
         "images" : {
             "type" : "object",
             "description" : "A dictionary object of images.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "image.schema.json"
             },
@@ -91,8 +93,7 @@
         "materials" : {
             "type" : "object",
             "description" : "A dictionary object of materials.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "material.schema.json"
             },
@@ -102,8 +103,7 @@
         "meshes" : {
             "type" : "object",
             "description" : "A dictionary object of meshes.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "mesh.schema.json"
             },
@@ -113,8 +113,7 @@
         "nodes" : {
             "type" : "object",
             "description" : "A dictionary object of nodes.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "node.schema.json"
             },
@@ -124,8 +123,7 @@
         "programs" : {
             "type" : "object",
             "description" : "A dictionary object of programs.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "program.schema.json"
             },
@@ -135,8 +133,7 @@
         "samplers" : {
             "type" : "object",
             "description" : "A dictionary object of samplers.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "sampler.schema.json"
             },
@@ -144,14 +141,17 @@
             "gltf_detailedDescription" : "A dictionary object of samplers.  The name of each sampler is an ID in the global glTF namespace that is used to reference the sampler.  A sampler contains properties for texture filtering and wrapping modes."
         },
         "scene" : {
-            "allOf" : [ { "$ref" : "glTFid.schema.json" } ],
+            "allOf" : [
+                {
+                    "$ref" : "glTFid.schema.json"
+                }
+            ],
             "description" : "The ID of the default scene."
         },
         "scenes" : {
             "type" : "object",
             "description" : "A dictionary object of scenes.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "scene.schema.json"
             },
@@ -161,8 +161,7 @@
         "shaders" : {
             "type" : "object",
             "description" : "A dictionary object of shaders.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "shader.schema.json"
             },
@@ -172,8 +171,7 @@
         "skins" : {
             "type" : "object",
             "description" : "A dictionary object of skins.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "skin.schema.json"
             },
@@ -183,8 +181,7 @@
         "techniques" : {
             "type" : "object",
             "description" : "A dictionary object of techniques.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "technique.schema.json"
             },
@@ -194,8 +191,7 @@
         "textures" : {
             "type" : "object",
             "description" : "A dictionary object of textures.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "texture.schema.json"
             },
@@ -204,7 +200,9 @@
         }
     },
     "dependencies" : {
-        "scene" : ["scenes"]
+        "scene" : [
+            "scenes"
+        ]
     },
     "additionalProperties" : false
 }

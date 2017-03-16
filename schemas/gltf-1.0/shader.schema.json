@@ -3,7 +3,11 @@
     "title" : "shader",
     "type" : "object",
     "description" : "A vertex or fragment shader.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
         "name" : {},
         "extensions" : {},
@@ -18,13 +22,21 @@
         "type" : {
             "type" : "integer",
             "description" : "The shader stage.",
-            "enum" : [35632, 35633],
-            "gltf_enumNames" : ["FRAGMENT_SHADER", "VERTEX_SHADER"],
+            "enum" : [
+                35632,
+                35633
+            ],
+            "gltf_enumNames" : [
+                "FRAGMENT_SHADER",
+                "VERTEX_SHADER"
+            ],
             "gltf_detailedDescription" : "The shader stage.  All valid values correspond to WebGL enums."
         }
     },
     "additionalProperties" : false,
-    "required" : ["uri", "type"],
+    "required" : [
+        "uri",
+        "type"
+    ],
     "gltf_webgl" : "`createShader()`, `deleteShader()`, `shaderSource()`, `compileShader()`, `getShaderParameter()`, and `getShaderInfoLog()`"
 }
-

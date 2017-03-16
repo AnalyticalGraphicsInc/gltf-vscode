@@ -3,7 +3,11 @@
     "title" : "image",
     "type" : "object",
     "description" : "Image data used to create a texture.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
         "name" : {},
         "extensions" : {},
@@ -17,5 +21,7 @@
         }
     },
     "additionalProperties" : false,
-    "required": ["uri"]
+    "required" : [
+        "uri"
+    ]
 }

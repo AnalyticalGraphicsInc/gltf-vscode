@@ -3,9 +3,13 @@
     "title" : "animation",
     "type" : "object",
     "description" : "A keyframe animation.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
-        "name": {},
+        "name" : {},
         "extensions" : {},
         "extras" : {},
         "channels" : {
@@ -19,8 +23,7 @@
         "parameters" : {
             "type" : "object",
             "description" : "A dictionary object of strings whose values are IDs of accessors with keyframe data, e.g., time, translation, rotation, etc.",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "animation.parameter.schema.json"
             },
@@ -29,8 +32,7 @@
         "samplers" : {
             "type" : "object",
             "description" : "A dictionary object of samplers that combines input and output parameters with an interpolation algorithm to define a keyframe graph (but not its target).",
-            "properties" : {
-            },
+            "properties" : {},
             "additionalProperties" : {
                 "$ref" : "animation.sampler.schema.json"
             },
@@ -38,8 +40,12 @@
         }
     },
     "dependencies" : {
-        "channels" : ["samplers"],
-        "samplers" : ["parameters"]
+        "channels" : [
+            "samplers"
+        ],
+        "samplers" : [
+            "parameters"
+        ]
     },
     "additionalProperties" : false
 }

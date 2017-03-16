@@ -3,7 +3,11 @@
     "title" : "skin",
     "type" : "object",
     "description" : "Joints and matrices defining a skin.",
-    "allOf" : [ { "$ref" : "glTFChildOfRootProperty.schema.json" } ],
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
     "properties" : {
         "name" : {},
         "extensions" : {},
@@ -12,15 +16,36 @@
             "type" : "array",
             "description" : "Floating-point 4x4 transformation matrix stored in column-major order.",
             "items" : {
-                "type": "number"
+                "type" : "number"
             },
             "minItems" : 16,
             "maxItems" : 16,
-            "default" : [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]
+            "default" : [
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1
+            ]
         },
         "inverseBindMatrices" : {
-            "allOf" : [ { "$ref" : "glTFid.schema.json" } ],
-            "description" : "The ID of the accessor containing the floating-point 4x4 inverse-bind matrices."    
+            "allOf" : [
+                {
+                    "$ref" : "glTFid.schema.json"
+                }
+            ],
+            "description" : "The ID of the accessor containing the floating-point 4x4 inverse-bind matrices."
         },
         "jointNames" : {
             "type" : "array",
@@ -33,5 +58,8 @@
         }
     },
     "additionalProperties" : false,
-    "required" : ["inverseBindMatrices", "jointNames"]
+    "required" : [
+        "inverseBindMatrices",
+        "jointNames"
+    ]
 }
