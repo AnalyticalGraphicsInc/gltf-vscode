@@ -20,21 +20,20 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         const content = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>glTF Preview</title>
-  <script src="${this.getFilePath('Cesium/Cesium.js')}"></script>
-  <style>
-      html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-      }
-  </style>
-  <script id="glTF" type="text/plain">${glTF}</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>glTF Preview</title>
+    <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}">
+    <script src="${this.getFilePath('Cesium/Cesium.js')}"></script>
+    <script id="glTF" type="text/plain">${glTF}</script>
 </head>
 <body>
-  <div id="cesiumContainer"></div>
-  <script src="${this.getFilePath('pages/previewModel.js')}"></script>
+    <div id="cesiumContainer">
+        <canvas id="mainCanvas"></canvas>
+        <div id="cesiumCreditContainer"></div>
+    </div>
+    <script src="${this.getFilePath('pages/previewModel.js')}"></script>
 </body>
 </html>
 `;
