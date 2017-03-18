@@ -11,14 +11,33 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:gltf.inspectDataUri",
+        "onCommand:gltf.previewModel"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "gltf.inspectDataUri",
+                "title": "glTF: Inspect Data URI"
+            },
+            {
+                "command": "gltf.previewModel",
+                "title": "glTF: Preview 3D Model"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "gltf.inspectDataUri",
+                "key": "alt+d",
+                "mac": "option+d",
+                "when": "editorTextFocus && editorLangId == 'json'"
+            },
+            {
+                "command": "gltf.previewModel",
+                "key": "alt+g",
+                "mac": "option+g",
+                "when": "editorTextFocus && editorLangId == 'json'"
             }
         ],
         "languages": [

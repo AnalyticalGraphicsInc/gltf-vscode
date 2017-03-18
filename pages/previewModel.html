@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>glTF Preview</title>
+  <script src="file://${this.getResourcePath('Cesium/Cesium.js')}"></script>
+  <style>
+      html, body, #cesiumContainer {
+          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+      }
+  </style>
+  <script id="glTF" type="text/plain">${glTF}</script>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script src="file://${this.getResourcePath('pages/previewModel.js')}"></script>
+</body>
+</html>
