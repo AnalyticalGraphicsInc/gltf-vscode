@@ -3,7 +3,7 @@
     "displayName": "glTF",
     "description": "Tools and utilities for editing glTF files",
     "version": "0.0.1",
-    "publisher": "emackey",
+    "publisher": "cesium",
     "engines": {
         "vscode": "^1.10.0"
     },

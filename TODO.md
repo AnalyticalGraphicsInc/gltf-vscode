@@ -1,4 +1,10 @@
-### Add gltf preview window
+## TODO
+
+This extension is not officially supported by any entity, and no promise is made that any ideas or feature requests here will ever get implemented.  This is just a wish-list.
+
+### Add color and skyBox choices to model preview
+
+### Save camera location in model view, with home button
 
 ### Add shader preview/edit/export/import
 
