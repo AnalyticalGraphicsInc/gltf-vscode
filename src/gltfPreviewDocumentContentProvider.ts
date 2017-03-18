@@ -33,6 +33,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         <canvas id="mainCanvas"></canvas>
         <div id="cesiumCreditContainer"></div>
     </div>
+    <div id="errorContainer"></div>
     <script src="${this.getFilePath('pages/previewModel.js')}"></script>
 </body>
 </html>

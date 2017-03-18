@@ -1,3 +1,9 @@
+var errorContainer = document.getElementById('errorContainer');
+window.onerror = function(error) {
+    errorContainer.style.display = 'block';
+    errorContainer.textContent = error.toString();
+};
+
 var scene;
 var canvas;
 var clock = new Cesium.Clock();
