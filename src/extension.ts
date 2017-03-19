@@ -32,37 +32,71 @@ export function activate(context: vscode.ExtensionContext) {
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
     const dataPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-dataUri', dataPreviewProvider);
-    const previewUri = Uri.parse('gltf-dataUri://gltf-vscode/gltf-dataUri-preview');
     context.subscriptions.push(dataPreviewRegistration);
 
     // Commands are registered in two places in the package.json file.
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
-
-        const map = jsonMap.parse(vscode.window.activeTextEditor.document.getText());
+        let map;
+        try {
+            map = jsonMap.parse(vscode.window.activeTextEditor.document.getText());
+        } catch (ex) {
+            vscode.window.showErrorMessage('Error parsing this document.  Please make sure it is valid JSON.');
+            return;
+        }
         const lineNum = vscode.window.activeTextEditor.selection.active.line;
         const columnNum = vscode.window.activeTextEditor.selection.active.character;
         const pointers = map.pointers;
-        let bestPointer, secondBestPointer, bestPointerSize, secondBestPointerSize;
-        console.log('testing');
+
+        let bestKey : string, secondBestKey : string;
         for (let key in pointers) {
             if (key && pointers.hasOwnProperty(key)) {
                 let pointer = pointers[key];
                 if (pointerContains(pointer, lineNum, columnNum)) {
-                    let pointerSize = pointer.valueEnd.pos - pointer.key.pos;
-                    console.log('SIZE ' + pointerSize + ' - ' + key);
+                    //let pointerSize = pointer.valueEnd.pos - (pointer.key || pointer.value).pos;
+                    //console.log('SIZE ' + pointerSize + ' - ' + key);
+                    //secondBestPointer = bestPointer;
+                    //bestPointer = pointer;
+                    secondBestKey = bestKey;
+                    bestKey = key;
                 }
             }
         }
 
-        vscode.workspace.openTextDocument(previewUri).then((doc: vscode.TextDocument) => {
-            vscode.window.showTextDocument(doc, ViewColumn.Two, false).then(e => {
-            });
-        }, (reason) => { vscode.window.showErrorMessage(reason); });
+        if (!bestKey) {
+            vscode.window.showErrorMessage('Please click on an embedded data item, and try this command again.');
+        } else {
+            if (secondBestKey && bestKey.endsWith('/uri')) {
+                bestKey = secondBestKey;
+            }
 
-        dataPreviewProvider.update(previewUri);
+            const useHtml = dataPreviewProvider.shouldUseHtmlPreview(map.data, bestKey);
+            const isShader = dataPreviewProvider.isShader(bestKey);
 
-        // Display a message box to the user
-        //vscode.window.showInformationMessage('Hello World!');
+            if (isShader) {
+                bestKey += '.glsl';
+            }
+
+            const previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
+                encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
+                bestKey);
+
+            if (useHtml) {
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, ViewColumn.Two, bestKey)
+                    .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
+
+                dataPreviewProvider.update(previewUri);
+            } else if (isShader) {
+                vscode.workspace.openTextDocument(previewUri).then((doc: vscode.TextDocument) => {
+                    vscode.window.showTextDocument(doc, ViewColumn.Two, false).then(e => {
+                    });
+                }, (reason) => { vscode.window.showErrorMessage(reason); });
+
+                dataPreviewProvider.update(previewUri);
+            } else {
+                vscode.window.showErrorMessage('This feature currently works only with images and shaders.');
+                console.log('gltf-vscode: No preview for: ' + bestKey);
+            }
+        }
     }));
 
     // Register a preview of the whole glTF file.
