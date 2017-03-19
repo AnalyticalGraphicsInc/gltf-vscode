@@ -5,6 +5,21 @@ import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
+import * as jsonMap from 'json-source-map';
+
+function pointerContains(pointer, lineNum : number, columnNum : number) : boolean {
+    const start = pointer.key || pointer.value;
+    if ((start.line > lineNum) ||
+        ((start.line === lineNum) && (start.column > columnNum))) {
+        return false;
+    }
+    const end = pointer.valueEnd;
+    if ((end.line < lineNum) ||
+        ((end.line === lineNum) && (end.column < columnNum))) {
+        return false;
+    }
+    return true;
+}
 
 // this method is called when your extension is activated
 // your extension is activated the very first time a command is executed
@@ -22,7 +37,22 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Commands are registered in two places in the package.json file.
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
-        // TODO: Investigate json-source-map.
+
+        const map = jsonMap.parse(vscode.window.activeTextEditor.document.getText());
+        const lineNum = vscode.window.activeTextEditor.selection.active.line;
+        const columnNum = vscode.window.activeTextEditor.selection.active.character;
+        const pointers = map.pointers;
+        let bestPointer, secondBestPointer, bestPointerSize, secondBestPointerSize;
+        console.log('testing');
+        for (let key in pointers) {
+            if (key && pointers.hasOwnProperty(key)) {
+                let pointer = pointers[key];
+                if (pointerContains(pointer, lineNum, columnNum)) {
+                    let pointerSize = pointer.valueEnd.pos - pointer.key.pos;
+                    console.log('SIZE ' + pointerSize + ' - ' + key);
+                }
+            }
+        }
 
         vscode.workspace.openTextDocument(previewUri).then((doc: vscode.TextDocument) => {
             vscode.window.showTextDocument(doc, ViewColumn.Two, false).then(e => {
