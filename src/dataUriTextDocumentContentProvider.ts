@@ -7,43 +7,70 @@ function atob(str): string {
     return new Buffer(str, 'base64').toString('binary');
 }
 
+function getFromPath(glTF, path : string) {
+    const pathSplit = path.split('/');
+    const numPathSegments = pathSplit.length;
+    let result = glTF;
+    const firstValidIndex = 1; // Because the path has a leading slash.
+    for (let i = firstValidIndex; i < numPathSegments; ++i) {
+        result = result[pathSplit[i]];
+    }
+    return result;
+}
+
 export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
+
+    public UriPrefix = 'gltf-dataUri://';
 
     constructor(context: ExtensionContext) {
         this._context = context;
     }
 
+    public shouldUseHtmlPreview(glTF, path : string) : boolean {
+        if (path.startsWith('/images/')) {
+            return true;
+        }
+        //const data = getFromPath(glTF, path);
+        //if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
+        //    const uri = data.uri;
+
+        //}
+        return false;
+    }
+
+    public isShader(path: string) : boolean {
+        return path.startsWith('/shaders/');
+    }
+
     public provideTextDocumentContent(uri: Uri): string {
-        const glTF = vscode.window.activeTextEditor.document.getText().split('\n');
-        const lineNum = vscode.window.activeTextEditor.selection.active.line;
-        const line = glTF[lineNum];
-        const pos = line.indexOf('data:');
-        if (pos < 0) {
-            return 'No dataURI on this line.';
+        const filename = decodeURIComponent(uri.authority);
+        const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
+        if (!document) {
+            vscode.window.showErrorMessage('Can no longer find document in editor: ' + filename);
+            return undefined;
+        }
+        const glTF = JSON.parse(document.getText());
+        let path = uri.path;
+        if (this.isShader(path) && path.endsWith('.glsl')) {
+            path = path.substring(0, path.length - 5);
+        }
+        const data = getFromPath(glTF, path);
+
+        if (data && (typeof data === 'object') && data.hasOwnProperty('uri')) {
+            const dataUri = data.uri;
+
+            if (path.startsWith('/images/')) {
+                return '<img src="' + dataUri + '" />';
+            } else {
+                const posBase = dataUri.indexOf('base64,');
+                const body = dataUri.substring(posBase + 7);
+                return atob(body);
+            }
         }
 
-        const posHalfMime = line.indexOf('/', pos);
-        const posBase = line.indexOf('base64,', pos);
-        const posEnd = line.indexOf('"', pos);
-        if ((posHalfMime < 0) || (posBase < 0) || (posEnd < 0)) {
-            return 'Can\'t parse dataURI on this line.';
-        }
-
-        const halfMime = line.substring(pos + 5, posHalfMime);
-        const body = line.substring(posBase + 7, posEnd);
-
-        if (halfMime === 'text') {
-            return atob(body);
-        }
-
-        if (halfMime === 'image') {
-            // TODO: The parent command needs to know if this doc is for an editor or an HTML preview.
-            return '<img src="' + line.substring(pos, posEnd) + '" />';
-        }
-
-        return 'Unknown MIME type, starts with: ' + halfMime;
+        return 'Unknown:\n' + uri.path;
     }
 
     get onDidChange(): Event<Uri> {
