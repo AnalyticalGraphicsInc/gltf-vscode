@@ -4,7 +4,7 @@
     "description": "Tools for editing and previewing glTF 1.0 files",
     "version": "1.0.2",
     "publisher": "cesium",
-    "license": "Apache 2.0",
+    "license": "Apache-2.0",
     "repository": {
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },

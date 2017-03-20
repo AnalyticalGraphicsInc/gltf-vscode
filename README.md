@@ -25,7 +25,7 @@ on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIB
 
 ## License
 
-See [LICENSE](LICENSE).
+See [LICENSE.md](LICENSE.md).
 
 ## Release Notes
 
