@@ -19,6 +19,14 @@ This version of the extension delivers the following features:
 
 This version of the extension does not offer any user-defined settings.
 
+## Source code
+
+on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+See [LICENSE](LICENSE).
+
 ## Release Notes
 
-See [CHANGELOG.md](CHANGELOG.md)
+See [CHANGELOG.md](CHANGELOG.md).
