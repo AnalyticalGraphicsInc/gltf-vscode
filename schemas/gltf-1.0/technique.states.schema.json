@@ -15,7 +15,6 @@
             "type" : "array",
             "description" : "WebGL states to enable.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [

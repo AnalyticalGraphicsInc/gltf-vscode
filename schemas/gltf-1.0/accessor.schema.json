@@ -37,7 +37,6 @@
             "gltf_webgl" : "`vertexAttribPointer()` stride parameter"
         },
         "componentType" : {
-            "type" : "integer",
             "description" : "The datatype of components in the attribute.",
             "gltf_detailedDescription" : "The datatype of components in the attribute.  All valid values correspond to WebGL enums.  The corresponding typed arrays are `Int8Array`, `Uint8Array`, `Int16Array`, `Uint16Array`, and `Float32Array`, respectively.",
             "oneOf" : [

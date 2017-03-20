@@ -31,7 +31,6 @@
             "type" : "array",
             "description" : "Integer values passed to `blendEquationSeparate()`.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [
@@ -66,7 +65,6 @@
             "type" : "array",
             "description" : "Integer values passed to `blendFuncSeparate()`.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [
@@ -191,7 +189,6 @@
             "type" : "array",
             "description" : "Integer value passed to `cullFace()`.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [
@@ -225,7 +222,6 @@
             "type" : "array",
             "description" : "Integer values passed to `depthFunc()`.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [
@@ -316,7 +312,6 @@
             "type" : "array",
             "description" : "Integer value passed to `frontFace()`.",
             "items" : {
-                "type" : "integer",
                 "oneOf" : [
                     {
                         "enum" : [

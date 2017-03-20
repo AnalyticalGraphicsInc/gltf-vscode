@@ -20,7 +20,6 @@
             "gltf_uriType" : "text"
         },
         "type" : {
-            "type" : "integer",
             "description" : "The shader stage.",
             "gltf_detailedDescription" : "The shader stage.  All valid values correspond to WebGL enums.",
             "oneOf" : [

@@ -73,6 +73,7 @@ function transformEnums(data) {
             data.oneOf = oneOf;
             delete data.enum;
             delete data.gltf_enumNames;
+            delete data.type;
         } else if (numEnums > 0) {
             console.warn('**** WARNING: enum count differs from gltf_enumNames count.');
         } else {

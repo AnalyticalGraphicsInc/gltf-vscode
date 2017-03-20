@@ -13,7 +13,6 @@
         "extensions" : {},
         "extras" : {},
         "magFilter" : {
-            "type" : "integer",
             "description" : "Magnification filter.",
             "default" : 9729,
             "gltf_detailedDescription" : "Magnification filter.  Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).",
@@ -34,7 +33,6 @@
             ]
         },
         "minFilter" : {
-            "type" : "integer",
             "description" : "Minification filter.",
             "default" : 9986,
             "gltf_detailedDescription" : "Minification filter.  All valid values correspond to WebGL enums.",
@@ -79,7 +77,6 @@
             ]
         },
         "wrapS" : {
-            "type" : "integer",
             "description" : "s wrapping mode.",
             "default" : 10497,
             "gltf_detailedDescription" : "s wrapping mode.  All valid values correspond to WebGL enums.",
@@ -106,7 +103,6 @@
             ]
         },
         "wrapT" : {
-            "type" : "integer",
             "description" : "t wrapping mode.",
             "default" : 10497,
             "gltf_detailedDescription" : "t wrapping mode.  All valid values correspond to WebGL enums.",
