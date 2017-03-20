@@ -8,6 +8,7 @@
     "repository": {
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
+    "icon": "gltf-icon.png",
     "engines": {
         "vscode": "^1.10.0"
     },
