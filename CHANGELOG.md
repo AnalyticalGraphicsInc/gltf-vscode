@@ -1,5 +1,11 @@
 # Change Log
 
+### 1.0.3 - 2017-03-21
+
+* Fleshed out README information, added notes about glTF compatibility.
+* Tweak schema import script to remove "type" on enums (so vscode doesn't suggest `0` as default value for enums that don't accept zero).
+* Update icon again.
+
 ### 1.0.1, 1.0.2 - 2017-03-19
 
 * Added icon, updated icon.
