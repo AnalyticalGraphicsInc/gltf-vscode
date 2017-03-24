@@ -1,0 +1,14 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "glTF",
+    "type" : "object",
+    "description" : "The root object for a glTF asset.",
+    "oneOf" : [
+        {
+            "$ref" : "gltf-2.0/glTF.schema.json"
+        },
+        {
+            "$ref" : "gltf-1.0/glTF.schema.json"
+        }
+    ]
+}

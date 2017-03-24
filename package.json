@@ -57,7 +57,7 @@
         "jsonValidation": [
             {
                 "fileMatch": "*.gltf",
-                "url": "./schemas/gltf-2.0/glTF.schema.json"
+                "url": "./schemas/glTF.chooser.schema.json"
             }
         ]
     },
