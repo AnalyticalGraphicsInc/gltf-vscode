@@ -1,10 +1,16 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as Url from 'url';
+import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 function atob(str): string {
     return new Buffer(str, 'base64').toString('binary');
+}
+
+function btoa(str): string {
+    return new Buffer(str, 'binary').toString('base64');
 }
 
 function getFromPath(glTF, path : string) {
@@ -28,15 +34,21 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         this._context = context;
     }
 
-    public shouldUseHtmlPreview(glTF, path : string) : boolean {
+    public shouldOpenDocument(glTF, path : string) : string {
+        const data = getFromPath(glTF, path);
+        if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
+            const uri : string = data.uri;
+            if (!uri.startsWith('data:')) {
+                return uri;
+            }
+        }
+        return null;
+    }
+
+    public shouldUseHtmlPreview(path : string) : boolean {
         if (path.startsWith('/images/')) {
             return true;
         }
-        //const data = getFromPath(glTF, path);
-        //if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
-        //    const uri = data.uri;
-
-        //}
         return false;
     }
 
@@ -59,7 +71,13 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         const data = getFromPath(glTF, path);
 
         if (data && (typeof data === 'object') && data.hasOwnProperty('uri')) {
-            const dataUri = data.uri;
+            let dataUri : string = data.uri;
+            if (!dataUri.startsWith('data:')) {
+                // Not a DataURI: Look up external reference.
+                const name = Url.resolve(document.fileName, dataUri);
+                const contents = fs.readFileSync(name);
+                dataUri = 'data:image;base64,' + btoa(contents);
+            }
 
             if (path.startsWith('/images/')) {
                 return '<img src="' + dataUri + '" />';
