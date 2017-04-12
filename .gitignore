@@ -1,2 +1,7 @@
+.DS_Store
+Thumbs.db
+desktop.ini
 out
 node_modules
+npm-debug.log
+debug.log
