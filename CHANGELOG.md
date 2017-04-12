@@ -1,5 +1,9 @@
 # Change Log
 
+### Unreleased
+
+* Data preview (<kbd>alt</kbd> + <kbd>d</kbd>) works with external files now.
+
 ### 1.0.3 - 2017-03-21
 
 * Fleshed out README information, added notes about glTF compatibility.
