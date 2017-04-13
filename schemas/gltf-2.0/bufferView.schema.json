@@ -37,21 +37,23 @@
             "gltf_webgl" : "`vertexAttribPointer()` stride parameter"
         },
         "target" : {
-            "description" : "The target that the WebGL buffer should be bound to.",
-            "gltf_detailedDescription" : "The target that the WebGL buffer should be bound to.  All valid values correspond to WebGL enums.  When this is not provided, the bufferView contains animation or skin data.",
+            "description" : "The target that the GPU buffer should be bound to.",
             "gltf_webgl" : "`bindBuffer()`",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         34962
                     ],
-                    "description" : "ARRAY_BUFFER - The target that the WebGL buffer should be bound to."
+                    "description" : "ARRAY_BUFFER - The target that the GPU buffer should be bound to."
                 },
                 {
                     "enum" : [
                         34963
                     ],
-                    "description" : "ELEMENT_ARRAY_BUFFER - The target that the WebGL buffer should be bound to."
+                    "description" : "ELEMENT_ARRAY_BUFFER - The target that the GPU buffer should be bound to."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
@@ -59,7 +61,6 @@
         "extensions" : {},
         "extras" : {}
     },
-    "additionalProperties" : false,
     "required" : [
         "buffer",
         "byteOffset",

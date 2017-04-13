@@ -20,7 +20,7 @@
             ],
             "minItems" : 4,
             "maxItems" : 4,
-            "gltf_detailedDescription" : "The RGBA components of the base color of the material. The fourth component (A) is the opacity of the material. These values are linear."
+            "gltf_detailedDescription" : "The RGBA components of the base color of the material. The fourth component (A) is the alpha coverage of the material. The `alphaMode` property specifies how alpha is interpreted. These values are linear."
         },
         "baseColorTexture" : {
             "allOf" : [
@@ -29,7 +29,7 @@
                 }
             ],
             "description" : "The base color texture.",
-            "gltf_detailedDescription" : "The base color texture. This texture contains RGB(A) components in sRGB color space. The first three components (RGB) specify the base color of the material. If the fourth component (A) is present, it represents the opacity of the material. Otherwise, an opacity of 1.0 is assumed."
+            "gltf_detailedDescription" : "The base color texture. This texture contains RGB(A) components in sRGB color space. The first three components (RGB) specify the base color of the material. If the fourth component (A) is present, it represents the alpha coverage of the material. Otherwise, an alpha of 1.0 is assumed. The `alphaMode` property specifies how alpha is interpreted. The stored texels must not be premultiplied."
         },
         "metallicFactor" : {
             "type" : "number",
@@ -54,8 +54,7 @@
                 }
             ],
             "description" : "The metallic-roughness texture.",
-            "gltf_detailedDescription" : "The metallic-roughness texture has two components. The first component (R) contains the metallic-ness of the material. The second component (G) contains the roughness of the material. These values are linear. If the third component (B) and/or the fourth component (A) are present, they are ignored."
+            "gltf_detailedDescription" : "The metallic-roughness texture. The metalness values are sampled from the B channel. The roughness values are sampled from the G channel. These values are linear. If other channels are present (R or A), they are ignored for metallic-roughness calculations."
         }
-    },
-    "additionalProperties" : false
+    }
 }

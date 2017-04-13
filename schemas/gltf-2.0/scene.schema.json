@@ -21,6 +21,5 @@
         "name" : {},
         "extensions" : {},
         "extras" : {}
-    },
-    "additionalProperties" : false
+    }
 }

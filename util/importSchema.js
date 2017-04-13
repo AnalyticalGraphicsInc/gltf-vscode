@@ -44,11 +44,29 @@ function parseArguments(args) {
     };
 }
 
+function transformAnyOf(data, parentDescription) {
+    if (!parentDescription) {
+        console.warn('**** WARNING: anyOf without description.');
+    } else {
+        var numBlocks = data.length;
+        for (var i = 0; i < numBlocks; ++i) {
+            var block = data[i];
+            if (block.hasOwnProperty('enum')) {
+                if (block.hasOwnProperty('description')) {
+                    block.description += ' - ' + parentDescription;
+                }
+            }
+        }
+    }
+}
+
 function transformEnums(data) {
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
             var val = data[key];
-            if (typeof(val) === 'object') {
+            if (key === 'anyOf') {
+                transformAnyOf(val, data.description);
+            } else if (typeof(val) === 'object') {
                 transformEnums(val);
             }
         }

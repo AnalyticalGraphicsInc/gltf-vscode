@@ -29,7 +29,7 @@
             "description" : "The datatype of components in the attribute.",
             "gltf_detailedDescription" : "The datatype of components in the attribute.  All valid values correspond to WebGL enums.  The corresponding typed arrays are `Int8Array`, `Uint8Array`, `Int16Array`, `Uint16Array`, `Uint32Array`, and `Float32Array`, respectively.  5125 (UNSIGNED_INT) is only allowed when the accessor contains indices, i.e., the accessor is only referenced by `primitive.indices`.",
             "gltf_webgl" : "`vertexAttribPointer()` type parameter",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         5120
@@ -65,6 +65,9 @@
                         5126
                     ],
                     "description" : "FLOAT - The datatype of components in the attribute."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
@@ -82,18 +85,47 @@
             "gltf_detailedDescription" : "The number of attributes referenced by this accessor, not to be confused with the number of bytes or number of components."
         },
         "type" : {
-            "type" : "string",
             "description" : "Specifies if the attribute is a scalar, vector, or matrix.",
-            "enum" : [
-                "SCALAR",
-                "VEC2",
-                "VEC3",
-                "VEC4",
-                "MAT2",
-                "MAT3",
-                "MAT4"
-            ],
-            "gltf_detailedDescription" : "Specifies if the attribute is a scalar, vector, or matrix, and the number of elements in the vector or matrix."
+            "anyOf" : [
+                {
+                    "enum" : [
+                        "SCALAR"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC2"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC3"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC4"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT2"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT3"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT4"
+                    ]
+                },
+                {
+                    "type" : "string"
+                }
+            ]
         },
         "max" : {
             "type" : "array",
@@ -127,7 +159,6 @@
         "extensions" : {},
         "extras" : {}
     },
-    "additionalProperties" : false,
     "required" : [
         "componentType",
         "count",

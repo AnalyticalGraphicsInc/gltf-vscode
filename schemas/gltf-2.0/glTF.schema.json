@@ -164,7 +164,6 @@
             "scenes"
         ]
     },
-    "additionalProperties" : false,
     "required" : [
         "asset"
     ]

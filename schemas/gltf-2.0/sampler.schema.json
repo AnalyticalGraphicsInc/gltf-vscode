@@ -11,10 +11,9 @@
     "properties" : {
         "magFilter" : {
             "description" : "Magnification filter.",
-            "default" : 9729,
             "gltf_detailedDescription" : "Magnification filter.  Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MAG_FILTER",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         9728
@@ -26,15 +25,17 @@
                         9729
                     ],
                     "description" : "LINEAR - Magnification filter."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
         "minFilter" : {
             "description" : "Minification filter.",
-            "default" : 9986,
             "gltf_detailedDescription" : "Minification filter.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MIN_FILTER",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         9728
@@ -70,6 +71,9 @@
                         9987
                     ],
                     "description" : "LINEAR_MIPMAP_LINEAR - Minification filter."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
@@ -78,7 +82,7 @@
             "default" : 10497,
             "gltf_detailedDescription" : "s wrapping mode.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_S",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         33071
@@ -96,6 +100,9 @@
                         10497
                     ],
                     "description" : "REPEAT - s wrapping mode."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
@@ -104,7 +111,7 @@
             "default" : 10497,
             "gltf_detailedDescription" : "t wrapping mode.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_T",
-            "oneOf" : [
+            "anyOf" : [
                 {
                     "enum" : [
                         33071
@@ -122,6 +129,9 @@
                         10497
                     ],
                     "description" : "REPEAT - t wrapping mode."
+                },
+                {
+                    "type" : "integer"
                 }
             ]
         },
@@ -129,6 +139,5 @@
         "extensions" : {},
         "extras" : {}
     },
-    "additionalProperties" : false,
     "gltf_webgl" : "`texParameterf()`"
 }
