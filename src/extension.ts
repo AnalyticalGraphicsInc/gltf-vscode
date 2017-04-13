@@ -35,7 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
     const dataPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-dataUri', dataPreviewProvider);
     context.subscriptions.push(dataPreviewRegistration);
 
-    // Commands are registered in two places in the package.json file.
+    // Commands are registered in 2 to 3 places in the package.json file:
+    // activationEvents, contributes.commands, and optionally contributes.keybindings.
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
         let map;
         try {
