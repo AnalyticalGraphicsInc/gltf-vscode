@@ -36,13 +36,13 @@
             {
                 "command": "gltf.inspectDataUri",
                 "key": "alt+d",
-                "mac": "option+d",
+                "mac": "alt+d",
                 "when": "editorTextFocus && editorLangId == 'json'"
             },
             {
                 "command": "gltf.previewModel",
                 "key": "alt+g",
-                "mac": "option+g",
+                "mac": "alt+g",
                 "when": "editorTextFocus && editorLangId == 'json'"
             }
         ],

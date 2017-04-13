@@ -6,6 +6,7 @@ import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import * as jsonMap from 'json-source-map';
+import * as Url from 'url';
 
 function pointerContains(pointer, lineNum : number, columnNum : number) : boolean {
     const start = pointer.key || pointer.value;
@@ -34,7 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
     const dataPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-dataUri', dataPreviewProvider);
     context.subscriptions.push(dataPreviewRegistration);
 
-    // Commands are registered in two places in the package.json file.
+    // Commands are registered in 2 to 3 places in the package.json file:
+    // activationEvents, contributes.commands, and optionally contributes.keybindings.
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
         let map;
         try {
@@ -52,10 +54,6 @@ export function activate(context: vscode.ExtensionContext) {
             if (key && pointers.hasOwnProperty(key)) {
                 let pointer = pointers[key];
                 if (pointerContains(pointer, lineNum, columnNum)) {
-                    //let pointerSize = pointer.valueEnd.pos - (pointer.key || pointer.value).pos;
-                    //console.log('SIZE ' + pointerSize + ' - ' + key);
-                    //secondBestPointer = bestPointer;
-                    //bestPointer = pointer;
                     secondBestKey = bestKey;
                     bestKey = key;
                 }
@@ -69,16 +67,22 @@ export function activate(context: vscode.ExtensionContext) {
                 bestKey = secondBestKey;
             }
 
-            const useHtml = dataPreviewProvider.shouldUseHtmlPreview(map.data, bestKey);
+            const shouldOpenDocument = dataPreviewProvider.shouldOpenDocument(map.data, bestKey);
+            const useHtml = dataPreviewProvider.shouldUseHtmlPreview(bestKey);
             const isShader = dataPreviewProvider.isShader(bestKey);
+            let previewUri;
 
-            if (isShader) {
-                bestKey += '.glsl';
+            if (isShader && shouldOpenDocument) {
+                previewUri = Url.resolve(vscode.window.activeTextEditor.document.fileName, shouldOpenDocument);
+            } else {
+                if (isShader) {
+                    bestKey += '.glsl';
+                }
+
+                previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
+                    encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
+                    bestKey);
             }
-
-            const previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
-                encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
-                bestKey);
 
             if (useHtml) {
                 vscode.commands.executeCommand('vscode.previewHtml', previewUri, ViewColumn.Two, bestKey)
