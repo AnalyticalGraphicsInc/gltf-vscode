@@ -5,15 +5,15 @@ import * as Url from 'url';
 import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
-function atob(str): string {
+export function atob(str): string {
     return new Buffer(str, 'base64').toString('binary');
 }
 
-function btoa(str): string {
+export function btoa(str): string {
     return new Buffer(str, 'binary').toString('base64');
 }
 
-function getFromPath(glTF, path : string) {
+export function getFromPath(glTF, path : string) {
     const pathSplit = path.split('/');
     const numPathSegments = pathSplit.length;
     let result = glTF;
@@ -22,6 +22,19 @@ function getFromPath(glTF, path : string) {
         result = result[pathSplit[i]];
     }
     return result;
+}
+
+export function guessMimeType(filename : string): string {
+    if (/\.png$/i.test(filename)) {
+        return 'image/png';
+    }
+    if (/\.jpe?g$/i.test(filename)) {
+        return 'image/jpeg';
+    }
+    if (/\.glsl$/i.test(filename) || /\.vert$/i.test(filename) || /\.frag$/i.test(filename)) {
+        return 'text/plain';
+    }
+    return 'application/octet-stream';
 }
 
 export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {
