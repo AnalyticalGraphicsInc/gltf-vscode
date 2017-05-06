@@ -1,6 +1,5 @@
 'use strict';
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';

@@ -158,6 +158,67 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     //
+    // Export a Data URI to a file.
+    //
+    function exportToFile(filename : string, pathFilename : string, pointer, dataUri : string) {
+        const fileContents = new Buffer(dataUri, 'base64');
+
+        fs.writeFileSync(pathFilename, fileContents);
+
+        vscode.window.activeTextEditor.edit(editBuilder => {
+            editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
+                pointer.valueEnd.line, pointer.valueEnd.column - 1), pathFilename);
+        });
+        vscode.window.showInformationMessage('File saved: ' + pathFilename);
+    }
+
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.exportUri', () => {
+        const map = tryGetJsonMap();
+        if (!map) {
+            return;
+        }
+
+        let bestKey = tryGetCurrentUriKey(map);
+        if (!bestKey) {
+            return;
+        }
+
+        const activeTextEditor = vscode.window.activeTextEditor;
+        const data = getFromPath(map.data, bestKey);
+        let dataUri : string = data.uri;
+        if (!dataUri.startsWith('data:')) {
+            vscode.window.showWarningMessage('This field is not a dataURI.');
+        } else {
+            vscode.window.showInputBox({
+                prompt: 'Enter a filename for this data.'
+            }).then(filename => {
+                if (filename) {
+                    const pointer = map.pointers[bestKey + '/uri'];
+                    let pathFilename = path.join(path.dirname(activeTextEditor.document.fileName), filename);
+                    if (fs.existsSync(pathFilename)) {
+                        vscode.window.showQuickPick([
+                            'Caution:  File exists.  Overwrite?  NO',
+                            'YES, overwrite ' + pathFilename
+                        ]).then(overwrite => {
+                            if (!/^YES/.test(overwrite)) {
+                                vscode.window.showInformationMessage('Export aborted');
+                            } else {
+                                // File exists, but user says it's OK to overwrite.
+                                exportToFile(filename, pathFilename, pointer, dataUri);
+                            }
+                        });
+                    } else {
+                        // File does not yet exist, try saving to it.
+                        exportToFile(filename, pathFilename, pointer, dataUri);
+                    }
+                }
+            }, reason => {
+                vscode.window.showErrorMessage(reason);
+            });
+        }
+    }));
+
+    //
     // Register a preview of the whole glTF file.
     //
     const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
