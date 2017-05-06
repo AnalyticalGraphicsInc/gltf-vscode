@@ -75,6 +75,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Commands are registered in 2 to 3 places in the package.json file:
     // activationEvents, contributes.commands, and optionally contributes.keybindings.
+    //
+    // Inspect the contents of a uri or dataURI.
+    //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
         const map = tryGetJsonMap();
         if (!map) {
@@ -138,7 +141,9 @@ export function activate(context: vscode.ExtensionContext) {
         const activeTextEditor = vscode.window.activeTextEditor;
         const data = getFromPath(map.data, bestKey);
         let dataUri : string = data.uri;
-        if (!dataUri.startsWith('data:')) {
+        if (dataUri.startsWith('data:')) {
+            vscode.window.showWarningMessage('This field is already a dataURI.');
+        } else {
             // Not a DataURI: Look up external reference.
             const name = Url.resolve(activeTextEditor.document.fileName, dataUri);
             const contents = fs.readFileSync(name);
@@ -152,7 +157,9 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
+    //
     // Register a preview of the whole glTF file.
+    //
     const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
     const gltfPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-preview', gltfPreviewProvider);
     const gltfPreviewUri = Uri.parse('gltf-preview://gltf-vscode/gltf-preview');
