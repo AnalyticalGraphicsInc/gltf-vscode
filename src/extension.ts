@@ -3,7 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
-import { DataUriTextDocumentContentProvider, getFromPath, atob, btoa, guessMimeType } from './dataUriTextDocumentContentProvider';
+import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
@@ -146,7 +146,13 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             // Not a DataURI: Look up external reference.
             const name = Url.resolve(activeTextEditor.document.fileName, dataUri);
-            const contents = fs.readFileSync(name);
+            let contents;
+            try {
+                contents = fs.readFileSync(name);
+            } catch (ex) {
+                vscode.window.showErrorMessage('Can\'t read file: ' + name);
+                return;
+            }
             dataUri = 'data:' + guessMimeType(name) + ';base64,' + btoa(contents);
             const pointer = map.pointers[bestKey + '/uri'];
 
@@ -161,13 +167,14 @@ export function activate(context: vscode.ExtensionContext) {
     // Export a Data URI to a file.
     //
     function exportToFile(filename : string, pathFilename : string, pointer, dataUri : string) {
-        const fileContents = new Buffer(dataUri, 'base64');
+        const pos = dataUri.indexOf(',');
+        const fileContents = new Buffer(dataUri.substring(pos + 1), 'base64');
 
         fs.writeFileSync(pathFilename, fileContents);
 
         vscode.window.activeTextEditor.edit(editBuilder => {
             editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
-                pointer.valueEnd.line, pointer.valueEnd.column - 1), pathFilename);
+                pointer.valueEnd.line, pointer.valueEnd.column - 1), filename);
         });
         vscode.window.showInformationMessage('File saved: ' + pathFilename);
     }
@@ -189,10 +196,24 @@ export function activate(context: vscode.ExtensionContext) {
         if (!dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is not a dataURI.');
         } else {
+            let guessName = 'Texture';
+            if (data.name) {
+                guessName = data.name;
+            }
+            const mimeTypePos = dataUri.indexOf(';');
+            let extension;
+            if (mimeTypePos > 0) {
+                extension = guessFileExtension(dataUri.substring(5, mimeTypePos));
+                guessName += extension;
+            }
             vscode.window.showInputBox({
-                prompt: 'Enter a filename for this data.'
+                prompt: 'Enter a filename for this data.',
+                value: guessName
             }).then(filename => {
                 if (filename) {
+                    if (extension && filename.indexOf('.') < 0) {
+                        filename += extension;
+                    }
                     const pointer = map.pointers[bestKey + '/uri'];
                     let pathFilename = path.join(path.dirname(activeTextEditor.document.fileName), filename);
                     if (fs.existsSync(pathFilename)) {

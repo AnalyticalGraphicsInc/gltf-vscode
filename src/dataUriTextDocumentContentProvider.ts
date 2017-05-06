@@ -23,15 +23,27 @@ export function getFromPath(glTF, path : string) {
     return result;
 }
 
+const gltfMimeTypes = {
+    'image/png' : ['png'],
+    'image/jpeg' : ['jpg', 'jpeg'],
+    'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
+};
+
+export function guessFileExtension(mimeType) {
+    if (gltfMimeTypes.hasOwnProperty(mimeType)) {
+        return '.' + gltfMimeTypes[mimeType][0];
+    }
+    return '.bin';
+}
+
 export function guessMimeType(filename : string): string {
-    if (/\.png$/i.test(filename)) {
-        return 'image/png';
-    }
-    if (/\.jpe?g$/i.test(filename)) {
-        return 'image/jpeg';
-    }
-    if (/\.glsl$/i.test(filename) || /\.vert$/i.test(filename) || /\.frag$/i.test(filename)) {
-        return 'text/plain';
+    for (const mimeType in gltfMimeTypes) {
+        for (const extensionIndex in gltfMimeTypes[mimeType]) {
+            const extension = gltfMimeTypes[mimeType][extensionIndex];
+            if (filename.toLowerCase().endsWith('.' + extension)) {
+                return mimeType;
+            }
+        }
     }
     return 'application/octet-stream';
 }
