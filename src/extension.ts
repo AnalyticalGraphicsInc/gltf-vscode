@@ -170,7 +170,12 @@ export function activate(context: vscode.ExtensionContext) {
         const pos = dataUri.indexOf(',');
         const fileContents = new Buffer(dataUri.substring(pos + 1), 'base64');
 
-        fs.writeFileSync(pathFilename, fileContents);
+        try {
+            fs.writeFileSync(pathFilename, fileContents);
+        } catch (ex) {
+            vscode.window.showErrorMessage('Can\'t write file: ' + pathFilename);
+            return;
+        }
 
         vscode.window.activeTextEditor.edit(editBuilder => {
             editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
