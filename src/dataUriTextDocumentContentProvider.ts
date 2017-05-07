@@ -1,19 +1,18 @@
 'use strict';
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
-function atob(str): string {
+export function atob(str): string {
     return new Buffer(str, 'base64').toString('binary');
 }
 
-function btoa(str): string {
+export function btoa(str): string {
     return new Buffer(str, 'binary').toString('base64');
 }
 
-function getFromPath(glTF, path : string) {
+export function getFromPath(glTF, path : string) {
     const pathSplit = path.split('/');
     const numPathSegments = pathSplit.length;
     let result = glTF;
@@ -22,6 +21,31 @@ function getFromPath(glTF, path : string) {
         result = result[pathSplit[i]];
     }
     return result;
+}
+
+const gltfMimeTypes = {
+    'image/png' : ['png'],
+    'image/jpeg' : ['jpg', 'jpeg'],
+    'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
+};
+
+export function guessFileExtension(mimeType) {
+    if (gltfMimeTypes.hasOwnProperty(mimeType)) {
+        return '.' + gltfMimeTypes[mimeType][0];
+    }
+    return '.bin';
+}
+
+export function guessMimeType(filename : string): string {
+    for (const mimeType in gltfMimeTypes) {
+        for (const extensionIndex in gltfMimeTypes[mimeType]) {
+            const extension = gltfMimeTypes[mimeType][extensionIndex];
+            if (filename.toLowerCase().endsWith('.' + extension)) {
+                return mimeType;
+            }
+        }
+    }
+    return 'application/octet-stream';
 }
 
 export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {

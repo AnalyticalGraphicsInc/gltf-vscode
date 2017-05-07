@@ -55,6 +55,10 @@ Note that previewed shaders are displayed with a `.glsl` file extension.  It is 
 
 Note that many dataURIs are quite long and can look bad in the editor.  Hover your mouse over the line numbers in the left margin to reveal little "`-`" icons that can fold closed blocks of JSON.  Fold closed the innermost block containing the `uri` field.  You can still select the name of the block that got folded and press <kbd>ALT</kbd> + <kbd>D</kbd> to preview the contents of that uri without unfolding it.
 
+### &bull;  Import and export embedded dataURIs
+
+In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), there are two commands named `Import file as Data URI` and `Export a Data URI to a file`.  To use these, place the document cursor on a block that contains a `"uri"` field.  If the value of this field is a valid filename, `Import` will load that file, encode it to base64, and replace the filename with the dataURI in your document.  `Export` is the reverse of this process, but first it will ask you for a filename to save to.  It will save the file in the same folder as the glTF file, so it does not need a path, just a name.  It will try to select an appropriate file extension based on the MIME type of the dataURI.  It will also warn you if you are about to overwrite an existing file.  If the save is successful, the dataURI will be replaced by the name of the newly created file.
+
 ## Extension Settings
 
 This version of the extension does not offer any user-defined settings.
