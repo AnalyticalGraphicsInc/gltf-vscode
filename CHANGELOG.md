@@ -3,6 +3,7 @@
 ### Unreleased
 
 * Data preview (<kbd>alt</kbd> + <kbd>d</kbd>) works with external files now.
+* DataURIs can be imported and exported with new vscode commands.
 
 ### 1.0.3 - 2017-03-21
 
