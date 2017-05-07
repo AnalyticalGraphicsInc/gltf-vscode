@@ -18,6 +18,8 @@
     ],
     "activationEvents": [
         "onCommand:gltf.inspectDataUri",
+        "onCommand:gltf.importUri",
+        "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel"
     ],
     "main": "./out/src/extension",
@@ -26,6 +28,14 @@
             {
                 "command": "gltf.inspectDataUri",
                 "title": "glTF: Inspect Data URI"
+            },
+            {
+                "command": "gltf.importUri",
+                "title": "glTF: Import file as Data URI"
+            },
+            {
+                "command": "gltf.exportUri",
+                "title": "glTF: Export a Data URI to a file"
             },
             {
                 "command": "gltf.previewModel",
