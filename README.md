@@ -39,9 +39,7 @@ Press <kbd>ALT</kbd> + <kbd>G</kbd> on your glTF file, or look for the command `
 
 #### glTF compatibility and sample models
 
-This extension is only able to preview data that is embedded in the glTF file itself.  It does not fetch data from external references, even if they are in the same folder as the glTF file (this may change in some future version).
-
-There are some [sample glTF 1.0 models online](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (but not preview) all the text-based versions (`*.gltf`), not binary versions (`*.glb`).  The preview functions are slightly more limited than that.  They work only with the `glTF-Embedded` flavor, not the glTF "separate files" version.  For example, to see the demo "Avocado" model, you would avoid the [separate files folder](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0/Avocado/glTF) and instead download the single [Avocado.gltf](https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/1.0/Avocado/glTF-Embedded/Avocado.gltf) file with all textures and resources embedded inside it.
+There are some [sample glTF 1.0 models online](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) all the text-based versions (`*.gltf`), not binary versions (`*.glb`).
 
 ### &bull;  Preview embedded dataURIs
 

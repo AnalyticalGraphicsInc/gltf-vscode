@@ -37,7 +37,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
                 if (typeof gltfObject[property] == "object") {
                     this.fixPaths(gltfObject[property], gltfRootPath);
                 } else if (property === "uri") {
-                    if (gltfObject[property].match((/^([^(data)]\S*)$/i)) && !this.isAbsolutePath(gltfObject[property]))
+                    if (!gltfObject[property].startsWith('data:') && !this.isAbsolutePath(gltfObject[property]))
                     {
                         gltfObject[property] = gltfRootPath + gltfObject[property];
                     }

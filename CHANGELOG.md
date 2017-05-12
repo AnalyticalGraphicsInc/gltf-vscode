@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.0.5 - 2017-05-12
+
+* Normal (non-embedded) glTF files can now be previewed.
+
 ### 1.0.4 - 2017-05-06
 
 * Data preview (<kbd>alt</kbd> + <kbd>d</kbd>) works with external files now.
