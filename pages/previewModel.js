@@ -69,35 +69,6 @@ function setCamera(scene, model) {
     scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
 }
 
-// function loadModel(gltf, resetCamera) {
-//     scene.primitives.removeAll();
-//     var model = scene.primitives.add(new Cesium.Model({
-//         gltf: gltf
-//     }));
-
-//     Cesium.when(model.readyPromise).then(function(model) {
-//         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
-//             model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.999, 0.0));
-//         }
-
-//         if (resetCamera) {
-//             setCamera(scene, model);
-//         }
-
-//         viewer._model = model;
-//         viewer.onLoad.raiseEvent(model);
-//     }).otherwise(function(e){
-//         window.alert('Error: ' + e);
-//     });
-// }
-
-// var gltf = JSON.parse(document.getElementById('glTF').textContent);
-
-// loadModel(gltf, true);
-
-
-
-
 function loadModel(gltfContent, gltfRootPath, gltfFileName, resetCamera) {
     scene.primitives.removeAll();
 
@@ -112,6 +83,13 @@ function loadModel(gltfContent, gltfRootPath, gltfFileName, resetCamera) {
     {
         model = scene.primitives.add(new Cesium.Model({
             gltf: gltfContent,
+
+            // In theory, by specifying basePath, we should be able to have relative paths
+            // within the glTFContent.  In practice, specifying basePath makes no difference.
+            // This is likely a bug in Cesium.  For now, we'll continue with specifying the
+            // basePath here, but we'll also make sure that all paths in glTFContent are
+            // absolute to work around the bug.  That logic happens at the time when the
+            // content gets written to the script tag in the HTML.
             basePath: gltfRootPath.replace(/\\/g, "\\\\")
         }));
     }
