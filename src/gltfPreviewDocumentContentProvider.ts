@@ -17,6 +17,19 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
     public provideTextDocumentContent(uri: Uri): string {
         const glTF = vscode.window.activeTextEditor.document.getText();
+
+        // The "uri" property within a glTF file provides the reference to the binary content needed
+        // for the glTF to be processed.  The content of that property is likely to fall into one of
+        // four categories:
+        // 1. Just the binary filename
+        // 2. A partial path to the file.
+        // 3. A full path (or full Uri reference)
+        // 4. The full binary content base-64 encoded with a content-type header.
+        //    a full path specified for their uri.  If they don't have a full path specified,
+        // If we reference
+        const glTFRootPath = path.dirname(vscode.window.activeTextEditor.document.fileName);
+        const glTFWithUpdatedPaths = glTF.replace(/^(\s*"uri"\s*:\s*")([^/\\\s]*)(".*)$/igm, "$1" + glTFRootPath.replace(/\\/g,"\\\\") + "\\\\$2$3");
+
         const content = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +39,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <title>glTF Preview</title>
     <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}">
     <script src="${this.getFilePath('Cesium/Cesium.js')}"></script>
-    <script id="glTF" type="text/plain">${glTF}</script>
+    <script id="glTF" type="text/plain">${glTFWithUpdatedPaths}</script>
 </head>
 <body>
     <div id="cesiumContainer">
