@@ -69,11 +69,52 @@ function setCamera(scene, model) {
     scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
 }
 
-function loadModel(gltf, resetCamera) {
+// function loadModel(gltf, resetCamera) {
+//     scene.primitives.removeAll();
+//     var model = scene.primitives.add(new Cesium.Model({
+//         gltf: gltf
+//     }));
+
+//     Cesium.when(model.readyPromise).then(function(model) {
+//         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
+//             model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.999, 0.0));
+//         }
+
+//         if (resetCamera) {
+//             setCamera(scene, model);
+//         }
+
+//         viewer._model = model;
+//         viewer.onLoad.raiseEvent(model);
+//     }).otherwise(function(e){
+//         window.alert('Error: ' + e);
+//     });
+// }
+
+// var gltf = JSON.parse(document.getElementById('glTF').textContent);
+
+// loadModel(gltf, true);
+
+
+
+
+function loadModel(gltfContent, gltfRootPath, gltfFileName, resetCamera) {
     scene.primitives.removeAll();
-    var model = scene.primitives.add(new Cesium.Model({
-        gltf: gltf
-    }));
+
+    var model = null;
+    if (gltfContent === null)
+    {
+        model = scene.primitives.add(Cesium.Model.fromGltf({
+            url: gltfRootPath.replace(/\\/g, "\\\\") + "\\" + gltfFileName,
+        }));
+    }
+    else
+    {
+        model = scene.primitives.add(new Cesium.Model({
+            gltf: gltfContent,
+            basePath: gltfRootPath.replace(/\\/g, "\\\\")
+        }));
+    }
 
     Cesium.when(model.readyPromise).then(function(model) {
         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
@@ -86,11 +127,18 @@ function loadModel(gltf, resetCamera) {
 
         viewer._model = model;
         viewer.onLoad.raiseEvent(model);
-    }).otherwise(function(e){
+    }).otherwise(function(e) {
         window.alert('Error: ' + e);
     });
 }
 
-var gltf = JSON.parse(document.getElementById('glTF').textContent);
+var gltfContent = null;
+try {
+    gltfContent = JSON.parse(document.getElementById('gltf').textContent);
+}
+catch (ex) { /* eat the exception */ }
 
-loadModel(gltf, true);
+var gltfFileName = document.getElementById('gltfFileName').textContent;
+var gltfRootPath = document.getElementById('gltfRootPath').textContent;
+
+loadModel(gltfContent, gltfRootPath, gltfFileName, true);
