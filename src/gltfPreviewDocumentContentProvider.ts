@@ -1,7 +1,6 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 export class GltfPreviewDocumentContentProvider implements TextDocumentContentProvider {
@@ -17,19 +16,30 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     }
 
     // credit: http://stackoverflow.com/a/30714706
-    private isAbsolute(pathToTest : string) : boolean {
+    private isAbsolutePath(pathToTest : string) : boolean {
         return path.normalize(pathToTest + '/') === path.normalize(path.resolve(pathToTest) + '/');
     }
 
+    /**
+    * @function fixPaths
+    * Does an in-place update of the provided gltfObject to ensure that all 'uri' properties are absolute paths.
+    * @param  {object} gltfObject The glTF content in object form
+    * @param  {string} gltfRootPath The root path that the glTF object is located in (which is where any relative binary files might be referenced from)
+    */
     private fixPaths(gltfObject: object, gltfRootPath: string) {
+        if (!gltfRootPath.endsWith("\\"))
+        {
+            gltfRootPath = gltfRootPath + "\\";
+        }
+
         for (var property in gltfObject) {
             if (gltfObject.hasOwnProperty(property)) {
                 if (typeof gltfObject[property] == "object") {
                     this.fixPaths(gltfObject[property], gltfRootPath);
                 } else if (property === "uri") {
-                    if (gltfObject[property].match((/^([^(data)]\S*)$/i)) && !this.isAbsolute(gltfObject[property]))
+                    if (gltfObject[property].match((/^([^(data)]\S*)$/i)) && !this.isAbsolutePath(gltfObject[property]))
                     {
-                        gltfObject[property] = gltfRootPath.replace(/\\/g, "\\\\") + "\\" + gltfObject[property];
+                        gltfObject[property] = gltfRootPath + gltfObject[property];
                     }
                 }
             }
@@ -39,7 +49,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     public provideTextDocumentContent(uri: Uri): string {
         const gltfRootPath = path.dirname(vscode.window.activeTextEditor.document.fileName);
         const gltfFileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        var gltfContent = vscode.window.activeTextEditor.document.getText();
 
         // The "uri" property within a glTF file provides the reference to the binary content needed
         // for the glTF to be processed.  The content of that property is likely to fall into one of
@@ -55,21 +64,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         // doesn't start with "data" (which would make it #4) and test the path to see if it's absolute
         // or not.  If it's not absolute, we'll prepend the root folder that the glTF file content
         // originated from.  This should ensure that both #1 and #2 work as well.
-        var regex = new RegExp(/^(\s*"uri"\s*:\s*")([^(data)]\S*)(".*)$/gim);
-        var match;
-        while (match = regex.exec(gltfContent))
-        {
-            var uriToCheck = match[2];
-            if (!this.isAbsolute(uriToCheck))
-            {
-                // match[0] is the full content matched
-                // match[1] is essentially "uri":"
-                // match[2] is what is inside the quotes for the uri property value
-                // match[3] is the end-quote for the property value and anything else that might have been on
-                //gltfContent = gltfContent.replace(match[0], match[1] + gltfRootPath.replace(/\\/g, "\\\\") + "\\" + match[2] + match[3]);
-            }
-        }
-
+        var gltfContent = vscode.window.activeTextEditor.document.getText();
         var gltf = JSON.parse(gltfContent);
         this.fixPaths(gltf, gltfRootPath);
         gltfContent = JSON.stringify(gltf);
@@ -97,17 +92,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 </body>
 </html>
 `;
-
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        fs.writeFileSync(this._context.asAbsolutePath('pages\\rendered.html'), content);
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-
         return content;
     }
 

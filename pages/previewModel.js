@@ -69,31 +69,41 @@ function setCamera(scene, model) {
     scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
 }
 
-function loadModel(gltfContent, gltfRootPath, gltfFileName, resetCamera) {
+function loadModelFromContent(gltfContent, gltfRootPath, resetCamera) {
     scene.primitives.removeAll();
 
-    var model = null;
-    if (gltfContent === null)
-    {
-        model = scene.primitives.add(Cesium.Model.fromGltf({
-            url: gltfRootPath.replace(/\\/g, "\\\\") + "\\" + gltfFileName,
-        }));
-    }
-    else
-    {
-        model = scene.primitives.add(new Cesium.Model({
-            gltf: gltfContent,
+    var model = scene.primitives.add(new Cesium.Model({
+        gltf: gltfContent,
 
-            // In theory, by specifying basePath, we should be able to have relative paths
-            // within the glTFContent.  In practice, specifying basePath makes no difference.
-            // This is likely a bug in Cesium.  For now, we'll continue with specifying the
-            // basePath here, but we'll also make sure that all paths in glTFContent are
-            // absolute to work around the bug.  That logic happens at the time when the
-            // content gets written to the script tag in the HTML.
-            basePath: gltfRootPath.replace(/\\/g, "\\\\")
-        }));
-    }
+        // In theory, by specifying basePath, we should be able to have relative paths
+        // within the glTFContent.  In practice, specifying basePath makes no difference.
+        // This is likely a bug in Cesium (tracked by https://github.com/AnalyticalGraphicsInc/cesium/issues/5319).
+        // For now, we'll continue with specifying the basePath here, but we'll also
+        // make sure that all paths in glTFContent are absolute to work around the bug.
+        // That logic happens at the time when the content gets written to the script
+        // tag in the HTML.
+        basePath: gltfRootPath.replace(/\\/g, "\\\\") + "\\"
+    }));
 
+    loadModel(model, resetCamera);
+}
+
+function loadModelFromFile(gltfFileName, gltfRootPath, resetCamera) {
+    scene.primitives.removeAll();
+
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+        url: gltfRootPath.replace(/\\/g, "\\\\") + "\\" + gltfFileName,
+
+        // Unfortunately, Cesium does not currently allow a basePath to be specified
+        // when loading a glTF file...that means it only works with glTF files that
+        // use absolute paths internally.  This Cesium feature request is tracked by
+        // https://github.com/AnalyticalGraphicsInc/cesium/issues/5320.
+    }));
+
+    loadModel(model, resetCamera);
+}
+
+function loadModel(model, resetCamera) {
     Cesium.when(model.readyPromise).then(function(model) {
         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
             model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.999, 0.0));
@@ -110,13 +120,15 @@ function loadModel(gltfContent, gltfRootPath, gltfFileName, resetCamera) {
     });
 }
 
-var gltfContent = null;
-try {
-    gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-}
-catch (ex) { /* eat the exception */ }
-
 var gltfFileName = document.getElementById('gltfFileName').textContent;
 var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
-loadModel(gltfContent, gltfRootPath, gltfFileName, true);
+try {
+    var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
+    loadModelFromContent(gltfContent, gltfRootPath, true);
+}
+catch (ex) {
+    // If the glTF content is missing or not valid JSON, then try to load the
+    // model directly from the glTF file.
+    loadModelFromFile(gltfFileName, gltfRootPath, true);
+}
