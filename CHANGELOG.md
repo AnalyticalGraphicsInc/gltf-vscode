@@ -3,6 +3,7 @@
 ### 1.0.5 - Unreleased
 
 * Normal (non-embedded) glTF files can now be previewed.
+* Multiple preview windows can now be opened at the same time.
 
 ### 1.0.4 - 2017-05-06
 
