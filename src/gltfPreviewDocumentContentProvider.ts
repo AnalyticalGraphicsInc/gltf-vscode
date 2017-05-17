@@ -21,8 +21,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         const fileName = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === fileName.toLowerCase());
         if (!document) {
-            vscode.window.showErrorMessage('Can no longer find document in editor: ' + fileName);
-            return undefined;
+            return 'ERROR: Can no longer find document in editor: ' + fileName;
         }
 
         const gltfContent = document.getText();

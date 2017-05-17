@@ -84,8 +84,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         const filename = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
         if (!document) {
-            vscode.window.showErrorMessage('Can no longer find document in editor: ' + filename);
-            return undefined;
+            return 'ERROR: Can no longer find document in editor: ' + filename;
         }
         const glTF = JSON.parse(document.getText());
         let path = uri.path;
