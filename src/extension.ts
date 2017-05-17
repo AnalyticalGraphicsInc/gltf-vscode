@@ -249,11 +249,12 @@ export function activate(context: vscode.ExtensionContext) {
     //
     const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
     const gltfPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-preview', gltfPreviewProvider);
-    const gltfPreviewUri = Uri.parse('gltf-preview://gltf-vscode/gltf-preview');
     context.subscriptions.push(gltfPreviewRegistration);
 
     context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
-        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, 'glTF Preview')
+        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
+        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${fileName}]`)
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
 
         // This can be used to debug the preview HTML.
