@@ -37,8 +37,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title>glTF Preview</title>
-    <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}">
-    <script src="${this.getFilePath('Cesium/Cesium.js')}"></script>
+    <link rel="stylesheet" href="${this.getFilePath('pages/cesium.css')}">
+    <script src="${this.getFilePath('engines/Cesium/Cesium.js')}"></script>
     <script id="gltf" type="text/plain">${gltfContent}</script>
     <script id="gltfRootPath" type="text/plain">${gltfRootPath}</script>
 </head>
@@ -48,7 +48,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         <div id="cesiumCreditContainer"></div>
     </div>
     <div id="errorContainer"></div>
-    <script src="${this.getFilePath('pages/previewModel.js')}"></script>
+    <script src="${this.getFilePath('pages/cesium.js')}"></script>
 </body>
 </html>
 `;
