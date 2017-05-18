@@ -17,10 +17,20 @@
             "gltf_uriType" : "image"
         },
         "mimeType" : {
-            "type" : "string",
-            "enum" : [
-                "image/jpeg",
-                "image/png"
+            "anyOf" : [
+                {
+                    "enum" : [
+                        "image/jpeg"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "image/png"
+                    ]
+                },
+                {
+                    "type" : "string"
+                }
             ],
             "description" : "The image's MIME type."
         },
@@ -41,10 +51,16 @@
             "mimeType"
         ]
     },
-    "not" : {
-        "required" : [
-            "bufferView",
-            "uri"
-        ]
-    }
+    "oneOf" : [
+        {
+            "required" : [
+                "uri"
+            ]
+        },
+        {
+            "required" : [
+                "bufferView"
+            ]
+        }
+    ]
 }

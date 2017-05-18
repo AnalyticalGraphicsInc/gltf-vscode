@@ -3,6 +3,11 @@
     "title" : "textureInfo",
     "type" : "object",
     "description" : "Reference to a texture.",
+    "allOf" : [
+        {
+            "$ref" : "glTFProperty.schema.json"
+        }
+    ],
     "properties" : {
         "index" : {
             "allOf" : [
@@ -18,7 +23,9 @@
             "default" : 0,
             "minimum" : 0,
             "gltf_detailedDescription" : "This integer value is used to construct a string in the format TEXCOORD_<set index> which is a reference to a key in mesh.primitives.attributes (e.g. A value of 0 corresponds to TEXCOORD_0)."
-        }
+        },
+        "extensions" : {},
+        "extras" : {}
     },
     "required" : [
         "index"

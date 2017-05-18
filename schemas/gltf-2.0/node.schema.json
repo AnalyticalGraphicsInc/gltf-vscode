@@ -24,7 +24,7 @@
                 "$ref" : "glTFid.schema.json"
             },
             "uniqueItems" : true,
-            "default" : []
+            "minItems" : 1
         },
         "skin" : {
             "allOf" : [
@@ -119,8 +119,7 @@
             "description" : "The weights of the instantiated Morph Target. Number of elements must match number of Morph Targets of used mesh.",
             "minItems" : 1,
             "items" : {
-                "type" : "number",
-                "minimum" : 0
+                "type" : "number"
             }
         },
         "name" : {},
@@ -133,6 +132,28 @@
         ],
         "skin" : [
             "mesh"
+        ]
+    },
+    "not" : {
+        "anyOf" : [
+            {
+                "required" : [
+                    "matrix",
+                    "translation"
+                ]
+            },
+            {
+                "required" : [
+                    "matrix",
+                    "rotation"
+                ]
+            },
+            {
+                "required" : [
+                    "matrix",
+                    "scale"
+                ]
+            }
         ]
     }
 }
