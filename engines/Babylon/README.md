@@ -1,4 +1,5 @@
 # Babylon.js 3D Engine
+![Babylon.js logo](logo.png)
 
 ## Geting an updated engine
 

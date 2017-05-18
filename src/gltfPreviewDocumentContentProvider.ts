@@ -27,19 +27,22 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const gltfContent = document.getText();
         const gltfFileName = path.basename(filePath);
-        let gltfRootPath : string = path.dirname(filePath).replace('\\', '/');
+        let gltfRootPath : string = path.dirname(filePath).replace(/\\/g, '/');
         if (!gltfRootPath.endsWith("/")) {
             gltfRootPath += "/";
         }
 
+        const gltf = JSON.parse(gltfContent);
+        const version = gltf.asset.version;
+
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultEngine');
 
-        // To simplify 
+        // To simplify
         const babylon = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylon.html'), 'UTF-8'));
         const cesium = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesium.html'), 'UTF-8'));
         const three = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/three.html'), 'UTF-8'));
 
-        let extensionRootPath: string = this._context.asAbsolutePath('').replace('\\', '/');
+        let extensionRootPath : string = this._context.asAbsolutePath('').replace(/\\/g, '/');
         if (!extensionRootPath.endsWith("/")) {
             extensionRootPath += "/";
         }
@@ -53,6 +56,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <title>glTF Preview</title>
 
     <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}"></link>
+
+    <!-- The glTF version of the model being previewed.  Some engines (like Three.js)
+         may need to know this ahead of time to know what loader to use. -->
+    <script id="version" type="text/plain">${version}</script>
 
     <!-- The 3D-engine HTML content that gets inserted into the div can literally use:
                {extensionRootPath}
@@ -94,7 +101,9 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <script type="text/javascript" src="${this.getFilePath('engines/Cesium/Cesium.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Babylon/babylon.custom.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/three.min.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('engines/Three/GLTFLoader.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/GLTF2Loader.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('engines/Three/OrbitControls.js')}"></script>
 </head>
 <body>
     <!-- The 3D-engine specific HTML content will be dynamically inserted within this div whenever the

@@ -20,3 +20,11 @@
     text-align: center;
     white-space: pre-wrap;
 }
+
+#logo {
+    position: absolute;
+    width: 100px;
+    bottom: 0px;
+    left: 0px;
+    padding: 10px;
+}
