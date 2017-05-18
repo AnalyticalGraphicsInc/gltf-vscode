@@ -7,16 +7,30 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
 
+    public UriPrefix = 'gltf-preview://';
+
     constructor(context: ExtensionContext) {
         this._context = context;
     }
 
     private getFilePath(file : string) : string {
-        return 'file://' + this._context.asAbsolutePath(file);
+        return 'file:///' + this._context.asAbsolutePath(file);
     }
 
     public provideTextDocumentContent(uri: Uri): string {
-        const glTF = vscode.window.activeTextEditor.document.getText();
+        const fileName = decodeURIComponent(uri.authority);
+        const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === fileName.toLowerCase());
+        if (!document) {
+            vscode.window.showErrorMessage('Can no longer find document in editor: ' + fileName);
+            return undefined;
+        }
+
+        const gltfContent = document.getText();
+        let gltfRootPath = path.dirname(fileName).replace('\\', '/');
+        if (!gltfRootPath.endsWith("/")) {
+            gltfRootPath += "/";
+        }
+
         const content = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +40,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <title>glTF Preview</title>
     <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}">
     <script src="${this.getFilePath('Cesium/Cesium.js')}"></script>
-    <script id="glTF" type="text/plain">${glTF}</script>
+    <script id="gltf" type="text/plain">${gltfContent}</script>
+    <script id="gltfRootPath" type="text/plain">${gltfRootPath}</script>
 </head>
 <body>
     <div id="cesiumContainer">
