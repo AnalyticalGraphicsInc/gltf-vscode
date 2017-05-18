@@ -69,12 +69,23 @@ function setCamera(scene, model) {
     scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
 }
 
-function loadModel(gltf, resetCamera) {
+function loadModelFromContent(gltfContent, gltfRootPath, resetCamera) {
     scene.primitives.removeAll();
+
+    if (!gltfRootPath.startsWith("file://"))
+    {
+        gltfRootPath = "file:///" + gltfRootPath;
+    }
+
     var model = scene.primitives.add(new Cesium.Model({
-        gltf: gltf
+        gltf: gltfContent,
+        basePath: gltfRootPath
     }));
 
+    loadModel(model, resetCamera);
+}
+
+function loadModel(model, resetCamera) {
     Cesium.when(model.readyPromise).then(function(model) {
         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
             model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.999, 0.0));
@@ -86,11 +97,11 @@ function loadModel(gltf, resetCamera) {
 
         viewer._model = model;
         viewer.onLoad.raiseEvent(model);
-    }).otherwise(function(e){
+    }).otherwise(function(e) {
         window.alert('Error: ' + e);
     });
 }
 
-var gltf = JSON.parse(document.getElementById('glTF').textContent);
-
-loadModel(gltf, true);
+var gltfRootPath = document.getElementById('gltfRootPath').textContent;
+var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
+loadModelFromContent(gltfContent, gltfRootPath, true);
