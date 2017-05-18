@@ -1,0 +1,52 @@
+body {
+    font-family: Monospace;
+    background-color: #222222;
+    margin: 0px;
+    overflow: hidden;
+}
+
+#info {
+    color: #808080;
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    display:block;
+}
+
+#container {
+    position: absolute;
+    top: 0px;
+    width:100%;
+    height:100%;
+    z-index: -1;
+}
+
+#controls {
+    position: absolute;
+    width: 200px;
+    bottom: 0px;
+    left: 0px;
+    padding: 10px;
+    background-color: White;
+    font: 13px "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+#controls > div {
+    margin-bottom: 8px;
+}
+
+#controls hr {
+    border: 0px;
+    height: 1px;
+    margin-bottom: 10px;
+    background-color: #bbb;
+}
+
+#info a, .button {
+    color: #f00;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer
+}

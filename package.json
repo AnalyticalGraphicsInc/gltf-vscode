@@ -24,7 +24,22 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [
+            "configuration": {
+                "title": "glTF configuration",
+                "properties": {
+                    "glTF.defaultEngine": {
+                        "type": "string",
+                        "default": "Cesium",
+                        "enum": [
+                            "Babylon.js",
+                            "Cesium",
+                            "Three.js"
+                        ],
+                        "description": "The default 3D engine that will be used when previewing your model.  You can always change the current engine within the preview pane."
+                    }
+                }
+            },
+            "commands": [
             {
                 "command": "gltf.inspectDataUri",
                 "title": "glTF: Inspect Data URI"

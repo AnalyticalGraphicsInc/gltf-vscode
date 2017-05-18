@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>glTF Preview</title>
+    <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}"></link>
+    <script type="text/javascript" src="${this.getFilePath('pages/dat.gui.min.js')}"></script>
+    <script id="extensionRootPath" type="text/plain">${extensionRootPath}</script>
+    <script id="gltf" type="text/plain">${gltfContent}</script>
+    <script id="gltfRootPath" type="text/plain">${gltfRootPath}</script>
+    <script id="gltfFileName" type="text/plain">${gltfFileName}</script>
+    <script id="defaultRenderer" type="text/plain">${defaultRenderer}</script>
+    <script id="babylon.js" type="text/plain">${babylon}</script>
+    <script id="cesium" type="text/plain">${cesium}</script>
+    <script id="three.js" type="text/plain">${three}</script>
+    <!-- Renderers -->
+    <script type="text/javascript" src="${this.getFilePath('Cesium/Cesium.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('Babylon/babylon.custom.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('Three/three.min.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('Three/GLTF2Loader.js')}"></script>
+</head>
+
+<body>
+    <div id="content"></div>
+    <script id="previewModel" type="text/javascript" src="${this.getFilePath('pages/previewModel.js')}" scriptPath="${this.getFilePath('pages/')}"></script>
+</body>
+
+</html>

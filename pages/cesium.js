@@ -72,14 +72,32 @@ function setCamera(scene, model) {
 function loadModelFromContent(gltfContent, gltfRootPath, resetCamera) {
     scene.primitives.removeAll();
 
-    if (!gltfRootPath.startsWith("file://"))
-    {
-        gltfRootPath = "file:///" + gltfRootPath;
-    }
-
     var model = scene.primitives.add(new Cesium.Model({
         gltf: gltfContent,
-        basePath: gltfRootPath
+
+        // In theory, by specifying basePath, we should be able to have relative paths
+        // within the glTFContent.  In practice, specifying basePath makes no difference.
+        // This is likely a bug in Cesium (tracked by https://github.com/AnalyticalGraphicsInc/cesium/issues/5319).
+        // For now, we'll continue with specifying the basePath here, but we'll also
+        // make sure that all paths in glTFContent are absolute to work around the bug.
+        // That logic happens at the time when the content gets written to the script
+        // tag in the HTML.
+        basePath: gltfRootPath.replace(/\\/g, "\\\\") + "\\"
+    }));
+
+    loadModel(model, resetCamera);
+}
+
+function loadModelFromFile(gltfFileName, gltfRootPath, resetCamera) {
+    scene.primitives.removeAll();
+
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+        url: gltfRootPath.replace(/\\/g, "\\\\") + "\\" + gltfFileName,
+
+        // Unfortunately, Cesium does not currently allow a basePath to be specified
+        // when loading a glTF file...that means it only works with glTF files that
+        // use absolute paths internally.  This Cesium feature request is tracked by
+        // https://github.com/AnalyticalGraphicsInc/cesium/issues/5320.
     }));
 
     loadModel(model, resetCamera);
@@ -102,6 +120,15 @@ function loadModel(model, resetCamera) {
     });
 }
 
+var gltfFileName = document.getElementById('gltfFileName').textContent;
 var gltfRootPath = document.getElementById('gltfRootPath').textContent;
-var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-loadModelFromContent(gltfContent, gltfRootPath, true);
+
+try {
+    var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
+    loadModelFromContent(gltfContent, gltfRootPath, true);
+}
+catch (ex) {
+    // If the glTF content is missing or not valid JSON, then try to load the
+    // model directly from the glTF file.
+    loadModelFromFile(gltfFileName, gltfRootPath, true);
+}
