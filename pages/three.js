@@ -173,8 +173,6 @@ function initScene(index) {
             }
         }
 
-        startAnimations();
-
         scene.add(object);
         onWindowResize();
 
@@ -244,19 +242,6 @@ function switchScene(index) {
 
     cleanup();
     initScene(index);
-}
-
-function startAnimations() {
-
-    var i, len = gltf.animations.length;
-
-    for (i = 0; i < len; i++) {
-
-        var clip = gltf.animations[i];
-        var action = mixer.existingAction(clip);
-
-        action.play();
-    }
 }
 
 function cleanup() {

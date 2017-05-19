@@ -81,59 +81,23 @@ function addHeadLink(href, body) {
     head.appendChild(link);
 }
 
-function readFile(file, fn) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status == 0) {
-                fn(rawFile.responseText);
-            }
-        }
-    }
+// Will be overridden by the currently loaded engine
+function cleanup() {}
 
-    rawFile.send(null);
-}
-
-function updatePreviewFS() {
-    var scriptPath = document.getElementById("previewModel").getAttribute('scriptPath');
-    var content = document.getElementById("content");
-
-    var rendererElementId = options.engine.toLocaleLowerCase();
-    var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
-    var engineHtmlPath = extensionRootPath + "pages/" + rendererElementId + ".html";
-
-    readFile(engineHtmlPath, function(fileContent) {
-        content.innerHtml = fileContent.replace(/{extensionRootPath}/g, extensionRootPath);
-
-        // Now, unfortunately, scripts that are added to the DOM won't be executed, but if
-        // we add them to the head, they will.  So, we'll iterate through all script tags
-        // in the code we just inserted and we'll add them to the Head.  Along the way, we'll
-        // give them all the same special ID so that we can easily remove them later.
-        clearRemovableHeadElements();
-        var scriptElements = content.getElementsByTagName('script')
-        for (var i = 0; i < scriptElements.length; i++) {
-            addHeadScript(scriptElements[i].src, scriptElements[i].innerHTML);
-        }
-
-        var linkElements = content.getElementsByTagName('link')
-        for (var i = 0; i < linkElements.length; i++) {
-            addHeadLink(linkElements[i].href, linkElements[i].innerHTML);
-        }
-    });
-}
-
+/**
+* @function updatePreview
+* Stops any any ction from the active engine, and then updates
+* the DOM to use the newly selected engine.
+*/
 function updatePreview() {
-    var scriptPath = document.getElementById("previewModel").getAttribute('scriptPath');
+    cleanup();
+
     var content = document.getElementById("content");
+    var engineElementId = options.engine.toLocaleLowerCase();
+    var engineHtml = decodeURI(document.getElementById(engineElementId).textContent);
 
-    var rendererElementId = options.engine.toLocaleLowerCase();
     var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
-    var engineHtmlPath = extensionRootPath + "pages/" + rendererElementId + ".html";
-
-    var rendererHtml = decodeURI(document.getElementById(rendererElementId).textContent);
-    rendererHtml = rendererHtml.replace(/{extensionRootPath}/g, extensionRootPath);
-    content.innerHTML = rendererHtml;
+    content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
     // Now, unfortunately, scripts that are added to the DOM won't be executed, but if
     // we add them to the head, they will.  So, we'll iterate through all script tags
@@ -151,9 +115,9 @@ function updatePreview() {
     }
 }
 
+// Create and initialize the dat.gui menu UI
 var gui = new dat.GUI();
 gui.add(options, "engine", engines).onChange(updatePreview);
-//gui.addColor(options, "background").onChange(updatePreview);
 gui.add(options, "help");
 
 window.onload = updatePreview;

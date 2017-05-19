@@ -24,3 +24,5 @@ BABYLON.SceneLoader.Load(rootPath, fileName, engine, function (scene) {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
+function cleanup() {}

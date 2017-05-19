@@ -26,3 +26,17 @@
     text-align: center;
     white-space: pre-wrap;
 }
+
+#warningContainer {
+    display: none;
+    position: absolute;
+    top: 30%;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: bold;
+    color: #ff9800;
+    background: rgba(42, 42, 42, 0.9);
+    padding: 5px;
+    text-align: center;
+    white-space: pre-wrap;
+}

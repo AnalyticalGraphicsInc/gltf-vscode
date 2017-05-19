@@ -120,14 +120,34 @@ function loadModel(model, resetCamera) {
     });
 }
 
+function cleanup() {}
+
+function showWarning(message, durationMs = null) {
+    var warning = document.getElementById("warningContainer");
+    warning.textContent = message;
+    warningContainer.style.display = 'block';
+    warning.style = (null === message) ? "hidden" : "visible";
+
+    if (null !== durationMs) {
+        setTimeout(function() {
+            showWarning(null);
+        }, durationMs);
+    }
+}
+
 var gltfFileName = document.getElementById('gltfFileName').textContent;
 var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
 try {
+    showWarning(null);
     var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
     loadModelFromContent(gltfContent, gltfRootPath, true);
 }
 catch (ex) {
+    // TODO: This doesn't actually seem to work yet.  Doesn't visually appear.
+    var warningDurationMs = 40000;
+    showWarning("Loading content from saved file.", warningDurationMs);
+
     // If the glTF content is missing or not valid JSON, then try to load the
     // model directly from the glTF file.
     loadModelFromFile(gltfFileName, gltfRootPath, true);

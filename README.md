@@ -37,6 +37,11 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 Press <kbd>ALT</kbd> + <kbd>G</kbd> on your glTF file, or look for the command `Preview 3D Model` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
+The Babylon.js and Three.js engines will preview the saved model as opposed to
+the current content in your open VS Code tab.  The Cesium engine will first try
+to preview what is currently in your tab, and only if that fails will it fall
+back on displaying the version of the model saved on disk.
+
 #### glTF compatibility and sample models
 
 There are some [sample glTF 1.0 models online](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) all the text-based versions (`*.gltf`), not binary versions (`*.glb`).
@@ -59,11 +64,20 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 ## Extension Settings
 
-This version of the extension does not offer any user-defined settings.
+`glTF.defaultEngine` - Allows you to choose the default 3D engine that will render the model in the preview window.
 
 ## Source code
 
 on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Acknowledgements
+
+This extension makes use of the following open source projects:
+
+ * [dat.GUI](https://github.com/dataarts/dat.gui) - Used for rendering the preview window's menu
+ * [Cesium](https://github.com/AnalyticalGraphicsInc/cesium) - One of the 3D engines used in the preview window
+ * [Babylon.js](https://github.com/BabylonJS/Babylon.js) - One of the 3D engines used in the preview window
+ * [Three.js](https://github.com/mrdoob/three.js/) - One of the 3D engines used in the preview window
 
 ## License
 
