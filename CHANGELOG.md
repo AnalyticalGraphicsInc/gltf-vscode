@@ -1,6 +1,6 @@
 # Change Log
 
-### 1.0.5 - Unreleased
+### 1.0.5 - 2017-05-20
 
 * Normal (non-embedded) glTF files can now be previewed.
 * Multiple preview windows can now be opened at the same time.
