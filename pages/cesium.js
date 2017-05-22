@@ -112,9 +112,6 @@ function loadModel(model, resetCamera) {
         if (resetCamera) {
             setCamera(scene, model);
         }
-
-        viewer._model = model;
-        viewer.onLoad.raiseEvent(model);
     }).otherwise(function(e) {
         window.onerror('Error: ' + e);
     });
