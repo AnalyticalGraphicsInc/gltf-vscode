@@ -109,17 +109,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 </body>
 </html>
 `;
-
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        fs.writeFileSync(this._context.asAbsolutePath('pages/rendered.html'), content);
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-        // DEBUG DEBUG DEBUG -- Remove this before pull request
-
         return content;
     }
 
