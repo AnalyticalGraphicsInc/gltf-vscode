@@ -1,5 +1,8 @@
+// This is a modified/simplified version of the published example:
+//     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
+
 // Tracks if this engine is currently the active engine.
-var enabled = false;
+var enabledThree = false;
 
 var orbitControls = null;
 var container = null;
@@ -12,10 +15,12 @@ var gltf = null;
 var mixer = null;
 var clock = new THREE.Clock();
 
+window.onerror = null;
+
 function onload() {
     switchScene(0);
     animate();
-    window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('resize', onWindowResizeThree, false);
 }
 
 function initScene(index) {
@@ -151,13 +156,15 @@ function initScene(index) {
         }
 
         scene.add(object);
-        onWindowResize();
+        onWindowResizeThree();
     });
 
     orbitControls = new THREE.OrbitControls(defaultCamera, renderer.domElement);
 }
 
-function onWindowResize() {
+function onWindowResizeThree() {
+    if (!enabledThree) { return }
+
     defaultCamera.aspect = container.offsetWidth / container.offsetHeight;
     defaultCamera.updateProjectionMatrix();
 
@@ -165,26 +172,27 @@ function onWindowResize() {
 }
 
 function animate() {
-    if (enabled)
-    {
-        requestAnimationFrame(animate);
+    if (!enabledThree) { return }
 
-        if (mixer) {
-            mixer.update(clock.getDelta());
-        }
+    requestAnimationFrame(animate);
 
-        orbitControls.update();
-        render();
+    if (mixer) {
+        mixer.update(clock.getDelta());
     }
+
+    orbitControls.update();
+    renderThree();
 }
 
-function render() {
+function renderThree() {
+    if (!enabledThree) { return }
+
     renderer.render(scene, camera);
 }
 
 function switchScene(index) {
     cleanup();
-    enabled = true;
+    enabledThree = true;
 
     initScene(index);
 }
@@ -195,7 +203,7 @@ function switchScene(index) {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
-    enabled = false;
+    enabledThree = false;
 
     if (container && renderer) {
         container.removeChild(renderer.domElement);
@@ -208,7 +216,7 @@ function cleanup() {
     }
 
     mixer.stopAllAction();
-    window.removeEventListener('resize', onWindowResize, false);
+    window.removeEventListener('resize', onWindowResizeThree, false);
 }
 
 var rootPath = "file:///" + document.getElementById("gltfRootPath").textContent;

@@ -1,5 +1,5 @@
 // Tracks if this engine is currently the active engine.
-var enabled = false;
+var enabledCesium = false;
 
 var errorContainer = document.getElementById('errorContainer');
 window.onerror = function(error) {
@@ -31,14 +31,13 @@ function resize() {
 }
 
 function startRenderLoop() {
-    if (enabled)
-    {
-        scene.initializeFrame();
-        resize();
-        var currentTime = clock.tick();
-        scene.render(currentTime);
-        Cesium.requestAnimationFrame(startRenderLoop);
-    }
+    if (!enabledCesium) { return }
+
+    scene.initializeFrame();
+    resize();
+    var currentTime = clock.tick();
+    scene.render(currentTime);
+    Cesium.requestAnimationFrame(startRenderLoop);
 }
 
 function setCamera(scene, model) {
@@ -110,7 +109,7 @@ function loadModel(model, resetCamera) {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
-    enabled = false;
+    enabledCesium = false;
 }
 
 /**
@@ -212,7 +211,7 @@ var cesiumLogoData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAeCAYA
 var cesiumCredit = new Cesium.Credit('Cesium', cesiumLogoData, 'http://cesiumjs.org/');
 scene.frameState.creditDisplay.addDefaultCredit(cesiumCredit);
 
-enabled = true;
+enabledCesium = true;
 startRenderLoop();
 resize();
 

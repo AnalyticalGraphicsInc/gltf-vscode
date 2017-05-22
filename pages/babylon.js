@@ -1,5 +1,5 @@
 // Tracks if this engine is currently the active engine.
-var enabled = false;
+var enabledBabylon = false;
 
 /**
 * @function cleanup
@@ -7,9 +7,9 @@ var enabled = false;
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
-    enabled = false;
-    window.removeEventListener('resize', onWindowResize);
-    engine.stopRenderLoop(render);
+    enabledBabylon = false;
+    window.removeEventListener('resize', onWindowResizeBabylon);
+    engine.stopRenderLoop(renderBabylon);
 }
 
 var errorContainer = document.getElementById('errorContainer');
@@ -18,7 +18,7 @@ window.onerror = function(error) {
     errorContainer.textContent = error.toString();
 };
 
-enabled = true;
+enabledBabylon = true;
 BABYLON.SceneLoader.ShowLoadingScreen = false;
 var canvas = document.getElementById("renderCanvas");
 var engine = new BABYLON.Engine(canvas, true);
@@ -32,16 +32,18 @@ BABYLON.SceneLoader.Load(rootPath, fileName, engine, function(newScene) {
     scene = newScene;
     scene.createDefaultCameraOrLight(true);
     scene.activeCamera.attachControl(canvas);
-    engine.runRenderLoop(render);
+    engine.runRenderLoop(renderBabylon);
 }, null, window.onerror);
 
-function render()
+function renderBabylon()
 {
     scene.render();
 }
 
-function onWindowResize() {
+function onWindowResizeBabylon() {
+    if (!enabledBabylon) { return }
+
     engine.resize();
 }
 
-window.addEventListener("resize", onWindowResize);
+window.addEventListener("resize", onWindowResizeBabylon);
