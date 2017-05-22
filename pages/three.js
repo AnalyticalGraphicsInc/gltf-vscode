@@ -1,22 +1,20 @@
 var orbitControls = null;
 var container, camera, scene, renderer, loader;
 
+var disabled = true;
 var defaultCamera = null;
 var gltf = null;
 var mixer = null;
 var clock = new THREE.Clock();
 
 function onload() {
-
     window.addEventListener('resize', onWindowResize, false);
 
     switchScene(0);
     animate();
-
 }
 
 function initScene(index) {
-
     container = document.getElementById('container');
 
     scene = new THREE.Scene();
@@ -32,7 +30,6 @@ function initScene(index) {
     var spot1 = null;
 
     if (sceneInfo.addLights) {
-
         var ambient = new THREE.AmbientLight(0x222222);
         scene.add(ambient);
 
@@ -47,12 +44,10 @@ function initScene(index) {
         spot1.penumbra = 0.75;
 
         if (sceneInfo.shadows) {
-
             spot1.castShadow = true;
             spot1.shadow.bias = 0.0001;
             spot1.shadow.mapSize.width = 2048;
             spot1.shadow.mapSize.height = 2048;
-
         }
 
         scene.add(spot1);
@@ -60,7 +55,6 @@ function initScene(index) {
     }
 
     // RENDERER
-
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setClearColor(0x222222);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -105,7 +99,6 @@ function initScene(index) {
     status.innerHTML = "Loading...";
 
     loader.load(url, function(data) {
-
         gltf = data;
 
         var object = gltf.scene;
@@ -128,62 +121,39 @@ function initScene(index) {
             }
         }
 
-        if (sceneInfo.objectRotation)
+        if (sceneInfo.objectRotation) {
             object.rotation.copy(sceneInfo.objectRotation);
+        }
 
-        if (sceneInfo.objectScale)
+        if (sceneInfo.objectScale) {
             object.scale.copy(sceneInfo.objectScale);
-
-        if (sceneInfo.addEnvMap) {
-
-            var envMap = getEnvMap();
-
-            object.traverse(function(node) {
-
-                if (node.material && node.material.isMeshStandardMaterial) {
-
-                    node.material.envMap = envMap;
-                    node.material.needsUpdate = true;
-
-                }
-
-            });
-
-            scene.background = envMap;
-
         }
 
         var animations = gltf.animations;
-
         if (animations && animations.length) {
-
             mixer = new THREE.AnimationMixer(object);
 
             for (var i = 0; i < animations.length; i++) {
-
                 var animation = animations[i];
 
                 // There's .3333 seconds junk at the tail of the Monster animation that
                 // keeps it from looping cleanly. Clip it at 3 seconds
-                if (sceneInfo.animationTime)
+                if (sceneInfo.animationTime) {
                     animation.duration = sceneInfo.animationTime;
+                }
 
                 mixer.clipAction(animation).play();
-
             }
         }
 
         scene.add(object);
         onWindowResize();
-
     });
 
     orbitControls = new THREE.OrbitControls(defaultCamera, renderer.domElement);
-
 }
 
 function onWindowResize() {
-
     defaultCamera.aspect = container.offsetWidth / container.offsetHeight;
     defaultCamera.updateProjectionMatrix();
 
@@ -191,38 +161,49 @@ function onWindowResize() {
 }
 
 function animate() {
-    requestAnimationFrame(animate);
-    if (mixer) mixer.update(clock.getDelta());
-    orbitControls.update();
-    render();
+    if (!disabled)
+    {
+        requestAnimationFrame(animate);
+
+        if (mixer) {
+            mixer.update(clock.getDelta());
+        }
+
+        orbitControls.update();
+        render();
+    }
 }
 
 function render() {
     renderer.render(scene, camera);
 }
 
-var envMap;
+function switchScene(index) {
+    cleanup();
+    disabled = false;
 
-function getEnvMap() {
+    initScene(index);
+}
 
-    if (envMap) {
+/**
+* @function cleanup
+* Perform any cleanup that needs to happen to stop rendering the current model.
+* This is called right before the active engine for the preview window is switched.
+*/
+function cleanup() {
+    disabled = true;
 
-        return envMap;
-
+    if (container && renderer) {
+        container.removeChild(renderer.domElement);
     }
 
-    var path = 'textures/cube/Park2/';
-    var format = '.jpg';
-    var urls = [
-        path + 'posx' + format, path + 'negx' + format,
-        path + 'posy' + format, path + 'negy' + format,
-        path + 'posz' + format, path + 'negz' + format
-    ];
+    defaultCamera = null;
 
-    envMap = new THREE.CubeTextureLoader().load(urls);
-    envMap.format = THREE.RGBFormat;
-    return envMap;
+    if (!loader || !mixer) {
+        return;
+    }
 
+    mixer.stopAllAction();
 }
 
 var rootPath = "file:///" + document.getElementById("gltfRootPath").textContent;
@@ -237,26 +218,5 @@ var sceneList = [
         addEnvMap: true
     }
 ];
-
-function switchScene(index) {
-
-    cleanup();
-    initScene(index);
-}
-
-function cleanup() {
-
-    if (container && renderer) {
-        container.removeChild(renderer.domElement);
-    }
-
-    defaultCamera = null;
-
-    if (!loader || !mixer)
-        return;
-
-    mixer.stopAllAction();
-
-}
 
 onload();

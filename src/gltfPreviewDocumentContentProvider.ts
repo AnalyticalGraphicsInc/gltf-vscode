@@ -32,20 +32,19 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             gltfRootPath += "/";
         }
 
-        const gltf = JSON.parse(gltfContent);
-        const version = gltf.asset.version;
-
-        const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultEngine');
-
-        // To simplify
-        const babylon = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylon.html'), 'UTF-8'));
-        const cesium = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesium.html'), 'UTF-8'));
-        const three = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/three.html'), 'UTF-8'));
-
         let extensionRootPath : string = this._context.asAbsolutePath('').replace(/\\/g, '/');
         if (!extensionRootPath.endsWith("/")) {
             extensionRootPath += "/";
         }
+
+        const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultEngine');
+
+        // We store the alternate HTML content for each of the 3D engines in a script tag within the Head of the
+        // preview HTML since we can't do any page navigations.  We need to encode the content so that the enclosing
+        // script tag doesn't get confused.
+        const babylon = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylon.html'), 'UTF-8'));
+        const cesium = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesium.html'), 'UTF-8'));
+        const three = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/three.html'), 'UTF-8'));
 
         const content = `<!DOCTYPE html>
 <html lang="en">
@@ -57,15 +56,11 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
     <link rel="stylesheet" href="${this.getFilePath('pages/previewModel.css')}"></link>
 
-    <!-- The glTF version of the model being previewed.  Some engines (like Three.js)
-         may need to know this ahead of time to know what loader to use. -->
-    <script id="version" type="text/plain">${version}</script>
-
     <!-- The 3D-engine HTML content that gets inserted into the div can literally use:
                {extensionRootPath}
          within its content and any instance of that string will be replaced with this
          real value at the time that the content is being inserted into the DOM.  This way,
-         relative path references can be resolved correctly. -->
+         relative path references within the HTML can be resolved correctly. -->
     <script id="extensionRootPath" type="text/plain">${extensionRootPath}</script>
 
     <!-- Allows us to access the name of the engine that the user has selected in their VS Code preference
@@ -101,7 +96,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <script type="text/javascript" src="${this.getFilePath('engines/Cesium/Cesium.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Babylon/babylon.custom.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/three.min.js')}"></script>
-    <script type="text/javascript" src="${this.getFilePath('engines/Three/GLTFLoader.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/GLTF2Loader.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/OrbitControls.js')}"></script>
 </head>

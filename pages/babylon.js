@@ -1,3 +1,11 @@
+/**
+* @function cleanup
+* Perform any cleanup that needs to happen to stop rendering the current model.
+* This is called right before the active engine for the preview window is switched.
+*/
+function cleanup() {
+}
+
 var errorContainer = document.getElementById('errorContainer');
 window.onerror = function(error) {
     errorContainer.style.display = 'block';
@@ -24,5 +32,3 @@ BABYLON.SceneLoader.Load(rootPath, fileName, engine, function (scene) {
 window.addEventListener("resize", function () {
     engine.resize();
 });
-
-function cleanup() {}

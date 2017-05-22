@@ -116,21 +116,93 @@ function loadModel(model, resetCamera) {
         viewer._model = model;
         viewer.onLoad.raiseEvent(model);
     }).otherwise(function(e) {
-        window.alert('Error: ' + e);
+        window.onerror('Error: ' + e);
     });
 }
 
-function cleanup() {}
+/**
+* @function cleanup
+* Perform any cleanup that needs to happen to stop rendering the current model.
+* This is called right before the active engine for the preview window is switched.
+*/
+function cleanup() {
+}
 
+/**
+* @function fadeOut
+* Fades out an HTML element
+* @param  {object} element The HTML element being faded out.
+* @credit http://idiallo.com/javascript/using-requestanimationframe
+*/
+function fadeOut(element) {
+    var opacity = element.style.opacity;
+
+    function decrease () {
+        opacity -= 0.05;
+        if (opacity <= 0) {
+            element.style.opacity = 0;
+            return true;
+        }
+
+        element.style.opacity = opacity;
+        requestAnimationFrame(decrease);
+    }
+
+    decrease();
+}
+
+/**
+* @function fadeIn
+* Fades in an HTML element
+* @param  {object} element The HTML element being faded in.
+* @credit http://idiallo.com/javascript/using-requestanimationframe
+*/
+function fadeIn(element) {
+    var opacity = element.style.opacity;
+
+    function increase () {
+        opacity += 0.05;
+        if (opacity >= 1) {
+            element.style.opacity = 1;
+            return true;
+        }
+
+        element.style.opacity = opacity;
+        requestAnimationFrame(increase);
+    }
+
+    increase();
+}
+
+/**
+* @function clearWarning
+* Hides any warning currently being displayed.
+*/
+function clearWarning() {
+    showWarning(null);
+}
+
+
+/**
+* @function showWarning
+* Displays (or hides) a warning overlay indefinitely, or for the provided duration.
+* @param  {string} message  The warning to display.  If null, hides the message.
+* @param  {type} durationMs The number of milliseconds to display the warning before auto-hiding it.  Defaults to null (indefinite timeout).
+*/
 function showWarning(message, durationMs = null) {
     var warning = document.getElementById("warningContainer");
-    warning.textContent = message;
     warningContainer.style.display = 'block';
-    warning.style = (null === message) ? "hidden" : "visible";
+
+    if (null === message) {
+        fadeOut(warning);
+    } else {
+        warning.textContent = message;
+        fadeIn(warning);
+    }
 
     if (null !== durationMs) {
         setTimeout(function() {
-            showWarning(null);
+            clearWarning();
         }, durationMs);
     }
 }
@@ -139,13 +211,12 @@ var gltfFileName = document.getElementById('gltfFileName').textContent;
 var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
 try {
-    showWarning(null);
+    clearWarning();
     var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
     loadModelFromContent(gltfContent, gltfRootPath, true);
 }
 catch (ex) {
-    // TODO: This doesn't actually seem to work yet.  Doesn't visually appear.
-    var warningDurationMs = 40000;
+    var warningDurationMs = 4000;
     showWarning("Loading content from saved file.", warningDurationMs);
 
     // If the glTF content is missing or not valid JSON, then try to load the

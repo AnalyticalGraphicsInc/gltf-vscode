@@ -1,11 +1,14 @@
+// Defines the 3D engines that the menu allows the users to choose from.
 var engines = [
     "Babylon.js",
     "Cesium",
     "Three.js"
 ];
 
+// This is the main interface object for dat.gui.  We define the initial
+// default values for each option within here, and the current menu
+// values will always be reflected here.
 var Options = function() {
-    // Set defaults
     this.engine = document.getElementById("defaultEngine").textContent;
     this.help = "Press 'h' to show / hide"
 };
@@ -81,8 +84,17 @@ function addHeadLink(href, body) {
     head.appendChild(link);
 }
 
-// Will be overridden by the currently loaded engine
-function cleanup() {}
+/**
+* @function cleanup
+* Perform any cleanup that needs to happen to stop rendering the current model.
+* This is called right before the active engine for the preview window is switched.
+* This method will get overridden by whatever 3D engine is currently loaded.
+* It has to be defined here though since we always call cleanup before switching
+* engines, so on initial load, this is the version that will be called.
+*/
+function cleanup() {
+
+}
 
 /**
 * @function updatePreview
@@ -93,9 +105,11 @@ function updatePreview() {
     cleanup();
 
     var content = document.getElementById("content");
+
+    // Update the DOM's "content" div with the HTML content for the currently selected
+    // 3D engine.
     var engineElementId = options.engine.toLocaleLowerCase();
     var engineHtml = decodeURI(document.getElementById(engineElementId).textContent);
-
     var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
     content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
@@ -103,6 +117,7 @@ function updatePreview() {
     // we add them to the head, they will.  So, we'll iterate through all script tags
     // in the code we just inserted and we'll add them to the Head.  Along the way, we'll
     // give them all the same special ID so that we can easily remove them later.
+    // We then do something similar for link (CSS) elements.
     clearRemovableHeadElements();
     var scriptElements = content.getElementsByTagName('script')
     for (var i = 0; i < scriptElements.length; i++) {
