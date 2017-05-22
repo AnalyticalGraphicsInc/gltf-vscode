@@ -1,17 +1,21 @@
-var orbitControls = null;
-var container, camera, scene, renderer, loader;
+// Tracks if this engine is currently the active engine.
+var enabled = false;
 
-var disabled = true;
+var orbitControls = null;
+var container = null;
+var camera = null;
+var scene = null;
+var renderer = null;
+var loader = null;
 var defaultCamera = null;
 var gltf = null;
 var mixer = null;
 var clock = new THREE.Clock();
 
 function onload() {
-    window.addEventListener('resize', onWindowResize, false);
-
     switchScene(0);
     animate();
+    window.addEventListener('resize', onWindowResize, false);
 }
 
 function initScene(index) {
@@ -161,7 +165,7 @@ function onWindowResize() {
 }
 
 function animate() {
-    if (!disabled)
+    if (enabled)
     {
         requestAnimationFrame(animate);
 
@@ -180,7 +184,7 @@ function render() {
 
 function switchScene(index) {
     cleanup();
-    disabled = false;
+    enabled = true;
 
     initScene(index);
 }
@@ -191,7 +195,7 @@ function switchScene(index) {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
-    disabled = true;
+    enabled = false;
 
     if (container && renderer) {
         container.removeChild(renderer.domElement);
@@ -204,6 +208,7 @@ function cleanup() {
     }
 
     mixer.stopAllAction();
+    window.removeEventListener('resize', onWindowResize, false);
 }
 
 var rootPath = "file:///" + document.getElementById("gltfRootPath").textContent;
