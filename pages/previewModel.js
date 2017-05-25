@@ -103,6 +103,7 @@ function cleanup() {
 */
 function updatePreview() {
     cleanup();
+    clearWarning();
 
     var content = document.getElementById("content");
 
@@ -130,9 +131,92 @@ function updatePreview() {
     }
 }
 
-// Create and initialize the dat.gui menu UI
-var gui = new dat.GUI();
-gui.add(options, "engine", engines).onChange(updatePreview);
-gui.add(options, "help");
+/**
+* @function fadeOut
+* Fades out an HTML element
+* @param  {object} element The HTML element being faded out.
+* @credit http://idiallo.com/javascript/using-requestanimationframe
+*/
+function fadeOut(element) {
+    var opacity = element.style.opacity;
 
-window.onload = updatePreview;
+    function decrease () {
+        opacity -= 0.05;
+        if (opacity <= 0) {
+            element.style.opacity = 0;
+            return true;
+        }
+
+        element.style.opacity = opacity;
+        requestAnimationFrame(decrease);
+    }
+
+    decrease();
+}
+
+/**
+* @function fadeIn
+* Fades in an HTML element
+* @param  {object} element The HTML element being faded in.
+* @credit http://idiallo.com/javascript/using-requestanimationframe
+*/
+function fadeIn(element) {
+    var opacity = element.style.opacity;
+
+    function increase () {
+        opacity += 0.05;
+        if (opacity >= 1) {
+            element.style.opacity = 1;
+            return true;
+        }
+
+        element.style.opacity = opacity;
+        requestAnimationFrame(increase);
+    }
+
+    increase();
+}
+
+/**
+* @function clearWarning
+* Hides any warning currently being displayed.
+*/
+function clearWarning() {
+    showWarning(null);
+}
+
+/**
+* @function showWarning
+* Displays (or hides) a warning overlay indefinitely, or for the provided duration.
+* @param  {string} message  The warning to display.  If null, hides the message.
+* @param  {type} durationMs The number of milliseconds to display the warning before auto-hiding it.  Defaults to null (indefinite timeout).
+*/
+function showWarning(message, durationMs = null) {
+    var warning = document.getElementById("warningContainer");
+    warningContainer.style.display = 'block';
+
+    if (null === message) {
+        fadeOut(warning);
+    } else {
+        warning.textContent = message;
+        fadeIn(warning);
+    }
+
+    if (null !== durationMs) {
+        setTimeout(function() {
+            clearWarning();
+        }, durationMs);
+    }
+}
+
+function initPreview()
+{
+    // Create and initialize the dat.gui menu UI
+    var gui = new dat.GUI();
+    gui.add(options, "engine", engines).onChange(updatePreview);
+    gui.add(options, "help");
+
+    updatePreview();
+}
+
+initPreview();

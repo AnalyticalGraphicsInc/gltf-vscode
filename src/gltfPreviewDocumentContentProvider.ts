@@ -100,6 +100,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <script type="text/javascript" src="${this.getFilePath('engines/Three/OrbitControls.js')}"></script>
 </head>
 <body>
+    <!-- A common area that any engine can use for displaying warnings to users.  Will always be cleared -->
+    <!-- when the current engine is changing. -->
+    <div id="warningContainer" style.opacity="0"></div>
+
     <!-- The 3D-engine specific HTML content will be dynamically inserted within this div whenever the
          active 3D engine changes. -->
     <div id="content"></div>
