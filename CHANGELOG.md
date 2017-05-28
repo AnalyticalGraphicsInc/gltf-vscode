@@ -1,5 +1,10 @@
 # Change Log
 
+### 1.0.6 - Unreleased
+
+* Multiple 3D rendering engines now available for the preview window (Cesium, Babylon.js and Three.js)
+* Users can set their default 3D rendering engine in preferences by setting a value for `glTF.defaultEngine`.
+
 ### 1.0.5 - 2017-05-20
 
 * Normal (non-embedded) glTF files can now be previewed.
