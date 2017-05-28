@@ -11,9 +11,9 @@
     "properties" : {
         "count" : {
             "type" : "integer",
-            "description" : "Number of entries stored in the sparse array.",
+            "description" : "The number of attributes encoded in this sparse accessor.",
             "minimum" : 1,
-            "gltf_detailedDescription" : "The number of attributes encoded in this sparse accessor."
+            "short_description" : "Number of entries stored in the sparse array."
         },
         "indices" : {
             "allOf" : [

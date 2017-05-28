@@ -10,8 +10,7 @@
     ],
     "properties" : {
         "magFilter" : {
-            "description" : "Magnification filter.",
-            "gltf_detailedDescription" : "Magnification filter.  Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).",
+            "description" : "Magnification filter.  Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MAG_FILTER",
             "anyOf" : [
                 {
@@ -29,11 +28,11 @@
                 {
                     "type" : "integer"
                 }
-            ]
+            ],
+            "short_description" : "Magnification filter."
         },
         "minFilter" : {
-            "description" : "Minification filter.",
-            "gltf_detailedDescription" : "Minification filter.  All valid values correspond to WebGL enums.",
+            "description" : "Minification filter.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MIN_FILTER",
             "anyOf" : [
                 {
@@ -75,12 +74,12 @@
                 {
                     "type" : "integer"
                 }
-            ]
+            ],
+            "short_description" : "Minification filter."
         },
         "wrapS" : {
-            "description" : "s wrapping mode.",
+            "description" : "s wrapping mode.  All valid values correspond to WebGL enums.",
             "default" : 10497,
-            "gltf_detailedDescription" : "s wrapping mode.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_S",
             "anyOf" : [
                 {
@@ -104,12 +103,12 @@
                 {
                     "type" : "integer"
                 }
-            ]
+            ],
+            "short_description" : "s wrapping mode."
         },
         "wrapT" : {
-            "description" : "t wrapping mode.",
+            "description" : "t wrapping mode.  All valid values correspond to WebGL enums.",
             "default" : 10497,
-            "gltf_detailedDescription" : "t wrapping mode.  All valid values correspond to WebGL enums.",
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_T",
             "anyOf" : [
                 {
@@ -133,7 +132,8 @@
                 {
                     "type" : "integer"
                 }
-            ]
+            ],
+            "short_description" : "t wrapping mode."
         },
         "name" : {},
         "extensions" : {},

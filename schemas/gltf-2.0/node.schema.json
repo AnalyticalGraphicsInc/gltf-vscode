@@ -60,8 +60,8 @@
                 0,
                 1
             ],
-            "gltf_detailedDescription" : "A floating-point 4x4 transformation matrix stored in column-major order.",
-            "gltf_webgl" : "`uniformMatrix4fv()` with the transpose parameter equal to false"
+            "gltf_webgl" : "`uniformMatrix4fv()` with the transpose parameter equal to false",
+            "short_description" : "A floating-point 4x4 transformation matrix stored in column-major order."
         },
         "mesh" : {
             "allOf" : [

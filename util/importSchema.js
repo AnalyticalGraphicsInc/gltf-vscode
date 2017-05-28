@@ -104,10 +104,33 @@ function transformEnums(data) {
     }
 }
 
+//
+// Swap out 'description' for 'gltf_detailedDescription'
+//
+function upgradeDescriptions(data) {
+    for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                upgradeDescriptions(val);
+            }
+        }
+    }
+
+    if (data.hasOwnProperty('gltf_detailedDescription')) {
+        if (data.hasOwnProperty('description')) {
+            data.short_description = data.description;
+        }
+        data.description = data.gltf_detailedDescription;
+        delete data.gltf_detailedDescription;
+    }
+}
+
 function transformFile(inputFile, outputFile) {
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
+    upgradeDescriptions(schema);
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }

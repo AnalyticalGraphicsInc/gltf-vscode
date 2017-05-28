@@ -29,12 +29,12 @@
         },
         "accessors" : {
             "type" : "array",
-            "description" : "An array of accessors.",
+            "description" : "An array of accessors.  An accessor is a typed view into a bufferView.",
             "items" : {
                 "$ref" : "accessor.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of accessors.  An accessor is a typed view into a bufferView."
+            "short_description" : "An array of accessors."
         },
         "animations" : {
             "type" : "array",
@@ -54,57 +54,57 @@
         },
         "buffers" : {
             "type" : "array",
-            "description" : "An array of buffers.",
+            "description" : "An array of buffers.  A buffer points to binary geometry, animation, or skins.",
             "items" : {
                 "$ref" : "buffer.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of buffers.  A buffer points to binary geometry, animation, or skins."
+            "short_description" : "An array of buffers."
         },
         "bufferViews" : {
             "type" : "array",
-            "description" : "An array of bufferViews.",
+            "description" : "An array of bufferViews.  A bufferView is a view into a buffer generally representing a subset of the buffer.",
             "items" : {
                 "$ref" : "bufferView.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of bufferViews.  A bufferView is a view into a buffer generally representing a subset of the buffer."
+            "short_description" : "An array of bufferViews."
         },
         "cameras" : {
             "type" : "array",
-            "description" : "An array of cameras.",
+            "description" : "An array of cameras.  A camera defines a projection matrix.",
             "items" : {
                 "$ref" : "camera.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of cameras.  A camera defines a projection matrix."
+            "short_description" : "An array of cameras."
         },
         "images" : {
             "type" : "array",
-            "description" : "An array of images.",
+            "description" : "An array of images.  An image defines data used to create a texture.",
             "items" : {
                 "$ref" : "image.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of images.  An image defines data used to create a texture."
+            "short_description" : "An array of images."
         },
         "materials" : {
             "type" : "array",
-            "description" : "An array of materials.",
+            "description" : "An array of materials.  A material defines the appearance of a primitive.",
             "items" : {
                 "$ref" : "material.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of materials.  A material defines the appearance of a primitive."
+            "short_description" : "An array of materials."
         },
         "meshes" : {
             "type" : "array",
-            "description" : "An array of meshes.",
+            "description" : "An array of meshes.  A mesh is a set of primitives to be rendered.",
             "items" : {
                 "$ref" : "mesh.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of meshes.  A mesh is a set of primitives to be rendered."
+            "short_description" : "An array of meshes."
         },
         "nodes" : {
             "type" : "array",
@@ -116,12 +116,12 @@
         },
         "samplers" : {
             "type" : "array",
-            "description" : "An array of samplers.",
+            "description" : "An array of samplers.  A sampler contains properties for texture filtering and wrapping modes.",
             "items" : {
                 "$ref" : "sampler.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of samplers.  A sampler contains properties for texture filtering and wrapping modes."
+            "short_description" : "An array of samplers."
         },
         "scene" : {
             "allOf" : [
@@ -141,12 +141,12 @@
         },
         "skins" : {
             "type" : "array",
-            "description" : "An array of skins.",
+            "description" : "An array of skins.  A skin is defined by joints and matrices.",
             "items" : {
                 "$ref" : "skin.schema.json"
             },
             "minItems" : 1,
-            "gltf_detailedDescription" : "An array of skins.  A skin is defined by joints and matrices."
+            "short_description" : "An array of skins."
         },
         "textures" : {
             "type" : "array",

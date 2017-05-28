@@ -15,13 +15,12 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of an accessor containing keyframe input values, e.g., time.",
-            "gltf_detailedDescription" : "The index of an accessor containing keyframe input values, e.g., time. That accessor must have componentType `FLOAT`. The values represent time in seconds with `time[0] >= 0.0`, and strictly increasing values, i.e., `time[n + 1] > time[n]`."
+            "description" : "The index of an accessor containing keyframe input values, e.g., time. That accessor must have componentType `FLOAT`. The values represent time in seconds with `time[0] >= 0.0`, and strictly increasing values, i.e., `time[n + 1] > time[n]`.",
+            "short_description" : "The index of an accessor containing keyframe input values, e.g., time."
         },
         "interpolation" : {
             "description" : "Interpolation algorithm.",
             "default" : "LINEAR",
-            "gltf_detailedDescription" : "Interpolation algorithm.",
             "anyOf" : [
                 {
                     "enum" : [
@@ -50,7 +49,8 @@
                 {
                     "type" : "string"
                 }
-            ]
+            ],
+            "short_description" : "Interpolation algorithm."
         },
         "output" : {
             "allOf" : [
@@ -58,8 +58,8 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of an accessor, containing keyframe output values.",
-            "gltf_detailedDescription" : "The index of an accessor containing keyframe output values. When targeting TRS target, the `accessor.componentType` of the output values must be `FLOAT`. When targeting morph weights, the `accessor.componentType` of the output values must be `FLOAT` or normalized integer where each output element stores values with a count equal to the number of morph targets."
+            "description" : "The index of an accessor containing keyframe output values. When targeting TRS target, the `accessor.componentType` of the output values must be `FLOAT`. When targeting morph weights, the `accessor.componentType` of the output values must be `FLOAT` or normalized integer where each output element stores values with a count equal to the number of morph targets.",
+            "short_description" : "The index of an accessor, containing keyframe output values."
         },
         "extensions" : {},
         "extras" : {}

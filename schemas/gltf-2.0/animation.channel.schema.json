@@ -15,8 +15,8 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of a sampler in this animation used to compute the value for the target.",
-            "gltf_detailedDescription" : "The index of a sampler in this animation used to compute the value for the target, e.g., a node's translation, rotation, or scale (TRS)."
+            "description" : "The index of a sampler in this animation used to compute the value for the target, e.g., a node's translation, rotation, or scale (TRS).",
+            "short_description" : "The index of a sampler in this animation used to compute the value for the target."
         },
         "target" : {
             "allOf" : [

@@ -24,8 +24,7 @@
             "default" : 0
         },
         "componentType" : {
-            "description" : "The indices data type.",
-            "gltf_detailedDescription" : "The indices data type.  Valid values correspond to WebGL enums: `5121` (UNSIGNED_BYTE), `5123` (UNSIGNED_SHORT), `5125` (UNSIGNED_INT).",
+            "description" : "The indices data type.  Valid values correspond to WebGL enums: `5121` (UNSIGNED_BYTE), `5123` (UNSIGNED_SHORT), `5125` (UNSIGNED_INT).",
             "anyOf" : [
                 {
                     "enum" : [
@@ -48,7 +47,8 @@
                 {
                     "type" : "integer"
                 }
-            ]
+            ],
+            "short_description" : "The indices data type."
         },
         "extensions" : {},
         "extras" : {}
