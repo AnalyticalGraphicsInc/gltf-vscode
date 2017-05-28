@@ -33,7 +33,9 @@ var CesiumPreview = function() {
     }
 
     function startRenderLoop() {
-        if (!enabled) { return }
+        if (!enabled) {
+            return;
+        }
 
         scene.initializeFrame();
         resize();

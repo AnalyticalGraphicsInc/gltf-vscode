@@ -47,12 +47,20 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             gltfRootPath += "/";
         }
 
+        var gltfMajorVersion = 1;
+        try {
+            const gltf = JSON.parse(gltfContent);
+            if (gltf && gltf.asset && gltf.asset.version && gltf.asset.version && gltf.asset.version[0] === '2') {
+                gltfMajorVersion = 2;
+            }
+        } catch (ex) { }
+
         let extensionRootPath : string = this._context.asAbsolutePath('').replace(/\\/g, '/');
         if (!extensionRootPath.endsWith("/")) {
             extensionRootPath += "/";
         }
 
-        const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultEngine');
+        const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
         // We store the alternate HTML content for each of the 3D engines in a script tag within the Head of the
         // preview HTML since we can't do any page navigations.  We need to encode the content so that the enclosing

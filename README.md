@@ -64,7 +64,9 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 ## Extension Settings
 
-`glTF.defaultEngine` - Allows you to choose the default 3D engine that will render the model in the preview window.
+* `glTF.defaultV1Engine` - Choose the default 3D engine that will render a glTF 1.0 model in the preview window.
+
+* `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
 
 ## Source code
 
