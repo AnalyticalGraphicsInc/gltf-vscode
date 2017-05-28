@@ -50,5 +50,11 @@
     },
     "required" : [
         "type"
-    ]
+    ],
+    "not" : {
+        "required" : [
+            "perspective",
+            "orthographic"
+        ]
+    }
 }

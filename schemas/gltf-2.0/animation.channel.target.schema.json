@@ -49,7 +49,6 @@
         "extras" : {}
     },
     "required" : [
-        "node",
         "path"
     ]
 }
