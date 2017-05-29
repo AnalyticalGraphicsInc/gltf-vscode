@@ -66,7 +66,7 @@ function transformEnums(data) {
             var val = data[key];
             if (key === 'anyOf') {
                 transformAnyOf(val, data.description);
-            } else if (typeof(val) === 'object') {
+            } else if (typeof(val) === 'object' && key !== 'not') {
                 transformEnums(val);
             }
         }
@@ -104,9 +104,6 @@ function transformEnums(data) {
     }
 }
 
-//
-// Swap out 'description' for 'gltf_detailedDescription'
-//
 function upgradeDescriptions(data) {
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
@@ -117,7 +114,14 @@ function upgradeDescriptions(data) {
         }
     }
 
-    if (data.hasOwnProperty('gltf_detailedDescription')) {
+    if (data.title && data.title === 'textureInfo' && data.description) {
+        // textureInfo.schema.json has a vague description "Reference to a texture"
+        // that overwrites more specific descriptions from the referring parents.
+        // So, we remove that here, and VSCode picks up better descriptions.
+        delete data.description;
+    } else if (data.hasOwnProperty('gltf_detailedDescription')) {
+        // Swap out 'description' for 'gltf_detailedDescription' as the latter
+        // typically has more detailed information.
         if (data.hasOwnProperty('description')) {
             data.short_description = data.description;
         }
