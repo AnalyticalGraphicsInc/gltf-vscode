@@ -31,12 +31,12 @@
         },
         "skeletons" : {
             "type" : "array",
-            "description" : "The ID of skeleton nodes.",
+            "description" : "The ID of skeleton nodes.  Each node defines a subtree, which has a `jointName` of the corresponding element in the referenced `skin.jointNames`.",
             "items" : {
                 "$ref" : "glTFid.schema.json"
             },
             "uniqueItems" : true,
-            "gltf_detailedDescription" : "The ID of skeleton nodes.  Each node defines a subtree, which has a `jointName` of the corresponding element in the referenced `skin.jointNames`."
+            "short_description" : "The ID of skeleton nodes."
         },
         "skin" : {
             "allOf" : [
@@ -80,17 +80,17 @@
                 0,
                 1
             ],
-            "gltf_detailedDescription" : "A floating-point 4x4 transformation matrix stored in column-major order.",
-            "gltf_webgl" : "`uniformMatrix4fv()` with the transpose parameter equal to false"
+            "gltf_webgl" : "`uniformMatrix4fv()` with the transpose parameter equal to false",
+            "short_description" : "A floating-point 4x4 transformation matrix stored in column-major order."
         },
         "meshes" : {
             "type" : "array",
-            "description" : "The IDs of the meshes in this node.",
+            "description" : "The IDs of the meshes in this node.  Multiple meshes are allowed so each can share the same transform matrix.",
             "items" : {
                 "$ref" : "glTFid.schema.json"
             },
             "uniqueItems" : true,
-            "gltf_detailedDescription" : "The IDs of the meshes in this node.  Multiple meshes are allowed so each can share the same transform matrix."
+            "short_description" : "The IDs of the meshes in this node."
         },
         "rotation" : {
             "type" : "array",

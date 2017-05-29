@@ -22,23 +22,22 @@
         },
         "byteOffset" : {
             "type" : "integer",
-            "description" : "The offset relative to the start of the bufferView in bytes.",
+            "description" : "The offset relative to the start of the bufferView in bytes.  This must be a multiple of the size of the data type.",
             "minimum" : 0,
-            "gltf_detailedDescription" : "The offset relative to the start of the bufferView in bytes.  This must be a multiple of the size of the data type.",
-            "gltf_webgl" : "`vertexAttribPointer()` offset parameter"
+            "gltf_webgl" : "`vertexAttribPointer()` offset parameter",
+            "short_description" : "The offset relative to the start of the bufferView in bytes."
         },
         "byteStride" : {
             "type" : "integer",
-            "description" : "The stride, in bytes, between attributes referenced by this accessor.",
+            "description" : "The stride, in bytes, between attributes referenced by this accessor.  When this is zero, the attributes are tightly packed.",
             "minimum" : 0,
             "maximum" : 255,
             "default" : 0,
-            "gltf_detailedDescription" : "The stride, in bytes, between attributes referenced by this accessor.  When this is zero, the attributes are tightly packed.",
-            "gltf_webgl" : "`vertexAttribPointer()` stride parameter"
+            "gltf_webgl" : "`vertexAttribPointer()` stride parameter",
+            "short_description" : "The stride, in bytes, between attributes referenced by this accessor."
         },
         "componentType" : {
-            "description" : "The datatype of components in the attribute.",
-            "gltf_detailedDescription" : "The datatype of components in the attribute.  All valid values correspond to WebGL enums.  The corresponding typed arrays are `Int8Array`, `Uint8Array`, `Int16Array`, `Uint16Array`, and `Float32Array`, respectively.",
+            "description" : "The datatype of components in the attribute.  All valid values correspond to WebGL enums.  The corresponding typed arrays are `Int8Array`, `Uint8Array`, `Int16Array`, `Uint16Array`, and `Float32Array`, respectively.",
             "oneOf" : [
                 {
                     "enum" : [
@@ -70,17 +69,18 @@
                     ],
                     "description" : "FLOAT - The datatype of components in the attribute."
                 }
-            ]
+            ],
+            "short_description" : "The datatype of components in the attribute."
         },
         "count" : {
             "type" : "integer",
-            "description" : "The number of attributes referenced by this accessor.",
+            "description" : "The number of attributes referenced by this accessor, not to be confused with the number of bytes or number of components.",
             "minimum" : 1,
-            "gltf_detailedDescription" : "The number of attributes referenced by this accessor, not to be confused with the number of bytes or number of components."
+            "short_description" : "The number of attributes referenced by this accessor."
         },
         "type" : {
             "type" : "string",
-            "description" : "Specifies if the attribute is a scalar, vector, or matrix.",
+            "description" : "Specifies if the attribute is a scalar, vector, or matrix, and the number of elements in the vector or matrix.",
             "enum" : [
                 "SCALAR",
                 "VEC2",
@@ -90,27 +90,27 @@
                 "MAT3",
                 "MAT4"
             ],
-            "gltf_detailedDescription" : "Specifies if the attribute is a scalar, vector, or matrix, and the number of elements in the vector or matrix."
+            "short_description" : "Specifies if the attribute is a scalar, vector, or matrix."
         },
         "max" : {
             "type" : "array",
-            "description" : "Maximum value of each component in this attribute.",
+            "description" : "Maximum value of each component in this attribute.  When both min and max arrays are defined, they have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16.",
             "items" : {
                 "type" : "number"
             },
             "minItems" : 1,
             "maxItems" : 16,
-            "gltf_detailedDescription" : "Maximum value of each component in this attribute.  When both min and max arrays are defined, they have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16."
+            "short_description" : "Maximum value of each component in this attribute."
         },
         "min" : {
             "type" : "array",
-            "description" : "Minimum value of each component in this attribute.",
+            "description" : "Minimum value of each component in this attribute.  When both min and max arrays are defined, they have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16.",
             "items" : {
                 "type" : "number"
             },
             "minItems" : 1,
             "maxItems" : 16,
-            "gltf_detailedDescription" : "Minimum value of each component in this attribute.  When both min and max arrays are defined, they have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16."
+            "short_description" : "Minimum value of each component in this attribute."
         }
     },
     "additionalProperties" : false,

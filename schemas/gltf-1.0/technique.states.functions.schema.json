@@ -29,7 +29,7 @@
         },
         "blendEquationSeparate" : {
             "type" : "array",
-            "description" : "Integer values passed to `blendEquationSeparate()`.",
+            "description" : "Integer values passed to `blendEquationSeparate()`. [rgb, alpha]. All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -58,12 +58,12 @@
                 32774,
                 32774
             ],
-            "gltf_detailedDescription" : "Integer values passed to `blendEquationSeparate()`. [rgb, alpha]. All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`blendEquationSeparate()`"
+            "gltf_webgl" : "`blendEquationSeparate()`",
+            "short_description" : "Integer values passed to `blendEquationSeparate()`."
         },
         "blendFuncSeparate" : {
             "type" : "array",
-            "description" : "Integer values passed to `blendFuncSeparate()`.",
+            "description" : "Integer values passed to `blendFuncSeparate()`. [srcRGB, dstRGB, srcAlpha, dstAlpha]. All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -166,8 +166,8 @@
                 1,
                 0
             ],
-            "gltf_detailedDescription" : "Integer values passed to `blendFuncSeparate()`. [srcRGB, dstRGB, srcAlpha, dstAlpha]. All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`blendFuncSeparate()`"
+            "gltf_webgl" : "`blendFuncSeparate()`",
+            "short_description" : "Integer values passed to `blendFuncSeparate()`."
         },
         "colorMask" : {
             "type" : "array",
@@ -187,7 +187,7 @@
         },
         "cullFace" : {
             "type" : "array",
-            "description" : "Integer value passed to `cullFace()`.",
+            "description" : "Integer value passed to `cullFace()`. All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -215,12 +215,12 @@
             "default" : [
                 1029
             ],
-            "gltf_detailedDescription" : "Integer value passed to `cullFace()`. All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`cullFace()`"
+            "gltf_webgl" : "`cullFace()`",
+            "short_description" : "Integer value passed to `cullFace()`."
         },
         "depthFunc" : {
             "type" : "array",
-            "description" : "Integer values passed to `depthFunc()`.",
+            "description" : "Integer values passed to `depthFunc()`. All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -278,8 +278,8 @@
             "default" : [
                 513
             ],
-            "gltf_detailedDescription" : "Integer values passed to `depthFunc()`. All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`depthFunc()`"
+            "gltf_webgl" : "`depthFunc()`",
+            "short_description" : "Integer values passed to `depthFunc()`."
         },
         "depthMask" : {
             "type" : "array",
@@ -310,7 +310,7 @@
         },
         "frontFace" : {
             "type" : "array",
-            "description" : "Integer value passed to `frontFace()`.",
+            "description" : "Integer value passed to `frontFace()`.  All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -332,8 +332,8 @@
             "default" : [
                 2305
             ],
-            "gltf_detailedDescription" : "Integer value passed to `frontFace()`.  All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`frontFace()`"
+            "gltf_webgl" : "`frontFace()`",
+            "short_description" : "Integer value passed to `frontFace()`."
         },
         "lineWidth" : {
             "type" : "array",
@@ -366,7 +366,7 @@
         },
         "scissor" : {
             "type" : "array",
-            "description" : "Floating-point value passed to `scissor()`.  [x, y, width, height].",
+            "description" : "Floating-point value passed to `scissor()`.  [x, y, width, height].  The default is the dimensions of the canvas when the WebGL context is created.  width and height must be greater than zero.",
             "items" : {
                 "type" : "number"
             },
@@ -378,8 +378,8 @@
                 0,
                 0
             ],
-            "gltf_detailedDescription" : "Floating-point value passed to `scissor()`.  [x, y, width, height].  The default is the dimensions of the canvas when the WebGL context is created.  width and height must be greater than zero.",
-            "gltf_webgl" : "`scissor()`"
+            "gltf_webgl" : "`scissor()`",
+            "short_description" : "Floating-point value passed to `scissor()`.  [x, y, width, height]."
         }
     },
     "additionalProperties" : false
