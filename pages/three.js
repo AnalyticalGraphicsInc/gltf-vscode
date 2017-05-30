@@ -165,7 +165,9 @@ var ThreePreview = function() {
     }
 
     function onWindowResize() {
-        if (!enabled) { return }
+        if (!enabled) {
+            return;
+        }
 
         defaultCamera.aspect = container.offsetWidth / container.offsetHeight;
         defaultCamera.updateProjectionMatrix();
@@ -174,7 +176,9 @@ var ThreePreview = function() {
     }
 
     function animate() {
-        if (!enabled) { return }
+        if (!enabled) {
+            return;
+        }
 
         requestAnimationFrame(animate);
 

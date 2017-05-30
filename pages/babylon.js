@@ -22,7 +22,9 @@ var BabylonPreview = function() {
     }
 
     function onWindowResize() {
-        if (!enabled) { return }
+        if (!enabled) {
+            return;
+        }
 
         engine.resize();
     }

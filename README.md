@@ -15,7 +15,7 @@ The glTF standard is maintained by [the Khronos Group](https://www.khronos.org/)
 
 ### &bull; Registers `*.gltf` files as JSON schema
 
-Uses the glTF 1.0 schema, and will warn for invalid or missing fields.
+Files are matched against the glTF 1.0 or glTF 2.0 schema, and schema violations are called out in the editor.
 
 ### &bull; Tooltips for glTF enum values
 
@@ -44,13 +44,13 @@ back on displaying the version of the model saved on disk.
 
 #### glTF compatibility and sample models
 
-There are some [sample glTF 1.0 models online](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) all the text-based versions (`*.gltf`), not binary versions (`*.glb`).
+There are some [sample glTF models online](https://github.com/KhronosGroup/glTF-Sample-Models/) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) the text-based versions (`*.gltf`), not binary versions (`*.glb`).
 
 ### &bull;  Preview embedded dataURIs
 
 Place the document cursor on a dataURI, or on a block that has been folded closed with a dataURI in its `uri` field, then press <kbd>ALT</kbd> + <kbd>D</kbd> or look for the command `Inspect Data URI` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
-* Previewing embedded shaders works, but the shader previews are read-only (for now)
+* Previewing embedded shaders works, but the shader previews are read-only.  To edit them, first export them to a file (see below).
 * Previewing embedded JPG and PNG images works.
 * Previewing buffer data is not (yet?) supported.
 

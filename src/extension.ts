@@ -64,10 +64,6 @@ function tryGetCurrentUriKey(map) {
 // your extension is activated the very first time a command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Extension "gltf-vscode" is now active.');
-
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
     const dataPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-dataUri', dataPreviewProvider);
