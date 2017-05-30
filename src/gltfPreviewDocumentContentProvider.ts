@@ -34,11 +34,13 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     //    Now you can debug the HTML preview in the sandboxed iframe.
 
     public provideTextDocumentContent(uri: Uri): string {
-        const filePath = decodeURIComponent(uri.authority);
+        let filePath = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filePath.toLowerCase());
         if (!document) {
             return 'ERROR: Can no longer find document in editor: ' + filePath;
         }
+        // Update case of `fileName` to match actual document filename.
+        filePath = document.fileName;
 
         const gltfContent = document.getText();
         const gltfFileName = path.basename(filePath);
@@ -103,7 +105,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <script id="gltfFileName" type="text/plain">${gltfFileName}</script>
 
     <!-- Engine Display Content
-         --------------
+         ======================
          This is the engine-specific display content that gets swapped into the "content" div
          when the engine is switched.  The ids match the names in the enum in package.json, as
          well as in the Options enum within previewModel.js. -->
@@ -112,7 +114,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <script id="three.js" type="text/plain">${three}</script>
 
     <!-- Engines
-         -------
+         =======
          These are loaded statically as opposed to dynamically (like the div content)
          to avoid race conditions when loading the script within the div content tries to reference
          the engine. -->

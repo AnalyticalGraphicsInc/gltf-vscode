@@ -265,6 +265,14 @@ export function activate(context: vscode.ExtensionContext) {
 
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
+
+    // Update the preview window when the glTF file is saved.
+    vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+        if (document === vscode.window.activeTextEditor.document) {
+            const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
+            gltfPreviewProvider.update(gltfPreviewUri);
+        }
+    });
 }
 
 // This method is called when your extension is deactivated.
