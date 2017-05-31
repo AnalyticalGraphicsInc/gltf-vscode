@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.0.0 - Unreleased
+### 2.0.0 - 2017-05-30
 
 * Multiple 3D rendering engines now available for the preview window (Cesium, Babylon.js and Three.js)
 * Users can set their default 3D rendering engine in preferences.
