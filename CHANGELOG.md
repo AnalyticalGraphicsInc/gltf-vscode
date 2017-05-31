@@ -2,6 +2,7 @@
 
 ### 2.0.0 - 2017-05-30
 
+* Support for glTF 2.0 files added.
 * Multiple 3D rendering engines now available for the preview window (Cesium, Babylon.js and Three.js)
 * Users can set their default 3D rendering engine in preferences.
 
