@@ -1,0 +1,143 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "sampler",
+    "type" : "object",
+    "description" : "Texture sampler properties for filtering and wrapping modes.",
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "magFilter" : {
+            "description" : "Magnification filter.  Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).",
+            "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MAG_FILTER",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        9728
+                    ],
+                    "description" : "NEAREST - Magnification filter."
+                },
+                {
+                    "enum" : [
+                        9729
+                    ],
+                    "description" : "LINEAR - Magnification filter."
+                },
+                {
+                    "type" : "integer"
+                }
+            ],
+            "short_description" : "Magnification filter."
+        },
+        "minFilter" : {
+            "description" : "Minification filter.  All valid values correspond to WebGL enums.",
+            "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_MIN_FILTER",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        9728
+                    ],
+                    "description" : "NEAREST - Minification filter."
+                },
+                {
+                    "enum" : [
+                        9729
+                    ],
+                    "description" : "LINEAR - Minification filter."
+                },
+                {
+                    "enum" : [
+                        9984
+                    ],
+                    "description" : "NEAREST_MIPMAP_NEAREST - Minification filter."
+                },
+                {
+                    "enum" : [
+                        9985
+                    ],
+                    "description" : "LINEAR_MIPMAP_NEAREST - Minification filter."
+                },
+                {
+                    "enum" : [
+                        9986
+                    ],
+                    "description" : "NEAREST_MIPMAP_LINEAR - Minification filter."
+                },
+                {
+                    "enum" : [
+                        9987
+                    ],
+                    "description" : "LINEAR_MIPMAP_LINEAR - Minification filter."
+                },
+                {
+                    "type" : "integer"
+                }
+            ],
+            "short_description" : "Minification filter."
+        },
+        "wrapS" : {
+            "description" : "s wrapping mode.  All valid values correspond to WebGL enums.",
+            "default" : 10497,
+            "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_S",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        33071
+                    ],
+                    "description" : "CLAMP_TO_EDGE - s wrapping mode."
+                },
+                {
+                    "enum" : [
+                        33648
+                    ],
+                    "description" : "MIRRORED_REPEAT - s wrapping mode."
+                },
+                {
+                    "enum" : [
+                        10497
+                    ],
+                    "description" : "REPEAT - s wrapping mode."
+                },
+                {
+                    "type" : "integer"
+                }
+            ],
+            "short_description" : "s wrapping mode."
+        },
+        "wrapT" : {
+            "description" : "t wrapping mode.  All valid values correspond to WebGL enums.",
+            "default" : 10497,
+            "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_T",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        33071
+                    ],
+                    "description" : "CLAMP_TO_EDGE - t wrapping mode."
+                },
+                {
+                    "enum" : [
+                        33648
+                    ],
+                    "description" : "MIRRORED_REPEAT - t wrapping mode."
+                },
+                {
+                    "enum" : [
+                        10497
+                    ],
+                    "description" : "REPEAT - t wrapping mode."
+                },
+                {
+                    "type" : "integer"
+                }
+            ],
+            "short_description" : "t wrapping mode."
+        },
+        "name" : {},
+        "extensions" : {},
+        "extras" : {}
+    },
+    "gltf_webgl" : "`texParameterf()`"
+}

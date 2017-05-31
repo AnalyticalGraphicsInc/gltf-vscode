@@ -26,8 +26,8 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The ID of the accessor that contains the indices.",
-            "gltf_detailedDescription" : "The ID of the accessor that contains the indices.  When this is not defined, the primitives should be rendered without indices using `drawArrays()`.  When defined, the accessor must contain indices: the bufferView referenced by the accessor must have a target equal to 34963 (ELEMENT_ARRAY_BUFFER); a byteStride that is tightly packed, i.e., 0 or the byte size of componentType in bytes; componentType must be 5121 (UNSIGNED_BYTE) or 5123 (UNSIGNED_SHORT); and type must be \"SCALAR\"."
+            "description" : "The ID of the accessor that contains the indices.  When this is not defined, the primitives should be rendered without indices using `drawArrays()`.  When defined, the accessor must contain indices: the bufferView referenced by the accessor must have a target equal to 34963 (ELEMENT_ARRAY_BUFFER); a byteStride that is tightly packed, i.e., 0 or the byte size of componentType in bytes; componentType must be 5121 (UNSIGNED_BYTE) or 5123 (UNSIGNED_SHORT); and type must be \"SCALAR\".",
+            "short_description" : "The ID of the accessor that contains the indices."
         },
         "material" : {
             "allOf" : [
@@ -38,9 +38,8 @@
             "description" : "The ID of the material to apply to this primitive when rendering."
         },
         "mode" : {
-            "description" : "The type of primitives to render.",
+            "description" : "The type of primitives to render. All valid values correspond to WebGL enums.",
             "default" : 4,
-            "gltf_detailedDescription" : "The type of primitives to render. All valid values correspond to WebGL enums.",
             "oneOf" : [
                 {
                     "enum" : [
@@ -84,7 +83,8 @@
                     ],
                     "description" : "TRIANGLE_FAN - The type of primitives to render."
                 }
-            ]
+            ],
+            "short_description" : "The type of primitives to render."
         }
     },
     "additionalProperties" : false,

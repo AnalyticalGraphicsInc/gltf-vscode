@@ -17,17 +17,17 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The ID of a parameter in this animation to use as keyframe input, e.g., time.",
-            "gltf_detailedDescription" : "The ID of a parameter in this animation to use as keyframe input.  This parameter must have type `FLOAT`.  The values represent time in seconds with `time[0] >= 0.0`, and monotonically increasing values, i.e., `time[n + 1] >= time[n]`."
+            "description" : "The ID of a parameter in this animation to use as keyframe input.  This parameter must have type `FLOAT`.  The values represent time in seconds with `time[0] >= 0.0`, and monotonically increasing values, i.e., `time[n + 1] >= time[n]`.",
+            "short_description" : "The ID of a parameter in this animation to use as keyframe input, e.g., time."
         },
         "interpolation" : {
             "type" : "string",
-            "description" : "Interpolation algorithm.",
+            "description" : "Interpolation algorithm.  When an animation targets a node's rotation, and the animation's interpolation is `\"LINEAR\"`, spherical linear interpolation (slerp) should be used to interpolate quaternions.",
             "enum" : [
                 "LINEAR"
             ],
             "default" : "LINEAR",
-            "gltf_detailedDescription" : "Interpolation algorithm.  When an animation targets a node's rotation, and the animation's interpolation is `\"LINEAR\"`, spherical linear interpolation (slerp) should be used to interpolate quaternions."
+            "short_description" : "Interpolation algorithm."
         },
         "output" : {
             "allOf" : [

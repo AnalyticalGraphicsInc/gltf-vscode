@@ -14,14 +14,13 @@
         "extras" : {},
         "uri" : {
             "type" : "string",
-            "description" : "The uri of the GLSL source.",
+            "description" : "The uri of the GLSL source.  Relative paths are relative to the .gltf file.  Instead of referencing an external file, the uri can also be a data-uri.",
             "format" : "uri",
-            "gltf_detailedDescription" : "The uri of the GLSL source.  Relative paths are relative to the .gltf file.  Instead of referencing an external file, the uri can also be a data-uri.",
-            "gltf_uriType" : "text"
+            "gltf_uriType" : "text",
+            "short_description" : "The uri of the GLSL source."
         },
         "type" : {
-            "description" : "The shader stage.",
-            "gltf_detailedDescription" : "The shader stage.  All valid values correspond to WebGL enums.",
+            "description" : "The shader stage.  All valid values correspond to WebGL enums.",
             "oneOf" : [
                 {
                     "enum" : [
@@ -35,7 +34,8 @@
                     ],
                     "description" : "VERTEX_SHADER - The shader stage."
                 }
-            ]
+            ],
+            "short_description" : "The shader stage."
         }
     },
     "additionalProperties" : false,

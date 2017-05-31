@@ -1,0 +1,31 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "buffer",
+    "type" : "object",
+    "description" : "A buffer points to binary geometry, animation, or skins.",
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "uri" : {
+            "type" : "string",
+            "description" : "The uri of the buffer.  Relative paths are relative to the .gltf file.  Instead of referencing an external file, the uri can also be a data-uri.",
+            "format" : "uriref",
+            "gltf_uriType" : "application",
+            "short_description" : "The uri of the buffer."
+        },
+        "byteLength" : {
+            "type" : "integer",
+            "description" : "The length of the buffer in bytes.",
+            "minimum" : 1
+        },
+        "name" : {},
+        "extensions" : {},
+        "extras" : {}
+    },
+    "required" : [
+        "byteLength"
+    ]
+}

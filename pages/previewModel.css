@@ -1,4 +1,4 @@
-html, body, #cesiumContainer, #mainCanvas {
+html, body, #content {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -7,20 +7,14 @@ html, body, #cesiumContainer, #mainCanvas {
     font-family: sans-serif;
 }
 
-#cesiumCreditContainer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-#errorContainer {
+#warningContainer {
     display: none;
     position: absolute;
     top: 30%;
     width: 100%;
     box-sizing: border-box;
     font-weight: bold;
-    color: #f42;
+    color: #ff9800;
     background: rgba(42, 42, 42, 0.9);
     padding: 5px;
     text-align: center;

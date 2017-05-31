@@ -15,7 +15,7 @@ The glTF standard is maintained by [the Khronos Group](https://www.khronos.org/)
 
 ### &bull; Registers `*.gltf` files as JSON schema
 
-Uses the glTF 1.0 schema, and will warn for invalid or missing fields.
+Files are matched against the glTF 1.0 or glTF 2.0 schema, and schema violations are called out in the editor.
 
 ### &bull; Tooltips for glTF enum values
 
@@ -37,15 +37,20 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 Press <kbd>ALT</kbd> + <kbd>G</kbd> on your glTF file, or look for the command `Preview 3D Model` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
+The Babylon.js and Three.js engines will preview the saved model as opposed to
+the current content in your open VS Code tab.  The Cesium engine will first try
+to preview what is currently in your tab, and only if that fails will it fall
+back on displaying the version of the model saved on disk.
+
 #### glTF compatibility and sample models
 
-There are some [sample glTF 1.0 models online](https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/1.0) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) all the text-based versions (`*.gltf`), not binary versions (`*.glb`).
+There are some [sample glTF models online](https://github.com/KhronosGroup/glTF-Sample-Models/) that can be downloaded, and each model comes in several flavors.  Currently this extension can be used to edit (and preview) the text-based versions (`*.gltf`), not binary versions (`*.glb`).
 
 ### &bull;  Preview embedded dataURIs
 
 Place the document cursor on a dataURI, or on a block that has been folded closed with a dataURI in its `uri` field, then press <kbd>ALT</kbd> + <kbd>D</kbd> or look for the command `Inspect Data URI` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
-* Previewing embedded shaders works, but the shader previews are read-only (for now)
+* Previewing embedded shaders works, but the shader previews are read-only.  To edit them, first export them to a file (see below).
 * Previewing embedded JPG and PNG images works.
 * Previewing buffer data is not (yet?) supported.
 
@@ -59,11 +64,22 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 ## Extension Settings
 
-This version of the extension does not offer any user-defined settings.
+* `glTF.defaultV1Engine` - Choose the default 3D engine that will render a glTF 1.0 model in the preview window.
+
+* `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
 
 ## Source code
 
 on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Acknowledgements
+
+This extension makes use of the following open source projects:
+
+ * [dat.GUI](https://github.com/dataarts/dat.gui) - Used for rendering the preview window's menu
+ * [Cesium](https://github.com/AnalyticalGraphicsInc/cesium) - One of the 3D engines used in the preview window
+ * [Babylon.js](https://github.com/BabylonJS/Babylon.js) - One of the 3D engines used in the preview window
+ * [Three.js](https://github.com/mrdoob/three.js/) - One of the 3D engines used in the preview window
 
 ## License
 

@@ -24,7 +24,30 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [
+            "configuration": {
+                "title": "glTF configuration",
+                "properties": {
+                    "glTF.defaultV1Engine": {
+                        "type": "string",
+                        "default": "Cesium",
+                        "enum": [
+                            "Cesium",
+                            "Three.js"
+                        ],
+                        "description": "The default 3D engine that will be used when previewing a glTF 1.0 model.  You can always change the current engine within the preview pane."
+                    },
+                    "glTF.defaultV2Engine": {
+                        "type": "string",
+                        "default": "Babylon.js",
+                        "enum": [
+                            "Babylon.js",
+                            "Three.js"
+                        ],
+                        "description": "The default 3D engine that will be used when previewing a glTF 2.0 model.  You can always change the current engine within the preview pane."
+                    }
+                }
+            },
+            "commands": [
             {
                 "command": "gltf.inspectDataUri",
                 "title": "glTF: Inspect Data URI"
@@ -67,7 +90,7 @@
         "jsonValidation": [
             {
                 "fileMatch": "*.gltf",
-                "url": "./schemas/gltf-1.0/glTF.schema.json"
+                "url": "./schemas/glTF.chooser.schema.json"
             }
         ]
     },

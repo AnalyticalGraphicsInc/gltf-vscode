@@ -44,11 +44,29 @@ function parseArguments(args) {
     };
 }
 
+function transformAnyOf(data, parentDescription) {
+    if (!parentDescription) {
+        console.warn('**** WARNING: anyOf without description.');
+    } else {
+        var numBlocks = data.length;
+        for (var i = 0; i < numBlocks; ++i) {
+            var block = data[i];
+            if (block.hasOwnProperty('enum')) {
+                if (block.hasOwnProperty('description')) {
+                    block.description += ' - ' + parentDescription;
+                }
+            }
+        }
+    }
+}
+
 function transformEnums(data) {
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
             var val = data[key];
-            if (typeof(val) === 'object') {
+            if (key === 'anyOf') {
+                transformAnyOf(val, data.description);
+            } else if (typeof(val) === 'object' && key !== 'not') {
                 transformEnums(val);
             }
         }
@@ -86,10 +104,37 @@ function transformEnums(data) {
     }
 }
 
+function upgradeDescriptions(data) {
+    for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                upgradeDescriptions(val);
+            }
+        }
+    }
+
+    if (data.title && data.title === 'textureInfo' && data.description) {
+        // textureInfo.schema.json has a vague description "Reference to a texture"
+        // that overwrites more specific descriptions from the referring parents.
+        // So, we remove that here, and VSCode picks up better descriptions.
+        delete data.description;
+    } else if (data.hasOwnProperty('gltf_detailedDescription')) {
+        // Swap out 'description' for 'gltf_detailedDescription' as the latter
+        // typically has more detailed information.
+        if (data.hasOwnProperty('description')) {
+            data.short_description = data.description;
+        }
+        data.description = data.gltf_detailedDescription;
+        delete data.gltf_detailedDescription;
+    }
+}
+
 function transformFile(inputFile, outputFile) {
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
+    upgradeDescriptions(schema);
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }

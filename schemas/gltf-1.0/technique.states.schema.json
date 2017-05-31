@@ -13,7 +13,7 @@
         "extras" : {},
         "enable" : {
             "type" : "array",
-            "description" : "WebGL states to enable.",
+            "description" : "WebGL states to enable.  States not in the array are disabled.  All valid values correspond to WebGL enums.",
             "items" : {
                 "oneOf" : [
                     {
@@ -56,8 +56,8 @@
             },
             "uniqueItems" : true,
             "default" : [],
-            "gltf_detailedDescription" : "WebGL states to enable.  States not in the array are disabled.  All valid values correspond to WebGL enums.",
-            "gltf_webgl" : "`enable()` and `disable()`"
+            "gltf_webgl" : "`enable()` and `disable()`",
+            "short_description" : "WebGL states to enable."
         },
         "functions" : {
             "$ref" : "technique.states.functions.schema.json"

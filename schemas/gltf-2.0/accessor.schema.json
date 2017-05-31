@@ -1,0 +1,173 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "accessor",
+    "type" : "object",
+    "description" : "A typed view into a bufferView.  A bufferView contains raw binary data.  An accessor provides a typed view into a bufferView or a subset of a bufferView similar to how WebGL's `vertexAttribPointer()` defines an attribute in a buffer.",
+    "allOf" : [
+        {
+            "$ref" : "glTFChildOfRootProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "bufferView" : {
+            "allOf" : [
+                {
+                    "$ref" : "glTFid.schema.json"
+                }
+            ],
+            "description" : "The index of the bufferView. When not defined, accessor must be initialized with zeros; `sparse` property or extensions could override zeros with actual values.",
+            "short_description" : "The index of the bufferView."
+        },
+        "byteOffset" : {
+            "type" : "integer",
+            "description" : "The offset relative to the start of the bufferView in bytes.  This must be a multiple of the size of the component datatype.",
+            "minimum" : 0,
+            "default" : 0,
+            "gltf_webgl" : "`vertexAttribPointer()` offset parameter",
+            "short_description" : "The offset relative to the start of the bufferView in bytes."
+        },
+        "componentType" : {
+            "description" : "The datatype of components in the attribute.  All valid values correspond to WebGL enums.  The corresponding typed arrays are `Int8Array`, `Uint8Array`, `Int16Array`, `Uint16Array`, `Uint32Array`, and `Float32Array`, respectively.  5125 (UNSIGNED_INT) is only allowed when the accessor contains indices, i.e., the accessor is only referenced by `primitive.indices`.",
+            "gltf_webgl" : "`vertexAttribPointer()` type parameter",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        5120
+                    ],
+                    "description" : "BYTE - The datatype of components in the attribute."
+                },
+                {
+                    "enum" : [
+                        5121
+                    ],
+                    "description" : "UNSIGNED_BYTE - The datatype of components in the attribute."
+                },
+                {
+                    "enum" : [
+                        5122
+                    ],
+                    "description" : "SHORT - The datatype of components in the attribute."
+                },
+                {
+                    "enum" : [
+                        5123
+                    ],
+                    "description" : "UNSIGNED_SHORT - The datatype of components in the attribute."
+                },
+                {
+                    "enum" : [
+                        5125
+                    ],
+                    "description" : "UNSIGNED_INT - The datatype of components in the attribute."
+                },
+                {
+                    "enum" : [
+                        5126
+                    ],
+                    "description" : "FLOAT - The datatype of components in the attribute."
+                },
+                {
+                    "type" : "integer"
+                }
+            ],
+            "short_description" : "The datatype of components in the attribute."
+        },
+        "normalized" : {
+            "type" : "boolean",
+            "description" : "Specifies whether integer data values should be normalized (`true`) to [0, 1] (for unsigned types) or [-1, 1] (for signed types), or converted directly (`false`) when they are accessed. This property is defined only for accessors that contain vertex attributes or morph weights animation data.",
+            "default" : false,
+            "gltf_webgl" : "`vertexAttribPointer()` normalized parameter",
+            "short_description" : "Specifies whether integer data values should be normalized."
+        },
+        "count" : {
+            "type" : "integer",
+            "description" : "The number of attributes referenced by this accessor, not to be confused with the number of bytes or number of components.",
+            "minimum" : 1,
+            "short_description" : "The number of attributes referenced by this accessor."
+        },
+        "type" : {
+            "description" : "Specifies if the attribute is a scalar, vector, or matrix.",
+            "anyOf" : [
+                {
+                    "enum" : [
+                        "SCALAR"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC2"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC3"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "VEC4"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT2"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT3"
+                    ]
+                },
+                {
+                    "enum" : [
+                        "MAT4"
+                    ]
+                },
+                {
+                    "type" : "string"
+                }
+            ]
+        },
+        "max" : {
+            "type" : "array",
+            "description" : "Maximum value of each component in this attribute.  Array elements must be treated as having the same data type as accessor's `componentType`. Both min and max arrays have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16.\n\n`normalized` property has no effect on array values: they always correspond to the actual values stored in the buffer. When accessor is sparse, this property must contain max values of accessor data with sparse substitution applied.",
+            "items" : {
+                "type" : "number"
+            },
+            "minItems" : 1,
+            "maxItems" : 16,
+            "short_description" : "Maximum value of each component in this attribute."
+        },
+        "min" : {
+            "type" : "array",
+            "description" : "Minimum value of each component in this attribute.  Array elements must be treated as having the same data type as accessor's `componentType`. Both min and max arrays have the same length.  The length is determined by the value of the type property; it can be 1, 2, 3, 4, 9, or 16.\n\n`normalized` property has no effect on array values: they always correspond to the actual values stored in the buffer. When accessor is sparse, this property must contain min values of accessor data with sparse substitution applied.",
+            "items" : {
+                "type" : "number"
+            },
+            "minItems" : 1,
+            "maxItems" : 16,
+            "short_description" : "Minimum value of each component in this attribute."
+        },
+        "sparse" : {
+            "allOf" : [
+                {
+                    "$ref" : "accessor.sparse.schema.json"
+                }
+            ],
+            "description" : "Sparse storage of attributes that deviate from their initialization value."
+        },
+        "name" : {},
+        "extensions" : {},
+        "extras" : {}
+    },
+    "dependencies" : {
+        "byteOffset" : [
+            "bufferView"
+        ]
+    },
+    "required" : [
+        "componentType",
+        "count",
+        "type"
+    ]
+}

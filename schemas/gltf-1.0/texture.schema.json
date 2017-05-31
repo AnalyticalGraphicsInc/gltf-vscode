@@ -13,9 +13,8 @@
         "extensions" : {},
         "extras" : {},
         "format" : {
-            "description" : "The texture's format.",
+            "description" : "The texture's format.  Valid values correspond to WebGL enums: `6406` (ALPHA), `6407` (RGB), `6408` (RGBA), `6409` (LUMINANCE), and `6410` (LUMINANCE_ALPHA).",
             "default" : 6408,
-            "gltf_detailedDescription" : "The texture's format.  Valid values correspond to WebGL enums: `6406` (ALPHA), `6407` (RGB), `6408` (RGBA), `6409` (LUMINANCE), and `6410` (LUMINANCE_ALPHA).",
             "gltf_webgl" : "`texImage2D()` format parameter",
             "oneOf" : [
                 {
@@ -48,12 +47,12 @@
                     ],
                     "description" : "LUMINANCE_ALPHA - The texture's format."
                 }
-            ]
+            ],
+            "short_description" : "The texture's format."
         },
         "internalFormat" : {
-            "description" : "The texture's internal format.",
+            "description" : "The texture's internal format.  Valid values correspond to WebGL enums: `6406` (ALPHA), `6407` (RGB), `6408` (RGBA), `6409` (LUMINANCE), and `6410` (LUMINANCE_ALPHA).  Defaults to same value as format.",
             "default" : 6408,
-            "gltf_detailedDescription" : "The texture's internal format.  Valid values correspond to WebGL enums: `6406` (ALPHA), `6407` (RGB), `6408` (RGBA), `6409` (LUMINANCE), and `6410` (LUMINANCE_ALPHA).  Defaults to same value as format.",
             "gltf_webgl" : "`texImage2D()` internalFormat parameter",
             "oneOf" : [
                 {
@@ -86,7 +85,8 @@
                     ],
                     "description" : "LUMINANCE_ALPHA - The texture's internal format."
                 }
-            ]
+            ],
+            "short_description" : "The texture's internal format."
         },
         "sampler" : {
             "allOf" : [
@@ -105,9 +105,8 @@
             "description" : "The ID of the image used by this texture."
         },
         "target" : {
-            "description" : "The target that the WebGL texture should be bound to.",
+            "description" : "The target that the WebGL texture should be bound to.  Valid values correspond to WebGL enums: `3553` (TEXTURE_2D).",
             "default" : 3553,
-            "gltf_detailedDescription" : "The target that the WebGL texture should be bound to.  Valid values correspond to WebGL enums: `3553` (TEXTURE_2D).",
             "gltf_webgl" : "`bindTexture()`",
             "oneOf" : [
                 {
@@ -116,12 +115,12 @@
                     ],
                     "description" : "TEXTURE_2D - The target that the WebGL texture should be bound to."
                 }
-            ]
+            ],
+            "short_description" : "The target that the WebGL texture should be bound to."
         },
         "type" : {
-            "description" : "Texel datatype.",
+            "description" : "Texel datatype.  Valid values correspond to WebGL enums: `5121` (UNSIGNED_BYTE), `33635` (UNSIGNED_SHORT_5_6_5), `32819` (UNSIGNED_SHORT_4_4_4_4), and `32820` (UNSIGNED_SHORT_5_5_5_1).",
             "default" : 5121,
-            "gltf_detailedDescription" : "Texel datatype.  Valid values correspond to WebGL enums: `5121` (UNSIGNED_BYTE), `33635` (UNSIGNED_SHORT_5_6_5), `32819` (UNSIGNED_SHORT_4_4_4_4), and `32820` (UNSIGNED_SHORT_5_5_5_1).",
             "gltf_webgl" : "`texImage2D()` type parameter",
             "oneOf" : [
                 {
@@ -148,7 +147,8 @@
                     ],
                     "description" : "UNSIGNED_SHORT_5_5_5_1 - Texel datatype."
                 }
-            ]
+            ],
+            "short_description" : "Texel datatype."
         }
     },
     "additionalProperties" : false,
