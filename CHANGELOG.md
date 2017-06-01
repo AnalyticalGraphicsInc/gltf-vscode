@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.0.1 - Unreleased
+
+* Update Babylon engine to fix glTF 1.0 support.
+
 ### 2.0.0 - 2017-05-30
 
 * Support for glTF 2.0 files added.
