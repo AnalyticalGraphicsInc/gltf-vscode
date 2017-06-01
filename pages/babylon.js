@@ -1,3 +1,4 @@
+
 var BabylonPreview = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
@@ -45,7 +46,8 @@ var BabylonPreview = function() {
 
         var rootPath = document.getElementById("gltfRootPath").textContent;
         var fileName = document.getElementById("gltfFileName").textContent;
-
+        
+        BABYLON.GLTFFileLoader.IncrementalLoading = false;
         BABYLON.SceneLoader.Load(rootPath, fileName, engine, function(newScene) {
             scene = newScene;
             scene.createDefaultCameraOrLight(true);
