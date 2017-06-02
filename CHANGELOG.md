@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.0.2 - UNRELEASED
+
+* Updated Cesium engine to 1.34 and leveraged the new [`basepath`](https://github.com/AnalyticalGraphicsInc/cesium/issues/5320) option in `Cesium.Model.fromGltf`.
+* Updated Babylon.js engine to get a [tangent fix](https://github.com/BabylonJS/Babylon.js/pull/2222).
+
 ### 2.0.1 - 2017-06-01
 
 * Update Babylon engine to fix glTF 1.0 support.
