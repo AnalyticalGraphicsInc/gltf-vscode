@@ -7,3 +7,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to gltf-
 
 ## [Individual CLA](https://github.com/AnalyticalGraphicsInc/cesium/blob/master/Documentation/Contributors/CLAs/individual-cla-agi-v1.0.txt)
    * [Howard Wolosky](https://github.com/HowardWolosky)
+   * [David Catuhe](https://github.com/deltakosh)

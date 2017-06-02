@@ -1,14 +1,17 @@
 # Change Log
 
-### 2.0.1 - Unreleased
+### 2.0.1 - 2017-06-01
 
 * Update Babylon engine to fix glTF 1.0 support.
+* Add some forgotten items to the 2.0.0 notes below that were already released.
 
 ### 2.0.0 - 2017-05-30
 
-* Support for glTF 2.0 files added.
+* Support for glTF 2.0 file preview and 2.0 schema validation added.
 * Multiple 3D rendering engines now available for the preview window (Cesium, Babylon.js and Three.js)
 * Users can set their default 3D rendering engine in preferences.
+* glTF schema long descriptions used in hover popups for both 1.0 and 2.0.
+* The glTF preview window automatically reloads after saving a glTF file.
 
 ### 1.0.5 - 2017-05-20
 

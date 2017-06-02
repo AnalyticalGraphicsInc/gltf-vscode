@@ -46,7 +46,7 @@ var BabylonPreview = function() {
 
         var rootPath = document.getElementById("gltfRootPath").textContent;
         var fileName = document.getElementById("gltfFileName").textContent;
-        
+
         BABYLON.GLTFFileLoader.IncrementalLoading = false;
         BABYLON.SceneLoader.Load(rootPath, fileName, engine, function(newScene) {
             scene = newScene;
