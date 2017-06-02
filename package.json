@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -31,6 +31,7 @@
                         "type": "string",
                         "default": "Cesium",
                         "enum": [
+                            "Babylon.js",
                             "Cesium",
                             "Three.js"
                         ],
