@@ -130,7 +130,7 @@ var CesiumPreview = function() {
         resize();
 
         var gltfFileName = document.getElementById('gltfFileName').textContent;
-        var gltfRootPath = "file://" + document.getElementById('gltfRootPath').textContent;
+        var gltfRootPath = "file:///" + document.getElementById('gltfRootPath').textContent;
 
         try {
             clearWarning();
