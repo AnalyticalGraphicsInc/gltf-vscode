@@ -37,8 +37,8 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 Press <kbd>ALT</kbd> + <kbd>G</kbd> on your glTF file, or look for the command `Preview 3D Model` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
-The Babylon.js and Three.js engines will preview the saved model as opposed to
-the current content in your open VS Code tab.  The Cesium engine will first try
+The Three.js engine will preview the saved model as opposed to
+the current content in your open VS Code tab.  The Babylon and Cesium engines will first try
 to preview what is currently in your tab, and only if that fails will it fall
 back on displaying the version of the model saved on disk.
 

@@ -45,10 +45,10 @@ var BabylonPreview = function() {
         engine.enableOfflineSupport = false;
 
         var rootPath = document.getElementById("gltfRootPath").textContent;
-        var fileName = document.getElementById("gltfFileName").textContent;
+        var gltfContent = document.getElementById('gltf').textContent;
 
         BABYLON.GLTFFileLoader.IncrementalLoading = false;
-        BABYLON.SceneLoader.Load(rootPath, fileName, engine, function(newScene) {
+        BABYLON.SceneLoader.Load(rootPath, 'data:' + gltfContent, engine, function(newScene) {
             scene = newScene;
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);

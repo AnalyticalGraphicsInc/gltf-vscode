@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.0.3 - UNRELEASED
+
+* Update Babylon preview to preview current tab content instead of saved file content, like the way Cesium preview works.
+
 ### 2.0.2 - 2017-06-06
 
 * Updated Cesium engine to 1.34 and leveraged the new [`basepath`](https://github.com/AnalyticalGraphicsInc/cesium/issues/5320) option in `Cesium.Model.fromGltf`.
