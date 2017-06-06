@@ -52,7 +52,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         var gltfMajorVersion = 1;
         try {
             const gltf = JSON.parse(gltfContent);
-            if (gltf && gltf.asset && gltf.asset.version && gltf.asset.version && gltf.asset.version[0] === '2') {
+            if (gltf && gltf.asset && gltf.asset.version && gltf.asset.version[0] === '2') {
                 gltfMajorVersion = 2;
             }
         } catch (ex) { }
