@@ -74,7 +74,7 @@
         },
         "normalized" : {
             "type" : "boolean",
-            "description" : "Specifies whether integer data values should be normalized (`true`) to [0, 1] (for unsigned types) or [-1, 1] (for signed types), or converted directly (`false`) when they are accessed. This property is defined only for accessors that contain vertex attributes or morph weights animation data.",
+            "description" : "Specifies whether integer data values should be normalized (`true`) to [0, 1] (for unsigned types) or [-1, 1] (for signed types), or converted directly (`false`) when they are accessed. This property is defined only for accessors that contain vertex attributes or animation output data.",
             "default" : false,
             "gltf_webgl" : "`vertexAttribPointer()` normalized parameter",
             "short_description" : "Specifies whether integer data values should be normalized."
