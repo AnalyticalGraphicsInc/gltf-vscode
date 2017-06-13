@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.0.3 - UNRELEASED
+### 2.0.3 - 2017-06-12
 
 * Update Babylon preview to preview current tab content instead of saved file content, like the way Cesium preview works.
 
