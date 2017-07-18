@@ -15,7 +15,7 @@ of this VS Code extension.
    * Loaders
       * glTF
    * Release
-      * v3.0 preview
+      * v3.1 preview (or whatever the "preview" version is)
    * Minification
       * Minified
 
