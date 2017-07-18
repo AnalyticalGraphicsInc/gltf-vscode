@@ -30,6 +30,22 @@ var BabylonPreview = function() {
         engine.resize();
     }
 
+    var extensionRootPath = document.getElementById("extensionRootPath").textContent;
+
+    function updateModelReflections() {
+        var hdrTexture = new BABYLON.HDRCubeTexture(extensionRootPath + "environments/babylon/country.babylon.hdr", scene);
+        scene.meshes.forEach(function (mesh) {
+            var material = mesh.material;
+            if (material instanceof BABYLON.MultiMaterial) {
+                material.subMaterials.forEach(function (subMaterial) {
+                    if (subMaterial instanceof BABYLON.PBRMaterial) {
+                        subMaterial.reflectionTexture = hdrTexture;
+                    }
+                });
+            }
+        });
+    }
+
     this.startPreview = function() {
         var errorContainer = document.getElementById('errorContainer');
         window.onerror = function(error) {
@@ -52,6 +68,9 @@ var BabylonPreview = function() {
             scene = newScene;
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
+            // TODO: This requires a newer version of Babylon.
+            //scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("environments/babylon/countrySpecularHDR.dds", scene);
+            updateModelReflections();
             engine.runRenderLoop(render);
         }, null, window.onerror);
 
