@@ -10,7 +10,7 @@ var engines = [
 // values will always be reflected here.
 var Options = function() {
     this.engine = document.getElementById("defaultEngine").textContent;
-    this.help = "Press 'h' to show / hide"
+    this.help = "Press 'h' to show / hide";
 };
 
 var options = new Options();

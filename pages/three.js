@@ -30,9 +30,8 @@ var ThreePreview = function() {
 
         scene = new THREE.Scene();
 
-        defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 20000);
+        defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
 
-        //defaultCamera.up = new THREE.Vector3( 0, 1, 0 );
         scene.add(defaultCamera);
         camera = defaultCamera;
 
@@ -44,29 +43,30 @@ var ThreePreview = function() {
             var ambient = new THREE.AmbientLight(0x222222);
             scene.add(ambient);
 
-            var directionalLight = new THREE.DirectionalLight(0xdddddd);
-            directionalLight.position.set(0, 0, 1).normalize();
+            var directionalLight = new THREE.DirectionalLight(0xcccccc);
+            directionalLight.position.set(-1, 0, -2).normalize();
             scene.add(directionalLight);
 
-            spot1 = new THREE.SpotLight(0xffffff, 1);
-            spot1.position.set(10, 20, 10);
-            spot1.angle = 0.25;
-            spot1.distance = 1024;
-            spot1.penumbra = 0.75;
-
             if (sceneInfo.shadows) {
+                spot1 = new THREE.SpotLight(0xffffff, 1);
+                spot1.position.set(10, 20, 10);
+                spot1.angle = 0.25;
+                spot1.distance = 1024;
+                spot1.penumbra = 0.75;
                 spot1.castShadow = true;
                 spot1.shadow.bias = 0.0001;
                 spot1.shadow.mapSize.width = 2048;
                 spot1.shadow.mapSize.height = 2048;
+                scene.add(spot1);
+            } else {
+                var directionalLight2 = new THREE.DirectionalLight(0xdddddd);
+                directionalLight2.position.set(1, 2, 2).normalize();
+                scene.add(directionalLight2);
             }
-
-            scene.add(spot1);
-
         }
 
         // RENDERER
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
         renderer.setClearColor(0x222222);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
