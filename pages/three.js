@@ -116,6 +116,24 @@ var ThreePreview = function() {
 
             status.innerHTML = "Load time: " + (performance.now() - loadStartTime).toFixed(2) + " ms.";
 
+            var extensionRootPath = document.getElementById('extensionRootPath').textContent;
+            var envPath = extensionRootPath + 'environments/threejs/Park2/';
+            var envFormat = '.jpg';
+
+            var envMap = new THREE.CubeTextureLoader().load([
+                envPath + 'posx' + envFormat, envPath + 'negx' + envFormat,
+                envPath + 'posy' + envFormat, envPath + 'negy' + envFormat,
+                envPath + 'posz' + envFormat, envPath + 'negz' + envFormat
+            ]);
+            envMap.format = THREE.RGBFormat;
+            object.traverse(function(node) {
+                if (node.material && 'envMap' in node.material) {
+                    node.material.envMap = envMap;
+                    node.material.normalScale.x = -1; // This fixes normal maps for ThreeJS.
+                    node.material.needsUpdate = true;
+                }
+            });
+
             if (sceneInfo.cameraPos)
                 defaultCamera.position.copy(sceneInfo.cameraPos);
 
