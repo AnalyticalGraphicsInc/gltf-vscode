@@ -41,16 +41,16 @@ var BabylonPreview = function() {
         BABYLON.SceneLoader.ShowLoadingScreen = false;
         canvas = document.getElementById("renderCanvas");
         engine = new BABYLON.Engine(canvas, true);
-        scene = null;
         engine.enableOfflineSupport = false;
+        scene = new BABYLON.Scene(engine);
+        scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
 
         var extensionRootPath = document.getElementById("extensionRootPath").textContent;
         var rootPath = document.getElementById("gltfRootPath").textContent;
         var gltfContent = document.getElementById('gltf').textContent;
 
         BABYLON.GLTFFileLoader.IncrementalLoading = false;
-        BABYLON.SceneLoader.Load(rootPath, 'data:' + gltfContent, engine, function(newScene) {
-            scene = newScene;
+        BABYLON.SceneLoader.Append(rootPath, 'data:' + gltfContent, scene, function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
