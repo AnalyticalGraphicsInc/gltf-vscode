@@ -45,6 +45,16 @@
                             "Three.js"
                         ],
                         "description": "The default 3D engine that will be used when previewing a glTF 2.0 model.  You can always change the current engine within the preview pane."
+                    },
+                    "glTF.Babylon.environment": {
+                        "type": "string",
+                        "default": "{extensionRootPath}/environments/babylon/countrySpecularHDR.dds",
+                        "description": "The path to a BabylonJS-ready DDS environment file."
+                    },
+                    "glTF.Three.environment": {
+                        "type": "string",
+                        "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
+                        "description": "The path to a set of environment cube faces usable by ThreeJS."
                     }
                 }
             },

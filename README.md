@@ -65,8 +65,9 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 ## Extension Settings
 
 * `glTF.defaultV1Engine` - Choose the default 3D engine that will render a glTF 1.0 model in the preview window.
-
 * `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
+* `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.
+* `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.
 
 ## Source code
 

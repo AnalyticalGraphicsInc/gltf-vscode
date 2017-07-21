@@ -45,7 +45,7 @@ var BabylonPreview = function() {
         scene = new BABYLON.Scene(engine);
         scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
 
-        var extensionRootPath = document.getElementById("extensionRootPath").textContent;
+        var defaultBabylonReflection = document.getElementById("defaultBabylonReflection").textContent;
         var rootPath = document.getElementById("gltfRootPath").textContent;
         var gltfContent = document.getElementById('gltf').textContent;
 
@@ -54,7 +54,7 @@ var BabylonPreview = function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-                extensionRootPath + 'environments/babylon/countrySpecularHDR.dds', scene);
+                defaultBabylonReflection, scene);
             engine.runRenderLoop(render);
         }, null, window.onerror);
 

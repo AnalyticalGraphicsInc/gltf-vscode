@@ -116,9 +116,9 @@ var ThreePreview = function() {
 
             status.innerHTML = "Load time: " + (performance.now() - loadStartTime).toFixed(2) + " ms.";
 
-            var extensionRootPath = document.getElementById('extensionRootPath').textContent;
-            var envPath = extensionRootPath + 'environments/threejs/Park2/';
-            var envFormat = '.jpg';
+            var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
+            var envPath = defaultThreeReflection[0];
+            var envFormat = defaultThreeReflection[1];
 
             var envMap = new THREE.CubeTextureLoader().load([
                 envPath + 'posx' + envFormat, envPath + 'negx' + envFormat,
