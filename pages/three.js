@@ -30,6 +30,7 @@ var ThreePreview = function() {
 
         scene = new THREE.Scene();
 
+        // Note: The near and far planes can be set this way due to the use of "logarithmicDepthBuffer" in the renderer below.
         defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
 
         scene.add(defaultCamera);
