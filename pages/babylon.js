@@ -7,6 +7,7 @@ var BabylonPreview = function() {
     var engine = null;
     var scene = null;
     var skybox = null;
+    var skyboxBlur = 0.0;
 
     /**
     * @function cleanup
@@ -60,7 +61,8 @@ var BabylonPreview = function() {
             backgroundGuiElement.style.display = 'block';
             function applyBackground(showBackground) {
                 if (showBackground) {
-                    skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true);
+                    skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true,
+                        (scene.activeCamera.maxZ - scene.activeCamera.minZ) / 2, skyboxBlur);
                 } else if (skybox) {
                     skybox.material.reflectionTexture.dispose();
                     skybox.dispose();
