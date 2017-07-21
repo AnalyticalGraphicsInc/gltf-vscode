@@ -6,6 +6,7 @@ var BabylonPreview = function() {
     var canvas = null;
     var engine = null;
     var scene = null;
+    var skybox = null;
 
     /**
     * @function cleanup
@@ -55,6 +56,20 @@ var BabylonPreview = function() {
             scene.activeCamera.attachControl(canvas);
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
                 defaultBabylonReflection, scene);
+
+            backgroundGuiElement.style.display = 'block';
+            function applyBackground(showBackground) {
+                if (showBackground) {
+                    skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true);
+                } else if (skybox) {
+                    skybox.material.reflectionTexture.dispose();
+                    skybox.dispose();
+                    skybox = null;
+                }
+            }
+            applyBackground(options.showBackground);
+            options.backgroundGuiCallback = applyBackground;
+
             engine.runRenderLoop(render);
         }, null, window.onerror);
 
@@ -68,6 +83,7 @@ var BabylonPreview = function() {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
+    options.backgroundGuiCallback = function() {};
     babylonPreview.cleanup();
 }
 

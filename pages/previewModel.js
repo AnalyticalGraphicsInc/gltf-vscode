@@ -10,10 +10,14 @@ var engines = [
 // values will always be reflected here.
 var Options = function() {
     this.engine = document.getElementById("defaultEngine").textContent;
+    this.showBackground = false;
     this.help = "Press 'h' to show / hide";
+    this.backgroundGuiCallback = function() {};
 };
 
 var options = new Options();
+var mainGui;
+var backgroundGuiElement;
 
 // The id that we'll add to any element that we're dynamically adding/removing
 // from the head when the active 3D engine changes.
@@ -120,13 +124,14 @@ function updatePreview() {
     // give them all the same special ID so that we can easily remove them later.
     // We then do something similar for link (CSS) elements.
     clearRemovableHeadElements();
-    var scriptElements = content.getElementsByTagName('script')
-    for (var i = 0; i < scriptElements.length; i++) {
+    var i;
+    var scriptElements = content.getElementsByTagName('script');
+    for (i = 0; i < scriptElements.length; i++) {
         addHeadScript(scriptElements[i].src, scriptElements[i].innerHTML);
     }
 
-    var linkElements = content.getElementsByTagName('link')
-    for (var i = 0; i < linkElements.length; i++) {
+    var linkElements = content.getElementsByTagName('link');
+    for (i = 0; i < linkElements.length; i++) {
         addHeadLink(linkElements[i].href, linkElements[i].innerHTML);
     }
 }
@@ -214,7 +219,12 @@ function initPreview()
     // Create and initialize the dat.gui menu UI
     var gui = new dat.GUI();
     gui.add(options, "engine", engines).onChange(updatePreview);
+    var backgroundGui = gui.add(options, "showBackground").name('show background').onChange(
+        function() { options.backgroundGuiCallback(options.showBackground); });
     gui.add(options, "help");
+
+    mainGui = gui;
+    backgroundGuiElement = backgroundGui.__li;
 
     updatePreview();
 }

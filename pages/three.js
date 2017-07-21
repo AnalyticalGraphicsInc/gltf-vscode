@@ -135,6 +135,13 @@ var ThreePreview = function() {
                 }
             });
 
+            backgroundGuiElement.style.display = 'block';
+            function applyBackground(showBackground) {
+                scene.background = showBackground ? envMap : null;
+            }
+            applyBackground(options.showBackground);
+            options.backgroundGuiCallback = applyBackground;
+
             if (sceneInfo.cameraPos)
                 defaultCamera.position.copy(sceneInfo.cameraPos);
 
@@ -264,6 +271,7 @@ var ThreePreview = function() {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
+    options.backgroundGuiCallback = function() {};
     threePreview.cleanup();
 }
 

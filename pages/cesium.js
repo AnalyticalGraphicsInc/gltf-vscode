@@ -105,6 +105,7 @@ var CesiumPreview = function() {
     };
 
     this.startPreview = function() {
+        backgroundGuiElement.style.display = 'none';
         canvas = document.getElementById('mainCanvas');
         canvas.addEventListener('contextmenu', function() {
             return false;
