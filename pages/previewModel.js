@@ -124,15 +124,14 @@ function updatePreview() {
     // give them all the same special ID so that we can easily remove them later.
     // We then do something similar for link (CSS) elements.
     clearRemovableHeadElements();
-    var i;
     var scriptElements = content.getElementsByTagName('script');
-    for (i = 0; i < scriptElements.length; i++) {
+    for (var i = 0; i < scriptElements.length; i++) {
         addHeadScript(scriptElements[i].src, scriptElements[i].innerHTML);
     }
 
     var linkElements = content.getElementsByTagName('link');
-    for (i = 0; i < linkElements.length; i++) {
-        addHeadLink(linkElements[i].href, linkElements[i].innerHTML);
+    for (var j = 0; j < linkElements.length; j++) {
+        addHeadLink(linkElements[j].href, linkElements[j].innerHTML);
     }
 }
 
