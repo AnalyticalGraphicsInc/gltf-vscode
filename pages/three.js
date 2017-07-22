@@ -30,9 +30,9 @@ var ThreePreview = function() {
 
         scene = new THREE.Scene();
 
-        defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1, 20000);
+        // Note: The near and far planes can be set this way due to the use of "logarithmicDepthBuffer" in the renderer below.
+        defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
 
-        //defaultCamera.up = new THREE.Vector3( 0, 1, 0 );
         scene.add(defaultCamera);
         camera = defaultCamera;
 
@@ -44,29 +44,30 @@ var ThreePreview = function() {
             var ambient = new THREE.AmbientLight(0x222222);
             scene.add(ambient);
 
-            var directionalLight = new THREE.DirectionalLight(0xdddddd);
-            directionalLight.position.set(0, 0, 1).normalize();
+            var directionalLight = new THREE.DirectionalLight(0xcccccc);
+            directionalLight.position.set(-1, 0, -2).normalize();
             scene.add(directionalLight);
 
-            spot1 = new THREE.SpotLight(0xffffff, 1);
-            spot1.position.set(10, 20, 10);
-            spot1.angle = 0.25;
-            spot1.distance = 1024;
-            spot1.penumbra = 0.75;
-
             if (sceneInfo.shadows) {
+                spot1 = new THREE.SpotLight(0xffffff, 1);
+                spot1.position.set(10, 20, 10);
+                spot1.angle = 0.25;
+                spot1.distance = 1024;
+                spot1.penumbra = 0.75;
                 spot1.castShadow = true;
                 spot1.shadow.bias = 0.0001;
                 spot1.shadow.mapSize.width = 2048;
                 spot1.shadow.mapSize.height = 2048;
+                scene.add(spot1);
+            } else {
+                var directionalLight2 = new THREE.DirectionalLight(0xdddddd);
+                directionalLight2.position.set(1, 2, 2).normalize();
+                scene.add(directionalLight2);
             }
-
-            scene.add(spot1);
-
         }
 
         // RENDERER
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
         renderer.setClearColor(0x222222);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -115,6 +116,31 @@ var ThreePreview = function() {
             var object = gltf.scene;
 
             status.innerHTML = "Load time: " + (performance.now() - loadStartTime).toFixed(2) + " ms.";
+
+            var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
+            var envPath = defaultThreeReflection[0];
+            var envFormat = defaultThreeReflection[1];
+
+            var envMap = new THREE.CubeTextureLoader().load([
+                envPath + 'posx' + envFormat, envPath + 'negx' + envFormat,
+                envPath + 'posy' + envFormat, envPath + 'negy' + envFormat,
+                envPath + 'posz' + envFormat, envPath + 'negz' + envFormat
+            ]);
+            envMap.format = THREE.RGBFormat;
+            object.traverse(function(node) {
+                if (node.material && 'envMap' in node.material) {
+                    node.material.envMap = envMap;
+                    node.material.normalScale.x = -1; // This fixes normal maps for ThreeJS.
+                    node.material.needsUpdate = true;
+                }
+            });
+
+            backgroundGuiElement.style.display = 'block';
+            function applyBackground(showBackground) {
+                scene.background = showBackground ? envMap : null;
+            }
+            applyBackground(options.showBackground);
+            options.backgroundGuiCallback = applyBackground;
 
             if (sceneInfo.cameraPos)
                 defaultCamera.position.copy(sceneInfo.cameraPos);
@@ -245,6 +271,7 @@ var ThreePreview = function() {
 * This is called right before the active engine for the preview window is switched.
 */
 function cleanup() {
+    options.backgroundGuiCallback = function() {};
     threePreview.cleanup();
 }
 

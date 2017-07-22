@@ -64,6 +64,11 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
+        const defaultBabylonReflection = String(vscode.workspace.getConfiguration('glTF.Babylon')
+            .get('environment')).replace('{extensionRootPath}', extensionRootPath.replace(/\/$/, ''));
+        const defaultThreeReflection = String(vscode.workspace.getConfiguration('glTF.Three')
+            .get('environment')).replace('{extensionRootPath}', extensionRootPath.replace(/\/$/, ''));
+
         // We store the alternate HTML content for each of the 3D engines in a script tag within the Head of the
         // preview HTML since we can't do any page navigations.  We need to encode the content so that the enclosing
         // script tag doesn't get confused.
@@ -91,6 +96,12 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     <!-- Allows us to access the name of the engine that the user has selected in their VS Code preference
          to be the one that is used for displaying the 3D model by default. -->
     <script id="defaultEngine" type="text/plain">${defaultEngine}</script>
+
+    <!-- Allows us to access the name of the default reflection environment for BabylonJS. -->
+    <script id="defaultBabylonReflection" type="text/plain">${defaultBabylonReflection}</script>
+
+    <!-- Allows us to access the name of the default reflection environment for ThreeJS. -->
+    <script id="defaultThreeReflection" type="text/plain">${defaultThreeReflection}</script>
 
     <!-- This provides a simple menu UI that we can use to allow users to switch the display engine.  -->
     <script type="text/javascript" src="${this.getFilePath('pages/dat.gui.min.js')}"></script>
