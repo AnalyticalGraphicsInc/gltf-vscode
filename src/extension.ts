@@ -10,6 +10,15 @@ import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 
+function checkValidEditor() : boolean {
+    if (vscode.window.activeTextEditor === undefined) {
+        vscode.window.showErrorMessage('Document too large (or no editor selected). ' +
+            '5 MB limit on document size, see: https://github.com/Microsoft/vscode/issues/31078');
+        return false;
+    }
+    return true;
+}
+
 function pointerContains(pointer, lineNum : number, columnNum : number) : boolean {
     const start = pointer.key || pointer.value;
     if ((start.line > lineNum) ||
@@ -75,6 +84,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Inspect the contents of a uri or dataURI.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
         const map = tryGetJsonMap();
         if (!map) {
             return;
@@ -124,6 +137,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Import a filename URI into a dataURI.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.importUri', () => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
         const map = tryGetJsonMap();
         if (!map) {
             return;
@@ -181,6 +198,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     context.subscriptions.push(vscode.commands.registerCommand('gltf.exportUri', () => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
         const map = tryGetJsonMap();
         if (!map) {
             return;
@@ -248,6 +269,10 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(gltfPreviewRegistration);
 
     context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
         const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
         const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
         vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${fileName}]`)
@@ -273,5 +298,4 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated.
 export function deactivate() {
-    console.log('Extension "gltf-vscode" deactivated.');
 }
