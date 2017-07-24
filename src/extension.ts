@@ -13,7 +13,12 @@ import * as fs from 'fs';
 function checkValidEditor() : boolean {
     if (vscode.window.activeTextEditor === undefined) {
         vscode.window.showErrorMessage('Document too large (or no editor selected). ' +
-            '5 MB limit on document size, see: https://github.com/Microsoft/vscode/issues/31078');
+            'Click \'More info\' for details via GitHub.', 'More info').then(choice => {
+                if (choice === 'More info') {
+                    let uri = Uri.parse('https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/README.md#compatibiliy-and-known-size-limitations');
+                    vscode.commands.executeCommand('vscode.open', uri);
+                }
+            });
         return false;
     }
     return true;
