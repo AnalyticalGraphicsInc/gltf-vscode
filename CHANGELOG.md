@@ -4,6 +4,7 @@
 
 * Update Babylon preview to latest v3.1 preview
 * Add reflection maps to BabylonJS and ThreeJS previews
+* Added message for glTF files that are too large for VSCode's extension host, with link to GitHub [issue](https://github.com/Microsoft/vscode/issues/31078).  Until that is fixed upstream, glTFs can be kept under the max size by separating the textures out.  External textures and bin files do *not* count against the size limitation, which applies only to the JSON portion of the glTF.
 
 ### 2.0.3 - 2017-06-12
 
