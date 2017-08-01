@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.0.5 - Unreleased
+### 2.0.5 - 2017-08-01
 
 * Update Cesium to 1.36, which adds glTF 2.0 support to the Cesium preview window.
 
