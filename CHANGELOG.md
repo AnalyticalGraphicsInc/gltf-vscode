@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.0.5 - Unreleased
+
+* Update Cesium to 1.36, which adds glTF 2.0 support to the Cesium preview window.
+
 ### 2.0.4 - 2017-07-24
 
 * Update Babylon preview to latest v3.1 preview

@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -42,6 +42,7 @@
                         "default": "Babylon.js",
                         "enum": [
                             "Babylon.js",
+                            "Cesium",
                             "Three.js"
                         ],
                         "description": "The default 3D engine that will be used when previewing a glTF 2.0 model.  You can always change the current engine within the preview pane."
