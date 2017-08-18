@@ -118,6 +118,10 @@ function updatePreview() {
     var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
     content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
+    // Cesium has some external assets that it will need to locate.  We configure the hint here,
+    // before any of the 3D engines have loaded.
+    window.CESIUM_BASE_URL = extensionRootPath + 'engines/Cesium/';
+
     // Now, unfortunately, scripts that are added to the DOM won't be executed, but if
     // we add them to the head, they will.  So, we'll iterate through all script tags
     // in the code we just inserted and we'll add them to the Head.  Along the way, we'll
