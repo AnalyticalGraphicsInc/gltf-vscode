@@ -9,6 +9,7 @@ import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
+var validator = require('../../validator/gltf_validator.dart.js');
 
 function checkValidEditor() : boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -278,9 +279,28 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${fileName}]`)
+        const fileName = vscode.window.activeTextEditor.document.fileName;
+        const baseName = path.basename(fileName);
+        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
+
+
+        //// BEGIN TEMPORARY HOOKUP
+        var gltfData = Buffer.from(vscode.window.activeTextEditor.document.getText());
+
+        validator.validate(baseName, new Uint8Array(gltfData), function (result) {
+            // Validation report in object form
+            console.log('======== glTF Validator results ========');
+            console.log(JSON.stringify(result, null, ' '));
+        }, function (result) {
+            // Validator's error (unknown data format)
+            console.warn('Validator had problems.');
+            console.warn(result);
+        });
+        //// END TEMPORARY HOOKUP
+
+
+
+        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${baseName}]`)
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
 
         // This can be used to debug the preview HTML.
