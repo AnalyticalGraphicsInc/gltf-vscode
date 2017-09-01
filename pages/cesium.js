@@ -32,6 +32,40 @@ var CesiumPreview = function() {
         }
     }
 
+    function addAnimUpdate(model, anim) {
+        anim.active.subscribe(function(newValue) {
+            if (!newValue) {
+                model.activeAnimations.remove(anim.animation);
+                anim.animation = undefined;
+            } else {
+                anim.animation = model.activeAnimations.add({
+                    name: anim.id,
+                    loop: Cesium.ModelAnimationLoop.REPEAT
+                });
+            }
+        });
+    }
+
+    function updateAnimations(model) {
+        var ko = Cesium.knockout;
+        var animationUI = document.getElementById('animationUI');
+        var animationIds = model._animationIds;
+        var animations = [];
+
+        for (var i = 0; i < animationIds.length; i++) {
+            var anim = {
+                id: animationIds[i],
+                active: ko.observable(false)
+            };
+            addAnimUpdate(model, anim);
+            animations.push(anim);
+        }
+        var animationViewModel = {
+            animations: ko.observableArray(animations)
+        };
+        ko.applyBindings(animationViewModel, animationUI);
+    }
+
     function startRenderLoop() {
         if (!enabled) {
             return;
@@ -90,6 +124,8 @@ var CesiumPreview = function() {
             if (resetCamera) {
                 setCamera(scene, model);
             }
+
+            updateAnimations(model);
         }).otherwise(function(e) {
             window.onerror('Error: ' + e);
         });

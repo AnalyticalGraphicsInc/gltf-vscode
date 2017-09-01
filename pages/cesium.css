@@ -13,6 +13,33 @@
     left: 0;
 }
 
+#animationUI {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(42, 42, 42, 0.7);
+    color: #edffff;
+    padding: 5px 10px;
+}
+
+#animationUI h3 {
+    margin: 4px auto;
+}
+
+#animationUI label {
+    display: block;
+    cursor: pointer;
+}
+
+#animationUI label:hover {
+    background: rgba(200, 200, 200, 0.3);
+}
+
+.animationList {
+    overflow-y: auto;
+    max-height: 30vh;
+}
+
 #errorContainer {
     display: none;
     position: absolute;
