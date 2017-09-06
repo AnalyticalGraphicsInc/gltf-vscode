@@ -63,6 +63,16 @@ var CesiumPreview = function() {
         var animationViewModel = {
             animations: ko.observableArray(animations)
         };
+        animationViewModel.playAll = function() {
+            animationViewModel.animations().forEach(function(anim) {
+                anim.active(true);
+            });
+        };
+        animationViewModel.playNone = function() {
+            animationViewModel.animations().forEach(function(anim) {
+                anim.active(false);
+            });
+        };
         ko.applyBindings(animationViewModel, animationUI);
     }
 

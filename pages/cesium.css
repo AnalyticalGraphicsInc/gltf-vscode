@@ -24,6 +24,7 @@
 
 #animationUI h3 {
     margin: 4px auto;
+    text-align: center;
 }
 
 #animationUI label {
@@ -35,9 +36,28 @@
     background: rgba(200, 200, 200, 0.3);
 }
 
+#animationUI input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
 .animationList {
     overflow-y: auto;
     max-height: 30vh;
+}
+
+#animationUI button {
+    border: none;
+    padding: 0.4rem 1rem;
+    margin: 0.2rem;
+    background: #777;
+    color: #edffff;
+    cursor: pointer;
+}
+
+#animationUI button:hover {
+    background: #999;
 }
 
 #errorContainer {
