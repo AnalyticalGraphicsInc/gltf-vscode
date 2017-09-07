@@ -39,7 +39,7 @@ var CesiumPreview = function() {
                 anim.animation = undefined;
             } else {
                 anim.animation = model.activeAnimations.add({
-                    name: anim.id,
+                    name: anim.index,
                     loop: Cesium.ModelAnimationLoop.REPEAT
                 });
             }
@@ -49,12 +49,13 @@ var CesiumPreview = function() {
     function updateAnimations(model) {
         var ko = Cesium.knockout;
         var animationUI = document.getElementById('animationUI');
-        var animationIds = model._animationIds;
+        var gltfAnimations = model.gltf.animations;
         var animations = [];
 
-        for (var i = 0; i < animationIds.length; i++) {
+        for (var i = 0; i < gltfAnimations.length; i++) {
             var anim = {
-                id: animationIds[i],
+                index: i,
+                name: gltfAnimations[i].name || i,
                 active: ko.observable(false)
             };
             addAnimUpdate(model, anim);
