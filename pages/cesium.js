@@ -195,15 +195,3 @@ var CesiumPreview = function() {
         }
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    cesiumPreview.cleanup();
-}
-
-var cesiumPreview = new CesiumPreview();
-cesiumPreview.startPreview();

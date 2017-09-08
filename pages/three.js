@@ -17,15 +17,7 @@ var ThreePreview = function() {
     var clock = new THREE.Clock();
     var sceneList = null;
 
-    window.onerror = null;
-
-    function onload() {
-        switchScene(0);
-        animate();
-        window.addEventListener('resize', onWindowResize, false);
-    }
-
-    function initScene(index) {
+    function initScene() {
         container = document.getElementById('container');
 
         scene = new THREE.Scene();
@@ -220,19 +212,13 @@ var ThreePreview = function() {
         renderer.render(scene, camera);
     }
 
-    function switchScene(index) {
-        cleanup();
-        enabled = true;
-
-        initScene(index);
-    }
-
     /**
     * @function cleanup
     * Perform any cleanup that needs to happen to stop rendering the current model.
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
+        options.backgroundGuiCallback = function() {};
         enabled = false;
 
         if (container && renderer) {
@@ -261,19 +247,9 @@ var ThreePreview = function() {
             }
         ];
 
-        onload();
+        enabled = true;
+        initScene();
+        animate();
+        window.addEventListener('resize', onWindowResize, false);
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    options.backgroundGuiCallback = function() {};
-    threePreview.cleanup();
-}
-
-var threePreview = new ThreePreview();
-threePreview.startPreview();

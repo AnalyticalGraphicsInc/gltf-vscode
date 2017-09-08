@@ -5,6 +5,21 @@ var engines = [
     "Three.js"
 ];
 
+var engineInfo = {
+    'Babylon.js': {
+        html: 'babylonHtml',
+        view: BabylonPreview
+    },
+    'Cesium': {
+        html: 'cesiumHtml',
+        view: CesiumPreview
+    },
+    'Three.js': {
+        html: 'threeHtml',
+        view: ThreePreview
+    }
+};
+
 // This is the main interface object for dat.gui.  We define the initial
 // default values for each option within here, and the current menu
 // values will always be reflected here.
@@ -18,6 +33,7 @@ var Options = function() {
 var options = new Options();
 var mainGui;
 var backgroundGuiElement;
+var activeView;
 
 // The id that we'll add to any element that we're dynamically adding/removing
 // from the head when the active 3D engine changes.
@@ -89,32 +105,22 @@ function addHeadLink(href, body) {
 }
 
 /**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-* This method will get overridden by whatever 3D engine is currently loaded.
-* It has to be defined here though since we always call cleanup before switching
-* engines, so on initial load, this is the version that will be called.
-*/
-function cleanup() {
-
-}
-
-/**
 * @function updatePreview
 * Stops any any ction from the active engine, and then updates
 * the DOM to use the newly selected engine.
 */
 function updatePreview() {
-    cleanup();
+    if (activeView) {
+        activeView.cleanup();
+    }
     clearWarning();
 
     var content = document.getElementById("content");
 
     // Update the DOM's "content" div with the HTML content for the currently selected
     // 3D engine.
-    var engineElementId = options.engine.toLocaleLowerCase();
-    var engineHtml = decodeURI(document.getElementById(engineElementId).textContent);
+    var activeEngineInfo = engineInfo[options.engine];
+    var engineHtml = decodeURI(document.getElementById(activeEngineInfo.html).textContent);
     var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
     content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
@@ -122,21 +128,8 @@ function updatePreview() {
     // before any of the 3D engines have loaded.
     window.CESIUM_BASE_URL = extensionRootPath + 'engines/Cesium/';
 
-    // Now, unfortunately, scripts that are added to the DOM won't be executed, but if
-    // we add them to the head, they will.  So, we'll iterate through all script tags
-    // in the code we just inserted and we'll add them to the Head.  Along the way, we'll
-    // give them all the same special ID so that we can easily remove them later.
-    // We then do something similar for link (CSS) elements.
-    clearRemovableHeadElements();
-    var scriptElements = content.getElementsByTagName('script');
-    for (var i = 0; i < scriptElements.length; i++) {
-        addHeadScript(scriptElements[i].src, scriptElements[i].innerHTML);
-    }
-
-    var linkElements = content.getElementsByTagName('link');
-    for (var j = 0; j < linkElements.length; j++) {
-        addHeadLink(linkElements[j].href, linkElements[j].innerHTML);
-    }
+    activeView = new activeEngineInfo.view();
+    activeView.startPreview();
 }
 
 /**
@@ -232,4 +225,4 @@ function initPreview()
     updatePreview();
 }
 
-initPreview();
+window.addEventListener('load', initPreview, false);

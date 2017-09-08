@@ -15,6 +15,7 @@ var BabylonPreview = function() {
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
+        options.backgroundGuiCallback = function() {};
         enabled = false;
         window.removeEventListener('resize', onWindowResize);
         engine.stopRenderLoop(render);
@@ -78,16 +79,3 @@ var BabylonPreview = function() {
         window.addEventListener("resize", onWindowResize);
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    options.backgroundGuiCallback = function() {};
-    babylonPreview.cleanup();
-}
-
-var babylonPreview = new BabylonPreview();
-babylonPreview.startPreview();
