@@ -1,7 +1,7 @@
 // This is a modified/simplified version of the published example:
 //     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
 
-var ThreePreview = function() {
+var ThreeView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 

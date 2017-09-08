@@ -8,15 +8,15 @@ var engines = [
 var engineInfo = {
     'Babylon.js': {
         html: 'babylonHtml',
-        view: BabylonPreview
+        view: BabylonView
     },
     'Cesium': {
         html: 'cesiumHtml',
-        view: CesiumPreview
+        view: CesiumView
     },
     'Three.js': {
         html: 'threeHtml',
-        view: ThreePreview
+        view: ThreeView
     }
 };
 

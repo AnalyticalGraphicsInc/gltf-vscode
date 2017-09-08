@@ -1,5 +1,5 @@
 
-var BabylonPreview = function() {
+var BabylonView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 

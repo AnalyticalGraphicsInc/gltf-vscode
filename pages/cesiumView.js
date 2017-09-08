@@ -1,4 +1,4 @@
-var CesiumPreview = function() {
+var CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;

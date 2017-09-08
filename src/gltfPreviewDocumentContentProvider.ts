@@ -17,9 +17,9 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     constructor(context: ExtensionContext) {
         this._context = context;
         this._mainHtml = fs.readFileSync(this._context.asAbsolutePath('pages/previewModel.html'), 'UTF-8')
-        this._babylonHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylon.html'), 'UTF-8'));
-        this._cesiumHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesium.html'), 'UTF-8'));
-        this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/three.html'), 'UTF-8'));
+        this._babylonHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylonView.html'), 'UTF-8'));
+        this._cesiumHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesiumView.html'), 'UTF-8'));
+        this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'UTF-8'));
     }
 
     private getFilePath(file : string) : string {
@@ -95,9 +95,9 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         ];
 
         const styles = [
-            'pages/babylon.css',
-            'pages/cesium.css',
-            'pages/three.css',
+            'pages/babylonView.css',
+            'pages/cesiumView.css',
+            'pages/threeView.css',
             'pages/previewModel.css'
         ];
 
@@ -108,9 +108,9 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             'engines/Three/three.min.js',
             'engines/Three/GLTF2Loader.js',
             'engines/Three/OrbitControls.js',
-            'pages/babylon.js',  // TODO: Rename to babylonView.js, cesiumView.js, threeView.js
-            'pages/cesium.js',
-            'pages/three.js',
+            'pages/babylonView.js',
+            'pages/cesiumView.js',
+            'pages/threeView.js',
             'pages/previewModel.js'
         ];
 
