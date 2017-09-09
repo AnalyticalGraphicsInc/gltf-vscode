@@ -114,10 +114,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             'pages/previewModel.js'
         ];
 
-        const content = this._mainHtml
-            .replace('{styles}', styles.map(s => `<link rel="stylesheet" href="${this.getFilePath(s)}"></link>`).join('\n'))
-            .replace('{strings}', strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>`).join('\n'))
-            .replace('{scripts}', scripts.map(s => `<script type="text/javascript" src="${this.getFilePath(s)}"></script>`).join('\n'));
+        const content = this._mainHtml.replace('{assets}',
+            styles.map(s => `<link rel="stylesheet" href="${this.getFilePath(s)}"></link>\n`).join('') +
+            strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
+            scripts.map(s => `<script type="text/javascript" src="${this.getFilePath(s)}"></script>\n`).join(''));
 
         return content;
     }
