@@ -20,6 +20,9 @@ var engineInfo = {
     }
 };
 
+// Use Cesium's built-in copy of Knockout as the global UI manager
+window.ko = Cesium.knockout;
+
 // This is the main interface object for dat.gui.  We define the initial
 // default values for each option within here, and the current menu
 // values will always be reflected here.
@@ -221,6 +224,15 @@ function initPreview()
 
     mainGui = gui;
     backgroundGuiElement = backgroundGui.__li;
+
+    var mainViewModel = {
+        showControls: ko.observable(true),
+        toggleControls: () => mainViewModel.showControls(!mainViewModel.showControls()),
+        controlText: () => (mainViewModel.showControls() ? 'Close controls' : 'Open controls')
+    };
+    var mainUI = document.getElementById('mainUI');
+    ko.applyBindings(mainViewModel, mainUI);
+
 
     updatePreview();
 }

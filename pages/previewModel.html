@@ -16,5 +16,12 @@
     <!-- The 3D-engine specific HTML content will be dynamically inserted within this div whenever the
          active 3D engine changes. -->
     <div id="content"></div>
+
+    <!-- This is the main UI panel shown in front of the model preview. -->
+    <div id="mainUI" data-bind="css: { 'showControls': showControls() }">
+        <div class="rowUI">Row 1</div>
+        <div class="rowUI">Row 2</div>
+        <div class="bottomUI"><span data-bind="click: toggleControls, text: controlText()"></span></div>
+    </div>
 </body>
 </html>

@@ -20,3 +20,40 @@ html, body, #content {
     text-align: center;
     white-space: pre-wrap;
 }
+
+#mainUI {
+    position: absolute;
+    top: 0;
+    right: 300px;
+    width: 300px;
+    color: #edffff;
+}
+
+.rowUI {
+    display: none;
+    background: #222;
+    border-bottom: 1px solid #444;
+    border-left: 4px solid #3c9cff;
+    padding: 0.4em 0.7rem;
+}
+
+.showControls .rowUI {
+    display: block;
+}
+
+.bottomUI {
+    position: relative;
+    border-top: 1.2rem solid black;
+    border-left: 1.2rem solid transparent;
+    text-align: center;
+}
+
+.bottomUI span {
+    position: absolute;
+    position: absolute;
+    top: -1.0rem;
+    left: -0.8rem;
+    right: 0;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
