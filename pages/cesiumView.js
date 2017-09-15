@@ -40,8 +40,6 @@ var CesiumView = function() {
     }
 
     function updateAnimations(model) {
-        var ko = Cesium.knockout;
-        var animationUI = document.getElementById('animationUI');
         var gltfAnimations = model.gltf.animations;
         var animations = [];
 
@@ -54,20 +52,7 @@ var CesiumView = function() {
             addAnimUpdate(model, anim);
             animations.push(anim);
         }
-        var animationViewModel = {
-            animations: ko.observableArray(animations)
-        };
-        animationViewModel.playAll = function() {
-            animationViewModel.animations().forEach(function(anim) {
-                anim.active(true);
-            });
-        };
-        animationViewModel.playNone = function() {
-            animationViewModel.animations().forEach(function(anim) {
-                anim.active(false);
-            });
-        };
-        ko.applyBindings(animationViewModel, animationUI);
+        mainViewModel.animations(animations);
     }
 
     function startRenderLoop() {
@@ -142,6 +127,7 @@ var CesiumView = function() {
     */
     this.cleanup = function() {
         enabled = false;
+        mainViewModel.animations([]);
     };
 
     this.startPreview = function() {

@@ -150,3 +150,41 @@ html, body, #content {
     right: 0;
     font-size: 0.7rem;
 }
+
+.animationUI > div:first-child {
+    font-size: 0.7rem;
+    margin-bottom: 0.2rem;
+}
+
+.animationUI label {
+    display: block;
+    cursor: pointer;
+}
+
+.animationUI label:hover {
+    background: rgba(200, 200, 200, 0.3);
+}
+
+.animationUI input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.animationList {
+    overflow-y: auto;
+    max-height: 30vh;
+}
+
+.animationUI button {
+    border: none;
+    padding: 0.4rem 1rem;
+    margin: 0.2rem;
+    background: #777;
+    color: #edffff;
+    cursor: pointer;
+}
+
+.animationUI button:hover {
+    background: #999;
+}

@@ -29,7 +29,18 @@ var mainViewModel = {
     errorText: ko.observable(),
     hasErrorText: () => !!mainViewModel.errorText(),
     toggleControls: () => mainViewModel.showControls(!mainViewModel.showControls()),
-    controlText: () => (mainViewModel.showControls() ? 'Close Controls' : 'Open Controls')
+    controlText: () => (mainViewModel.showControls() ? 'Close Controls' : 'Open Controls'),
+    animations: ko.observableArray([]),
+    playAll: () => {
+        mainViewModel.animations().forEach(function(anim) {
+            anim.active(true);
+        });
+    },
+    playNone: () => {
+        mainViewModel.animations().forEach(function(anim) {
+            anim.active(false);
+        });
+    }
 };
 
 /**

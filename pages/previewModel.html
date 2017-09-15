@@ -18,7 +18,7 @@
     <div id="warningContainer" data-bind="text: errorText, visible: hasErrorText()">Loading...</div>
 
     <!-- This is the main UI panel shown in front of the model preview. -->
-    <div id="mainUI" data-bind="css: { 'showControls': showControls() }">
+    <div id="mainUI" class="showControls" data-bind="css: { 'showControls': showControls() }">
         <div class="topUI"><span>engine:</span></div>
         <div class="rowUI engineUI" data-bind="foreach: engineInfo">
             <label data-bind="css: {active: $parent.selectedEngine() === $data}"><input type="radio" name="engine"
@@ -26,6 +26,19 @@
         </div>
         <div class="rowUI" data-bind="visible: hasBackground">
             <label><input type="checkbox" data-bind="checked: showBackground" /><span>Show Background</span></label>
+        </div>
+        <div class="rowUI animationUI" style="display: none;" data-bind="visible: animations().length > 0">
+            <div>animations:</div>
+            <div class="animationList" data-bind="foreach: animations">
+                <label>
+                    <input type="checkbox" data-bind="checked: active">
+                    <span data-bind="text: name"></span>
+                </label>
+            </div>
+            <div data-bind="visible: animations().length > 1">
+                <button type="button" class="cesium-button" data-bind="click: playAll">All</button>
+                <button type="button" class="cesium-button" data-bind="click: playNone">None</button>
+            </div>
         </div>
         <div class="bottomUI" data-bind="click: toggleControls"><span data-bind="text: controlText()"></span></div>
     </div>
