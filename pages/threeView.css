@@ -1,34 +1,15 @@
-
-
-#info {
-    color: #808080;
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    text-align: center;
-    z-index: 100;
-    display:block;
-}
-
-#container {
+#threeContainer {
     position: absolute;
     top: 0px;
     width:100%;
     height:100%;
 }
 
-#info a, .button {
-    color: #f00;
-    font-weight: bold;
-    text-decoration: underline;
-    cursor: pointer
-}
-
-#logo {
+#threeLogo {
     position: absolute;
     width: 100px;
     bottom: 0px;
     left: 0px;
     padding: 10px;
-    background-color: White;
+    background-color: white;
 }

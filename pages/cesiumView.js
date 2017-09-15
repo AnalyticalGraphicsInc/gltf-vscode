@@ -2,13 +2,6 @@ var CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;
-
-    var errorContainer = document.getElementById('errorContainer');
-    window.onerror = function(error) {
-        errorContainer.style.display = 'block';
-        errorContainer.textContent = error.toString();
-    };
-
     var scene = null;
     var canvas = null;
     var clock = new Cesium.Clock();
@@ -138,7 +131,7 @@ var CesiumView = function() {
 
             updateAnimations(model);
         }).otherwise(function(e) {
-            window.onerror('Error: ' + e);
+            mainViewModel.errorText('Error: ' + e);
         });
     }
 
@@ -152,7 +145,7 @@ var CesiumView = function() {
     };
 
     this.startPreview = function() {
-        backgroundGuiElement.style.display = 'none';
+        mainViewModel.hasBackground(false);
         canvas = document.getElementById('mainCanvas');
         canvas.addEventListener('contextmenu', function() {
             return false;
@@ -181,13 +174,11 @@ var CesiumView = function() {
         var gltfRootPath = "file:///" + document.getElementById('gltfRootPath').textContent;
 
         try {
-            clearWarning();
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
             loadModelFromContent(gltfContent, gltfRootPath, true);
         }
         catch (ex) {
-            var warningDurationMs = 4000;
-            showWarning("Loading content from saved file.", warningDurationMs);
+            console.warn("Cesium: Loading glTF content from saved file.");
 
             // If the glTF content is missing or not valid JSON, then try to load the
             // model directly from the glTF file.

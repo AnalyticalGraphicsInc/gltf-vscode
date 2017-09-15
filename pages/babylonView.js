@@ -8,6 +8,7 @@ var BabylonView = function() {
     var scene = null;
     var skybox = null;
     var skyboxBlur = 0.0;
+    var backgroundSubscription;
 
     /**
     * @function cleanup
@@ -15,7 +16,10 @@ var BabylonView = function() {
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
-        options.backgroundGuiCallback = function() {};
+        if (backgroundSubscription) {
+            backgroundSubscription.dispose();
+            backgroundSubscription = undefined;
+        }
         enabled = false;
         window.removeEventListener('resize', onWindowResize);
         engine.stopRenderLoop(render);
@@ -34,15 +38,9 @@ var BabylonView = function() {
     }
 
     this.startPreview = function() {
-        var errorContainer = document.getElementById('errorContainer');
-        window.onerror = function(error) {
-            errorContainer.style.display = 'block';
-            errorContainer.textContent = error.toString();
-        };
-
         enabled = true;
         BABYLON.SceneLoader.ShowLoadingScreen = false;
-        canvas = document.getElementById("renderCanvas");
+        canvas = document.getElementById("babylonRenderCanvas");
         engine = new BABYLON.Engine(canvas, true);
         engine.enableOfflineSupport = false;
         scene = new BABYLON.Scene(engine);
@@ -59,7 +57,7 @@ var BabylonView = function() {
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
                 defaultBabylonReflection, scene);
 
-            backgroundGuiElement.style.display = 'block';
+            mainViewModel.hasBackground(true);
             function applyBackground(showBackground) {
                 if (showBackground) {
                     skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true,
@@ -70,11 +68,13 @@ var BabylonView = function() {
                     skybox = null;
                 }
             }
-            applyBackground(options.showBackground);
-            options.backgroundGuiCallback = applyBackground;
+            applyBackground(mainViewModel.showBackground());
+            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             engine.runRenderLoop(render);
-        }, null, window.onerror);
+        }, null, function(error) {
+            mainViewModel.errorText(error.toString());
+        });
 
         window.addEventListener("resize", onWindowResize);
     };

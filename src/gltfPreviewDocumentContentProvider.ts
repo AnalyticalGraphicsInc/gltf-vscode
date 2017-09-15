@@ -102,7 +102,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         ];
 
         const scripts = [
-            'pages/dat.gui.min.js',
             'engines/Cesium/Cesium.js',
             'engines/Babylon/babylon.custom.js',
             'engines/Three/three.min.js',

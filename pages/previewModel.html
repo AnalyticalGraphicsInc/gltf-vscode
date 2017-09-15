@@ -9,19 +9,25 @@
     {assets}
 </head>
 <body>
-    <!-- A common area that any engine can use for displaying warnings to users.  Will always be cleared -->
-    <!-- when the current engine is changing. -->
-    <div id="warningContainer" style.opacity="0"></div>
-
     <!-- The 3D-engine specific HTML content will be dynamically inserted within this div whenever the
          active 3D engine changes. -->
     <div id="content"></div>
 
+    <!-- A common area that any engine can use for displaying errors and warnings to users. -->
+    <!-- Will always be cleared when the current engine is changing. -->
+    <div id="warningContainer" data-bind="text: errorText, visible: hasErrorText()">Loading...</div>
+
     <!-- This is the main UI panel shown in front of the model preview. -->
     <div id="mainUI" data-bind="css: { 'showControls': showControls() }">
-        <div class="rowUI">Row 1</div>
-        <div class="rowUI">Row 2</div>
-        <div class="bottomUI"><span data-bind="click: toggleControls, text: controlText()"></span></div>
+        <div class="topUI"><span>engine:</span></div>
+        <div class="rowUI engineUI" data-bind="foreach: engineInfo">
+            <label data-bind="css: {active: $parent.selectedEngine() === $data}"><input type="radio" name="engine"
+                data-bind="checked: $parent.selectedEngine, checkedValue: $data" /><span data-bind="text: name"></span></label>
+        </div>
+        <div class="rowUI" data-bind="visible: hasBackground">
+            <label><input type="checkbox" data-bind="checked: showBackground" /><span>Show Background</span></label>
+        </div>
+        <div class="bottomUI" data-bind="click: toggleControls"><span data-bind="text: controlText()"></span></div>
     </div>
 </body>
 </html>

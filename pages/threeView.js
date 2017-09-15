@@ -16,9 +16,10 @@ var ThreeView = function() {
     var mixer = null;
     var clock = new THREE.Clock();
     var sceneList = null;
+    var backgroundSubscription;
 
     function initScene() {
-        container = document.getElementById('container');
+        container = document.getElementById('threeContainer');
 
         scene = new THREE.Scene();
 
@@ -98,16 +99,11 @@ var ThreeView = function() {
         loader = new THREE.GLTF2Loader();
 
         var url = sceneInfo.url;
-        var loadStartTime = performance.now();
-        var status = document.getElementById("status");
-        status.innerHTML = "Loading...";
 
         loader.load(url, function(data) {
             gltf = data;
 
             var object = gltf.scene;
-
-            status.innerHTML = "Load time: " + (performance.now() - loadStartTime).toFixed(2) + " ms.";
 
             var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
             var envPath = defaultThreeReflection[0];
@@ -127,12 +123,12 @@ var ThreeView = function() {
                 }
             });
 
-            backgroundGuiElement.style.display = 'block';
+            mainViewModel.hasBackground(true);
             function applyBackground(showBackground) {
                 scene.background = showBackground ? envMap : null;
             }
-            applyBackground(options.showBackground);
-            options.backgroundGuiCallback = applyBackground;
+            applyBackground(mainViewModel.showBackground());
+            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             if (sceneInfo.cameraPos)
                 defaultCamera.position.copy(sceneInfo.cameraPos);
@@ -218,7 +214,10 @@ var ThreeView = function() {
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
-        options.backgroundGuiCallback = function() {};
+        if (backgroundSubscription) {
+            backgroundSubscription.dispose();
+            backgroundSubscription = undefined;
+        }
         enabled = false;
 
         if (container && renderer) {
