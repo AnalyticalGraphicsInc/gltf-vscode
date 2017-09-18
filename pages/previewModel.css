@@ -49,26 +49,27 @@ html, body, #content {
     padding: 0.4em 0.7rem;
 }
 
-.engineUI {
+.radioButtons {
     display: flex;
     flex-flow: row nowrap;
 }
 
-.engineUI label {
+.radioButtons label {
     position: relative;
     display: inline-block;
     background-color: #1D4D7C;
     cursor: pointer;
     padding: 0 0.5rem;
     margin: 0.4rem 0 0.6rem;
+    text-align: center;
     flex: 1;
 }
 
-.engineUI label:not(:last-child) {
+.radioButtons label:not(:last-child) {
     margin-right: 0.5rem;
 }
 
-.engineUI label::before {
+.radioButtons label::before {
     content: ' ';
     position: absolute;
     top: 100%;
@@ -79,7 +80,7 @@ html, body, #content {
     border-bottom: 0.1rem solid transparent;
 }
 
-.engineUI label::after {
+.radioButtons label::after {
     content: ' ';
     position: absolute;
     bottom: 100%;
@@ -89,30 +90,30 @@ html, body, #content {
     border-right: 0.3rem solid transparent;
 }
 
-.engineUI label:hover {
+.radioButtons label:hover {
     background-color: #3c9cff;
     color: white;
 }
 
-.engineUI label:hover::before {
+.radioButtons label:hover::before {
     border-top-color: #3c9cff;
 }
 
-.engineUI label:hover::after {
+.radioButtons label:hover::after {
     border-bottom-color: #3c9cff;
 }
 
 /* The "active" class is applied by a knockout binding to the selected engine. */
-.engineUI label.active {
+.radioButtons label.active {
     color: white;
 }
 
-.engineUI label.active::before {
+.radioButtons label.active::before {
     border-left-color: white;
     border-bottom-color: white;
 }
 
-.engineUI label input {
+.radioButtons label input {
     position: absolute;
     top: -100vh;
 }
@@ -156,15 +157,6 @@ html, body, #content {
     margin-bottom: 0.2rem;
 }
 
-.animationUI label {
-    display: block;
-    cursor: pointer;
-}
-
-.animationUI label:hover {
-    background: rgba(200, 200, 200, 0.3);
-}
-
 .animationUI input[type="checkbox"] {
     width: 16px;
     height: 16px;
@@ -176,15 +168,11 @@ html, body, #content {
     max-height: 30vh;
 }
 
-.animationUI button {
-    border: none;
-    padding: 0.4rem 1rem;
-    margin: 0.2rem;
-    background: #777;
-    color: #edffff;
+.animationList label {
+    display: block;
     cursor: pointer;
 }
 
-.animationUI button:hover {
-    background: #999;
+.animationList label:hover {
+    background: rgba(200, 200, 200, 0.3);
 }

@@ -27,6 +27,7 @@ var CesiumView = function() {
 
     function addAnimUpdate(model, anim) {
         anim.active.subscribe(function(newValue) {
+            mainViewModel.oneAnimChanged();
             if (!newValue) {
                 model.activeAnimations.remove(anim.animation);
                 anim.animation = undefined;

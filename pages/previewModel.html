@@ -20,7 +20,7 @@
     <!-- This is the main UI panel shown in front of the model preview. -->
     <div id="mainUI" class="showControls" data-bind="css: { 'showControls': showControls() }">
         <div class="topUI"><span>engine:</span></div>
-        <div class="rowUI engineUI" data-bind="foreach: engineInfo">
+        <div class="rowUI radioButtons" data-bind="foreach: engineInfo">
             <label data-bind="css: {active: $parent.selectedEngine() === $data}"><input type="radio" name="engine"
                 data-bind="checked: $parent.selectedEngine, checkedValue: $data" /><span data-bind="text: name"></span></label>
         </div>
@@ -35,9 +35,9 @@
                     <span data-bind="text: name"></span>
                 </label>
             </div>
-            <div data-bind="visible: animations().length > 1">
-                <button type="button" class="cesium-button" data-bind="click: playAll">All</button>
-                <button type="button" class="cesium-button" data-bind="click: playNone">None</button>
+            <div class="radioButtons" data-bind="visible: animations().length > 1, foreach: animPlayAllNoneOptions">
+                <label data-bind="css: {active: $parent.animPlayAllNone() === $data}"><input type="radio" name="allOrNoAnimations"
+                    data-bind="checked: $parent.animPlayAllNone, checkedValue: $data" /><span data-bind="text: $data"></span></label>
             </div>
         </div>
         <div class="bottomUI" data-bind="click: toggleControls"><span data-bind="text: controlText()"></span></div>
