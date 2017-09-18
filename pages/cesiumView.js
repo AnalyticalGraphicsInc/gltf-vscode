@@ -133,7 +133,7 @@ var CesiumView = function() {
 
     this.startPreview = function() {
         mainViewModel.hasBackground(false);
-        canvas = document.getElementById('mainCanvas');
+        canvas = document.getElementById('cesiumCanvas');
         canvas.addEventListener('contextmenu', function() {
             return false;
         }, false);
