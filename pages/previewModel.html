@@ -25,13 +25,18 @@
                 data-bind="checked: $parent.selectedEngine, checkedValue: $data" /><span data-bind="text: name"></span></label>
         </div>
         <div class="rowUI" data-bind="visible: hasBackground">
-            <label><input type="checkbox" data-bind="checked: showBackground" /><span>Show Background</span></label>
+            <label class="checkboxLabel" data-bind="css: { active: showBackground() }">
+                <input type="checkbox" data-bind="checked: showBackground" />
+                <span class="angleBox"><span></span></span>
+                <span>Show Background</span>
+            </label>
         </div>
         <div class="rowUI animationUI" style="display: none;" data-bind="visible: animations().length > 0">
             <div>animations:</div>
             <div class="animationList" data-bind="foreach: animations">
-                <label>
+                <label class="checkboxLabel" data-bind="css: { active: active() }">
                     <input type="checkbox" data-bind="checked: active">
+                    <span class="angleBox"><span></span></span>
                     <span data-bind="text: name"></span>
                 </label>
             </div>

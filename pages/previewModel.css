@@ -157,22 +157,81 @@ html, body, #content {
     margin-bottom: 0.2rem;
 }
 
-.animationUI input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-}
-
 .animationList {
     overflow-y: auto;
     max-height: 30vh;
+    margin-bottom: 0.2rem;
 }
 
-.animationList label {
+.checkboxLabel {
     display: block;
     cursor: pointer;
+    padding: 0.25rem 0;
 }
 
-.animationList label:hover {
-    background: rgba(200, 200, 200, 0.3);
+.checkboxLabel:hover {
+    background: rgba(200, 200, 200, 0.15);
+    color: white;
+}
+
+.checkboxLabel input[type="checkbox"] {
+    position: absolute;
+    top: -100vh;
+}
+
+.angleBox {
+    display: inline-block;
+    position: relative;
+    width: 16px;
+    height: 11px;
+    background: #1D4D7C;
+    vertical-align: top;
+}
+
+.angleBox::before {
+    content: ' ';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-top: 5px solid #1D4D7C;
+    border-left: 5px solid transparent;
+}
+
+.active .angleBox > span {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-left: 8px solid white;
+    border-bottom: 4px solid white;
+    border-right: 4px solid transparent;
+}
+
+.active .angleBox > span::before {
+    content: ' ';
+    position: absolute;
+    top: 4px;
+    left: -8px;
+    width: 12px;
+    height: 4px;
+    background: white;
+}
+
+.active .angleBox > span::after {
+    content: ' ';
+    position: absolute;
+    top: 8px;
+    left: -8px;
+    border-right: 8px solid white;
+    border-top: 4px solid white;
+    border-left: 4px solid transparent;
+}
+
+label:hover .angleBox {
+    background: #3c9cff;
+}
+
+label:hover .angleBox::before {
+    border-top-color: #3c9cff;
 }

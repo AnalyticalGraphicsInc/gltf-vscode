@@ -41,10 +41,10 @@ var mainViewModel = {
         // have become the same state, or if there are different states in use now,
         // so that the All/None radio buttons can update accordingly.
         var activeList = mainViewModel.animations().map(a => a.active());
-        if (activeList.every(a => a === true)) {
-            mainViewModel.animPlayAllNone(ANIM_PLAY_ALL);
-        } else if (activeList.every(a => a === false)) {
+        if ((activeList.length === 0) || (activeList.every(a => a === false))) {
             mainViewModel.animPlayAllNone(ANIM_PLAY_NONE);
+        } else if (activeList.every(a => a === true)) {
+            mainViewModel.animPlayAllNone(ANIM_PLAY_ALL);
         } else {
             mainViewModel.animPlayAllNone(undefined);
         }

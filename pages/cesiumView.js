@@ -54,6 +54,7 @@ var CesiumView = function() {
             animations.push(anim);
         }
         mainViewModel.animations(animations);
+        mainViewModel.oneAnimChanged();
     }
 
     function startRenderLoop() {
