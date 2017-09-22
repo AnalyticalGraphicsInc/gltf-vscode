@@ -11,9 +11,6 @@
     "author": {
         "name": "The Khronos Group Inc."
     },
-    "engines": {
-        "node": ">=0.11.8"
-    },
     "main": "gltf_validator.js",
     "keywords": [
         "gltf",

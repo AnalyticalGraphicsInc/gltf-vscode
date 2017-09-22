@@ -286,13 +286,27 @@ export function activate(context: vscode.ExtensionContext) {
 
         //// BEGIN TEMPORARY HOOKUP
         var gltfData = Buffer.from(vscode.window.activeTextEditor.document.getText());
+        const folderName = path.resolve(fileName, '..');
 
-        validator.validate(baseName, new Uint8Array(gltfData), function (result) {
+        validator.validate(baseName, new Uint8Array(gltfData), (uri) =>
+            new Promise((resolve, reject) => {
+                uri = path.resolve(folderName, uri);
+                fs.readFile(uri, (err, data) => {
+                    console.log("Loading external file: " + uri);
+                    if (err) {
+                        console.warn("Error: " + err.toString());
+                        reject(err.toString());
+                        return;
+                    }
+                    resolve(data);
+                });
+            })
+        ).then((result) => {
             // Validation report in object form
             console.log('======== glTF Validator results ========');
             console.log(JSON.stringify(result, null, ' '));
-        }, function (result) {
-            // Validator's error (unknown data format)
+        }, (result) => {
+            // Validator's error
             console.warn('Validator had problems.');
             console.warn(result);
         });
