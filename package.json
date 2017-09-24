@@ -56,6 +56,12 @@
                     "type": "string",
                     "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
                     "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
+                },
+                "glTF.Validation.maxNumberOfProblems": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produced by the glTF Validator."
                 }
             }
         },

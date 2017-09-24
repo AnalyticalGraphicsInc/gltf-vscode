@@ -6,8 +6,8 @@
 
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
-    Diagnostic, DiagnosticSeverity, InitializeResult, TextDocumentPositionParams, CompletionItem,
-    CompletionItemKind
+    Diagnostic, DiagnosticSeverity, InitializeResult, CompletionItem
+    //TextDocumentPositionParams, CompletionItemKind
 } from 'vscode-languageserver';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport
@@ -45,12 +45,14 @@ documents.onDidChangeContent((change) => {
 
 // The settings interface describe the server relevant settings part
 interface Settings {
-    lspSample: ExampleSettings;
+    glTF: GltfSettings;
 }
 
-// These are the example settings we defined in the client's package.json
-// file
-interface ExampleSettings {
+interface GltfSettings {
+    Validation: ValidatorSettings;
+}
+
+interface ValidatorSettings {
     maxNumberOfProblems: number;
 }
 
@@ -60,7 +62,7 @@ let maxNumberOfProblems: number;
 // as well.
 connection.onDidChangeConfiguration((change) => {
     let settings = <Settings>change.settings;
-    maxNumberOfProblems = settings.lspSample.maxNumberOfProblems || 100;
+    maxNumberOfProblems = settings.glTF.Validation.maxNumberOfProblems || 100;
     // Revalidate any open text documents
     documents.all().forEach(validateTextDocument);
 });
@@ -95,6 +97,7 @@ connection.onDidChangeWatchedFiles((_change) => {
 });
 
 
+/*
 // This handler provides the initial list of the completion items.
 connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
     // The pass parameter contains the position of the text document in
@@ -113,6 +116,7 @@ connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): Com
         }
     ]
 });
+*/
 
 // This handler resolve additional information for the item selected in
 // the completion list.
