@@ -1,0 +1,22 @@
+{
+    "name": "gltf-validation-server",
+    "description": "glTF Validator as a Language Server.",
+    "version": "0.0.1",
+    "author": "The Khronos Group",
+    "license": "Apache-2.0",
+    "engines": {
+        "node": "*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
+    },
+    "dependencies": {
+        "vscode-languageserver": "^3.4.2"
+    },
+    "scripts": {
+        "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",
+        "compile": "installServerIntoExtension .. ./package.json ./tsconfig.json && tsc -p .",
+        "watch": "installServerIntoExtension .. ./package.json ./tsconfig.json && tsc -w -p ."
+    }
+}
