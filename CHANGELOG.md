@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.0.6 - UNRELEASED
+
+* Replaced UI with a Knockout data-bound UI, to allow more per-engine configurability.
+* Added animations panel to Cesium preview, with options to toggle individual animations.
+
 ### 2.0.5 - 2017-08-01
 
 * Update Cesium to 1.36, which adds glTF 2.0 support to the Cesium preview window.

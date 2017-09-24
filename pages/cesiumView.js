@@ -1,14 +1,7 @@
-var CesiumPreview = function() {
+var CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;
-
-    var errorContainer = document.getElementById('errorContainer');
-    window.onerror = function(error) {
-        errorContainer.style.display = 'block';
-        errorContainer.textContent = error.toString();
-    };
-
     var scene = null;
     var canvas = null;
     var clock = new Cesium.Clock();
@@ -30,6 +23,38 @@ var CesiumPreview = function() {
                 frustum.bottom = -frustum.top;
             }
         }
+    }
+
+    function addAnimUpdate(model, anim) {
+        anim.active.subscribe(function(newValue) {
+            mainViewModel.oneAnimChanged();
+            if (!newValue) {
+                model.activeAnimations.remove(anim.animation);
+                anim.animation = undefined;
+            } else {
+                anim.animation = model.activeAnimations.add({
+                    name: anim.index,
+                    loop: Cesium.ModelAnimationLoop.REPEAT
+                });
+            }
+        });
+    }
+
+    function updateAnimations(model) {
+        var gltfAnimations = model.gltf.animations;
+        var animations = [];
+
+        for (var i = 0; i < gltfAnimations.length; i++) {
+            var anim = {
+                index: i,
+                name: gltfAnimations[i].name || i,
+                active: ko.observable(false)
+            };
+            addAnimUpdate(model, anim);
+            animations.push(anim);
+        }
+        mainViewModel.animations(animations);
+        mainViewModel.oneAnimChanged();
     }
 
     function startRenderLoop() {
@@ -90,8 +115,10 @@ var CesiumPreview = function() {
             if (resetCamera) {
                 setCamera(scene, model);
             }
+
+            updateAnimations(model);
         }).otherwise(function(e) {
-            window.onerror('Error: ' + e);
+            mainViewModel.errorText('Error: ' + e);
         });
     }
 
@@ -102,11 +129,12 @@ var CesiumPreview = function() {
     */
     this.cleanup = function() {
         enabled = false;
+        mainViewModel.animations([]);
     };
 
     this.startPreview = function() {
-        backgroundGuiElement.style.display = 'none';
-        canvas = document.getElementById('mainCanvas');
+        mainViewModel.hasBackground(false);
+        canvas = document.getElementById('cesiumCanvas');
         canvas.addEventListener('contextmenu', function() {
             return false;
         }, false);
@@ -134,13 +162,11 @@ var CesiumPreview = function() {
         var gltfRootPath = "file:///" + document.getElementById('gltfRootPath').textContent;
 
         try {
-            clearWarning();
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
             loadModelFromContent(gltfContent, gltfRootPath, true);
         }
         catch (ex) {
-            var warningDurationMs = 4000;
-            showWarning("Loading content from saved file.", warningDurationMs);
+            console.warn("Cesium: Loading glTF content from saved file.");
 
             // If the glTF content is missing or not valid JSON, then try to load the
             // model directly from the glTF file.
@@ -148,15 +174,3 @@ var CesiumPreview = function() {
         }
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    cesiumPreview.cleanup();
-}
-
-var cesiumPreview = new CesiumPreview();
-cesiumPreview.startPreview();

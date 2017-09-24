@@ -1,7 +1,7 @@
 // This is a modified/simplified version of the published example:
 //     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
 
-var ThreePreview = function() {
+var ThreeView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 
@@ -16,17 +16,10 @@ var ThreePreview = function() {
     var mixer = null;
     var clock = new THREE.Clock();
     var sceneList = null;
+    var backgroundSubscription;
 
-    window.onerror = null;
-
-    function onload() {
-        switchScene(0);
-        animate();
-        window.addEventListener('resize', onWindowResize, false);
-    }
-
-    function initScene(index) {
-        container = document.getElementById('container');
+    function initScene() {
+        container = document.getElementById('threeContainer');
 
         scene = new THREE.Scene();
 
@@ -106,16 +99,11 @@ var ThreePreview = function() {
         loader = new THREE.GLTF2Loader();
 
         var url = sceneInfo.url;
-        var loadStartTime = performance.now();
-        var status = document.getElementById("status");
-        status.innerHTML = "Loading...";
 
         loader.load(url, function(data) {
             gltf = data;
 
             var object = gltf.scene;
-
-            status.innerHTML = "Load time: " + (performance.now() - loadStartTime).toFixed(2) + " ms.";
 
             var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
             var envPath = defaultThreeReflection[0];
@@ -135,12 +123,12 @@ var ThreePreview = function() {
                 }
             });
 
-            backgroundGuiElement.style.display = 'block';
+            mainViewModel.hasBackground(true);
             function applyBackground(showBackground) {
                 scene.background = showBackground ? envMap : null;
             }
-            applyBackground(options.showBackground);
-            options.backgroundGuiCallback = applyBackground;
+            applyBackground(mainViewModel.showBackground());
+            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             if (sceneInfo.cameraPos)
                 defaultCamera.position.copy(sceneInfo.cameraPos);
@@ -220,19 +208,16 @@ var ThreePreview = function() {
         renderer.render(scene, camera);
     }
 
-    function switchScene(index) {
-        cleanup();
-        enabled = true;
-
-        initScene(index);
-    }
-
     /**
     * @function cleanup
     * Perform any cleanup that needs to happen to stop rendering the current model.
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
+        if (backgroundSubscription) {
+            backgroundSubscription.dispose();
+            backgroundSubscription = undefined;
+        }
         enabled = false;
 
         if (container && renderer) {
@@ -261,19 +246,9 @@ var ThreePreview = function() {
             }
         ];
 
-        onload();
+        enabled = true;
+        initScene();
+        animate();
+        window.addEventListener('resize', onWindowResize, false);
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    options.backgroundGuiCallback = function() {};
-    threePreview.cleanup();
-}
-
-var threePreview = new ThreePreview();
-threePreview.startPreview();
