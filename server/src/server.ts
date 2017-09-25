@@ -9,6 +9,10 @@ import {
     Diagnostic, DiagnosticSeverity, InitializeResult, CompletionItem
     //TextDocumentPositionParams, CompletionItemKind
 } from 'vscode-languageserver';
+import * as path from 'path';
+import * as Url from 'url';
+import * as fs from 'fs';
+import * as gltfValidator from 'gltf-validator';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
@@ -19,6 +23,10 @@ let documents: TextDocuments = new TextDocuments();
 // Make the text document manager listen on the connection
 // for open, change and close text document events
 documents.listen(connection);
+
+let documentsToValidate: TextDocument[] = [];
+let debounceValidateTimer: NodeJS.Timer;
+const debounceTimeout = 500;
 
 // After the server has started the client sends an initilize request. The server receives
 // in the passed params the rootPath of the workspace plus the client capabilites.
@@ -40,7 +48,7 @@ connection.onInitialize((params): InitializeResult => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
-    validateTextDocument(change.document);
+    scheduleValidation(change.document);
 });
 
 // The settings interface describe the server relevant settings part
@@ -63,12 +71,84 @@ let maxNumberOfProblems: number;
 connection.onDidChangeConfiguration((change) => {
     let settings = <Settings>change.settings;
     maxNumberOfProblems = settings.glTF.Validation.maxNumberOfProblems || 100;
-    // Revalidate any open text documents
-    documents.all().forEach(validateTextDocument);
+    // Schedule revalidation any open text documents
+    documents.all().forEach(scheduleValidation);
 });
 
+function scheduleValidation(textDocument: TextDocument): void {
+    const lowerUri = textDocument.uri.toLowerCase();
+    if (lowerUri.startsWith('file:///') && lowerUri.endsWith('.gltf')) {
+        console.log('schedule ' + textDocument.uri);
+        if (documentsToValidate.indexOf(textDocument) < 0) {
+            documentsToValidate.push(textDocument);
+        }
+        if (debounceValidateTimer) {
+            clearTimeout(debounceValidateTimer);
+            debounceValidateTimer = undefined;
+        }
+        debounceValidateTimer = setTimeout(() => {
+            documentsToValidate.forEach(validateTextDocument);
+            documentsToValidate = [];
+        }, debounceTimeout);
+    }
+}
+
+const _driveLetterPath = /^\/[a-zA-Z]:/;
+
+// From: https://github.com/Microsoft/vscode/blob/f2c2d9c65880e44b588a0e1916423b691fff01d3/src/vs/base/common/uri.ts#L357-L374
+function getFsPath(uri) {
+    const url = Url.parse(uri);
+    const urlPath = decodeURIComponent(url.path);
+    let value: string;
+    if (url.auth && urlPath && url.protocol === 'file:') {
+        // unc path: file://shares/c$/far/boo
+        value = `//${url.auth}${urlPath}`;
+    } else if (_driveLetterPath.test(urlPath)) {
+        // windows drive letter: file:///c:/far/boo
+        value = urlPath[1].toLowerCase() + urlPath.substr(2);
+    } else {
+        // other path
+        value = urlPath;
+    }
+    return path.normalize(value);
+}
+
 function validateTextDocument(textDocument: TextDocument): void {
+    console.log('validate ' + textDocument.uri);
     let diagnostics: Diagnostic[] = [];
+
+    const fileName = getFsPath(textDocument.uri);
+    const baseName = path.basename(fileName);
+
+    const gltfData = Buffer.from(textDocument.getText());
+    const folderName = path.resolve(fileName, '..');
+
+    gltfValidator.validate(baseName, new Uint8Array(gltfData), (uri) =>
+        new Promise((resolve, reject) => {
+            uri = path.resolve(folderName, uri);
+            fs.readFile(uri, (err, data) => {
+                console.log("Loading external file: " + uri);
+                if (err) {
+                    console.warn("Error: " + err.toString());
+                    reject(err.toString());
+                    return;
+                }
+                resolve(data);
+            });
+        })
+    ).then((result) => {
+        // Validation report in object form
+        console.log('======== glTF Validator results ========');
+        console.log(JSON.stringify(result, null, ' '));
+    }, (result) => {
+        // Validator's error
+        console.warn('Validator had problems.');
+        console.warn(result);
+    });
+
+
+
+
     let lines = textDocument.getText().split(/\r?\n/g);
     let problems = 0;
     for (var i = 0; i < lines.length && problems < maxNumberOfProblems; i++) {
@@ -83,7 +163,7 @@ function validateTextDocument(textDocument: TextDocument): void {
                     end: { line: i, character: index + 10 }
                 },
                 message: `${line.substr(index, 10)} should be spelled TypeScript`,
-                source: 'ex'
+                source: 'glTF Validator'
             });
         }
     }

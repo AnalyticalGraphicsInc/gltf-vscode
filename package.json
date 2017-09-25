@@ -132,6 +132,7 @@
     "dependencies": {
         "json-source-map": "^0.4.0",
         "vscode": "^1.1.5",
-        "vscode-languageclient": "^3.4.2"
+        "vscode-languageclient": "^3.4.2",
+        "gltf-validator": "file:./gltf-validator"
     }
 }

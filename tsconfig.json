@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
         "module": "commonjs",
         "target": "es6",
         "outDir": "out",

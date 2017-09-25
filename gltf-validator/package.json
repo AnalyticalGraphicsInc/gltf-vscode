@@ -1,5 +1,5 @@
 {
-    "name": "glTF-Validator",
+    "name": "gltf-validator",
     "description": "Library for validating glTF 2.0 assets, compiled to JS.",
     "license": "Apache-2.0",
     "bugs": "https://github.com/KhronosGroup/glTF-Validator/issues",
@@ -11,7 +11,7 @@
     "author": {
         "name": "The Khronos Group Inc."
     },
-    "main": "gltf_validator.js",
+    "main": "index.js",
     "keywords": [
         "gltf",
         "webgl",
