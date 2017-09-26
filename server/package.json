@@ -12,7 +12,8 @@
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
     "dependencies": {
-        "vscode-languageserver": "^3.4.2",
+        "json-source-map": "^0.4.0",
+        "vscode-languageserver": "3.3.0",
         "gltf-validator": "file:../gltf-validator"
     },
     "scripts": {

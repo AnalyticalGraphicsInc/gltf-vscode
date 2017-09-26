@@ -12,6 +12,7 @@ import {
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
+import * as jsonMap from 'json-source-map';
 import * as gltfValidator from 'gltf-validator';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport
@@ -28,6 +29,15 @@ let documentsToValidate: TextDocument[] = [];
 let debounceValidateTimer: NodeJS.Timer;
 const debounceTimeout = 500;
 
+function tryGetJsonMap(textDocument: TextDocument) {
+    try {
+        return jsonMap.parse(textDocument.getText());
+    } catch (ex) {
+        console.warn('Error parsing glTF document.  Please make sure it is valid JSON.');
+    }
+    return undefined;
+}
+
 // After the server has started the client sends an initilize request. The server receives
 // in the passed params the rootPath of the workspace plus the client capabilites.
 let workspaceRoot: string;
@@ -36,11 +46,11 @@ connection.onInitialize((params): InitializeResult => {
     return {
         capabilities: {
             // Tell the client that the server works in FULL text document sync mode
-            textDocumentSync: documents.syncKind,
+            textDocumentSync: documents.syncKind
             // Tell the client that the server support code complete
-            completionProvider: {
-                resolveProvider: true
-            }
+            //completionProvider: {
+            //    resolveProvider: true
+            //}
         }
     }
 });
@@ -115,7 +125,6 @@ function getFsPath(uri) {
 
 function validateTextDocument(textDocument: TextDocument): void {
     console.log('validate ' + textDocument.uri);
-    let diagnostics: Diagnostic[] = [];
 
     const fileName = getFsPath(textDocument.uri);
     const baseName = path.basename(fileName);
@@ -138,37 +147,17 @@ function validateTextDocument(textDocument: TextDocument): void {
         })
     ).then((result) => {
         // Validation report in object form
-        console.log('======== glTF Validator results ========');
-        console.log(JSON.stringify(result, null, ' '));
+        if (result.errors) {
+            const diagnostics = convertErrorsToDiagnostics(textDocument, result.errors);
+
+            // Send the computed diagnostics to VSCode.
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        }
     }, (result) => {
         // Validator's error
-        console.warn('Validator had problems.');
+        console.warn('glTF Validator had problems.');
         console.warn(result);
     });
-
-
-
-
-    let lines = textDocument.getText().split(/\r?\n/g);
-    let problems = 0;
-    for (var i = 0; i < lines.length && problems < maxNumberOfProblems; i++) {
-        let line = lines[i];
-        let index = line.indexOf('typescript');
-        if (index >= 0) {
-            problems++;
-            diagnostics.push({
-                severity: DiagnosticSeverity.Warning,
-                range: {
-                    start: { line: i, character: index },
-                    end: { line: i, character: index + 10 }
-                },
-                message: `${line.substr(index, 10)} should be spelled TypeScript`,
-                source: 'glTF Validator'
-            });
-        }
-    }
-    // Send the computed diagnostics to VSCode.
-    connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
 connection.onDidChangeWatchedFiles((_change) => {
@@ -176,6 +165,63 @@ connection.onDidChangeWatchedFiles((_change) => {
     connection.console.log('We recevied an file change event');
 });
 
+
+function convertErrorsToDiagnostics(textDocument: TextDocument, errors: any) : Diagnostic[] {
+    let diagnostics: Diagnostic[] = [];
+    let problems = 0;
+
+    const map = tryGetJsonMap(textDocument);
+    if (!map) {
+        diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}));
+    } else {
+        for (let category in errors) {
+            if (errors.hasOwnProperty(category)) {
+                let errorList = errors[category];
+                let len = errorList.length;
+                for (let i = 0; i < len; ++i) {
+                    let info = errorList[i];
+                    if (info.message) {
+                        if (++problems > maxNumberOfProblems) {
+                            break;
+                        }
+                        diagnostics.push(getDiagnostic(info, map));
+                    }
+                }
+            }
+        }
+    }
+
+    return diagnostics;
+}
+
+function getDiagnostic(info: any, map: any) : Diagnostic {
+    let range = {
+        start: { line: 0, character: 0 },
+        end: { line: 0, character: Number.MAX_VALUE }
+    };
+
+    if (info.path) {
+        const pointerName = info.path.substring(1);
+        if (map.pointers.hasOwnProperty(pointerName)) {
+            const pointer = map.pointers[pointerName];
+            const start = pointer.key || pointer.value;
+            range.start.line = start.line;
+            range.start.character = start.column;
+
+            const end = pointer.valueEnd;
+            range.end.line = end.line;
+            range.end.character = end.column;
+        }
+    }
+
+    return {
+        code: 'Some code',
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: info.message,
+        source: 'glTF Validator'
+    };
+}
 
 /*
 // This handler provides the initial list of the completion items.
