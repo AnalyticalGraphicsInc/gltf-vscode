@@ -130,7 +130,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
          to avoid race conditions when loading the script within the div content tries to reference
          the engine. -->
     <script type="text/javascript" src="${this.getFilePath('engines/Cesium/Cesium.js')}"></script>
-    <script type="text/javascript" src="${this.getFilePath('engines/Babylon/babylon.custom.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('node_modules/babylonjs/dist/preview release/babylon.js')}"></script>
+    <script type="text/javascript" src="${this.getFilePath('node_modules/babylonjs/dist/preview release/loaders/babylonjs.loaders.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/three.min.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/GLTF2Loader.js')}"></script>
     <script type="text/javascript" src="${this.getFilePath('engines/Three/OrbitControls.js')}"></script>

@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
+import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
@@ -292,11 +293,25 @@ export function activate(context: vscode.ExtensionContext) {
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
 
+    const treeViewProvider = new GltfTreeViewDocumentContentProvider(context);
+    const treeViewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-tree-view-preview', treeViewProvider);
+
+    let disposable = vscode.commands.registerCommand('gltf.previewTree', () => {
+        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
+        const gltfPreviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+        return vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
+        }, (reason) => {
+            vscode.window.showErrorMessage(reason);
+        });
+    });
+
     // Update the preview window when the glTF file is saved.
     vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
         if (document === vscode.window.activeTextEditor.document) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
+            const gltfTreeviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+            treeViewProvider.update(gltfTreeviewUri)
         }
     });
 }
