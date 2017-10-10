@@ -21,7 +21,8 @@
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
-        "onCommand:gltf.previewTree"
+        "onCommand:gltf.previewTree",
+        "onCommand:gltf.saveAsGlb"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -80,6 +81,10 @@
             {
                 "command": "gltf.previewTree",
                 "title": "glTF: Preview tree view"
+            },
+            {
+                "command": "gltf.saveAsGlb",
+                "title": "glTF: Export GLB"
             }
         ],
         "keybindings": [
@@ -93,6 +98,12 @@
                 "command": "gltf.previewModel",
                 "key": "alt+g",
                 "mac": "alt+g",
+                "when": "editorTextFocus && editorLangId == 'json'"
+            },
+            {
+                "command": "gltf.saveAsGlb",
+                "key": "alt+shift+s e",
+                "mac": "alt+shift+s e",
                 "when": "editorTextFocus && editorLangId == 'json'"
             }
         ],

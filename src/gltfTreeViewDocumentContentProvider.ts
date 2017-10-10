@@ -144,14 +144,17 @@ export class GltfTreeViewDocumentContentProvider implements vscode.TextDocumentC
     private createMesh(meshIndex: string, skinIndex: string): any
     {
         let mesh = this._gltf.meshes[meshIndex];
+        let name = this.createName('Mesh', meshIndex, mesh);
+
         let skin;
         if (skinIndex !== undefined)
         {
             skin = this._gltf.skins[skinIndex];
+            name += '; ' + this.createName('Skin', skinIndex, skin);
         }
 
         let meshObj = {
-            text: this.createName('Mesh', meshIndex, mesh) + '; ' + this.createName('Skin', skinIndex, skin),
+            text: name,
             children: []
         };
 
@@ -161,7 +164,7 @@ export class GltfTreeViewDocumentContentProvider implements vscode.TextDocumentC
     private createName(typeName: string, index: string, obj: any)
     {
         let name = `${typeName} ${index}`;
-        if (obj.name)
+        if (obj && obj.name)
         {
             name += `: ${obj.name}`;
         }

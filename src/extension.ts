@@ -6,6 +6,7 @@ import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
+import * as GlbExport from './exportProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
@@ -266,6 +267,30 @@ export function activate(context: vscode.ExtensionContext) {
             });
         }
     }));
+
+    let saveas = vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', (te, t) => {
+
+        let gltfContent = te.document.getText();
+        let gltf;
+        try {
+            gltf = JSON.parse(gltfContent);
+        } catch (ex) {
+            return;
+        }
+        if (!gltf || !gltf.asset || !gltf.asset.version || gltf.asset.version[0] !== '2') {
+            return;
+        }
+
+        let editor = vscode.window.activeTextEditor;
+
+        if (editor) {
+            let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
+
+            GlbExport.save(gltf, glbPath);
+        }
+    });
+
+    context.subscriptions.push(saveas);
 
     //
     // Register a preview of the whole glTF file.
