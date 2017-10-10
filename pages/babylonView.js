@@ -1,5 +1,5 @@
 
-var BabylonPreview = function() {
+var BabylonView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 
@@ -8,6 +8,7 @@ var BabylonPreview = function() {
     var scene = null;
     var skybox = null;
     var skyboxBlur = 0.0;
+    var backgroundSubscription;
 
     /**
     * @function cleanup
@@ -15,6 +16,10 @@ var BabylonPreview = function() {
     * This is called right before the active engine for the preview window is switched.
     */
     this.cleanup = function() {
+        if (backgroundSubscription) {
+            backgroundSubscription.dispose();
+            backgroundSubscription = undefined;
+        }
         enabled = false;
         window.removeEventListener('resize', onWindowResize);
         engine.stopRenderLoop(render);
@@ -33,15 +38,9 @@ var BabylonPreview = function() {
     }
 
     this.startPreview = function() {
-        var errorContainer = document.getElementById('errorContainer');
-        window.onerror = function(error) {
-            errorContainer.style.display = 'block';
-            errorContainer.textContent = error.toString();
-        };
-
         enabled = true;
         BABYLON.SceneLoader.ShowLoadingScreen = false;
-        canvas = document.getElementById("renderCanvas");
+        canvas = document.getElementById("babylonRenderCanvas");
         engine = new BABYLON.Engine(canvas, true);
         engine.enableOfflineSupport = false;
         scene = new BABYLON.Scene(engine);
@@ -58,7 +57,7 @@ var BabylonPreview = function() {
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
                 defaultBabylonReflection, scene);
 
-            backgroundGuiElement.style.display = 'block';
+            mainViewModel.hasBackground(true);
             function applyBackground(showBackground) {
                 if (showBackground) {
                     skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true,
@@ -69,25 +68,14 @@ var BabylonPreview = function() {
                     skybox = null;
                 }
             }
-            applyBackground(options.showBackground);
-            options.backgroundGuiCallback = applyBackground;
+            applyBackground(mainViewModel.showBackground());
+            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             engine.runRenderLoop(render);
-        }, null, window.onerror);
+        }, null, function(error) {
+            mainViewModel.errorText(error.toString());
+        });
 
         window.addEventListener("resize", onWindowResize);
     };
 };
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-*/
-function cleanup() {
-    options.backgroundGuiCallback = function() {};
-    babylonPreview.cleanup();
-}
-
-var babylonPreview = new BabylonPreview();
-babylonPreview.startPreview();

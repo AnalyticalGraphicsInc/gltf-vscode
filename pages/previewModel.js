@@ -1,103 +1,73 @@
 // Defines the 3D engines that the menu allows the users to choose from.
-var engines = [
-    "Babylon.js",
-    "Cesium",
-    "Three.js"
-];
+var engineInfo = [{
+    name: 'Babylon.js',
+    html: 'babylonHtml',
+    view: BabylonView
+}, {
+    name: 'Cesium',
+    html: 'cesiumHtml',
+    view: CesiumView
+}, {
+    name: 'Three.js',
+    html: 'threeHtml',
+    view: ThreeView
+}];
 
-// This is the main interface object for dat.gui.  We define the initial
-// default values for each option within here, and the current menu
-// values will always be reflected here.
-var Options = function() {
-    this.engine = document.getElementById("defaultEngine").textContent;
-    this.showBackground = false;
-    this.help = "Press 'h' to show / hide";
-    this.backgroundGuiCallback = function() {};
+// Use Cesium's built-in copy of Knockout as the global UI manager
+window.ko = Cesium.knockout;
+
+// Keep a reference to the active view engine, for cleanup.
+var activeView;
+
+var ANIM_PLAY_ALL = 'All';
+var ANIM_PLAY_NONE = 'None';
+
+// This is the main view model for the UI controls.
+var mainViewModel = {
+    engineInfo: ko.observableArray(engineInfo),
+    selectedEngine: ko.observable(engineInfo.find(e => e.name === document.getElementById("defaultEngine").textContent)),
+    showControls: ko.observable(true),
+    hasBackground: ko.observable(false),
+    showBackground: ko.observable(false),
+    errorText: ko.observable(),
+    hasErrorText: () => !!mainViewModel.errorText(),
+    toggleControls: () => mainViewModel.showControls(!mainViewModel.showControls()),
+    controlText: () => (mainViewModel.showControls() ? 'Close Controls' : 'Open Controls'),
+    animations: ko.observableArray([]),
+    animPlayAllNone: ko.observable(ANIM_PLAY_NONE),
+    animPlayAllNoneOptions: ko.observableArray([ANIM_PLAY_ALL, ANIM_PLAY_NONE]),
+    oneAnimChanged: () => {
+        // After any animation is toggled individually, we must check if all animations
+        // have become the same state, or if there are different states in use now,
+        // so that the All/None radio buttons can update accordingly.
+        var activeList = mainViewModel.animations().map(a => a.active());
+        if ((activeList.length === 0) || (activeList.every(a => a === false))) {
+            mainViewModel.animPlayAllNone(ANIM_PLAY_NONE);
+        } else if (activeList.every(a => a === true)) {
+            mainViewModel.animPlayAllNone(ANIM_PLAY_ALL);
+        } else {
+            mainViewModel.animPlayAllNone(undefined);
+        }
+    }
 };
 
-var options = new Options();
-var mainGui;
-var backgroundGuiElement;
-
-// The id that we'll add to any element that we're dynamically adding/removing
-// from the head when the active 3D engine changes.
-var removableElementId = 'removableHeadElement';
-
 /**
-* @function clearRemovableHeadElements
-* Removes any element from the DOM that has the
-* removableElementId id (since the DOM supports multiple
-* elements with the same id.)
+* @function playAllOrNoAnimations
+* Plays or stops all animations when the user clicks the 'All' or 'None' radio buttons.
+* No action is taken if neither 'All' nor 'None' is selected, because
+* the user may be playing only some of the animations, in which case the
+* selected option will be undefined.
 */
-function clearRemovableHeadElements()
-{
-    while (true)
-    {
-        var element = document.getElementById(removableElementId);
-        if (element === null) {
-            break;
-        }
-
-        element.remove();
+function playAllOrNoAnimations(option) {
+    if (option === ANIM_PLAY_ALL) {
+        mainViewModel.animations().forEach(function(anim) {
+            anim.active(true);
+        });
+    } else if (option === ANIM_PLAY_NONE) {
+        mainViewModel.animations().forEach(function(anim) {
+            anim.active(false);
+        });
     }
-}
-
-/**
-* @function addHeadScript
-* Dynamically adds a script to the "head" element of the DOM.
-* This is the only reliable way to get dynamically added script
-* elements to be evaluated. (eval() can't be used because it only
-* evaluates in-lined script bodies and not scripts that are
-* referenced by the "src" attribute.)
-* All scripts added this way will use the id defined by
-* removableElementId so that they can be easily removed via
-* clearRemovableHeadElements.
-* @param  {string} src  The src link for the external script.
-* @param  {string} body The body content of the script element if it's not a remote script.
-*/
-function addHeadScript(src, body)
-{
-    var head = document.getElementsByTagName("head")[0];
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = src;
-    script.id = removableElementId;
-    script.innerHTML = body;
-    head.appendChild(script);
-}
-
-/**
-* @function addHeadLink
-* Dynamically adds a CSS link element to the "head" element of the DOM.
-* This was the only reliable way identified that would evaluate
-* CSS that is dynamically injected into an HTML body.
-* All link elements added this way will use the id defined by
-* removableElementId so that they can be easily removed via
-* clearRemovableHeadElements.
-* @param  {string} src  The src link for the external CSS file.
-* @param  {string} body The body content of the CSS element if it's not a remote file.
-*/
-function addHeadLink(href, body) {
-    var head = document.getElementsByTagName("head")[0];
-    var link = document.createElement("link");
-    link.rel = 'stylesheet';
-    link.type = "text/css";
-    link.href = href;
-    link.id = removableElementId;
-    link.innerHTML = body;
-    head.appendChild(link);
-}
-
-/**
-* @function cleanup
-* Perform any cleanup that needs to happen to stop rendering the current model.
-* This is called right before the active engine for the preview window is switched.
-* This method will get overridden by whatever 3D engine is currently loaded.
-* It has to be defined here though since we always call cleanup before switching
-* engines, so on initial load, this is the version that will be called.
-*/
-function cleanup() {
-
 }
 
 /**
@@ -106,15 +76,20 @@ function cleanup() {
 * the DOM to use the newly selected engine.
 */
 function updatePreview() {
-    cleanup();
-    clearWarning();
+    if (activeView) {
+        activeView.cleanup();
+        activeView = undefined;
+    }
+
+    // Clear errors/warnings.
+    mainViewModel.errorText(undefined);
 
     var content = document.getElementById("content");
 
     // Update the DOM's "content" div with the HTML content for the currently selected
     // 3D engine.
-    var engineElementId = options.engine.toLocaleLowerCase();
-    var engineHtml = decodeURI(document.getElementById(engineElementId).textContent);
+    var activeEngineInfo = mainViewModel.selectedEngine();
+    var engineHtml = decodeURI(document.getElementById(activeEngineInfo.html).textContent);
     var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
     content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
@@ -122,114 +97,34 @@ function updatePreview() {
     // before any of the 3D engines have loaded.
     window.CESIUM_BASE_URL = extensionRootPath + 'engines/Cesium/';
 
-    // Now, unfortunately, scripts that are added to the DOM won't be executed, but if
-    // we add them to the head, they will.  So, we'll iterate through all script tags
-    // in the code we just inserted and we'll add them to the Head.  Along the way, we'll
-    // give them all the same special ID so that we can easily remove them later.
-    // We then do something similar for link (CSS) elements.
-    clearRemovableHeadElements();
-    var scriptElements = content.getElementsByTagName('script');
-    for (var i = 0; i < scriptElements.length; i++) {
-        addHeadScript(scriptElements[i].src, scriptElements[i].innerHTML);
-    }
-
-    var linkElements = content.getElementsByTagName('link');
-    for (var j = 0; j < linkElements.length; j++) {
-        addHeadLink(linkElements[j].href, linkElements[j].innerHTML);
-    }
-}
-
-/**
-* @function fadeOut
-* Fades out an HTML element
-* @param  {object} element The HTML element being faded out.
-* @credit http://idiallo.com/javascript/using-requestanimationframe
-*/
-function fadeOut(element) {
-    var opacity = element.style.opacity;
-
-    function decrease () {
-        opacity -= 0.05;
-        if (opacity <= 0) {
-            element.style.opacity = 0;
-            return true;
-        }
-
-        element.style.opacity = opacity;
-        requestAnimationFrame(decrease);
-    }
-
-    decrease();
-}
-
-/**
-* @function fadeIn
-* Fades in an HTML element
-* @param  {object} element The HTML element being faded in.
-* @credit http://idiallo.com/javascript/using-requestanimationframe
-*/
-function fadeIn(element) {
-    var opacity = element.style.opacity;
-
-    function increase () {
-        opacity += 0.05;
-        if (opacity >= 1) {
-            element.style.opacity = 1;
-            return true;
-        }
-
-        element.style.opacity = opacity;
-        requestAnimationFrame(increase);
-    }
-
-    increase();
-}
-
-/**
-* @function clearWarning
-* Hides any warning currently being displayed.
-*/
-function clearWarning() {
-    showWarning(null);
-}
-
-/**
-* @function showWarning
-* Displays (or hides) a warning overlay indefinitely, or for the provided duration.
-* @param  {string} message  The warning to display.  If null, hides the message.
-* @param  {type} durationMs The number of milliseconds to display the warning before auto-hiding it.  Defaults to null (indefinite timeout).
-*/
-function showWarning(message, durationMs = null) {
-    var warning = document.getElementById("warningContainer");
-    warningContainer.style.display = 'block';
-
-    if (null === message) {
-        fadeOut(warning);
-    } else {
-        warning.textContent = message;
-        fadeIn(warning);
-    }
-
-    if (null !== durationMs) {
-        setTimeout(function() {
-            clearWarning();
-        }, durationMs);
-    }
+    activeView = new activeEngineInfo.view();
+    activeView.startPreview();
 }
 
 function initPreview()
 {
-    // Create and initialize the dat.gui menu UI
-    var gui = new dat.GUI();
-    gui.add(options, "engine", engines).onChange(updatePreview);
-    var backgroundGui = gui.add(options, "showBackground").name('show background').onChange(
-        function() { options.backgroundGuiCallback(options.showBackground); });
-    gui.add(options, "help");
+    // Bind the viewModel to the main UI panel.
+    var mainUI = document.getElementById('mainUI');
+    ko.applyBindings(mainViewModel, mainUI);
 
-    mainGui = gui;
-    backgroundGuiElement = backgroundGui.__li;
+    // Bind the viewModel to the warning UI
+    var errorUI = document.getElementById('warningContainer');
+    ko.applyBindings(mainViewModel, warningContainer);
+
+    // Subscribe to changes in the viewModel
+    mainViewModel.selectedEngine.subscribe(updatePreview);
+    mainViewModel.animPlayAllNone.subscribe(playAllOrNoAnimations);
+
+    // Capture JavaScript errors and display them.
+    window.addEventListener('error', function(error) {
+        var message = error.toString();
+        if (error && error.message) {
+            message = error.message;
+        }
+        mainViewModel.errorText(message);
+    });
 
     updatePreview();
 }
 
-initPreview();
+window.addEventListener('load', initPreview, false);
