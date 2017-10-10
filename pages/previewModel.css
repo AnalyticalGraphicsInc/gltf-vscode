@@ -45,7 +45,6 @@ html, body, #content {
 .rowUI {
     background: #222;
     border-bottom: 1px solid #444;
-    /*border-left: 4px solid #3c9cff;*/
     padding: 0.4em 0.7rem;
 }
 
@@ -90,6 +89,22 @@ html, body, #content {
     border-right: 0.3rem solid transparent;
 }
 
+/* The "active" class is applied by a knockout binding to the selected engine. */
+.radioButtons label.active {
+    background-color: #307ccb;
+    color: white;
+}
+
+.radioButtons label.active::before {
+    border-top-color: #307ccb;
+    border-left-color: white;
+    border-bottom-color: white;
+}
+
+.radioButtons label.active::after {
+    border-bottom-color: #307ccb;
+}
+
 .radioButtons label:hover {
     background-color: #3c9cff;
     color: white;
@@ -101,16 +116,6 @@ html, body, #content {
 
 .radioButtons label:hover::after {
     border-bottom-color: #3c9cff;
-}
-
-/* The "active" class is applied by a knockout binding to the selected engine. */
-.radioButtons label.active {
-    color: white;
-}
-
-.radioButtons label.active::before {
-    border-left-color: white;
-    border-bottom-color: white;
 }
 
 .radioButtons label input {
@@ -197,6 +202,14 @@ html, body, #content {
     box-sizing: border-box;
     border-top: 5px solid #1D4D7C;
     border-left: 5px solid transparent;
+}
+
+.active .angleBox {
+    background-color: #307ccb;
+}
+
+.active .angleBox::before {
+    border-top-color: #307ccb;
 }
 
 .active .angleBox > span {

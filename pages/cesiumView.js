@@ -130,6 +130,7 @@ var CesiumView = function() {
     this.cleanup = function() {
         enabled = false;
         mainViewModel.animations([]);
+        scene = scene && scene.destroy();
     };
 
     this.startPreview = function() {
@@ -156,7 +157,6 @@ var CesiumView = function() {
 
         enabled = true;
         startRenderLoop();
-        resize();
 
         var gltfFileName = document.getElementById('gltfFileName').textContent;
         var gltfRootPath = "file:///" + document.getElementById('gltfRootPath').textContent;
