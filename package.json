@@ -115,7 +115,7 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "postinstall": "cd server && npm install && cd ..",
+        "postinstall": "cd server && npm install && cd .. && node ./node_modules/vscode/bin/install",
         "compile": "tsc -p ./tsconfig.json && cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
         "compile:client": "tsc -p ./tsconfig.json",
         "watch:client": "tsc -w -p ./tsconfig.json",
@@ -134,6 +134,6 @@
         "json-source-map": "^0.4.0",
         "vscode": "^1.1.5",
         "vscode-languageclient": "3.3.0",
-        "gltf-validator": "file:./gltf-validator"
+        "gltf-validator": "^2.0.0-dev.0"
     }
 }

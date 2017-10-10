@@ -132,7 +132,7 @@ function validateTextDocument(textDocument: TextDocument): void {
     const gltfData = Buffer.from(textDocument.getText());
     const folderName = path.resolve(fileName, '..');
 
-    gltfValidator.validate(baseName, new Uint8Array(gltfData), (uri) =>
+    gltfValidator.validateBytes(baseName, new Uint8Array(gltfData), (uri) =>
         new Promise((resolve, reject) => {
             uri = path.resolve(folderName, uri);
             fs.readFile(uri, (err, data) => {
