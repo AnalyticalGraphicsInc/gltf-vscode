@@ -4,6 +4,7 @@
 
 * Replaced UI with a Knockout data-bound UI, to allow more per-engine configurability.
 * Added animations panel to Cesium preview, with options to toggle individual animations.
+* Re-import glTF schemas from Khronos glTF GitHub repo, only minor tweaks.
 
 ### 2.0.5 - 2017-08-01
 
