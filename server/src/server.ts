@@ -146,17 +146,21 @@ function validateTextDocument(textDocument: TextDocument): void {
             });
         })
     ).then((result) => {
-        // Validation report in object form
-        if (result.errors) {
-            const diagnostics = convertErrorsToDiagnostics(textDocument, result.errors);
-
-            // Send the computed diagnostics to VSCode.
-            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        let diagnostics: Diagnostic[] = [];
+        const map = tryGetJsonMap(textDocument);
+        if (!map) {
+            diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}, DiagnosticSeverity.Error));
         } else {
-            // Clear any old errors.
-            const diagnostics: Diagnostic[] = [];
-            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+            let problems = 0;
+            if (result.errors) {
+                problems = convertErrorsToDiagnostics(diagnostics, problems, map, result.errors, DiagnosticSeverity.Error);
+            }
+            if (result.warnings) {
+                convertErrorsToDiagnostics(diagnostics, problems, map, result.warnings, DiagnosticSeverity.Warning);
+            }
         }
+        // Send the computed diagnostics to VSCode, clearing any old messages.
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     }, (result) => {
         // Validator's error
         console.warn('glTF Validator had problems.');
@@ -170,35 +174,27 @@ connection.onDidChangeWatchedFiles((_change) => {
 });
 
 
-function convertErrorsToDiagnostics(textDocument: TextDocument, errors: any) : Diagnostic[] {
-    let diagnostics: Diagnostic[] = [];
-    let problems = 0;
-
-    const map = tryGetJsonMap(textDocument);
-    if (!map) {
-        diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}));
-    } else {
-        for (let category in errors) {
-            if (errors.hasOwnProperty(category)) {
-                let errorList = errors[category];
-                let len = errorList.length;
-                for (let i = 0; i < len; ++i) {
-                    let info = errorList[i];
-                    if (info.message) {
-                        if (++problems > maxNumberOfProblems) {
-                            break;
-                        }
-                        diagnostics.push(getDiagnostic(info, map));
+function convertErrorsToDiagnostics(diagnostics: Diagnostic[], problems: number, map: any, errors: any, severity: DiagnosticSeverity) : number {
+    for (let category in errors) {
+        if (errors.hasOwnProperty(category)) {
+            let errorList = errors[category];
+            let len = errorList.length;
+            for (let i = 0; i < len; ++i) {
+                let info = errorList[i];
+                if (info.message) {
+                    if (++problems > maxNumberOfProblems) {
+                        break;
                     }
+                    diagnostics.push(getDiagnostic(info, map, severity));
                 }
             }
         }
     }
 
-    return diagnostics;
+    return problems;
 }
 
-function getDiagnostic(info: any, map: any) : Diagnostic {
+function getDiagnostic(info: any, map: any, severity: DiagnosticSeverity) : Diagnostic {
     let range = {
         start: { line: 0, character: 0 },
         end: { line: 0, character: Number.MAX_VALUE }
@@ -220,7 +216,7 @@ function getDiagnostic(info: any, map: any) : Diagnostic {
 
     return {
         code: 'Some code',
-        severity: DiagnosticSeverity.Error,
+        severity: severity,
         range,
         message: info.message,
         source: 'glTF Validator'
