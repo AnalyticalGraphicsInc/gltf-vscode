@@ -114,7 +114,7 @@ function upgradeDescriptions(data) {
         }
     }
 
-    if (data.title && data.title === 'textureInfo' && data.description) {
+    if (data.title && data.title === 'Texture Info' && data.description) {
         // textureInfo.schema.json has a vague description "Reference to a texture"
         // that overwrites more specific descriptions from the referring parents.
         // So, we remove that here, and VSCode picks up better descriptions.
