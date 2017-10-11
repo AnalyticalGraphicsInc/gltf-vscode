@@ -152,6 +152,10 @@ function validateTextDocument(textDocument: TextDocument): void {
 
             // Send the computed diagnostics to VSCode.
             connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        } else {
+            // Clear any old errors.
+            const diagnostics: Diagnostic[] = [];
+            connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
         }
     }, (result) => {
         // Validator's error
