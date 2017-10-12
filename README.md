@@ -50,11 +50,13 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 ![Render states enable](images/StatesEnable.png)
 
-## Compatibiliy and known size limitations
+## Compatibility and known size limitations
 
 Currently, this extension is compatible only with `*.gltf` files, not the binary form of `*.glb`.  This may change in the future.  [Contributions](CONTRIBUTING.md) welcome!
 
 Also, there is a [known issue](https://github.com/Microsoft/vscode/issues/31078) where VSCode extensions cannot manipulate documents that have grown beyond 5 MB in size.  This limitation applies only to the main JSON-based glTF document, not to external assets such as the `bin` file, texture image files, etc.  The sample model repo contains some models called `glTF-Embedded`, where all of the assets have been URI-encoded and placed inside the JSON document.  For some of the larger models, this does make the document larger than the size limit, preventing this extension's preview windows from opening.  We hope this limit will be increased or made user-configurable in the future.  In the meantime, the workaround is to use the non-embedded versions of those models.  The non-embedded versions are all well below the size limit, because the bulk of their data is external to the JSON.
+
+Note there is now a 64-bit version of VSCode that appears to have a much higher bound for this limit.  For large models, the 64-bit version is strongly recommended over the 32-bit version of VSCode.
 
 ## Extension Settings
 
@@ -71,10 +73,10 @@ on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIB
 
 This extension makes use of the following open source projects:
 
- * [dat.GUI](https://github.com/dataarts/dat.gui) - Used for rendering the preview window's menu
  * [Cesium](https://github.com/AnalyticalGraphicsInc/cesium) - One of the 3D engines used in the preview window
  * [Babylon.js](https://github.com/BabylonJS/Babylon.js) - One of the 3D engines used in the preview window
  * [Three.js](https://github.com/mrdoob/three.js/) - One of the 3D engines used in the preview window
+ * [Knockout](http://knockoutjs.com/) - Used to data-bind preview window's menu
 
 ## License
 
