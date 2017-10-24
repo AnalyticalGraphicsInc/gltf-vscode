@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.0.7 - 2017-10-24
+* Create a new preview pane that shows the Node tree.
+* Add a GLB exporter. Shift+Alt+S E
+* Added menu items for previews.
+
 ### 2.0.6 - 2017-10-12
 
 * Replaced UI with a Knockout data-bound UI, to allow more per-engine configurability.
