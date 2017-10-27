@@ -10,7 +10,7 @@
     },
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.17.0"
     },
     "categories": [
         "Formatters",

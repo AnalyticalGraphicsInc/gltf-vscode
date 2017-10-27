@@ -275,9 +275,11 @@ export function activate(context: vscode.ExtensionContext) {
         try {
             gltf = JSON.parse(gltfContent);
         } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
             return;
         }
         if (!gltf || !gltf.asset || !gltf.asset.version || gltf.asset.version[0] !== '2') {
+            vscode.window.showErrorMessage('Error: only glTF 2.0 is supported.');
             return;
         }
 
@@ -285,8 +287,25 @@ export function activate(context: vscode.ExtensionContext) {
 
         if (editor) {
             let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
-
-            GlbExport.save(gltf, glbPath);
+            let options = {
+                defaultUri: Uri.file(glbPath),
+                filters: {
+                    'Binary glTF': ['glb'],
+                    'All files': ['*']
+                 }
+            };
+            vscode.window.showSaveDialog(options).then(uri => {
+                if (uri !== undefined) {
+                    try {
+                        GlbExport.save(gltf, uri.fsPath);
+                        vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
+                    } catch (ex) {
+                        vscode.window.showErrorMessage(ex.toString());
+                    }
+                }
+            }, reason => {
+                vscode.window.showErrorMessage(reason.toString());
+            });
         }
     });
 
