@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.0.7 - UNRELEASED
+### 2.0.7 - 2017-10-28
 
 * Added an option to export the glTF to a `.glb` binary package file. (Shift+Alt+S E)
 * Created a new preview pane that shows the scene node tree.
