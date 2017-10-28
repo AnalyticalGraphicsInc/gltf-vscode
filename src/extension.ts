@@ -268,7 +268,13 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    let saveas = vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', (te, t) => {
+    //
+    // Export the whole file and its dependencies to a binary GLB file.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', (te, t) => {
+        if (!checkValidEditor()) {
+            return;
+        }
 
         let gltfContent = te.document.getText();
         let gltf;
@@ -284,32 +290,27 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         let editor = vscode.window.activeTextEditor;
-
-        if (editor) {
-            let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
-            let options = {
-                defaultUri: Uri.file(glbPath),
-                filters: {
-                    'Binary glTF': ['glb'],
-                    'All files': ['*']
-                 }
-            };
-            vscode.window.showSaveDialog(options).then(uri => {
-                if (uri !== undefined) {
-                    try {
-                        GlbExport.save(gltf, uri.fsPath);
-                        vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
-                    } catch (ex) {
-                        vscode.window.showErrorMessage(ex.toString());
-                    }
+        let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
+        let options = {
+            defaultUri: Uri.file(glbPath),
+            filters: {
+                'Binary glTF': ['glb'],
+                'All files': ['*']
+            }
+        };
+        vscode.window.showSaveDialog(options).then(uri => {
+            if (uri !== undefined) {
+                try {
+                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
+                } catch (ex) {
+                    vscode.window.showErrorMessage(ex.toString());
                 }
-            }, reason => {
-                vscode.window.showErrorMessage(reason.toString());
-            });
-        }
-    });
-
-    context.subscriptions.push(saveas);
+            }
+        }, reason => {
+            vscode.window.showErrorMessage(reason.toString());
+        });
+    }));
 
     //
     // Register a preview of the whole glTF file.
@@ -337,23 +338,29 @@ export function activate(context: vscode.ExtensionContext) {
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
 
+    //
+    // Register a preview of the node tree.
+    //
     const treeViewProvider = new GltfTreeViewDocumentContentProvider(context);
     const treeViewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-tree-view-preview', treeViewProvider);
 
-    let disposable = vscode.commands.registerCommand('gltf.previewTree', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.treeView', () => {
         const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        const gltfPreviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-        return vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
+        const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+        return vscode.commands.executeCommand('vscode.previewHtml', gltfTreeViewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
-    });
+    }));
 
-    // Update the preview window when the glTF file is saved.
+    //
+    // Update all preview windows when the glTF file is saved.
+    //
     vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
         if (document === vscode.window.activeTextEditor.document) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
+
             const gltfTreeviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
             treeViewProvider.update(gltfTreeviewUri)
         }

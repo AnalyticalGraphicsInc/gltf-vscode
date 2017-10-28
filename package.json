@@ -21,7 +21,7 @@
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
-        "onCommand:gltf.previewTree",
+        "onCommand:gltf.treeView",
         "onCommand:gltf.saveAsGlb"
     ],
     "main": "./out/src/extension",
@@ -79,12 +79,12 @@
                 "title": "glTF: Preview 3D Model"
             },
             {
-                "command": "gltf.previewTree",
-                "title": "glTF: Preview tree view"
+                "command": "gltf.treeView",
+                "title": "glTF: Tree view of scene nodes"
             },
             {
                 "command": "gltf.saveAsGlb",
-                "title": "glTF: Export GLB"
+                "title": "glTF: Export GLB (Binary version)"
             }
         ],
         "keybindings": [
@@ -111,11 +111,45 @@
             "editor/title": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json"
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
                 },
                 {
-                    "command": "gltf.previewTree",
-                    "when": "resourceLangId == json"
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.inspectDataUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.importUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.exportUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.saveAsGlb",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
                 }
             ]
         },

@@ -54,7 +54,7 @@ export class GltfTreeViewDocumentContentProvider implements vscode.TextDocumentC
             }
             if (!this._gltf || !this._gltf.asset || !this._gltf.asset.version || this._gltf.asset.version[0] !== '2') {
                 this._gltf = undefined;
-                return this.errorSnippet("Active editor doesn't show a Gltf document - nothing to preview.")
+                return this.errorSnippet("This tree viewer only works with glTF version 2.x files.")
             }
         }
         this.updateTreeData();

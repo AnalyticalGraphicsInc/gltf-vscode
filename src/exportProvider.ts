@@ -41,7 +41,7 @@ function alignedLength(value: number) : number
     return value + (alignValue - multiple);
 }
 
-export function save(gltf : any, filename: string) {
+export function save(gltf: any, sourceFilename: string, outputFilename: string) {
     const Binary = {
         Magic: 0x46546C67
     };
@@ -55,7 +55,7 @@ export function save(gltf : any, filename: string) {
     for (; bufferIndex < gltf.buffers.length; bufferIndex++)
     {
         let buffer = gltf.buffers[bufferIndex];
-        let data = dataFromUri(buffer, filename);
+        let data = dataFromUri(buffer, sourceFilename);
         if (data !== undefined) {
             outputBuffers.push(data);
         }
@@ -73,7 +73,7 @@ export function save(gltf : any, filename: string) {
     if (gltf.images !== undefined)
     {
         for (let image of gltf.images) {
-            let data = dataFromUri(image, filename);
+            let data = dataFromUri(image, sourceFilename);
             if (data === undefined) {
                 delete image['uri'];
                 continue;
@@ -102,7 +102,7 @@ export function save(gltf : any, filename: string) {
     if (gltf.shaders !== undefined)
     {
         for (let shader of gltf.shaders) {
-            let data = dataFromUri(shader, filename);
+            let data = dataFromUri(shader, sourceFilename);
             if (data === undefined) {
                 delete shader['uri'];
                 continue;
@@ -170,5 +170,5 @@ export function save(gltf : any, filename: string) {
         outputBuffers[i].copy(finalBuffer, bufIndex + bufferMap.get(i));
     }
 
-    fs.writeFileSync(filename, finalBuffer, 'binary');
+    fs.writeFileSync(outputFilename, finalBuffer, 'binary');
 }
