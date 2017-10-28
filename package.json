@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -80,11 +80,11 @@
             },
             {
                 "command": "gltf.treeView",
-                "title": "glTF: Tree view of scene nodes"
+                "title": "glTF: Tree View of Scene Nodes"
             },
             {
                 "command": "gltf.saveAsGlb",
-                "title": "glTF: Export GLB (Binary version)"
+                "title": "glTF: Export GLB (Binary file)"
             }
         ],
         "keybindings": [
@@ -185,8 +185,8 @@
     },
     "dependencies": {
         "json-source-map": "^0.4.0",
-        "jstree":"^3.3.4",
-        "jquery":"^3.2.1",
-        "babylonjs":"^3.1.0-alpha3.5"
+        "jstree": "^3.3.4",
+        "jquery": "^3.2.1",
+        "babylonjs": "^3.1.0-alpha3.5"
     }
 }

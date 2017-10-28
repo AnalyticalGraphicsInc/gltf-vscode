@@ -1,8 +1,9 @@
 # Change Log
 
-### 2.0.7 - 2017-10-24
-* Create a new preview pane that shows the Node tree.
-* Add a GLB exporter. Shift+Alt+S E
+### 2.0.7 - UNRELEASED
+
+* Added an option to export the glTF to a `.glb` binary package file. (Shift+Alt+S E)
+* Created a new preview pane that shows the scene node tree.
 * Added menu items for previews.
 
 ### 2.0.6 - 2017-10-12

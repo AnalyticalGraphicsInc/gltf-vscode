@@ -285,7 +285,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         if (!gltf || !gltf.asset || !gltf.asset.version || gltf.asset.version[0] !== '2') {
-            vscode.window.showErrorMessage('Error: only glTF 2.0 is supported.');
+            vscode.window.showErrorMessage('Error: Only glTF 2.0 is supported for GLB export.');
             return;
         }
 
