@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -10,7 +10,7 @@
     },
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.17.0"
     },
     "categories": [
         "Formatters",
@@ -20,7 +20,9 @@
         "onCommand:gltf.inspectDataUri",
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
-        "onCommand:gltf.previewModel"
+        "onCommand:gltf.previewModel",
+        "onCommand:gltf.treeView",
+        "onCommand:gltf.saveAsGlb"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -75,6 +77,14 @@
             {
                 "command": "gltf.previewModel",
                 "title": "glTF: Preview 3D Model"
+            },
+            {
+                "command": "gltf.treeView",
+                "title": "glTF: Tree View of Scene Nodes"
+            },
+            {
+                "command": "gltf.saveAsGlb",
+                "title": "glTF: Export GLB (Binary file)"
             }
         ],
         "keybindings": [
@@ -89,8 +99,60 @@
                 "key": "alt+g",
                 "mac": "alt+g",
                 "when": "editorTextFocus && editorLangId == 'json'"
+            },
+            {
+                "command": "gltf.saveAsGlb",
+                "key": "alt+shift+s e",
+                "mac": "alt+shift+s e",
+                "when": "editorTextFocus && editorLangId == 'json'"
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.inspectDataUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.importUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.exportUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.saveAsGlb",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ]
+        },
         "languages": [
             {
                 "id": "json",
@@ -122,6 +184,9 @@
         "@types/mocha": "^2.2.32"
     },
     "dependencies": {
-        "json-source-map": "^0.4.0"
+        "json-source-map": "^0.4.0",
+        "jstree": "^3.3.4",
+        "jquery": "^3.2.1",
+        "babylonjs": "^3.1.0-alpha3.5"
     }
 }

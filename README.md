@@ -12,6 +12,12 @@ The above model, other sample models, and associated licenses can be obtained fr
 
 You can preview glTF files in a number of different rendering engines: BabylonJS, Cesium, and ThreeJS.  The ThreeJS engine will preview the saved model as opposed to the current content in your open VS Code tab.  The Babylon and Cesium engines will first try to preview what is currently in your tab, and only if that fails will it fall back on displaying the version of the model saved on disk.
 
+## Export text-based `.gltf` file to binary `.glb` file.
+
+Command name: `glTF: Export GLB (Binary file)`
+
+The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.  This command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared.
+
 ## Preview image files and data-URIs from inside the glTF document
 
 ![Sample image preview of normal map](images/SampleImagePreview.png)
@@ -27,6 +33,12 @@ If you plan to preview GLSL shader code, consider installing a 3rd-party syntax 
 ![Sample conversion](images/Conversion.png)
 
 In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), there are two commands named `glTF: Import file as Data URI` and `glTF: Export a Data URI to a file`.  To use these, place the document cursor on a block that contains a `"uri"` field.  If the value of this field is a valid filename, `Import` will load that file, encode it to base64, and replace the filename with the dataURI in your document.  `Export` is the reverse of this process, but first it will ask you for a filename to save to.  It will save the file in the same folder as the glTF file, so it does not need a path, just a name.  It will try to select an appropriate file extension based on the MIME type of the dataURI.  It will also warn you if you are about to overwrite an existing file.  If the save is successful, the dataURI will be replaced by the name of the newly created file.
+
+## Tree View of Scene Nodes
+
+Command name: `glTF: Tree View of Scene Nodes`
+
+This displays a window with a tree view revealing the node structure of the glTF file.
 
 ## Other Features
 

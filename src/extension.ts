@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
+import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
+import * as GlbExport from './exportProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
@@ -267,6 +269,50 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     //
+    // Export the whole file and its dependencies to a binary GLB file.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', (te, t) => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
+        let gltfContent = te.document.getText();
+        let gltf;
+        try {
+            gltf = JSON.parse(gltfContent);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+            return;
+        }
+        if (!gltf || !gltf.asset || !gltf.asset.version || gltf.asset.version[0] !== '2') {
+            vscode.window.showErrorMessage('Error: Only glTF 2.0 is supported for GLB export.');
+            return;
+        }
+
+        let editor = vscode.window.activeTextEditor;
+        let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
+        let options = {
+            defaultUri: Uri.file(glbPath),
+            filters: {
+                'Binary glTF': ['glb'],
+                'All files': ['*']
+            }
+        };
+        vscode.window.showSaveDialog(options).then(uri => {
+            if (uri !== undefined) {
+                try {
+                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
+                } catch (ex) {
+                    vscode.window.showErrorMessage(ex.toString());
+                }
+            }
+        }, reason => {
+            vscode.window.showErrorMessage(reason.toString());
+        });
+    }));
+
+    //
     // Register a preview of the whole glTF file.
     //
     const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
@@ -292,11 +338,31 @@ export function activate(context: vscode.ExtensionContext) {
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
 
-    // Update the preview window when the glTF file is saved.
+    //
+    // Register a preview of the node tree.
+    //
+    const treeViewProvider = new GltfTreeViewDocumentContentProvider(context);
+    const treeViewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-tree-view-preview', treeViewProvider);
+
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.treeView', () => {
+        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
+        const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+        return vscode.commands.executeCommand('vscode.previewHtml', gltfTreeViewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
+        }, (reason) => {
+            vscode.window.showErrorMessage(reason);
+        });
+    }));
+
+    //
+    // Update all preview windows when the glTF file is saved.
+    //
     vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
         if (document === vscode.window.activeTextEditor.document) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
+
+            const gltfTreeviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+            treeViewProvider.update(gltfTreeviewUri)
         }
     });
 }
