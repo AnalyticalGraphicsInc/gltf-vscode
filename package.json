@@ -17,6 +17,7 @@
         "Linters"
     ],
     "activationEvents": [
+        "onCommand:gltf.inspectDataUri",
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
