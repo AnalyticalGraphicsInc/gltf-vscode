@@ -17,12 +17,13 @@
         "Linters"
     ],
     "activationEvents": [
-        "onCommand:gltf.inspectDataUri",
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
         "onCommand:gltf.treeView",
-        "onCommand:gltf.saveAsGlb"
+        "onCommand:gltf.saveAsGlb",
+        "onCommand:gltf.importGlbOpen",
+        "onCommand:gltf.importGlbFile"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -85,6 +86,14 @@
             {
                 "command": "gltf.saveAsGlb",
                 "title": "glTF: Export GLB (Binary file)"
+            },
+            {
+                "command": "gltf.importGlbFile",
+                "title": "glTF: Import from GLB"
+            },
+            {
+                "command": "gltf.importGlbOpen",
+                "title": "glTF: Import a GLB selected in an Open dialog"
             }
         ],
         "keybindings": [
@@ -105,9 +114,19 @@
                 "key": "alt+shift+s e",
                 "mac": "alt+shift+s e",
                 "when": "editorTextFocus && editorLangId == 'json'"
+            },
+            {
+                "key": "ctrl+shift+alt+g",
+                "mac": "cmd+shift+alt+g",
+                "command": "gltf.importGlbOpen"
             }
         ],
         "menus": {
+            "explorer/context": [
+                {
+                    "command": "gltf.importGlbFile"
+                }
+            ],
             "editor/title": [
                 {
                     "command": "gltf.previewModel",

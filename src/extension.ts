@@ -7,6 +7,7 @@ import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, g
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
 import * as GlbExport from './exportProvider';
+import * as GlbImport from './importProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
@@ -291,25 +292,34 @@ export function activate(context: vscode.ExtensionContext) {
 
         let editor = vscode.window.activeTextEditor;
         let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
-        let options = {
-            defaultUri: Uri.file(glbPath),
-            filters: {
-                'Binary glTF': ['glb'],
-                'All files': ['*']
-            }
-        };
-        vscode.window.showSaveDialog(options).then(uri => {
-            if (uri !== undefined) {
-                try {
-                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
-                    vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
-                } catch (ex) {
-                    vscode.window.showErrorMessage(ex.toString());
+        if (fs.existsSync(glbPath)) {
+            const options: vscode.SaveDialogOptions = {
+                defaultUri: Uri.file(glbPath),
+                filters: {
+                    'Binary glTF': ['glb'],
+                    'All files': ['*']
                 }
+            };
+            vscode.window.showSaveDialog(options).then(uri => {
+                if (uri !== undefined) {
+                    try {
+                        GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                        vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
+                    } catch (ex) {
+                        vscode.window.showErrorMessage(ex.toString());
+                    }
+                }
+            }, reason => {
+                vscode.window.showErrorMessage(reason.toString());
+            });
+        } else {
+            try {
+                GlbExport.save(gltf, editor.document.uri.fsPath, glbPath);
+                vscode.window.showInformationMessage('Glb exported as: ' + glbPath);
+            } catch (ex) {
+                vscode.window.showErrorMessage(ex.toString());
             }
-        }, reason => {
-            vscode.window.showErrorMessage(reason.toString());
-        });
+        }
     }));
 
     //
@@ -351,6 +361,47 @@ export function activate(context: vscode.ExtensionContext) {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
+    }));
+
+    //
+    // Import of a GLB file and writing out its various chunks.
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbOpen', () => {
+        const options: vscode.OpenDialogOptions = {
+             canSelectMany: false,
+             openLabel: 'Import',
+             filters: {
+                'Binary glTF': ['glb'],
+                'All files': ['*']
+            }
+        };
+
+        vscode.window.showOpenDialog(options).then(fileUri => {
+            if (fileUri && fileUri[0]) {
+                try {
+                    GlbImport.load(fileUri[0].fsPath);
+                } catch (ex) {
+                    vscode.window.showErrorMessage(ex.toString());
+                }
+            }
+        });
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', (fileUri) => {
+
+        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri)) {
+            if (vscode.window.activeTextEditor === undefined) {
+                vscode.commands.executeCommand('gltf.importGlbOpen');
+                return;
+            }
+            fileUri = vscode.window.activeTextEditor.document.uri;
+        }
+
+        try {
+            GlbImport.load(fileUri.fsPath);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
     }));
 
     //

@@ -12,11 +12,12 @@ The above model, other sample models, and associated licenses can be obtained fr
 
 You can preview glTF files in a number of different rendering engines: BabylonJS, Cesium, and ThreeJS.  The ThreeJS engine will preview the saved model as opposed to the current content in your open VS Code tab.  The Babylon and Cesium engines will first try to preview what is currently in your tab, and only if that fails will it fall back on displaying the version of the model saved on disk.
 
-## Export text-based `.gltf` file to binary `.glb` file.
+## Import a binary `.glb` file as text-based `.gltf` and export text-based `.gltf` file to binary `.glb` file.
 
-Command name: `glTF: Export GLB (Binary file)`
+Command name: `glTF: Export GLB (Binary file)`\
+Command name: `glTF: Import from GLB`
 
-The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.  This command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared.
+The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.  The `glTF: Export GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared. The `glTF: Import from GLB` command will open a binary `.glb` for editing, creating separate files for each of the GLB binary chunks.
 
 ## Preview image files and data-URIs from inside the glTF document
 
