@@ -77,6 +77,7 @@ Note there is now a 64-bit version of VSCode that appears to have a much higher 
 * `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
 * `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](http://doc.babylonjs.com/overviews/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  There are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The files must be in a format usable on the web, such as PNG or JPEG.
+* `glTF.alwaysPromptForFilename` - When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?
 
 ## Source code
 

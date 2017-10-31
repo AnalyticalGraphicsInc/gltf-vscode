@@ -17,25 +17,19 @@ export async function load(sourceFilename: string) {
     // Compose an target filename
     let targetFilename = sourceFilename.replace('.glb', '.gltf');
 
-    if (fs.existsSync(targetFilename)) {
-        let result = await vscode.window.showWarningMessage('.glTF already present, are you sure you want to continue?', 'Yes', 'Select Path');
-
-        if (result == 'Select Path') {
-            const options: vscode.SaveDialogOptions = {
-                defaultUri: Uri.file(targetFilename),
-                filters: {
-                    'glTF': ['gltf'],
-                    'All files': ['*']
-                }
-            };
-            let uri = await vscode.window.showSaveDialog(options);
-            if (uri !== undefined) {
-                targetFilename = uri.fsPath;
+    if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename')) {
+        const options: vscode.SaveDialogOptions = {
+            defaultUri: Uri.file(targetFilename),
+            filters: {
+                'glTF': ['gltf'],
+                'All files': ['*']
             }
-            else {
-                return;
-            }
-        } else if (result === undefined) {
+        };
+        let uri = await vscode.window.showSaveDialog(options);
+        if (uri !== undefined) {
+            targetFilename = uri.fsPath;
+        }
+        else {
             return;
         }
     }

@@ -232,40 +232,39 @@ export function activate(context: vscode.ExtensionContext) {
             }
             const mimeTypePos = dataUri.indexOf(';');
             let extension;
+            let mimeType = '';
             if (mimeTypePos > 0) {
-                extension = guessFileExtension(dataUri.substring(5, mimeTypePos));
+                mimeType = dataUri.substring(5, mimeTypePos)
+                extension = guessFileExtension(mimeType);
                 guessName += extension;
             }
-            vscode.window.showInputBox({
-                prompt: 'Enter a filename for this data.',
-                value: guessName
-            }).then(filename => {
-                if (filename) {
-                    if (extension && filename.indexOf('.') < 0) {
-                        filename += extension;
+            let pathGuessName = path.join(path.dirname(activeTextEditor.document.fileName), guessName);
+
+            const pointer = map.pointers[bestKey + '/uri'];
+            if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename'))
+            {
+                let options: vscode.SaveDialogOptions = {
+                    defaultUri: Uri.file(pathGuessName),
+                    filters: {
+                        'All files': ['*']
                     }
-                    const pointer = map.pointers[bestKey + '/uri'];
-                    let pathFilename = path.join(path.dirname(activeTextEditor.document.fileName), filename);
-                    if (fs.existsSync(pathFilename)) {
-                        vscode.window.showQuickPick([
-                            'Caution:  File exists.  Overwrite?  NO',
-                            'YES, overwrite ' + pathFilename
-                        ]).then(overwrite => {
-                            if (!/^YES/.test(overwrite)) {
-                                vscode.window.showInformationMessage('Export aborted');
-                            } else {
-                                // File exists, but user says it's OK to overwrite.
-                                exportToFile(filename, pathFilename, pointer, dataUri);
-                            }
-                        });
-                    } else {
-                        // File does not yet exist, try saving to it.
-                        exportToFile(filename, pathFilename, pointer, dataUri);
+                };
+                options.filters[mimeType] = [extension.replace('.', '')];
+                vscode.window.showSaveDialog(options).then(uri => {
+                    if (uri) {
+                        let filename = uri.fsPath;
+                        if (extension && filename.indexOf('.') < 0) {
+                            filename += extension;
+                        }
+                        exportToFile(path.basename(filename), filename, pointer, dataUri);
                     }
-                }
-            }, reason => {
-                vscode.window.showErrorMessage(reason);
-            });
+                }, reason => {
+                    vscode.window.showErrorMessage(reason);
+                });
+            } else {
+                // File may exist, but user says it's OK to overwrite.
+                exportToFile(guessName, pathGuessName, pointer, dataUri);
+            }
         }
     }));
 
@@ -292,7 +291,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         let editor = vscode.window.activeTextEditor;
         let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
-        if (fs.existsSync(glbPath)) {
+        if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename')) {
             const options: vscode.SaveDialogOptions = {
                 defaultUri: Uri.file(glbPath),
                 filters: {

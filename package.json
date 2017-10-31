@@ -60,6 +60,11 @@
                     "type": "string",
                     "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
                     "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
+                },
+                "glTF.neverPromptForFilename": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?"
                 }
             }
         },
