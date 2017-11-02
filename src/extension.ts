@@ -361,7 +361,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', async (fileUri) => {
 
-        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri)) {
+        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) || !fileUri.fsPath.endsWith('.glb')) {
             if ((vscode.window.activeTextEditor !== undefined) &&
                 (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))) {
                 fileUri = vscode.window.activeTextEditor.document.uri;

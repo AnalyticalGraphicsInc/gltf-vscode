@@ -11,27 +11,7 @@ export async function load(sourceFilename: string) {
         return;
     }
     if (!fs.existsSync(sourceFilename)) {
-        return;
-    }
-
-    // Compose an target filename
-    let targetFilename = sourceFilename.replace('.glb', '.gltf');
-
-    if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
-        const options: vscode.SaveDialogOptions = {
-            defaultUri: Uri.file(targetFilename),
-            filters: {
-                'glTF': ['gltf'],
-                'All files': ['*']
-            }
-        };
-        let uri = await vscode.window.showSaveDialog(options);
-        if (uri !== undefined) {
-            targetFilename = uri.fsPath;
-        }
-        else {
-            return;
-        }
+        throw new Error('File not found.');
     }
 
     // Read the GLB data
@@ -46,7 +26,33 @@ export async function load(sourceFilename: string) {
     }
     const readVersion = sourceBuf.readUInt32LE(4);
     if (readVersion !== 2) {
-        throw new Error('Source file does not appear to be a GLB (glTF Binary) model.');
+        throw new Error('Only GLB version 2 is supported for import. Detected version: ' + readVersion);
+    }
+
+    // Compose a target filename
+    let targetFilename = sourceFilename.replace('.glb', '.gltf');
+
+    if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
+        const options: vscode.SaveDialogOptions = {
+            defaultUri: Uri.file(targetFilename),
+            filters: {
+                'glTF': ['gltf'],
+                'All files': ['*']
+            }
+        };
+        let uri = await vscode.window.showSaveDialog(options);
+        if (!uri) {
+            return;
+        }
+        targetFilename = uri.fsPath;
+    }
+
+    // Strip off the '.glb' or other file extension, for use as a base name for external assets.
+    let targetBasename = targetFilename;
+    if (path.extname(targetFilename).length > 1) {
+        let components = targetFilename.split('.');
+        components.pop();
+        targetBasename = components.join('.');
     }
 
     const jsonBufSize = sourceBuf.readUInt32LE(12);
@@ -73,7 +79,7 @@ export async function load(sourceFilename: string) {
         const length: number = view.byteLength;
 
         let extension = guessFileExtension(imageBuf.mimeType);
-        let filename = targetFilename + '.' + bufferViewIndex.toString() + extension;
+        let filename = targetBasename + '_img' + bufferViewIndex.toString() + extension;
         fs.writeFileSync(filename, buf.slice(offset, offset + length), 'binary');
 
         delete imageBuf.bufferView;
@@ -106,7 +112,7 @@ export async function load(sourceFilename: string) {
         } else if (shaderBuf.type == GL_FRAGMENT_SHADER_ARB) {
             extension = '.frag';
         }
-        let filename = targetFilename + '.' + bufferViewIndex.toString() + extension;
+        let filename = targetBasename + '_shader' + bufferViewIndex.toString() + extension;
 
         fs.writeFileSync(filename, buf.slice(offset, offset + length), 'binary');
 
@@ -163,7 +169,7 @@ export async function load(sourceFilename: string) {
     }
     gltf.bufferViews = newBufferView;
 
-    let binFilename = targetFilename + '.bin';
+    let binFilename = targetBasename + '_data.bin';
     let finalBuffer = Buffer.concat(bufferDataList);
     fs.writeFileSync(binFilename, finalBuffer, 'binary');
     gltf.buffers = [{
