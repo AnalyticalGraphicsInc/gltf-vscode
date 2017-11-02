@@ -169,6 +169,32 @@ export async function load(sourceFilename: string) {
     }
     gltf.bufferViews = newBufferView;
 
+    function getNewBufferViewIndex(oldIndex) {
+        const newIndex = bufferViewList.indexOf(oldIndex);
+        if (newIndex < 0) {
+            throw new Error('Problem mapping bufferView indices.');
+        }
+        return newIndex;
+    }
+
+    // Renumber existing bufferView references.
+    // No need to check gltf.images*.bufferView since images were broken out above.
+    if (gltf.accessors) {
+        for (let accessor of gltf.accessors) {
+            if (accessor.bufferView !== undefined) {
+                accessor.bufferView = getNewBufferViewIndex(accessor.bufferView);
+            }
+            if (accessor.sparse) {
+                if (accessor.sparse.indices && accessor.sparse.indices.bufferView !== undefined) {
+                    accessor.bufferView.indices.bufferView = getNewBufferViewIndex(accessor.bufferView.indices.bufferView);
+                }
+                if (accessor.sparse.values && accessor.sparse.values.bufferView !== undefined) {
+                    accessor.bufferView.values.bufferView = getNewBufferViewIndex(accessor.bufferView.values.bufferView);
+                }
+            }
+        }
+    }
+
     let binFilename = targetBasename + '_data.bin';
     let finalBuffer = Buffer.concat(bufferDataList);
     fs.writeFileSync(binFilename, finalBuffer, 'binary');
