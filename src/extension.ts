@@ -205,7 +205,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage('File saved: ' + pathFilename);
     }
 
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.exportUri', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.exportUri', async () => {
         if (!checkValidEditor()) {
             return;
         }
@@ -241,7 +241,7 @@ export function activate(context: vscode.ExtensionContext) {
             let pathGuessName = path.join(path.dirname(activeTextEditor.document.fileName), guessName);
 
             const pointer = map.pointers[bestKey + '/uri'];
-            if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename'))
+            if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename'))
             {
                 let options: vscode.SaveDialogOptions = {
                     defaultUri: Uri.file(pathGuessName),
@@ -250,17 +250,14 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 };
                 options.filters[mimeType] = [extension.replace('.', '')];
-                vscode.window.showSaveDialog(options).then(uri => {
-                    if (uri) {
-                        let filename = uri.fsPath;
-                        if (extension && filename.indexOf('.') < 0) {
-                            filename += extension;
-                        }
-                        exportToFile(path.basename(filename), filename, pointer, dataUri);
+                let uri = await vscode.window.showSaveDialog(options);
+                if (uri) {
+                    let filename = uri.fsPath;
+                    if (extension && filename.indexOf('.') < 0) {
+                        filename += extension;
                     }
-                }, reason => {
-                    vscode.window.showErrorMessage(reason);
-                });
+                    exportToFile(path.basename(filename), filename, pointer, dataUri);
+                }
             } else {
                 // File may exist, but user says it's OK to overwrite.
                 exportToFile(guessName, pathGuessName, pointer, dataUri);
@@ -271,7 +268,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Export the whole file and its dependencies to a binary GLB file.
     //
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', (te, t) => {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', async (te, t) => {
         if (!checkValidEditor()) {
             return;
         }
@@ -291,7 +288,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         let editor = vscode.window.activeTextEditor;
         let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
-        if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename')) {
+        if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
             const options: vscode.SaveDialogOptions = {
                 defaultUri: Uri.file(glbPath),
                 filters: {
@@ -299,18 +296,15 @@ export function activate(context: vscode.ExtensionContext) {
                     'All files': ['*']
                 }
             };
-            vscode.window.showSaveDialog(options).then(uri => {
-                if (uri !== undefined) {
-                    try {
-                        GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
-                        vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
-                    } catch (ex) {
-                        vscode.window.showErrorMessage(ex.toString());
-                    }
+            let uri = await vscode.window.showSaveDialog(options);
+            if (uri !== undefined) {
+                try {
+                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
+                } catch (ex) {
+                    vscode.window.showErrorMessage(ex.toString());
                 }
-            }, reason => {
-                vscode.window.showErrorMessage(reason.toString());
-            });
+            }
         } else {
             try {
                 GlbExport.save(gltf, editor.document.uri.fsPath, glbPath);
@@ -365,39 +359,33 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Import of a GLB file and writing out its various chunks.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbOpen', () => {
-        const options: vscode.OpenDialogOptions = {
-             canSelectMany: false,
-             openLabel: 'Import',
-             filters: {
-                'Binary glTF': ['glb'],
-                'All files': ['*']
-            }
-        };
-
-        vscode.window.showOpenDialog(options).then(fileUri => {
-            if (fileUri && fileUri[0]) {
-                try {
-                    GlbImport.load(fileUri[0].fsPath);
-                } catch (ex) {
-                    vscode.window.showErrorMessage(ex.toString());
-                }
-            }
-        });
-    }));
-
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', (fileUri) => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', async (fileUri) => {
 
         if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri)) {
-            if (vscode.window.activeTextEditor === undefined) {
-                vscode.commands.executeCommand('gltf.importGlbOpen');
-                return;
+            if ((vscode.window.activeTextEditor !== undefined) &&
+                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))) {
+                fileUri = vscode.window.activeTextEditor.document.uri;
+             } else {
+                const options: vscode.OpenDialogOptions = {
+                    canSelectMany: false,
+                    openLabel: 'Import',
+                    filters: {
+                        'Binary glTF': ['glb'],
+                        'All files': ['*']
+                    }
+                };
+
+                let openUri = await vscode.window.showOpenDialog(options);
+                if (openUri && openUri[0]) {
+                    fileUri = openUri[0];
+                } else {
+                    return;
+                }
             }
-            fileUri = vscode.window.activeTextEditor.document.uri;
         }
 
         try {
-            GlbImport.load(fileUri.fsPath);
+            await GlbImport.load(fileUri.fsPath);
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
@@ -411,8 +399,8 @@ export function activate(context: vscode.ExtensionContext) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
 
-            const gltfTreeviewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-            treeViewProvider.update(gltfTreeviewUri)
+            const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+            treeViewProvider.update(gltfTreeViewUri)
         }
     });
 }

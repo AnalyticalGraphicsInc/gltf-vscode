@@ -17,7 +17,7 @@ export async function load(sourceFilename: string) {
     // Compose an target filename
     let targetFilename = sourceFilename.replace('.glb', '.gltf');
 
-    if (!vscode.workspace.getConfiguration('glTF').get('neverPromptForFilename')) {
+    if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
         const options: vscode.SaveDialogOptions = {
             defaultUri: Uri.file(targetFilename),
             filters: {
@@ -42,11 +42,11 @@ export async function load(sourceFilename: string) {
     const sourceBuf = fs.readFileSync(sourceFilename);
     const readMagic = sourceBuf.readUInt32LE(0);
     if (readMagic !== Binary.Magic) {
-        return;
+        throw new Error('Source file does not appear to be a GLB (glTF Binary) model.');
     }
     const readVersion = sourceBuf.readUInt32LE(4);
     if (readVersion !== 2) {
-        return;
+        throw new Error('Source file does not appear to be a GLB (glTF Binary) model.');
     }
 
     const jsonBufSize = sourceBuf.readUInt32LE(12);
@@ -151,15 +151,20 @@ export async function load(sourceFilename: string) {
 
     // create a file for the rest of the buffer data
     let newBufferView = [];
-    let finalBuffer = Buffer.concat(bufferDataList);
     let currentOffset = 0;
     for (let bufferViewIndex of bufferViewList) {
         let view = gltf.bufferViews[bufferViewIndex];
-        view.byteOffset = currentOffset;
         const length: number = view.byteLength;
+        view.buffer = 0;
+        view.byteOffset = currentOffset;
+        view.byteLength = length;
+        newBufferView.push(view);
         currentOffset += length;
     }
+    gltf.bufferViews = newBufferView;
+
     let binFilename = targetFilename + '.bin';
+    let finalBuffer = Buffer.concat(bufferDataList);
     fs.writeFileSync(binFilename, finalBuffer, 'binary');
     gltf.buffers = [{
         uri: path.basename(binFilename),
