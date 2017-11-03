@@ -124,6 +124,18 @@
                     "group": "glTF"
                 }
             ],
+            "editor/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.inspectDataUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ],
             "editor/title": [
                 {
                     "command": "gltf.previewModel",
