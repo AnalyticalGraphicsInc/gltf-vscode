@@ -13,16 +13,23 @@ function decodeBase64(uri: string) : Buffer {
     return Buffer.from(uri.split(",")[1], 'base64');
 }
 
-function dataFromUri(buffer: any, basePath: string) : Buffer {
+function dataFromUri(buffer: any, basePath: string) : { mimeType: string, buffer: Buffer } {
     if (buffer.uri === undefined) {
         return undefined;
     }
     if (isBase64(buffer.uri)) {
-        return decodeBase64(buffer.uri);
+        const mimeTypePos = buffer.uri.indexOf(';');
+        if (mimeTypePos > 0) {
+            let mimeType = buffer.uri.substring(5, mimeTypePos)
+            return { mimeType: mimeType, buffer: decodeBase64(buffer.uri) };
+        } else {
+            return undefined;
+        }
     }
     else {
         const fullUri = Url.resolve(basePath, buffer.uri);
-        return fs.readFileSync(fullUri);
+        let mimeType = guessMimeType(fullUri)
+        return { mimeType: mimeType, buffer: fs.readFileSync(fullUri) };
     }
 }
 
@@ -57,12 +64,12 @@ export function save(gltf: any, sourceFilename: string, outputFilename: string) 
         let buffer = gltf.buffers[bufferIndex];
         let data = dataFromUri(buffer, sourceFilename);
         if (data !== undefined) {
-            outputBuffers.push(data);
+            outputBuffers.push(data.buffer);
         }
         delete buffer['uri'];
-        buffer['byteLength'] = data.length;
+        buffer['byteLength'] = data.buffer.length;
         bufferMap.set(bufferIndex, bufferOffset);
-        bufferOffset += alignedLength(data.length);
+        bufferOffset += alignedLength(data.buffer.length);
     }
     for (let bufferView of gltf.bufferViews)
     {
@@ -82,19 +89,19 @@ export function save(gltf: any, sourceFilename: string, outputFilename: string) 
             let bufferView = {
                 buffer: 0,
                 byteOffset: bufferOffset,
-                byteLength: data.length,
+                byteLength: data.buffer.length,
             };
 
             bufferMap.set(bufferIndex, bufferOffset);
             bufferIndex++;
-            bufferOffset += alignedLength(data.length);
+            bufferOffset += alignedLength(data.buffer.length);
 
             let bufferViewIndex = gltf.bufferViews.length;
             gltf.bufferViews.push(bufferView);
-            outputBuffers.push(data);
+            outputBuffers.push(data.buffer);
 
             image['bufferView'] = bufferViewIndex;
-            image['mimeType'] = guessMimeType(image.uri);
+            image['mimeType'] = data.mimeType;
             delete image['uri'];
         }
     }
@@ -111,19 +118,19 @@ export function save(gltf: any, sourceFilename: string, outputFilename: string) 
             let bufferView = {
                 buffer: 0,
                 byteOffset: bufferOffset,
-                byteLength: data.length,
+                byteLength: data.buffer.length,
             };
 
             bufferMap.set(bufferIndex, bufferOffset);
             bufferIndex++;
-            bufferOffset += alignedLength(data.length);
+            bufferOffset += alignedLength(data.buffer.length);
 
             let bufferViewIndex = gltf.bufferViews.length;
             gltf.bufferViews.push(bufferView);
-            outputBuffers.push(data);
+            outputBuffers.push(data.buffer);
 
             shader['bufferView'] = bufferViewIndex;
-            shader['mimeType'] = guessMimeType(shader.uri);
+            shader['mimeType'] = data.mimeType;
             delete shader['uri'];
         }
     }

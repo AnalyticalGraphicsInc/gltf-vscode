@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.0.8 - UNRELEASED
+
+* Added an option to import a`.glb` binary package file.
+
 ### 2.0.7 - 2017-10-28
 
 * Added an option to export the glTF to a `.glb` binary package file. (Shift+Alt+S E)
