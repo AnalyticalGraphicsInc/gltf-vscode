@@ -3,6 +3,7 @@
 ### 2.0.8 - UNRELEASED
 
 * Added an option to import a`.glb` binary package file.
+* Updated logo for Babylon.js
 
 ### 2.0.7 - 2017-10-28
 
