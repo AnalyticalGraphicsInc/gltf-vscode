@@ -72,7 +72,16 @@ var BabylonView = function() {
             backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             engine.runRenderLoop(render);
-        }, null, function(error) {
+        }, null, function(error, longMessage) {
+            if (longMessage && typeof longMessage === 'string') {
+                var lines = longMessage.split('\n');
+                var lastLine = lines.pop();
+                var pos = lastLine.indexOf(': ');
+                if (pos >= 0) {
+                    lastLine = lastLine.substring(pos + 2);
+                }
+                error = lastLine;
+            }
             mainViewModel.errorText(error.toString());
         });
 
