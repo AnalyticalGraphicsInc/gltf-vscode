@@ -147,6 +147,7 @@ var CesiumView = function() {
             canvas: canvas,
             creditContainer: document.getElementById('cesiumCreditContainer')
         });
+        scene.rethrowRenderErrors = true;
         scene.camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;
         scene.backgroundColor = Cesium.Color.SLATEGRAY;
 
