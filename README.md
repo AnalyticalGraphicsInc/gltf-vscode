@@ -14,10 +14,25 @@ You can preview glTF files in a number of different rendering engines: BabylonJS
 
 ## Import a binary `.glb` file as text-based `.gltf` and export text-based `.gltf` file to binary `.glb` file.
 
-Command name: `glTF: Export GLB (Binary file)`\
+![GLB conversion](images/GlbConversion.png)
+
+Command name: `glTF: Export to GLB (Binary file)`\
 Command name: `glTF: Import from GLB`
 
-The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.  The `glTF: Export GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared. The `glTF: Import from GLB` command will open a binary `.glb` for editing, creating separate files for each of the GLB binary chunks.
+The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.
+
+The `glTF: Export to GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared.
+
+The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating separate files for each of the GLB binary chunks.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
+
+* `Lantern.gltf` - The JSON structure.
+* `Lantern_data.bin` - The binary mesh data
+* `Lantern_img0.png` - Image file(s) extracted from the GLB's binary chunks
+* `Lantern_img1.png`
+* `Lantern_img2.png`
+* `Lantern_img3.png`
+
+The user is given a "Save As..." dialog for the base `.gltf` output filename only.  The other files are saved to the same folder with names calculated by appending to the user's selected base name, and any pre-existing files with the same name will be overwritten.
 
 ## Preview image files and data-URIs from inside the glTF document
 

@@ -22,7 +22,7 @@
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
         "onCommand:gltf.treeView",
-        "onCommand:gltf.saveAsGlb",
+        "onCommand:gltf.exportGlbFile",
         "onCommand:gltf.importGlbFile"
     ],
     "main": "./out/src/extension",
@@ -89,8 +89,8 @@
                 "title": "glTF: Tree View of Scene Nodes"
             },
             {
-                "command": "gltf.saveAsGlb",
-                "title": "glTF: Export GLB (Binary file)"
+                "command": "gltf.exportGlbFile",
+                "title": "glTF: Export to GLB (Binary file)"
             },
             {
                 "command": "gltf.importGlbFile",
@@ -111,7 +111,7 @@
                 "when": "editorTextFocus && editorLangId == 'json'"
             },
             {
-                "command": "gltf.saveAsGlb",
+                "command": "gltf.exportGlbFile",
                 "key": "alt+shift+s e",
                 "mac": "alt+shift+s e",
                 "when": "editorTextFocus && editorLangId == 'json'"
@@ -163,7 +163,7 @@
                     "group": "glTF"
                 },
                 {
-                    "command": "gltf.saveAsGlb",
+                    "command": "gltf.exportGlbFile",
                     "when": "resourceLangId == json",
                     "group": "glTF"
                 },

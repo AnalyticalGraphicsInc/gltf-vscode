@@ -79,7 +79,8 @@ export async function load(sourceFilename: string) {
         const length: number = view.byteLength;
 
         let extension = guessFileExtension(imageBuf.mimeType);
-        let filename = targetBasename + '_img' + bufferViewIndex.toString() + extension;
+        let imageIndex = gltf.images.indexOf(imageBuf);
+        let filename = targetBasename + '_img' + imageIndex.toString() + extension;
         fs.writeFileSync(filename, buf.slice(offset, offset + length), 'binary');
 
         delete imageBuf.bufferView;
@@ -112,7 +113,8 @@ export async function load(sourceFilename: string) {
         } else if (shaderBuf.type == GL_FRAGMENT_SHADER_ARB) {
             extension = '.frag';
         }
-        let filename = targetBasename + '_shader' + bufferViewIndex.toString() + extension;
+        let shaderIndex = gltf.shaders.indexOf(shaderBuf);
+        let filename = targetBasename + '_shader' + shaderIndex.toString() + extension;
 
         fs.writeFileSync(filename, buf.slice(offset, offset + length), 'binary');
 

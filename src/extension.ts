@@ -268,7 +268,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Export the whole file and its dependencies to a binary GLB file.
     //
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.saveAsGlb', async (te, t) => {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportGlbFile', async (te, t) => {
         if (!checkValidEditor()) {
             return;
         }
