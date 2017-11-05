@@ -54,6 +54,9 @@ var BabylonView = function() {
         BABYLON.SceneLoader.Append(rootPath, 'data:' + gltfContent, scene, function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
+            // glTF assets use a +Z forward convention while the default camera faces +Z.
+            // Rotate the camera to look at the front of the asset.
+            scene.activeCamera.alpha += Math.PI;
             scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
                 defaultBabylonReflection, scene);
 
@@ -72,7 +75,16 @@ var BabylonView = function() {
             backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
             engine.runRenderLoop(render);
-        }, null, function(error) {
+        }, null, function(error, longMessage) {
+            if (longMessage && typeof longMessage === 'string') {
+                var lines = longMessage.split('\n');
+                var lastLine = lines.pop();
+                var pos = lastLine.indexOf(': ');
+                if (pos >= 0) {
+                    lastLine = lastLine.substring(pos + 2);
+                }
+                error = lastLine;
+            }
             mainViewModel.errorText(error.toString());
         });
 
