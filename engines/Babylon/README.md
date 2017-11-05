@@ -1,23 +1,4 @@
 # Babylon.js 3D Engine
 ![Babylon.js logo](logo.png)
 
-## Geting an updated engine
-
-To minimize the download size, we create a custom, minified version of Babylon.js
-that has the subset of the features that are relevant for use within the context
-of this VS Code extension.
-
-1. Go here: [Babylon.js Generator](http://www.babylonjs.com/versionbuilder/)
-
-2. Select the following items:
-   * Materials
-      * Shadow only material
-   * Loaders
-      * glTF
-   * Release
-      * v3.1 preview (or whatever the "preview" version is)
-   * Minification
-      * Minified
-
-3. Replace the current `babylon.custom.js` file the one that you just downloaded.
-
+Babylon is updated as a package dependency of this VS Code extension.

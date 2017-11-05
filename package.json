@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.6",
+    "version": "2.0.8",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -10,7 +10,7 @@
     },
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.16.0"
+        "vscode": "^1.17.0"
     },
     "categories": [
         "Formatters",
@@ -21,7 +21,10 @@
         "onCommand:gltf.inspectDataUri",
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
-        "onCommand:gltf.previewModel"
+        "onCommand:gltf.previewModel",
+        "onCommand:gltf.treeView",
+        "onCommand:gltf.exportGlbFile",
+        "onCommand:gltf.importGlbFile"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -58,6 +61,11 @@
                     "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
                     "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
                 },
+                "glTF.alwaysOverwriteDefaultFilename": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?"
+                },
                 "glTF.Validation.maxNumberOfProblems": {
                     "scope": "resource",
                     "type": "number",
@@ -82,6 +90,18 @@
             {
                 "command": "gltf.previewModel",
                 "title": "glTF: Preview 3D Model"
+            },
+            {
+                "command": "gltf.treeView",
+                "title": "glTF: Tree View of Scene Nodes"
+            },
+            {
+                "command": "gltf.exportGlbFile",
+                "title": "glTF: Export to GLB (Binary file)"
+            },
+            {
+                "command": "gltf.importGlbFile",
+                "title": "glTF: Import from GLB"
             }
         ],
         "keybindings": [
@@ -96,8 +116,82 @@
                 "key": "alt+g",
                 "mac": "alt+g",
                 "when": "editorTextFocus && editorLangId == 'json'"
+            },
+            {
+                "command": "gltf.exportGlbFile",
+                "key": "alt+shift+s e",
+                "mac": "alt+shift+s e",
+                "when": "editorTextFocus && editorLangId == 'json'"
             }
         ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "gltf.importGlbFile",
+                    "group": "glTF"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.inspectDataUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ],
+            "editor/title": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.treeView",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.inspectDataUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.importUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.exportUri",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.exportGlbFile",
+                    "when": "resourceLangId == json",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.importGlbFile",
+                    "group": "glTF"
+                }
+            ]
+        },
         "languages": [
             {
                 "id": "json",
@@ -134,6 +228,9 @@
         "json-source-map": "^0.4.0",
         "vscode": "^1.1.5",
         "vscode-languageclient": "3.3.0",
-        "gltf-validator": "^2.0.0-dev.0"
+        "gltf-validator": "^2.0.0-dev.0",
+        "jstree": "^3.3.4",
+        "jquery": "^3.2.1",
+        "babylonjs": "^3.1.0-alpha3.5"
     }
 }

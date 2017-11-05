@@ -12,6 +12,28 @@ The above model, other sample models, and associated licenses can be obtained fr
 
 You can preview glTF files in a number of different rendering engines: BabylonJS, Cesium, and ThreeJS.  The ThreeJS engine will preview the saved model as opposed to the current content in your open VS Code tab.  The Babylon and Cesium engines will first try to preview what is currently in your tab, and only if that fails will it fall back on displaying the version of the model saved on disk.
 
+## Import a binary `.glb` file as text-based `.gltf` and export text-based `.gltf` file to binary `.glb` file.
+
+![GLB conversion](images/GlbConversion.png)
+
+Command name: `glTF: Export to GLB (Binary file)`\
+Command name: `glTF: Import from GLB`
+
+The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.
+
+The `glTF: Export to GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared.
+
+The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating separate files for each of the GLB binary chunks.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
+
+* `Lantern.gltf` - The JSON structure.
+* `Lantern_data.bin` - The binary mesh data
+* `Lantern_img0.png` - Image file(s) extracted from the GLB's binary chunks
+* `Lantern_img1.png`
+* `Lantern_img2.png`
+* `Lantern_img3.png`
+
+The user is given a "Save As..." dialog for the base `.gltf` output filename only.  The other files are saved to the same folder with names calculated by appending to the user's selected base name, and any pre-existing files with the same name will be overwritten.
+
 ## Preview image files and data-URIs from inside the glTF document
 
 ![Sample image preview of normal map](images/SampleImagePreview.png)
@@ -27,6 +49,12 @@ If you plan to preview GLSL shader code, consider installing a 3rd-party syntax 
 ![Sample conversion](images/Conversion.png)
 
 In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), there are two commands named `glTF: Import file as Data URI` and `glTF: Export a Data URI to a file`.  To use these, place the document cursor on a block that contains a `"uri"` field.  If the value of this field is a valid filename, `Import` will load that file, encode it to base64, and replace the filename with the dataURI in your document.  `Export` is the reverse of this process, but first it will ask you for a filename to save to.  It will save the file in the same folder as the glTF file, so it does not need a path, just a name.  It will try to select an appropriate file extension based on the MIME type of the dataURI.  It will also warn you if you are about to overwrite an existing file.  If the save is successful, the dataURI will be replaced by the name of the newly created file.
+
+## Tree View of Scene Nodes
+
+Command name: `glTF: Tree View of Scene Nodes`
+
+This displays a window with a tree view revealing the node structure of the glTF file.
 
 ## Other Features
 
@@ -64,6 +92,7 @@ Note there is now a 64-bit version of VSCode that appears to have a much higher 
 * `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
 * `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](http://doc.babylonjs.com/overviews/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  There are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The files must be in a format usable on the web, such as PNG or JPEG.
+* `glTF.alwaysOverwriteDefaultFilename` - When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?
 
 ## Source code
 

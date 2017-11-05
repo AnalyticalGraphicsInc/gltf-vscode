@@ -11,7 +11,6 @@ var ThreeView = function() {
     var scene = null;
     var renderer = null;
     var loader = null;
-    var defaultCamera = null;
     var gltf = null;
     var mixer = null;
     var clock = new THREE.Clock();
@@ -24,10 +23,9 @@ var ThreeView = function() {
         scene = new THREE.Scene();
 
         // Note: The near and far planes can be set this way due to the use of "logarithmicDepthBuffer" in the renderer below.
-        defaultCamera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
+        camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
 
-        scene.add(defaultCamera);
-        camera = defaultCamera;
+        scene.add(camera);
 
         var sceneInfo = sceneList[0];
 
@@ -130,8 +128,27 @@ var ThreeView = function() {
             applyBackground(mainViewModel.showBackground());
             backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
-            if (sceneInfo.cameraPos)
-                defaultCamera.position.copy(sceneInfo.cameraPos);
+            if (sceneInfo.cameraPos) {
+                object.updateMatrixWorld();
+                var boundingBox = new THREE.Box3().setFromObject(object);
+                var modelSize = boundingBox.getSize().length();
+                var modelCenter = boundingBox.getCenter();
+
+                orbitControls.reset();
+                orbitControls.maxDistance = modelSize * 50;
+
+                object.position.x = -modelCenter.x;
+                object.position.y = -modelCenter.y;
+                object.position.z = -modelCenter.z;
+                camera.position.copy(modelCenter);
+                camera.position.x += modelSize * sceneInfo.cameraPos.x;
+                camera.position.y += modelSize * sceneInfo.cameraPos.y;
+                camera.position.z += modelSize * sceneInfo.cameraPos.z;
+                camera.near = modelSize / 100;
+                camera.far = modelSize * 100;
+                camera.updateProjectionMatrix();
+                camera.lookAt(modelCenter);
+            }
 
             if (sceneInfo.center) {
                 orbitControls.target.copy(sceneInfo.center);
@@ -175,7 +192,7 @@ var ThreeView = function() {
             onWindowResize();
         });
 
-        orbitControls = new THREE.OrbitControls(defaultCamera, renderer.domElement);
+        orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     }
 
     function onWindowResize() {
@@ -183,8 +200,8 @@ var ThreeView = function() {
             return;
         }
 
-        defaultCamera.aspect = container.offsetWidth / container.offsetHeight;
-        defaultCamera.updateProjectionMatrix();
+        camera.aspect = container.offsetWidth / container.offsetHeight;
+        camera.updateProjectionMatrix();
 
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
@@ -224,7 +241,7 @@ var ThreeView = function() {
             container.removeChild(renderer.domElement);
         }
 
-        defaultCamera = null;
+        camera = null;
 
         if (!loader || !mixer) {
             return;
@@ -240,8 +257,7 @@ var ThreeView = function() {
         sceneList = [
             {
                 name: "glTF Preview", url: rootPath + fileName,
-                cameraPos: new THREE.Vector3(2, 1, 3),
-                objectRotation: new THREE.Euler(0, Math.PI, 0),
+                cameraPos: new THREE.Vector3(-0.2, 0.4, 1.4),
                 addLights: true
             }
         ];

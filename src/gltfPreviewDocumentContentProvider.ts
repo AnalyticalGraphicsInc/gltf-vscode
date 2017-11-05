@@ -38,7 +38,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     //    old docked one.
     //
     // 4. In the top of the Console tab of the remaining un-docked DevTools,
-    //    click the pull-down and change "top" to "_target (webview.html)".
+    //    click the pull-down and change "top" to "active-frame (webview.html)".
     //    Now you can debug the HTML preview in the sandboxed iframe.
 
     public provideTextDocumentContent(uri: Uri): string {
@@ -103,7 +103,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const scripts = [
             'engines/Cesium/Cesium.js',
-            'engines/Babylon/babylon.custom.js',
+            'node_modules/babylonjs/dist/preview release/babylon.js',
+            'node_modules/babylonjs/dist/preview release/loaders/babylonjs.loaders.js',
             'engines/Three/three.min.js',
             'engines/Three/GLTF2Loader.js',
             'engines/Three/OrbitControls.js',
