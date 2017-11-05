@@ -77,9 +77,9 @@ var CesiumView = function() {
         controller.minimumZoomDistance = 0.0;
 
         var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
-        var heading = Cesium.Math.toRadians(-130.0);
-        var pitch = Cesium.Math.toRadians(-25.0);
-        var range = r * 3.5;
+        var heading = Cesium.Math.toRadians(10);
+        var pitch = Cesium.Math.toRadians(-15);
+        var range = r * 2.5;
 
         scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
     }
