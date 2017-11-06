@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.0.8 - 2017-11-04
+
+* Added an option to import a`.glb` binary package file.
+* Default camera view in all three engines updated for glTF's new +Z forward convention for models.
+* Model is automatically sized and centered in all three engines now.
+* Updated logo for Babylon.js.
+* Revealed more error messages from Babylon and Cesium.
+
 ### 2.0.7 - 2017-10-28
 
 * Added an option to export the glTF to a `.glb` binary package file. (Shift+Alt+S E)

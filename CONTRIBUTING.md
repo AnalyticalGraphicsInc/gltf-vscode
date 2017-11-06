@@ -13,7 +13,42 @@ This only needs to be completed once, and enables contributions to all of the pr
 
 Please email a completed CLA with all fields filled in to [cla@agi.com](mailto:cla@agi.com).  Related questions are also welcome.
 
+## Developer Environment
+
+[VSCode](https://code.visualstudio.com/) itself is used for developing and debugging its own extensions.
+
+You will also need [NodeJS](https://nodejs.org/en/) installed, for npm package management.
+
+1. Use `git` to clone this repository to a local disk.
+2. Open a shell and run `npm install` in the root folder of the cloned repository, to install npm packages.
+3. Launch VSCode and click "Open Folder" on the root of the cloned repository.
+
+To launch the debugger, press <kbd>F5</kbd>.  This will open a second copy of VSCode, with a built-from-source version of
+the extension installed.  If you already have the glTF extension from the marketplace installed, there will be an info message
+letting you know that the built version has overwritten it for just the debugger session.
+
 ## CHANGELOG.md
 
 Please add bullet point(s) for changes or new features to the top of `CHANGELOG.md`.  The publish date can be left as `UNRELEASED` since
 the release is not on any set schedule, and likely will not happen on the same day that the pull request is created.
+
+## Debugging the HTML preview window in VSCode
+
+This is tricky, because HTML is previewed inside a sandboxed iframe which is itself inside an embedded webview inside
+VSCode's Electron-based user interface.  Here are the steps:
+
+1. Use the extension to launch the HTML preview window (such as by previewing a glTF model).
+
+2. Click `Help` -> `Toggle Developer Tools`.  Note that this DevTools is docked, and is only for VSCode itself.
+
+3. In the Console tab, paste this line:
+
+```
+    document.body.querySelector('webview').getWebContents().openDevTools();
+```
+
+4. You now have a second DevTools.  This new one is un-docked.  Close the old docked one.
+
+5. In the top of the Console tab of the remaining un-docked DevTools, click the pull-down and change `top` to `active-frame (webview.html)`.
+
+Now you can debug the HTML preview in the sandboxed iframe.
