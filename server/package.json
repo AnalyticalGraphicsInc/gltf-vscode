@@ -14,7 +14,7 @@
     "dependencies": {
         "json-source-map": "^0.4.0",
         "vscode-languageserver": "3.3.0",
-        "gltf-validator": "^2.0.0-dev.0"
+        "gltf-validator": "2.0.0-dev.1"
     },
     "scripts": {
         "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",

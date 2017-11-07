@@ -144,19 +144,24 @@ function validateTextDocument(textDocument: TextDocument): void {
                 }
                 resolve(data);
             });
-        })
+        }),
+        {
+            maxIssues: maxNumberOfProblems
+            // TODO: Configure `ignoredIssues` and `severityOverrides`
+        }
     ).then((result) => {
         let diagnostics: Diagnostic[] = [];
         const map = tryGetJsonMap(textDocument);
         if (!map) {
-            diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}, DiagnosticSeverity.Error));
-        } else {
-            let problems = 0;
-            if (result.errors) {
-                problems = convertErrorsToDiagnostics(diagnostics, problems, map, result.errors, DiagnosticSeverity.Error);
-            }
-            if (result.warnings) {
-                convertErrorsToDiagnostics(diagnostics, problems, map, result.warnings, DiagnosticSeverity.Warning);
+            diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}));
+        } else if (result.issues && result.issues.messages) {
+            const messages = result.issues.messages;
+            convertErrorsToDiagnostics(diagnostics, map, messages);
+
+            if (result.issues.truncated) {
+                diagnostics.push(getDiagnostic({
+                    message: 'VALIDATION ABORTED: Too many messages produced.'
+                }, map));
             }
         }
         // Send the computed diagnostics to VSCode, clearing any old messages.
@@ -174,34 +179,39 @@ connection.onDidChangeWatchedFiles((_change) => {
 });
 
 
-function convertErrorsToDiagnostics(diagnostics: Diagnostic[], problems: number, map: any, errors: any, severity: DiagnosticSeverity) : number {
-    for (let category in errors) {
-        if (errors.hasOwnProperty(category)) {
-            let errorList = errors[category];
-            let len = errorList.length;
-            for (let i = 0; i < len; ++i) {
-                let info = errorList[i];
-                if (info.message) {
-                    if (++problems > maxNumberOfProblems) {
-                        break;
-                    }
-                    diagnostics.push(getDiagnostic(info, map, severity));
-                }
-            }
+function convertErrorsToDiagnostics(diagnostics: Diagnostic[], map: any, messages: any) {
+    let len = messages.length;
+    for (let i = 0; i < len; ++i) {
+        let info = messages[i];
+        if (info.message) {
+            diagnostics.push(getDiagnostic(info, map));
         }
     }
-
-    return problems;
 }
 
-function getDiagnostic(info: any, map: any, severity: DiagnosticSeverity) : Diagnostic {
+function getDiagnostic(info: any, map: any) : Diagnostic {
     let range = {
         start: { line: 0, character: 0 },
         end: { line: 0, character: Number.MAX_VALUE }
     };
 
-    if (info.path) {
-        const pointerName = info.path.substring(1);
+    let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
+    switch (info.severity) {
+        case 1:
+            severity = DiagnosticSeverity.Warning;
+            break;
+        case 2:
+            severity = DiagnosticSeverity.Information;
+            break;
+        case 3:
+            severity = DiagnosticSeverity.Hint;
+            break;
+        default:
+            break;
+    }
+
+    if (info.pointer) {
+        const pointerName = info.pointer;
         if (map.pointers.hasOwnProperty(pointerName)) {
             const pointer = map.pointers[pointerName];
             const start = pointer.key || pointer.value;
@@ -215,7 +225,7 @@ function getDiagnostic(info: any, map: any, severity: DiagnosticSeverity) : Diag
     }
 
     return {
-        code: 'Some code',
+        code: info.code,
         severity: severity,
         range,
         message: info.message,

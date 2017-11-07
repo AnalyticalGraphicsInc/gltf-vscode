@@ -13,6 +13,7 @@ import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
+import * as gltfValidator from 'gltf-validator';
 
 function checkValidEditor() : boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -368,6 +369,42 @@ export function activate(context: vscode.ExtensionContext) {
         const fileName = vscode.window.activeTextEditor.document.fileName;
         const baseName = path.basename(fileName);
         const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
+
+        /*
+         * TODO: Make new command to run validation on a specific file and save the output somewhere.
+
+        //// BEGIN TEMPORARY HOOKUP
+        var gltfData = Buffer.from(vscode.window.activeTextEditor.document.getText());
+        const folderName = path.resolve(fileName, '..');
+
+        gltfValidator.validateBytes(baseName, new Uint8Array(gltfData), (uri) =>
+            new Promise((resolve, reject) => {
+                uri = path.resolve(folderName, uri);
+                fs.readFile(uri, (err, data) => {
+                    console.log("Loading external file: " + uri);
+                    if (err) {
+                        console.warn("Error: " + err.toString());
+                        reject(err.toString());
+                        return;
+                    }
+                    resolve(data);
+                });
+            }),
+            {
+                maxIssues: 100
+                // TODO: Hook this up the same way as in server.ts
+            }
+        ).then((result) => {
+            // Validation report in object form
+            console.log('======== glTF Validator results ========');
+            console.log(JSON.stringify(result, null, ' '));
+        }, (result) => {
+            // Validator's error
+            console.warn('glTF Validator had problems.');
+            console.warn(result);
+        });
+        //// END TEMPORARY HOOKUP
+        */
 
         vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${baseName}]`)
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
