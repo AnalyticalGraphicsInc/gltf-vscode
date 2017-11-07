@@ -73,7 +73,7 @@ export function save(gltf: any, sourceFilename: string, outputFilename: string) 
     }
     for (let bufferView of gltf.bufferViews)
     {
-        bufferView.byteOffset = bufferView.byteOffset + bufferMap.get(bufferView.buffer);
+        bufferView.byteOffset = (bufferView.byteOffset || 0) + bufferMap.get(bufferView.buffer);
         bufferView.buffer = 0;
     }
 
