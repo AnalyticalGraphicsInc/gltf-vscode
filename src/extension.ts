@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
-import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
+import {  GltfNode, GltfOutlineProvider } from './gltfTreeViewDocumentContentProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
 import * as jsonMap from 'json-source-map';
@@ -80,6 +80,9 @@ function tryGetCurrentUriKey(map) {
 // this method is called when your extension is activated
 // your extension is activated the very first time a command is executed
 export function activate(context: vscode.ExtensionContext) {
+
+    const gltfOutlineProvider = new GltfOutlineProvider(context);
+    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineProvider);
 
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
@@ -189,7 +192,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     function exportToFile(filename : string, pathFilename : string, pointer, dataUri : string) {
         const pos = dataUri.indexOf(',');
-        const fileContents = new Buffer(dataUri.substring(pos + 1), 'base64');
+        const fileContents = Buffer.from(dataUri.substring(pos + 1), 'base64');
 
         try {
             fs.writeFileSync(pathFilename, fileContents);
@@ -341,20 +344,9 @@ export function activate(context: vscode.ExtensionContext) {
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
 
-    //
-    // Register a preview of the node tree.
-    //
-    const treeViewProvider = new GltfTreeViewDocumentContentProvider(context);
-    const treeViewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-tree-view-preview', treeViewProvider);
-
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.treeView', () => {
-        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-        return vscode.commands.executeCommand('vscode.previewHtml', gltfTreeViewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
-        }, (reason) => {
-            vscode.window.showErrorMessage(reason);
-        });
-    }));
+    vscode.commands.registerCommand('gltf.openGltfSelection', range => {
+        gltfOutlineProvider.select(range);
+    });
 
     //
     // Import of a GLB file and writing out its various chunks.
@@ -398,9 +390,6 @@ export function activate(context: vscode.ExtensionContext) {
         if (document === vscode.window.activeTextEditor.document) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
-
-            const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-            treeViewProvider.update(gltfTreeViewUri)
         }
     });
 }

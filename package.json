@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.0.8",
+    "version": "2.0.7",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -23,7 +23,8 @@
         "onCommand:gltf.previewModel",
         "onCommand:gltf.treeView",
         "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile"
+        "onCommand:gltf.importGlbFile",
+        "onView:gltfOutline"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -198,7 +199,16 @@
                 "fileMatch": "*.gltf",
                 "url": "./schemas/glTF.chooser.schema.json"
             }
-        ]
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "id": "gltfOutline",
+                    "name": "glTF Outline",
+                    "when": "resourceLangId == 'json'"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
@@ -217,8 +227,6 @@
     },
     "dependencies": {
         "json-source-map": "^0.4.0",
-        "jstree": "^3.3.4",
-        "jquery": "^3.2.1",
         "babylonjs": "^3.1.0-alpha3.5"
     }
 }

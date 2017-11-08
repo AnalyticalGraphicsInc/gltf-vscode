@@ -5,11 +5,11 @@ import * as fs from 'fs';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 export function atob(str): string {
-    return new Buffer(str, 'base64').toString('binary');
+    return Buffer.from(str, 'base64').toString('binary');
 }
 
 export function btoa(str): string {
-    return new Buffer(str, 'binary').toString('base64');
+    return Buffer.from(str, 'binary').toString('base64');
 }
 
 export function getFromPath(glTF, path : string) {
