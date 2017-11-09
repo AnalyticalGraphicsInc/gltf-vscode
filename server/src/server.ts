@@ -159,7 +159,7 @@ function validateTextDocument(textDocument: TextDocument): void {
     const fileName = getFsPath(textDocument.uri);
     const baseName = path.basename(fileName);
 
-    const gltfData = Buffer.from(textDocument.getText());
+    const gltfText = textDocument.getText();
     const folderName = path.resolve(fileName, '..');
 
     const map = tryGetJsonMap(textDocument);
@@ -169,7 +169,7 @@ function validateTextDocument(textDocument: TextDocument): void {
         return;
     }
 
-    gltfValidator.validateBytes(baseName, new Uint8Array(gltfData), (uri) =>
+    gltfValidator.validateString(baseName, gltfText, (uri) =>
         new Promise((resolve, reject) => {
             uri = path.resolve(folderName, uri);
             fs.readFile(uri, (err, data) => {
