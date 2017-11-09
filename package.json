@@ -110,7 +110,7 @@
             },
             {
                 "command": "gltf.validateFile",
-                "title": "glTF: Run the validator on an external file"
+                "title": "glTF: Validate a GLB or GLTF file"
             },
             {
                 "command": "gltf.exportGlbFile",
@@ -145,6 +145,10 @@
             "explorer/context": [
                 {
                     "command": "gltf.importGlbFile",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.validateFile",
                     "group": "glTF"
                 }
             ],
@@ -205,6 +209,10 @@
                 },
                 {
                     "command": "gltf.importGlbFile",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.validateFile",
                     "group": "glTF"
                 }
             ]

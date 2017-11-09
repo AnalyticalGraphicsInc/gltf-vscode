@@ -9,11 +9,11 @@ import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContent
 import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
+import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
-import * as gltfValidator from 'gltf-validator';
 
 function checkValidEditor() : boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -370,42 +370,6 @@ export function activate(context: vscode.ExtensionContext) {
         const baseName = path.basename(fileName);
         const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
 
-        /*
-         * TODO: Make new command to run validation on a specific file and save the output somewhere.
-
-        //// BEGIN TEMPORARY HOOKUP
-        var gltfData = Buffer.from(vscode.window.activeTextEditor.document.getText());
-        const folderName = path.resolve(fileName, '..');
-
-        gltfValidator.validateBytes(baseName, new Uint8Array(gltfData), (uri) =>
-            new Promise((resolve, reject) => {
-                uri = path.resolve(folderName, uri);
-                fs.readFile(uri, (err, data) => {
-                    console.log("Loading external file: " + uri);
-                    if (err) {
-                        console.warn("Error: " + err.toString());
-                        reject(err.toString());
-                        return;
-                    }
-                    resolve(data);
-                });
-            }),
-            {
-                maxIssues: 100
-                // TODO: Hook this up the same way as in server.ts
-            }
-        ).then((result) => {
-            // Validation report in object form
-            console.log('======== glTF Validator results ========');
-            console.log(JSON.stringify(result, null, ' '));
-        }, (result) => {
-            // Validator's error
-            console.warn('glTF Validator had problems.');
-            console.warn(result);
-        });
-        //// END TEMPORARY HOOKUP
-        */
-
         vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${baseName}]`)
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
 
@@ -463,6 +427,42 @@ export function activate(context: vscode.ExtensionContext) {
 
         try {
             await GlbImport.load(fileUri.fsPath);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
+    }));
+
+    //
+    // Run the validator on an external file.
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.validateFile', async (fileUri) => {
+        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) ||
+            !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.gltf'))) {
+            if ((vscode.window.activeTextEditor !== undefined) &&
+                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb') ||
+                vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.gltf'))) {
+                fileUri = vscode.window.activeTextEditor.document.uri;
+             } else {
+                const options: vscode.OpenDialogOptions = {
+                    canSelectMany: false,
+                    openLabel: 'Validate',
+                    filters: {
+                        'glTF Files': ['gltf', 'glb'],
+                        'All files': ['*']
+                    }
+                };
+
+                let openUri = await vscode.window.showOpenDialog(options);
+                if (openUri && openUri[0]) {
+                    fileUri = openUri[0];
+                } else {
+                    return;
+                }
+            }
+        }
+
+        try {
+            await GltfValidate.validate(fileUri.fsPath);
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
