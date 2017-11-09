@@ -245,17 +245,17 @@
         "jshint": "^2.9.4",
         "yargs": "^6.5.0",
         "typescript": "^2.5.2",
-        "mocha": "^3.5.0",
-        "@types/node": "^6.0.88",
+        "mocha": "^4.0.1",
+        "@types/node": "^8.0.50",
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "json-source-map": "^0.4.0",
-        "vscode": "^1.1.5",
-        "vscode-languageclient": "3.4.2",
+        "babylonjs": "^3.1.0-beta1.1",
         "gltf-validator": "2.0.0-dev.1",
-        "jstree": "^3.3.4",
         "jquery": "^3.2.1",
-        "babylonjs": "^3.1.0-alpha3.5"
+        "json-source-map": "^0.4.0",
+        "jstree": "^3.3.4",
+        "vscode": "^1.1.5",
+        "vscode-languageclient": "^3.5.0"
     }
 }
