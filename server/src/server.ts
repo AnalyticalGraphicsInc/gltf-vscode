@@ -27,7 +27,6 @@ documents.listen(connection);
 
 let documentsToValidate: TextDocument[] = [];
 let debounceValidateTimer: NodeJS.Timer;
-const debounceTimeout = 500;
 
 function tryGetJsonMap(textDocument: TextDocument) {
     try {
@@ -40,9 +39,7 @@ function tryGetJsonMap(textDocument: TextDocument) {
 
 // After the server has started the client sends an initilize request. The server receives
 // in the passed params the rootPath of the workspace plus the client capabilites.
-let workspaceRoot: string;
-connection.onInitialize((params): InitializeResult => {
-    workspaceRoot = params.rootPath;
+connection.onInitialize((): InitializeResult => {
     return {
         capabilities: {
             // Tell the client that the server works in FULL text document sync mode
@@ -62,29 +59,31 @@ documents.onDidChangeContent((change) => {
 });
 
 // The settings interface describe the server relevant settings part
-interface Settings {
-    glTF: GltfSettings;
-}
-
 interface GltfSettings {
     Validation: ValidatorSettings;
 }
 
 interface ValidatorSettings {
+    enable: boolean;
+    debounce: number;
     maxNumberOfProblems: number;
 }
 
-// hold the maxNumberOfProblems setting
-let maxNumberOfProblems: number;
-// The settings have changed. Is send on server activation
-// as well.
+let currentSettings: GltfSettings;
+
+//
+// This is sent on server activation, and again for every configuration change.
+//
 connection.onDidChangeConfiguration((change) => {
-    let settings = <Settings>change.settings;
-    maxNumberOfProblems = settings.glTF.Validation.maxNumberOfProblems || 100;
+    currentSettings = <GltfSettings>change.settings.glTF;
     // Schedule revalidation any open text documents
     documents.all().forEach(scheduleValidation);
 });
 
+/**
+ * Schedule a document for glTF validation after the debounce timeout.
+ * @param textDocument The document to schedule validator for.
+ */
 function scheduleValidation(textDocument: TextDocument): void {
     const lowerUri = textDocument.uri.toLowerCase();
     if (lowerUri.startsWith('file:///') && lowerUri.endsWith('.gltf')) {
@@ -99,7 +98,7 @@ function scheduleValidation(textDocument: TextDocument): void {
         debounceValidateTimer = setTimeout(() => {
             documentsToValidate.forEach(validateTextDocument);
             documentsToValidate = [];
-        }, debounceTimeout);
+        }, currentSettings.Validation.debounce);
     }
 }
 
@@ -146,11 +145,12 @@ function validateTextDocument(textDocument: TextDocument): void {
             });
         }),
         {
-            maxIssues: maxNumberOfProblems
+            maxIssues: currentSettings.Validation.maxNumberOfProblems
             // TODO: Configure `ignoredIssues` and `severityOverrides`
         }
     ).then((result) => {
         let diagnostics: Diagnostic[] = [];
+        // TODO: Parse this before calling validator
         const map = tryGetJsonMap(textDocument);
         if (!map) {
             diagnostics.push(getDiagnostic({ message: 'Error parsing JSON document.' }, {}));

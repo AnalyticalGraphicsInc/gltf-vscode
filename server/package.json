@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "json-source-map": "^0.4.0",
-        "vscode-languageserver": "3.3.0",
+        "vscode-languageserver": "3.4.2",
         "gltf-validator": "2.0.0-dev.1"
     },
     "scripts": {

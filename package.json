@@ -23,6 +23,7 @@
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
         "onCommand:gltf.treeView",
+        "onCommand:gltf.validateFile",
         "onCommand:gltf.exportGlbFile",
         "onCommand:gltf.importGlbFile"
     ],
@@ -66,6 +67,18 @@
                     "default": false,
                     "description": "When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?"
                 },
+                "glTF.Validation.enable": {
+                    "scope": "resource",
+                    "type": "boolean",
+                    "default": true,
+                    "description": "When true, automatically run the glTF Validator and report any found issues to the document problems window."
+                },
+                "glTF.Validation.debounce": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 500,
+                    "description": "The number of milliseconds to wait for multiple requests to re-validate a glTF document."
+                },
                 "glTF.Validation.maxNumberOfProblems": {
                     "scope": "resource",
                     "type": "number",
@@ -94,6 +107,10 @@
             {
                 "command": "gltf.treeView",
                 "title": "glTF: Tree View of Scene Nodes"
+            },
+            {
+                "command": "gltf.validateFile",
+                "title": "glTF: Run the validator on an external file"
             },
             {
                 "command": "gltf.exportGlbFile",
@@ -227,7 +244,7 @@
     "dependencies": {
         "json-source-map": "^0.4.0",
         "vscode": "^1.1.5",
-        "vscode-languageclient": "3.3.0",
+        "vscode-languageclient": "3.4.2",
         "gltf-validator": "2.0.0-dev.1",
         "jstree": "^3.3.4",
         "jquery": "^3.2.1",
