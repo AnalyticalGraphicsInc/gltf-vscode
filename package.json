@@ -79,11 +79,23 @@
                     "default": 500,
                     "description": "The number of milliseconds to wait for multiple requests to re-validate a glTF document."
                 },
-                "glTF.Validation.maxNumberOfProblems": {
+                "glTF.Validation.maxIssues": {
                     "scope": "resource",
                     "type": "number",
                     "default": 100,
-                    "description": "Controls the maximum number of problems produced by the glTF Validator."
+                    "description": "Controls the maximum number of issues reported by the glTF Validator."
+                },
+                "glTF.Validation.ignoredIssues": {
+                    "scope": "resource",
+                    "type": "array",
+                    "default": [],
+                    "description": "Array of issue codes to ignore during validation.  See https://github.com/KhronosGroup/glTF-Validator/blob/master/ISSUES.md"
+                },
+                "glTF.Validation.severityOverrides": {
+                    "scope": "resource",
+                    "type": "object",
+                    "default": {},
+                    "description": "Override severity code of any glTF validation message by code.  See https://github.com/KhronosGroup/glTF-Validator/blob/master/ISSUES.md"
                 }
             }
         },

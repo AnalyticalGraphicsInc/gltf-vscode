@@ -9,6 +9,14 @@ import { resolve } from 'url';
 const SaveReportAs = 'Save Report As...';
 const OverwriteReport = 'Save report.json';
 
+interface ValidatorSettings {
+    enable: boolean;
+    debounce: number;
+    maxIssues: number;
+    ignoredIssues: Array<string>;
+    severityOverrides: object;
+}
+
 export async function validate(sourceFilename: string) {
     if (typeof sourceFilename == 'undefined') {
         return;
@@ -16,6 +24,8 @@ export async function validate(sourceFilename: string) {
     if (!fs.existsSync(sourceFilename)) {
         throw new Error('File not found.');
     }
+
+    const currentSettings: ValidatorSettings = vscode.workspace.getConfiguration('glTF').get('Validation');
 
     const gltfData = fs.readFileSync(sourceFilename);
     const baseName = path.basename(sourceFilename);
@@ -33,8 +43,9 @@ export async function validate(sourceFilename: string) {
             });
         }),
         {
-            maxIssues: 100
-            // TODO: Hook this up the same way as in server.ts
+            maxIssues: currentSettings.maxIssues,
+            ignoredIssues: currentSettings.ignoredIssues,
+            severityOverrides: currentSettings.severityOverrides
         }
     );
 

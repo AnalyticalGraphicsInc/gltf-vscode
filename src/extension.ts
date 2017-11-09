@@ -438,26 +438,20 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('gltf.validateFile', async (fileUri) => {
         if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) ||
             !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.gltf'))) {
-            if ((vscode.window.activeTextEditor !== undefined) &&
-                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb') ||
-                vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.gltf'))) {
-                fileUri = vscode.window.activeTextEditor.document.uri;
-             } else {
-                const options: vscode.OpenDialogOptions = {
-                    canSelectMany: false,
-                    openLabel: 'Validate',
-                    filters: {
-                        'glTF Files': ['gltf', 'glb'],
-                        'All files': ['*']
-                    }
-                };
-
-                let openUri = await vscode.window.showOpenDialog(options);
-                if (openUri && openUri[0]) {
-                    fileUri = openUri[0];
-                } else {
-                    return;
+            const options: vscode.OpenDialogOptions = {
+                canSelectMany: false,
+                openLabel: 'Validate',
+                filters: {
+                    'glTF Files': ['gltf', 'glb'],
+                    'All files': ['*']
                 }
+            };
+
+            let openUri = await vscode.window.showOpenDialog(options);
+            if (openUri && openUri[0]) {
+                fileUri = openUri[0];
+            } else {
+                return;
             }
         }
 

@@ -66,7 +66,9 @@ interface GltfSettings {
 interface ValidatorSettings {
     enable: boolean;
     debounce: number;
-    maxNumberOfProblems: number;
+    maxIssues: number;
+    ignoredIssues: Array<string>;
+    severityOverrides: object;
 }
 
 let currentSettings: GltfSettings;
@@ -145,8 +147,9 @@ function validateTextDocument(textDocument: TextDocument): void {
             });
         }),
         {
-            maxIssues: currentSettings.Validation.maxNumberOfProblems
-            // TODO: Configure `ignoredIssues` and `severityOverrides`
+            maxIssues: currentSettings.Validation.maxIssues,
+            ignoredIssues: currentSettings.Validation.ignoredIssues,
+            severityOverrides: currentSettings.Validation.severityOverrides
         }
     ).then((result) => {
         let diagnostics: Diagnostic[] = [];
