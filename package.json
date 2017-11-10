@@ -262,8 +262,8 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "babylonjs": "^3.1.0-beta1.1",
-        "gltf-validator": "2.0.0-dev.1",
+        "babylonjs": "^3.1.0-beta1.1.1",
+        "gltf-validator": "2.0.0-dev.1.1",
         "jquery": "^3.2.1",
         "json-source-map": "^0.4.0",
         "jstree": "^3.3.4",

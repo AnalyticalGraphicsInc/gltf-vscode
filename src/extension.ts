@@ -106,7 +106,7 @@ export function activateServer(context: vscode.ExtensionContext) {
     }
 
     // Create the language client and start the client.
-    let disposable = new LanguageClient('gltfValidation', 'glTF Validation Server', serverOptions, clientOptions).start();
+    let disposable = new LanguageClient('gltfLanguageServer', 'glTF Language Server', serverOptions, clientOptions).start();
 
     // Push the disposable to the context's subscriptions so that the
     // client can be deactivated on extension deactivation

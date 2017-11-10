@@ -2,10 +2,10 @@
 
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
-    Diagnostic, DiagnosticSeverity, InitializeResult
+    Diagnostic, DiagnosticSeverity, InitializeResult, Range
 } from 'vscode-languageserver';
+import Uri from 'vscode-uri';
 import * as path from 'path';
-import * as Url from 'url';
 import * as fs from 'fs';
 import * as jsonMap from 'json-source-map';
 import * as gltfValidator from 'gltf-validator';
@@ -24,16 +24,30 @@ documents.listen(connection);
 let documentsToValidate: TextDocument[] = [];
 let debounceValidateTimer: NodeJS.Timer;
 
+/**
+ * Attempt to parse a JSON document into a map of JSON pointers.
+ * Catch and report any parsing errors encountered.
+ *
+ * @param textDocument The document to parse
+ * @return A map of JSON pointers to document text locations, or `undefined`
+ */
 function tryGetJsonMap(textDocument: TextDocument) {
     try {
         return jsonMap.parse(textDocument.getText());
     } catch (ex) {
-        console.warn('Error parsing glTF document.  Please make sure it is valid JSON.');
+        console.warn('Error parsing glTF JSON document: ' + textDocument.uri);
     }
     return undefined;
 }
 
-function isLocalGltf(textDocument: TextDocument) {
+/**
+ * Evaluate whether a given document URI should be passed to the glTF Validator
+ * for further processing.
+ *
+ * @param textDocument The document to evaluate
+ * @return True if the URI appears to be a local `.gltf` file.
+ */
+function isLocalGltf(textDocument: TextDocument): boolean {
     const lowerUri = textDocument.uri.toLowerCase();
     return (lowerUri.startsWith('file:///') && lowerUri.endsWith('.gltf'));
 }
@@ -70,7 +84,7 @@ let currentSettings: GltfSettings;
 connection.onDidChangeConfiguration((change) => {
     currentSettings = <GltfSettings>change.settings.glTF;
     if (currentSettings.Validation.enable) {
-        // Schedule revalidation any open text documents
+        // Schedule revalidation of all open text documents using the new settings.
         documents.all().forEach(scheduleValidation);
     } else {
         if (debounceValidateTimer) {
@@ -98,6 +112,7 @@ documents.onDidClose(change => {
 
 /**
  * Schedule a document for glTF validation after the debounce timeout.
+ *
  * @param textDocument The document to schedule validator for.
  */
 function scheduleValidation(textDocument: TextDocument): void {
@@ -117,6 +132,12 @@ function scheduleValidation(textDocument: TextDocument): void {
     }
 }
 
+/**
+ * Remove a glTF document from scheduled validation, possibly because
+ * the document has closed or is no longer available to validate.
+ *
+ * @param textDocument The document to un-schedule
+ */
 function unscheduleValidation(textDocument: TextDocument): void {
     var index = documentsToValidate.indexOf(textDocument);
     if (index >= 0) {
@@ -125,6 +146,12 @@ function unscheduleValidation(textDocument: TextDocument): void {
     }
 }
 
+/**
+ * Clear any previous validation output messages from a particular document,
+ * likely because glTF validation has been disabled.
+ *
+ * @param textDocument The document to clear
+ */
 function clearValidationTextDocument(textDocument: TextDocument): void {
     if (isLocalGltf(textDocument)) {
         console.log('disable validation ' + textDocument.uri);
@@ -133,30 +160,15 @@ function clearValidationTextDocument(textDocument: TextDocument): void {
     }
 }
 
-const _driveLetterPath = /^\/[a-zA-Z]:/;
-
-// From: https://github.com/Microsoft/vscode/blob/f2c2d9c65880e44b588a0e1916423b691fff01d3/src/vs/base/common/uri.ts#L357-L374
-function getFsPath(uri) {
-    const url = Url.parse(uri);
-    const urlPath = decodeURIComponent(url.path);
-    let value: string;
-    if (url.auth && urlPath && url.protocol === 'file:') {
-        // unc path: file://shares/c$/far/boo
-        value = `//${url.auth}${urlPath}`;
-    } else if (_driveLetterPath.test(urlPath)) {
-        // windows drive letter: file:///c:/far/boo
-        value = urlPath[1].toLowerCase() + urlPath.substr(2);
-    } else {
-        // other path
-        value = urlPath;
-    }
-    return path.normalize(value);
-}
-
+/**
+ * Immediately launch the glTF Validator on a .gltf JSON document.
+ *
+ * @param textDocument The document to validate
+ */
 function validateTextDocument(textDocument: TextDocument): void {
     console.log('validate ' + textDocument.uri);
 
-    const fileName = getFsPath(textDocument.uri);
+    const fileName = Uri.parse(textDocument.uri).fsPath;
     const baseName = path.basename(fileName);
 
     const gltfText = textDocument.getText();
@@ -207,17 +219,29 @@ function validateTextDocument(textDocument: TextDocument): void {
         }
         // Send the computed diagnostics to VSCode, clearing any old messages.
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        if (diagnostics.length === 0) {
+            console.log('Validation passed: ' + fileName);
+        } else {
+            console.log(diagnostics.length.toFixed() + ' validation messages for ' + fileName);
+        }
     }, (result) => {
         // Validator's error
-        console.warn('glTF Validator had problems.');
+        console.warn('glTF Validator failed on: ' + fileName);
         console.warn(result);
         let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'glTF Validator error: ' + result }, {})];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     });
 }
 
-function getDiagnostic(info: any, map: any) : Diagnostic {
-    let range = {
+/**
+ * Convert an individual glTF Validator messgae to a Language Server Diagnostic.
+ *
+ * @param info An object containing a message from the glTF Validator's output messages
+ * @param map A map of JSON pointers to document text locations
+ * @return A `Diagnostic` to send back to the client
+ */
+function getDiagnostic(info: any, map: any): Diagnostic {
+    let range: Range = {
         start: { line: 0, character: 0 },
         end: { line: 0, character: Number.MAX_VALUE }
     };

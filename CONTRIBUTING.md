@@ -25,7 +25,7 @@ You will also need [NodeJS](https://nodejs.org/en/) installed, for npm package m
 4. Press <kbd>CTRL</kbd> - <kbd>P</kbd> to open the task bar, and type `task watch` to launch the watch task.
 
 NOTE: It is important to launch the watch task every time you close and re-open VSCode.  The extension has two parts now,
-a main part called the "client" and a separate glTF validation process called the "Language Server."  If you don't
+a main part called the "client" and a separate process called the "glTF Language Server."  If you don't
 manually start the build watcher, the client might be built without the server, and you will see an error.  When the `watch`
 task is running, you will see a tiny icon in the bottom status bar with the number `2` next to a wrench-and-screwdriver
 icon.  There are 2 watchers, one for the client and one for the server.  If you only see `1` here, one of the watchers

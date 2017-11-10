@@ -1,8 +1,8 @@
 {
-    "name": "gltf-validation-server",
-    "description": "glTF Validator as a Language Server.",
-    "version": "0.0.1",
-    "author": "The Khronos Group Inc.",
+    "name": "gltf-language-server",
+    "description": "glTF Language Server",
+    "version": "1.0.0",
+    "author": "Analytical Graphics, Inc. and outside contributors",
     "license": "Apache-2.0",
     "engines": {
         "node": "*"
@@ -12,9 +12,10 @@
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
     "dependencies": {
+        "gltf-validator": "2.0.0-dev.1.1",
         "json-source-map": "^0.4.0",
         "vscode-languageserver": "3.5.0",
-        "gltf-validator": "2.0.0-dev.1"
+        "vscode-uri": "^1.0.1"
     },
     "scripts": {
         "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",
