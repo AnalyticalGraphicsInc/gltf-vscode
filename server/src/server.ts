@@ -181,6 +181,15 @@ function validateTextDocument(textDocument: TextDocument): void {
         return;
     }
 
+    if ((!map.data.asset) || (!map.data.asset.version) || (map.data.asset.version[0] === '1')) {
+        let diagnostics: Diagnostic[] = [getDiagnostic({
+            message: 'Validation not available for glTF 1.0 files.',
+            severity: 2
+        }, map)];
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        return;
+    }
+
     gltfValidator.validateString(baseName, gltfText, (uri) =>
         new Promise((resolve, reject) => {
             uri = path.resolve(folderName, uri);
@@ -204,6 +213,7 @@ function validateTextDocument(textDocument: TextDocument): void {
         if (result.issues && result.issues.messages) {
             const messages = result.issues.messages;
             const numMessages = messages.length;
+
             for (let i = 0; i < numMessages; ++i) {
                 let info = messages[i];
                 if (info.message) {
