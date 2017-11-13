@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as jsonMap from 'json-source-map';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn, Range } from 'vscode';
 
-export declare type GltfNodeType = 'material' | 'texture' | 'mesh' | 'skin' | 'skeleton' | 'node' | 'animation' | 'scene' | 'root';
+export declare type GltfNodeType = 'animation' | 'material' | 'mesh' |  'node' | 'scene' | 'skeleton' |'skin' | 'texture' | 'root';
 
 interface GltfNode {
     parent?: GltfNode;
@@ -39,7 +39,7 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
             title: '',
             arguments: [node.range]
         };
-        treeItem.iconPath = this.getIcon(node);
+        treeItem.iconPath = this.getIcon(node.type);
         treeItem.contextValue = node.type;
         return treeItem;
     }
@@ -141,9 +141,7 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         if (this.gltf && this.gltf.scenes) {
             for (let sceneIndex = 0; sceneIndex < this.gltf.scenes.length; sceneIndex++) {
                 let scene = this.gltf.scenes[sceneIndex];
-                let gltfNode = this.createScene(scene, sceneIndex);
-                gltfNode.parent = this.tree;
-                this.tree.children.push(gltfNode);
+                this.createScene(scene, sceneIndex, this.tree);
             }
         }
 
@@ -157,14 +155,16 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         }
     }
 
-    private createScene(scene: any, sceneIndex: number): GltfNode {
+    private createScene(scene: any, sceneIndex: number, parent: GltfNode): void {
         let pointer = this.pointers['/scenes/' + sceneIndex];
         let sceneObj: GltfNode = {
             name: this.createName('Scene', sceneIndex.toString(), scene),
             children: [],
             type: 'scene',
+            parent: parent,
             range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
         };
+        parent.children.push(sceneObj);
 
         if (scene.nodes) {
             for (let nodeSceneIndex = 0; nodeSceneIndex < scene.nodes.length; nodeSceneIndex++) {
@@ -173,8 +173,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
                 this.createNode(node, nodeIndex, false, sceneObj);
             }
         }
-
-        return sceneObj;
     }
 
     private createNode(node: any, nodeIndex: string, followBones: boolean, parent: GltfNode): void {
@@ -189,14 +187,10 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         parent.children.push(nodeObj);
 
         if (node.mesh !== undefined) {
-            let gltfNode = this.createMesh(node.mesh, nodeIndex);
-            gltfNode.parent = nodeObj;
-            nodeObj.children.push(gltfNode);
+            this.createMesh(node.mesh, nodeIndex, nodeObj);
         }
         if (node.skin !== undefined) {
-            let gltfNode = this.createSkin(node.skin);
-            gltfNode.parent = nodeObj;
-            nodeObj.children.push(gltfNode);
+            let gltfNode = this.createSkin(node.skin, nodeObj);
         }
         if (node.children) {
             for (let nodeChildrenIndex = 0; nodeChildrenIndex < node.children.length; nodeChildrenIndex++) {
@@ -209,107 +203,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
             }
         }
         this.createNodeAnimations(nodeIndex, nodeObj);
-    }
-
-    private createNodeAnimations(nodeIndex: string, parent: GltfNode): void {
-        this.forEachAnimationChannel((animationIndex: number, channelIndex: number, target: any) => {
-            if (target.path !== 'weights' && target.node === nodeIndex) {
-                let pointerPath = '/animations/' + animationIndex.toString() + '/channels/' + channelIndex.toString();
-                let pointer = this.pointers[pointerPath];
-
-                let animation = this.gltf.animations[animationIndex];
-                let name = this.createName(target.path + ' Animation', `${animationIndex} ${channelIndex}`, animation);
-                let animationObj: GltfNode = {
-                    name: name,
-                    children: [],
-                    type: 'animation',
-                    parent: parent,
-                    range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
-                };
-                parent.children.push(animationObj);
-            }
-        });
-    }
-
-    private createSkin(skinIndex: string): GltfNode {
-        let skin = this.gltf.skins[skinIndex];
-        let name = this.createName('Skin', skinIndex, skin);
-
-        let pointer = this.pointers['/skins/' + skinIndex];
-        let skeletonNode = this.gltf.nodes[skin.skeleton];
-        let skinObj: GltfNode = {
-            name: name,
-            children: [],
-            type: 'skeleton',
-            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
-        };
-        this.createNode(skeletonNode, skin.skeleton, true, skinObj);
-
-        return skinObj;
-    }
-
-    private createMesh(meshIndex: string, nodeIndex: string): GltfNode {
-        let mesh = this.gltf.meshes[meshIndex];
-        let name = this.createName('Mesh', meshIndex, mesh);
-
-        let pointer = this.pointers['/meshes/' + meshIndex];
-        let meshObj: GltfNode = {
-            name: name,
-            children: [],
-            type: 'mesh',
-            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
-        };
-        if (mesh.primitives)
-        {
-            for (let primitiveIndex = 0; primitiveIndex < mesh.primitives.length; primitiveIndex++)
-            {
-                let gltfNode = this.createMeshPrimitive(mesh, meshIndex, primitiveIndex.toString(), nodeIndex)
-                gltfNode.parent = meshObj;
-                meshObj.children.push(gltfNode);
-            }
-        }
-
-        return meshObj;
-    }
-
-    private createMeshPrimitive(mesh: any, meshIndex: string, primitiveIndex: string, nodeIndex: string): GltfNode {
-        let primitive = mesh.primitives[primitiveIndex];
-        let name = this.createName('Primitive', primitiveIndex, primitive);
-
-        let pointerPath = '/meshes/' + meshIndex + '/primitives/' + primitiveIndex;
-        let pointer = this.pointers[pointerPath];
-        let primitiveObj: GltfNode = {
-            name: name,
-            children: [],
-            type: 'mesh',
-            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
-        };
-
-        if (primitive.targets)
-        {
-            this.createMorphTargets(primitive, pointerPath, nodeIndex, primitiveObj);
-        }
-
-        this.createMaterial(primitive.material, primitiveObj);
-
-        return primitiveObj;
-    }
-
-    private createMorphTargets(primitive: any, pointerPath: string, nodeIndex: string, parent: GltfNode): void {
-        for (let morphTargetIndex = 0; morphTargetIndex < primitive.targets.length; morphTargetIndex++)
-        {
-            let targetPointerPath = pointerPath + '/targets/' + morphTargetIndex;
-            let targetPointer = this.pointers[targetPointerPath];
-            let targetObj: GltfNode = {
-                name: `Morph Target ` + morphTargetIndex,
-                children: [],
-                type: 'mesh',
-                parent: parent,
-                range: new vscode.Range(this.editor.document.positionAt(targetPointer.value.pos), this.editor.document.positionAt(targetPointer.valueEnd.pos))
-            };
-            parent.children.push(targetObj);
-            this.createMorphTargetAnimations(nodeIndex, targetObj);
-        }
     }
 
     private forEachAnimationChannel(callback: (animationIndex: number, channelIndex: number, target: any) => void): void {
@@ -325,14 +218,14 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         }
     }
 
-    private createMorphTargetAnimations(nodeIndex: string, parent: GltfNode) {
+    private createNodeAnimations(nodeIndex: string, parent: GltfNode): void {
         this.forEachAnimationChannel((animationIndex: number, channelIndex: number, target: any) => {
-            if (target.path === 'weights' && target.node === nodeIndex) {
+            if (target.node === nodeIndex) {
                 let pointerPath = '/animations/' + animationIndex.toString() + '/channels/' + channelIndex.toString();
                 let pointer = this.pointers[pointerPath];
 
                 let animation = this.gltf.animations[animationIndex];
-                let name = this.createName('Morph Target Animation', `${animationIndex} ${channelIndex}`, animation);
+                let name = this.createName(target.path + ' animation', `${animationIndex} ${channelIndex}`, animation);
                 let animationObj: GltfNode = {
                     name: name,
                     children: [],
@@ -345,7 +238,87 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         });
     }
 
-    private createMaterial(materialIndex: string, parent: GltfNode) {
+    private createSkin(skinIndex: string, parent: GltfNode): void {
+        let skin = this.gltf.skins[skinIndex];
+        let name = this.createName('Skin', skinIndex, skin);
+
+        let pointer = this.pointers['/skins/' + skinIndex];
+        let skeletonNode = this.gltf.nodes[skin.skeleton];
+        let skinObj: GltfNode = {
+            name: name,
+            children: [],
+            type: 'skeleton',
+            parent: parent,
+            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
+        };
+        parent.children.push(skinObj);
+
+        this.createNode(skeletonNode, skin.skeleton, true, skinObj);
+    }
+
+    private createMesh(meshIndex: string, nodeIndex: string, parent: GltfNode): void {
+        let mesh = this.gltf.meshes[meshIndex];
+        let name = this.createName('Mesh', meshIndex, mesh);
+
+        let pointer = this.pointers['/meshes/' + meshIndex];
+        let meshObj: GltfNode = {
+            name: name,
+            children: [],
+            type: 'mesh',
+            parent: parent,
+            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
+        };
+        parent.children.push(meshObj);
+
+        if (mesh.primitives)
+        {
+            for (let primitiveIndex = 0; primitiveIndex < mesh.primitives.length; primitiveIndex++)
+            {
+                this.createMeshPrimitive(mesh, meshIndex, primitiveIndex.toString(), meshObj)
+            }
+        }
+    }
+
+    private createMeshPrimitive(mesh: any, meshIndex: string, primitiveIndex: string, parent: GltfNode): void {
+        let primitive = mesh.primitives[primitiveIndex];
+        let name = this.createName('Primitive', primitiveIndex, primitive);
+
+        let pointerPath = '/meshes/' + meshIndex + '/primitives/' + primitiveIndex;
+        let pointer = this.pointers[pointerPath];
+        let primitiveObj: GltfNode = {
+            name: name,
+            children: [],
+            type: 'mesh',
+            parent: parent,
+            range: new vscode.Range(this.editor.document.positionAt(pointer.value.pos), this.editor.document.positionAt(pointer.valueEnd.pos))
+        };
+        parent.children.push(primitiveObj);
+
+        if (primitive.targets)
+        {
+            this.createMorphTargets(primitive, pointerPath, primitiveObj);
+        }
+
+        this.createMaterial(primitive.material, primitiveObj);
+    }
+
+    private createMorphTargets(primitive: any, pointerPath: string, parent: GltfNode): void {
+        for (let morphTargetIndex = 0; morphTargetIndex < primitive.targets.length; morphTargetIndex++)
+        {
+            let targetPointerPath = pointerPath + '/targets/' + morphTargetIndex;
+            let targetPointer = this.pointers[targetPointerPath];
+            let targetObj: GltfNode = {
+                name: `Morph Target ` + morphTargetIndex,
+                children: [],
+                type: 'mesh',
+                parent: parent,
+                range: new vscode.Range(this.editor.document.positionAt(targetPointer.value.pos), this.editor.document.positionAt(targetPointer.valueEnd.pos))
+            };
+            parent.children.push(targetObj);
+        }
+    }
+
+    private createMaterial(materialIndex: string, parent: GltfNode): void {
         if (materialIndex === undefined) {
             return;
         }
@@ -372,8 +345,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
             this.createTexture('PBR Base Color', material.pbrMetallicRoughness.baseColorTexture, materialObj);
             this.createTexture('Metallic Roughness', material.pbrMetallicRoughness.metallicRoughnessTexture, materialObj);
         }
-
-        return materialObj;
     }
 
     private createTexture(typeName: string, textureIndex: any, parent: GltfNode): void {
@@ -399,7 +370,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         parent.children.push(textureObj);
     }
 
-
     private createName(typeName: string, index: string, obj: any) {
         let name = `${typeName} ${index}`;
         if (obj && obj.name) {
@@ -409,55 +379,14 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
         return name;
     }
 
-    private _getChildren(node: GltfNode): GltfNode[] {
-        return node.children;
-    }
+     private getIcon(nodeType: GltfNodeType): any {
+        if (nodeType === 'node' || nodeType === 'root') {
+            return null;
+        }
 
-    private getIcon(node: GltfNode): any {
-        //TODO 'material' | 'texture' | 'node'
-
-        if (node.type === 'mesh') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'mesh.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'mesh.svg'))
-            }
+        return {
+            light: this.context.asAbsolutePath(path.join('resources', 'light', nodeType + '.svg')),
+            dark: this.context.asAbsolutePath(path.join('resources', 'dark', nodeType + '.svg'))
         }
-        if (node.type === 'skin') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'skin.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'skin.svg'))
-            }
-        }
-        if (node.type === 'skeleton') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'skeleton.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'skeleton.svg'))
-            }
-        }
-        if (node.type === 'scene') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'scene.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'scene.svg'))
-            }
-        }
-        if (node.type === 'animation') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'settings.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'settings.svg'))
-            }
-        }
-        if (node.type === 'material') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'material.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'material.svg'))
-            }
-        }
-        if (node.type === 'texture') {
-            return {
-                light: this.context.asAbsolutePath(path.join('resources', 'light', 'texture.svg')),
-                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'texture.svg'))
-            }
-        }
-        return null;
     }
 }
