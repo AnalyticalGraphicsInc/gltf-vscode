@@ -80,7 +80,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
     }
 
     private walkTree(node: GltfNode, callback: (GltfNode) => void): void {
-        console.log(`walkTree: ${node.name}`);
         callback(node);
         for (let child of node.children) {
             this.walkTree(child, callback);
@@ -94,7 +93,6 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
                 this.walkTree(this.tree, (node: GltfNode) => {
                     if (node.range.contains(selection)) {
                         do {
-                            console.log(`selectedList.add(${node.name})`);
                             this.selectedList.add(node);
                             node = node.parent;
                         } while (node !== undefined);
