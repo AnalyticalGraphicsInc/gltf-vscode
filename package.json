@@ -65,6 +65,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?"
+                },
+                "expandOutlineWithSelection": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When the editor selection changes the glTF outline will expand to include the current selction."
                 }
             }
         },
