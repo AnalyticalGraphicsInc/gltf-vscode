@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
-import {  GltfNode, GltfOutlineProvider } from './gltfTreeViewDocumentContentProvider';
+import {  GltfOutlineProvider } from './gltfTreeViewDocumentContentProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
 import * as jsonMap from 'json-source-map';

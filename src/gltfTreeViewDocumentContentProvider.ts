@@ -7,7 +7,7 @@ import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri
 
 export declare type GltfNodeType = 'mesh' | 'skin' | 'skeleton' | 'node' | 'animation' | 'scene' | 'root';
 
-export class GltfNode {
+interface GltfNode {
     children: GltfNode[];
     range: vscode.Range;
     name: string;
