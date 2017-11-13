@@ -21,7 +21,6 @@
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
-        "onCommand:gltf.treeView",
         "onCommand:gltf.exportGlbFile",
         "onCommand:gltf.importGlbFile",
         "onView:gltfOutline"
@@ -91,10 +90,6 @@
                 "title": "glTF: Preview 3D Model"
             },
             {
-                "command": "gltf.treeView",
-                "title": "glTF: Tree View of Scene Nodes"
-            },
-            {
                 "command": "gltf.exportGlbFile",
                 "title": "glTF: Export to GLB (Binary file)"
             },
@@ -147,21 +142,11 @@
                     "command": "gltf.previewModel",
                     "when": "resourceLangId == json",
                     "group": "glTF"
-                },
-                {
-                    "command": "gltf.treeView",
-                    "when": "resourceLangId == json",
-                    "group": "glTF"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json",
-                    "group": "glTF"
-                },
-                {
-                    "command": "gltf.treeView",
                     "when": "resourceLangId == json",
                     "group": "glTF"
                 },

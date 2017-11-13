@@ -27,18 +27,11 @@ function checkValidEditor() : boolean {
     return true;
 }
 
-function pointerContains(pointer, lineNum : number, columnNum : number) : boolean {
-    const start = pointer.key || pointer.value;
-    if ((start.line > lineNum) ||
-        ((start.line === lineNum) && (start.column > columnNum))) {
-        return false;
-    }
-    const end = pointer.valueEnd;
-    if ((end.line < lineNum) ||
-        ((end.line === lineNum) && (end.column < columnNum))) {
-        return false;
-    }
-    return true;
+function pointerContains(pointer: any, selection: vscode.Selection) : boolean {
+    const doc = vscode.window.activeTextEditor.document;
+    const range = new vscode.Range(doc.positionAt(pointer.value.pos), doc.positionAt(pointer.valueEnd.pos));
+
+    return range.contains(selection);
 }
 
 function tryGetJsonMap() {
@@ -51,18 +44,15 @@ function tryGetJsonMap() {
 }
 
 function tryGetCurrentUriKey(map) {
-    const lineNum = vscode.window.activeTextEditor.selection.active.line;
-    const columnNum = vscode.window.activeTextEditor.selection.active.character;
+    const selection = vscode.window.activeTextEditor.selection;
     const pointers = map.pointers;
 
     let bestKey : string, secondBestKey : string;
-    for (let key in pointers) {
-        if (key && pointers.hasOwnProperty(key)) {
-            let pointer = pointers[key];
-            if (pointerContains(pointer, lineNum, columnNum)) {
-                secondBestKey = bestKey;
-                bestKey = key;
-            }
+    for (let key of Object.keys(pointers)) {
+        let pointer = pointers[key];
+        if (pointerContains(pointer, selection)) {
+            secondBestKey = bestKey;
+            bestKey = key;
         }
     }
 
