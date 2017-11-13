@@ -52,9 +52,7 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 ## Tree View of Scene Nodes
 
-Command name: `glTF: Tree View of Scene Nodes`
-
-This displays a window with a tree view revealing the node structure of the glTF file.
+This displays an Explorer outline revealing the node structure of the glTF file. This allows easier navigation of the scene structure.
 
 ## Other Features
 
