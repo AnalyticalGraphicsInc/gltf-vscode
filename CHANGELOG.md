@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.0.9 - 2017-11-06
+
+* Fixed bug where a small error could slip into a `.glb` file due to a missing `byteOffset` value in a `.gltf` file.
+
 ### 2.0.8 - 2017-11-04
 
 * Added an option to import a`.glb` binary package file.
