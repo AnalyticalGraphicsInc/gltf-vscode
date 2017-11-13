@@ -446,6 +446,18 @@ export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
                 dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'settings.svg'))
             }
         }
+        if (node.type === 'material') {
+            return {
+                light: this.context.asAbsolutePath(path.join('resources', 'light', 'material.svg')),
+                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'material.svg'))
+            }
+        }
+        if (node.type === 'texture') {
+            return {
+                light: this.context.asAbsolutePath(path.join('resources', 'light', 'texture.svg')),
+                dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'texture.svg'))
+            }
+        }
         return null;
     }
 }
