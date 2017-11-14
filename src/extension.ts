@@ -69,6 +69,13 @@ function tryGetCurrentUriKey(map) {
     return bestKey;
 }
 
+function configurationChanged() {
+    const config = vscode.workspace.getConfiguration('glTF');
+    const showToolbar3D = config.get('showToolbar3D');
+
+    vscode.commands.executeCommand('setContext', 'glTF_showToolbar3D', showToolbar3D);
+}
+
 // This method activates the language server, to run the glTF Validator.
 export function activateServer(context: vscode.ExtensionContext) {
     // The server is implemented in node
@@ -106,6 +113,10 @@ export function activateServer(context: vscode.ExtensionContext) {
 // this method is called when your extension is activated
 // your extension is activated the very first time a command is executed
 export function activate(context: vscode.ExtensionContext) {
+
+    // Set configuration options
+    vscode.workspace.onDidChangeConfiguration(configurationChanged);
+    configurationChanged();
 
     // Activate the validation server.
     activateServer(context);

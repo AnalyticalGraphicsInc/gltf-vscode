@@ -62,6 +62,11 @@
                     "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
                     "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
                 },
+                "glTF.showToolbar3D": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show a button on the toolbar to activate the 3D Preview window."
+                },
                 "glTF.alwaysOverwriteDefaultFilename": {
                     "type": "boolean",
                     "default": false,
@@ -119,7 +124,11 @@
             },
             {
                 "command": "gltf.previewModel",
-                "title": "glTF: Preview 3D Model"
+                "title": "glTF: Preview 3D Model",
+                "icon": {
+                    "dark": "./resources/dark/scene.svg",
+                    "light": "./resources/light/scene.svg"
+                }
             },
             {
                 "command": "gltf.validateFile",
@@ -180,8 +189,8 @@
             "editor/title": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json",
-                    "group": "glTF"
+                    "when": "resourceLangId == json && glTF_showToolbar3D",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
