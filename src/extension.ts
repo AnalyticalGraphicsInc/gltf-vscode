@@ -6,7 +6,7 @@ import { Uri, ViewColumn } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
-import { GltfTreeViewDocumentContentProvider } from './gltfTreeViewDocumentContentProvider';
+import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
 import * as GltfValidate from './validationProvider';
@@ -29,18 +29,11 @@ function checkValidEditor() : boolean {
     return true;
 }
 
-function pointerContains(pointer, lineNum : number, columnNum : number) : boolean {
-    const start = pointer.key || pointer.value;
-    if ((start.line > lineNum) ||
-        ((start.line === lineNum) && (start.column > columnNum))) {
-        return false;
-    }
-    const end = pointer.valueEnd;
-    if ((end.line < lineNum) ||
-        ((end.line === lineNum) && (end.column < columnNum))) {
-        return false;
-    }
-    return true;
+function pointerContains(pointer: any, selection: vscode.Selection) : boolean {
+    const doc = vscode.window.activeTextEditor.document;
+    const range = new vscode.Range(doc.positionAt(pointer.value.pos), doc.positionAt(pointer.valueEnd.pos));
+
+    return range.contains(selection);
 }
 
 function tryGetJsonMap() {
@@ -53,18 +46,15 @@ function tryGetJsonMap() {
 }
 
 function tryGetCurrentUriKey(map) {
-    const lineNum = vscode.window.activeTextEditor.selection.active.line;
-    const columnNum = vscode.window.activeTextEditor.selection.active.character;
+    const selection = vscode.window.activeTextEditor.selection;
     const pointers = map.pointers;
 
     let bestKey : string, secondBestKey : string;
-    for (let key in pointers) {
-        if (key && pointers.hasOwnProperty(key)) {
-            let pointer = pointers[key];
-            if (pointerContains(pointer, lineNum, columnNum)) {
-                secondBestKey = bestKey;
-                bestKey = key;
-            }
+    for (let key of Object.keys(pointers)) {
+        let pointer = pointers[key];
+        if (pointerContains(pointer, selection)) {
+            secondBestKey = bestKey;
+            bestKey = key;
         }
     }
 
@@ -119,6 +109,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Activate the validation server.
     activateServer(context);
+
+    // Register the outline provider.
+    const gltfOutlineTreeDataProvider = new GltfOutlineTreeDataProvider(context);
+    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineTreeDataProvider);
 
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
@@ -228,7 +222,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     function exportToFile(filename : string, pathFilename : string, pointer, dataUri : string) {
         const pos = dataUri.indexOf(',');
-        const fileContents = new Buffer(dataUri.substring(pos + 1), 'base64');
+        const fileContents = Buffer.from(dataUri.substring(pos + 1), 'base64');
 
         try {
             fs.writeFileSync(pathFilename, fileContents);
@@ -383,18 +377,10 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     //
-    // Register a preview of the node tree.
+    // Register glTF Tree View
     //
-    const treeViewProvider = new GltfTreeViewDocumentContentProvider(context);
-    const treeViewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-tree-view-preview', treeViewProvider);
-
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.treeView', () => {
-        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-        return vscode.commands.executeCommand('vscode.previewHtml', gltfTreeViewUri, vscode.ViewColumn.Two, `glTF Tree View [${fileName}]`).then((success) => {
-        }, (reason) => {
-            vscode.window.showErrorMessage(reason);
-        });
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.openGltfSelection', range => {
+        gltfOutlineTreeDataProvider.select(range);
     }));
 
     //
@@ -469,9 +455,6 @@ export function activate(context: vscode.ExtensionContext) {
         if (document === vscode.window.activeTextEditor.document) {
             const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
             gltfPreviewProvider.update(gltfPreviewUri);
-
-            const gltfTreeViewUri = Uri.parse(treeViewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-            treeViewProvider.update(gltfTreeViewUri)
         }
     });
 }

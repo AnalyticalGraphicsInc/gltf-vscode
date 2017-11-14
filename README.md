@@ -52,9 +52,7 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 ## Tree View of Scene Nodes
 
-Command name: `glTF: Tree View of Scene Nodes`
-
-This displays a window with a tree view revealing the node structure of the glTF file.
+This displays an Explorer outline revealing the node structure of the glTF file. This allows easier navigation of the scene structure.
 
 ## glTF Validation
 
@@ -98,9 +96,11 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  There are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The files must be in a format usable on the web, such as PNG or JPEG.
 
-### File Creation
+### Files and Folders
 
 * `glTF.alwaysOverwriteDefaultFilename` - Certain commands create new files, such as importing and exporting GLBs, exporting a DataURI, and creating a glTF Validation report.  When `true` these files will be saved with their default names, which saves the step of interacting with a file dialog each time, but does make it trivial to overwrite existing files.  It's safer to leave this set to `false`.
+
+* `glTF.expandOutlineWithSelection` - When the editor selection changes, the glTF outline will expand to include the current selection.
 
 ### Automatic glTF Validation (only)
 

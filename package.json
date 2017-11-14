@@ -22,10 +22,10 @@
         "onCommand:gltf.importUri",
         "onCommand:gltf.exportUri",
         "onCommand:gltf.previewModel",
-        "onCommand:gltf.treeView",
         "onCommand:gltf.validateFile",
         "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile"
+        "onCommand:gltf.importGlbFile",
+        "onView:gltfOutline"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -66,6 +66,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?"
+                },
+                "glTF.expandOutlineWithSelection": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When the editor selection changes the glTF outline will expand to include the current selection."
                 },
                 "glTF.Validation.enable": {
                     "scope": "resource",
@@ -115,10 +120,6 @@
             {
                 "command": "gltf.previewModel",
                 "title": "glTF: Preview 3D Model"
-            },
-            {
-                "command": "gltf.treeView",
-                "title": "glTF: Tree View of Scene Nodes"
             },
             {
                 "command": "gltf.validateFile",
@@ -181,21 +182,11 @@
                     "command": "gltf.previewModel",
                     "when": "resourceLangId == json",
                     "group": "glTF"
-                },
-                {
-                    "command": "gltf.treeView",
-                    "when": "resourceLangId == json",
-                    "group": "glTF"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json",
-                    "group": "glTF"
-                },
-                {
-                    "command": "gltf.treeView",
                     "when": "resourceLangId == json",
                     "group": "glTF"
                 },
@@ -242,7 +233,16 @@
                 "fileMatch": "*.gltf",
                 "url": "./schemas/glTF.chooser.schema.json"
             }
-        ]
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "id": "gltfOutline",
+                    "name": "glTF Outline",
+                    "when": "resourceLangId == 'json'"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
@@ -264,9 +264,7 @@
     "dependencies": {
         "babylonjs": "^3.1.0-beta1.1.1",
         "gltf-validator": "2.0.0-dev.1.3",
-        "jquery": "^3.2.1",
         "json-source-map": "^0.4.0",
-        "jstree": "^3.3.4",
         "vscode": "^1.1.5",
         "vscode-languageclient": "^3.5.0"
     }

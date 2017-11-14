@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg3716"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="m-bone.svg">
+  <defs
+     id="defs3710" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="880.12198"
+     inkscape:cy="257.14286"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3713">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       id="path3718"
+       cx="138.71725"
+       cy="33.550598"
+       rx="23.056549"
+       ry="20.032738"
+       style="stroke-width:0.26458332" />
+    <ellipse
+       id="path3724"
+       cx="162.52975"
+       cy="45.26786"
+       rx="22.678572"
+       ry="21.166666"
+       style="stroke-width:0.26458332" />
+    <ellipse
+       id="path3718-0"
+       cx="31.280313"
+       cy="229.83095"
+       rx="24.660166"
+       ry="20.300007"
+       style="stroke-width:0.27544904" />
+    <ellipse
+       id="path3724-3"
+       cx="58.300049"
+       cy="243.15182"
+       rx="24.282188"
+       ry="22.503014"
+       style="stroke-width:0.28228813" />
+    <rect
+       id="rect4074"
+       width="41.660797"
+       height="201.39227"
+       x="131.88701"
+       y="-57.348545"
+       rx="0.65803349"
+       style="stroke-width:0.22426724"
+       transform="matrix(0.77533606,0.63154888,-0.46825992,0.88359077,0,0)" />
+  </g>
+</svg>
