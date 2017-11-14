@@ -98,6 +98,8 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 ### Files and Folders
 
+* `glTF.showToolbar3D` - Show a button on the toolbar to activate the 3D Preview window.
+
 * `glTF.alwaysOverwriteDefaultFilename` - Certain commands create new files, such as importing and exporting GLBs, exporting a DataURI, and creating a glTF Validation report.  When `true` these files will be saved with their default names, which saves the step of interacting with a file dialog each time, but does make it trivial to overwrite existing files.  It's safer to leave this set to `false`.
 
 * `glTF.expandOutlineWithSelection` - When the editor selection changes, the glTF outline will expand to include the current selection.
