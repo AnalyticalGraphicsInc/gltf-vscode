@@ -1,30 +1,79 @@
-// Available variables which can be used inside of strings.
-// ${workspaceRoot}: the root folder of the team
-// ${file}: the current opened file
-// ${fileBasename}: the current opened file's basename
-// ${fileDirname}: the current opened file's dirname
-// ${fileExtname}: the current opened file's extension
-// ${cwd}: the current working directory of the spawned process
-
-// A task runner that calls a custom npm script that compiles the extension.
 {
-    "version": "0.1.0",
-
-    // we want to run npm
-    "command": "npm",
-
-    // the command is a shell script
-    "isShellCommand": true,
-
-    // show the output window only if unrecognized errors occur.
-    "showOutput": "silent",
-
-    // we run the custom script "compile" as defined in package.json
-    "args": ["run", "compile", "--loglevel", "silent"],
-
-    // The tsc compiler is started in watching mode
-    "isBackground": true,
-
-    // use the standard tsc in watch mode problem matcher to find compile problems in the output.
-    "problemMatcher": "$tsc-watch"
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "compile",
+            "dependsOn": [
+                "compile:client",
+                "compile:server"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "compile:client",
+            "type": "npm",
+            "script": "compile:client",
+            "group": "build",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            },
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "label": "compile:server",
+            "type": "npm",
+            "script": "compile:server",
+            "group": "build",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            },
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "taskName": "watch",
+            "dependsOn": [
+                "watch:client",
+                "watch:server"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "watch:client",
+            "type": "npm",
+            "script": "watch:client",
+            "isBackground": true,
+            "group": "build",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            },
+            "problemMatcher": [
+                "$tsc-watch"
+            ]
+        },
+        {
+            "label": "watch:server",
+            "type": "npm",
+            "script": "watch:server",
+            "isBackground": true,
+            "group": "build",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            },
+            "problemMatcher": [
+                "$tsc-watch"
+            ]
+        }
+    ]
 }

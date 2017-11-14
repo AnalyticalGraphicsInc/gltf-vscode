@@ -2,6 +2,7 @@
 
 ### 2.1.0 - UNRELEASED
 
+* Integrated Khronos glTF Validator
 * Recreated TreeView as an Explorer outline view that can navigate the glTF document.
 
 ### 2.0.9 - 2017-11-06

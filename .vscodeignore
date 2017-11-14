@@ -5,6 +5,7 @@ out/test/**
 test/**
 util/**
 src/**
+server/src/**
 **/*.map
 .gitignore
 tsconfig.json

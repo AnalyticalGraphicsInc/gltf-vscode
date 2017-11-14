@@ -1,28 +1,33 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-    "version": "0.1.0",
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "Launch Extension",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
             "stopOnEntry": false,
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/src/**/*.js" ],
-            "preLaunchTask": "npm"
+            "outFiles": [
+                "${workspaceRoot}/out/src/**/*.js"
+            ],
+            "preLaunchTask": "watch:client"
         },
         {
-            "name": "Launch Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
-            "stopOnEntry": false,
+            "name": "Attach to Server",
+            "type": "node",
+            "request": "attach",
+            "port": 6009,
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
-            "preLaunchTask": "npm"
+            "outFiles": [
+                "${workspaceRoot}/server/**/*.js"
+            ],
+            "protocol": "inspector",
+            "preLaunchTask": "watch:server"
         }
     ]
 }

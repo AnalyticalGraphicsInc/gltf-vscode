@@ -3,11 +3,13 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import {  GltfOutlineProvider } from './gltfTreeViewDocumentContentProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
+import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
@@ -67,10 +69,48 @@ function tryGetCurrentUriKey(map) {
     return bestKey;
 }
 
+// This method activates the language server, to run the glTF Validator.
+export function activateServer(context: vscode.ExtensionContext) {
+    // The server is implemented in node
+    let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+    // The debug options for the server
+    let debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+
+    // If the extension is launched in debug mode then the debug server options are used
+    // Otherwise the run options are used
+    let serverOptions: ServerOptions = {
+        run : { module: serverModule, transport: TransportKind.ipc },
+        debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
+    }
+
+    // Options to control the language client
+    let clientOptions: LanguageClientOptions = {
+        // Register the server for plain text documents
+        documentSelector: [{scheme: 'file', language: 'json'}],
+        synchronize: {
+            // Synchronize the setting section 'glTF' to the server
+            configurationSection: 'glTF',
+            // Notify the server about file changes to '.clientrc files contain in the workspace
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+        }
+    }
+
+    // Create the language client and start the client.
+    let disposable = new LanguageClient('gltfLanguageServer', 'glTF Language Server', serverOptions, clientOptions).start();
+
+    // Push the disposable to the context's subscriptions so that the
+    // client can be deactivated on extension deactivation
+    context.subscriptions.push(disposable);
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time a command is executed
 export function activate(context: vscode.ExtensionContext) {
 
+    // Activate the validation server.
+    activateServer(context);
+
+    // Register the outline provider.
     const gltfOutlineProvider = new GltfOutlineProvider(context);
     vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineProvider);
 
@@ -320,9 +360,11 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        const fileName = path.basename(vscode.window.activeTextEditor.document.fileName);
-        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${fileName}]`)
+        const fileName = vscode.window.activeTextEditor.document.fileName;
+        const baseName = path.basename(fileName);
+        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
+
+        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${baseName}]`)
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
 
         // This can be used to debug the preview HTML.
@@ -368,6 +410,36 @@ export function activate(context: vscode.ExtensionContext) {
 
         try {
             await GlbImport.load(fileUri.fsPath);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
+    }));
+
+    //
+    // Run the validator on an external file.
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.validateFile', async (fileUri) => {
+        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) ||
+            !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.gltf'))) {
+            const options: vscode.OpenDialogOptions = {
+                canSelectMany: false,
+                openLabel: 'Validate',
+                filters: {
+                    'glTF Files': ['gltf', 'glb'],
+                    'All files': ['*']
+                }
+            };
+
+            let openUri = await vscode.window.showOpenDialog(options);
+            if (openUri && openUri[0]) {
+                fileUri = openUri[0];
+            } else {
+                return;
+            }
+        }
+
+        try {
+            await GltfValidate.validate(fileUri.fsPath);
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
