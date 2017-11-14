@@ -4,11 +4,17 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "out": true
+        "out": true,
+        "server/etc": true,
+        "server/server.js*" : true
     },
     "search.exclude": {
-        "node_modules": true
+        "node_modules": true,
+        "out": true,
+        "server/server.js*": true
     },
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "typescript.tsc.autoDetect": "off",
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "editor.insertSpaces": true,

@@ -56,11 +56,17 @@ Command name: `glTF: Tree View of Scene Nodes`
 
 This displays a window with a tree view revealing the node structure of the glTF file.
 
+## glTF Validation
+
+Files can be validated three different ways:
+
+* The official [Khronos glTF Validator](https://github.com/KhronosGroup/glTF-Validator) runs automatically on glTF 2.0 files, and reports any issues it finds to the document's "Problems" window.  All such messages are marked with a `[glTF Validator]` prefix.  Check the bottom status bar for a small `x` in a circle next to a small `!` in a triangle, these show numbers of errors and warnings, respectively.  This goes far beyond simple JSON validation, as it reads in external data and image files, and looks at mesh data itself for structural errors.
+
+* The same glTF Validator can also run as a manual process, by issuing the command `glTF: Validate a GLB or GLTF file`.  This can be done by right-clicking a file in the VSCode File Explorer sidebar, or just running the command stand-alone to open a file dialog.  This is the only method in this extension to validate GLB files directly, without conversion.  A summary of the validation report appears at the top, along with an option to save the JSON report.
+
+* The glTF JSON schema is registered with VSCode for `*.gltf` files, and VSCode will find schema violations using its own JSON schema validation, without help from the glTF Validator.  This produces messages in the "Problems" window that *are not* marked `[glTF Validator]`.  This is less thorough than full glTF validation, but is the only method available to glTF 1.0 files.
+
 ## Other Features
-
-### &bull; Registers `*.gltf` files as JSON schema
-
-Files are matched against the glTF 1.0 or glTF 2.0 schema, and schema violations are called out in the editor.
 
 ### &bull; Tooltips for glTF enum values
 
@@ -78,21 +84,37 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 ![Render states enable](images/StatesEnable.png)
 
-## Compatibility and known size limitations
-
-Currently, this extension is compatible only with `*.gltf` files, not the binary form of `*.glb`.  This may change in the future.  [Contributions](CONTRIBUTING.md) welcome!
-
-Also, there is a [known issue](https://github.com/Microsoft/vscode/issues/31078) where VSCode extensions cannot manipulate documents that have grown beyond 5 MB in size.  This limitation applies only to the main JSON-based glTF document, not to external assets such as the `bin` file, texture image files, etc.  The sample model repo contains some models called `glTF-Embedded`, where all of the assets have been URI-encoded and placed inside the JSON document.  For some of the larger models, this does make the document larger than the size limit, preventing this extension's preview windows from opening.  We hope this limit will be increased or made user-configurable in the future.  In the meantime, the workaround is to use the non-embedded versions of those models.  The non-embedded versions are all well below the size limit, because the bulk of their data is external to the JSON.
-
-Note there is now a 64-bit version of VSCode that appears to have a much higher bound for this limit.  For large models, the 64-bit version is strongly recommended over the 32-bit version of VSCode.
-
 ## Extension Settings
 
+### Default rendering engines
+
 * `glTF.defaultV1Engine` - Choose the default 3D engine that will render a glTF 1.0 model in the preview window.
+
 * `glTF.defaultV2Engine` - Choose the default 3D engine that will render a glTF 2.0 model in the preview window.
+
+### Reflection Environments
+
 * `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](http://doc.babylonjs.com/overviews/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
+
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  There are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The files must be in a format usable on the web, such as PNG or JPEG.
-* `glTF.alwaysOverwriteDefaultFilename` - When creating a filesystem file from glTF or GLB import or export should a prompt be shown to select the result filename?
+
+### File Creation
+
+* `glTF.alwaysOverwriteDefaultFilename` - Certain commands create new files, such as importing and exporting GLBs, exporting a DataURI, and creating a glTF Validation report.  When `true` these files will be saved with their default names, which saves the step of interacting with a file dialog each time, but does make it trivial to overwrite existing files.  It's safer to leave this set to `false`.
+
+### Automatic glTF Validation (only)
+
+* `glTF.Validation.enable` - When true, automatically run the glTF Validator and report any found issues to the document problems window.
+
+* `glTF.Validation.debounce` - The number of milliseconds to wait for multiple automatic requests to re-validate a glTF document.
+
+### Automatic and Manual glTF Validation (shared settings)
+
+* `glTF.Validation.maxIssues` - Controls the maximum number of issues reported by the Khronos glTF Validator (not counting any messages produced by VSCode's own JSON schema validation).
+
+* `glTF.Validation.ignoredIssues` - Array of issue codes to ignore during validation.  The issues should be listed in the array by issue code, such as `ACCESSOR_INDEX_TRIANGLE_DEGENERATE` and `NODE_EMPTY`. See [ISSUES.md](https://github.com/KhronosGroup/glTF-Validator/blob/master/ISSUES.md) for the full list, or run a manual glTF Validation of an existing file with messages reported to see their codes.  For example, to completely disable reporting of empty nodes, one would use: `[ "NODE_EMPTY" ]`
+
+* `glTF.Validation.severityOverrides` - This is a JSON object that maps issue codes (as keys) to severity codes (as values).  The issue codes are the same as for `glTF.Validation.ignoredIssues` above.  The severity codes are: 0 for `error`, 1 for `warning`, 2 for `information`, and 3 for `hint`.  For example, to reduce the severity of empty nodes to `hint`, one would specify: `{ "NODE_EMPTY" : 3 }`
 
 ## Source code
 
