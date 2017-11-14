@@ -15,7 +15,7 @@ interface GltfNode {
     type: GltfNodeType;
 }
 
-export class GltfOutlineProvider implements vscode.TreeDataProvider<GltfNode> {
+export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<GltfNode> {
     private tree: GltfNode;
     private editor: vscode.TextEditor;
     private gltf: any;

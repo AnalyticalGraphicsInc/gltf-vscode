@@ -6,7 +6,7 @@ import { Uri, ViewColumn } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
-import {  GltfOutlineProvider } from './gltfTreeViewDocumentContentProvider';
+import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
 import * as GlbExport from './exportProvider';
 import * as GlbImport from './importProvider';
 import * as GltfValidate from './validationProvider';
@@ -111,8 +111,8 @@ export function activate(context: vscode.ExtensionContext) {
     activateServer(context);
 
     // Register the outline provider.
-    const gltfOutlineProvider = new GltfOutlineProvider(context);
-    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineProvider);
+    const gltfOutlineTreeDataProvider = new GltfOutlineTreeDataProvider(context);
+    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineTreeDataProvider);
 
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
@@ -376,9 +376,12 @@ export function activate(context: vscode.ExtensionContext) {
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
 
-    vscode.commands.registerCommand('gltf.openGltfSelection', range => {
-        gltfOutlineProvider.select(range);
-    });
+    //
+    // Register glTF Tree View
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.openGltfSelection', range => {
+        gltfOutlineTreeDataProvider.select(range);
+    }));
 
     //
     // Import of a GLB file and writing out its various chunks.
