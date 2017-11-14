@@ -31,23 +31,24 @@ export async function validate(sourceFilename: string) {
     const baseName = path.basename(sourceFilename);
     const folderName = path.resolve(sourceFilename, '..');
 
-    const result = await gltfValidator.validateBytes(baseName, new Uint8Array(gltfData), (uri) =>
-        new Promise((resolve, reject) => {
-            uri = path.resolve(folderName, uri);
-            fs.readFile(uri, (err, data) => {
-                if (err) {
-                    reject(err.toString());
-                    return;
-                }
-                resolve(data);
-            });
-        }),
-        {
-            maxIssues: currentSettings.maxIssues,
-            ignoredIssues: currentSettings.ignoredIssues,
-            severityOverrides: currentSettings.severityOverrides
-        }
-    );
+    const result = await gltfValidator.validateBytes(new Uint8Array(gltfData), {
+        uri: baseName,
+        maxIssues: currentSettings.maxIssues,
+        ignoredIssues: currentSettings.ignoredIssues,
+        severityOverrides: currentSettings.severityOverrides,
+        externalResourceFunction: (uri) =>
+            new Promise((resolve, reject) => {
+                uri = path.resolve(folderName, uri);
+                fs.readFile(uri, (err, data) => {
+                    if (err) {
+                        reject(err.toString());
+                        return;
+                    }
+                    resolve(data);
+                });
+            }
+        ),
+    });
 
     const useSaveAs = !vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename');
     const SaveReport = useSaveAs ? SaveReportAs : OverwriteReport;

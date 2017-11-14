@@ -190,25 +190,26 @@ function validateTextDocument(textDocument: TextDocument): void {
         return;
     }
 
-    gltfValidator.validateString(baseName, gltfText, (uri) =>
-        new Promise((resolve, reject) => {
-            uri = path.resolve(folderName, uri);
-            fs.readFile(uri, (err, data) => {
-                console.log("Loading external file: " + uri);
-                if (err) {
-                    console.warn("Error: " + err.toString());
-                    reject(err.toString());
-                    return;
-                }
-                resolve(data);
-            });
-        }),
-        {
-            maxIssues: currentSettings.Validation.maxIssues,
-            ignoredIssues: currentSettings.Validation.ignoredIssues,
-            severityOverrides: currentSettings.Validation.severityOverrides
-        }
-    ).then((result) => {
+    gltfValidator.validateString(gltfText, {
+        uri: baseName,
+        maxIssues: currentSettings.Validation.maxIssues,
+        ignoredIssues: currentSettings.Validation.ignoredIssues,
+        severityOverrides: currentSettings.Validation.severityOverrides,
+        externalResourceFunction: (uri) =>
+            new Promise((resolve, reject) => {
+                uri = path.resolve(folderName, uri);
+                fs.readFile(uri, (err, data) => {
+                    console.log("Loading external file: " + uri);
+                    if (err) {
+                        console.warn("Error: " + err.toString());
+                        reject(err.toString());
+                        return;
+                    }
+                    resolve(data);
+                });
+            }
+        ),
+    }).then((result) => {
         let diagnostics: Diagnostic[] = [];
         if (result.issues && result.issues.messages) {
             const messages = result.issues.messages;
