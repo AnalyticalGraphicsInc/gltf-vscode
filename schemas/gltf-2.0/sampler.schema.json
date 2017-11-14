@@ -78,7 +78,7 @@
             "short_description" : "Minification filter."
         },
         "wrapS" : {
-            "description" : "s wrapping mode.  All valid values correspond to WebGL enums.",
+            "description" : "S (U) wrapping mode.  All valid values correspond to WebGL enums.",
             "default" : 10497,
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_S",
             "anyOf" : [
@@ -107,7 +107,7 @@
             "short_description" : "s wrapping mode."
         },
         "wrapT" : {
-            "description" : "t wrapping mode.  All valid values correspond to WebGL enums.",
+            "description" : "T (V) wrapping mode.  All valid values correspond to WebGL enums.",
             "default" : 10497,
             "gltf_webgl" : "`texParameterf()` with pname equal to TEXTURE_WRAP_T",
             "anyOf" : [
