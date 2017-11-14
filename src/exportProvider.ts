@@ -157,7 +157,7 @@ export function save(gltf: any, sourceFilename: string, outputFilename: string) 
         8 + // bin chunk header: chunk length + type
         binBufferSize;
 
-    let finalBuffer = new Buffer(totalSize);
+    let finalBuffer = Buffer.alloc(totalSize);
     let dataView = new DataView(finalBuffer.buffer);
     let bufIndex = 0;
     dataView.setUint32(bufIndex, Binary.Magic, true); bufIndex += 4;
