@@ -70,7 +70,11 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             this.parseTree();
             this._onDidChangeTreeData.fire();
         });
-        this.parseTree();
+        try {
+            this.parseTree();
+        } catch (ex) {
+            console.log(ex.toString());
+        }
     }
 
     select(range: vscode.Range) {
