@@ -81,6 +81,16 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
     }
 
     public provideTextDocumentContent(uri: Uri): string {
+        if (uri.query === 'onDefinition' && uri.path.startsWith('/images/')) {
+            // We are coming from the language server definition request and this is an image path.
+            // The document that is opened in this case doesn't render Html so we close it and
+            // reissue the request with previewHtml.
+            vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+            vscode.commands.executeCommand('vscode.previewHtml', Uri.parse(this.UriPrefix + uri.authority + uri.path));
+
+            return '';
+        }
+
         const filename = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
         if (!document) {

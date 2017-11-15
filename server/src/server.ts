@@ -382,17 +382,24 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     const numPathSegments = pathSplit.length;
     let result = pathData.jsonMap.data;
 
-    function makeLocation(position: any) {
-        let range = Range.create(document.positionAt(position.value.pos), document.positionAt(position.valueEnd.pos));
-        let location = Location.create(textDocumentPosition.textDocument.uri, range);
+    function makeLocation(position?: any, uri?: string) {
+        let range: Range;
+        if (position == null) {
+            range = Range.create(0, 0, 0, 0);
+        } else {
+            range = Range.create(document.positionAt(position.value.pos), document.positionAt(position.valueEnd.pos));
+        }
 
-        return location;
+        if (uri == null) {
+            uri = textDocumentPosition.textDocument.uri
+        }
+
+        return Location.create(uri, range);
     }
     const firstValidIndex = 1; // Because the path has a leading slash.
-    let inChildren: boolean = false;
     let inNodes: boolean = false;
-    let inJoints: boolean = false;
     let inChannels: boolean = false;
+    let inAccessors: boolean = false;
     let currentPath: string = '';
     let currentAnimationPath: string;
     for (let i = firstValidIndex; i < numPathSegments; ++i) {
@@ -416,7 +423,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             else if (part === 'input' || part === 'output' || part === 'indices' || part === 'inverseBindMatrices' || part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
                 return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
             }
-            else if (part === 'node' || part === 'skeleton' || inChildren || inNodes || inJoints) {
+            else if (part === 'node' || part === 'skeleton' || inNodes ) {
                 return makeLocation(pathData.jsonMap.pointers['/nodes/' + result]);
             }
             else if (part === 'bufferView') {
@@ -440,24 +447,30 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             }
             else if (part === 'camera') {
                 return makeLocation(pathData.jsonMap.pointers['/cameras/' + result]);
-            }
-            else if (part === 'uri') {
-                // TODO if not data make a normal location else make the data viewer location
+            } else if (part === 'fragmentShader' || part === 'vertexShader') {
+                return makeLocation(pathData.jsonMap.pointers['/shaders/' + result]);
             }
         }
         else {
-            if (part === 'children') {
-                inChildren = true;
-            }
-            else if (part === 'nodes') {
+            if (part === 'nodes' || part === 'children' || part === 'joints') {
                 inNodes = true;
-            }
-            else if (part === 'joints') {
-                inJoints = true;
             }
             else if (part === 'channels') {
                 inChannels = true;
                 currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
+            }
+            else if (result.uri !== undefined) {
+                if (!result.uri.startsWith('data:')) {
+                    return makeLocation(null, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
+                } else {
+                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath + '?onDefinition';
+                    return makeLocation(null, uri);
+                }
+            } else if (part === 'accessors') {
+                inAccessors = true;
+            } else if (inAccessors && !path.includes('bufferView')) {
+                let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                return makeLocation(null, uri);
             }
         }
     }
