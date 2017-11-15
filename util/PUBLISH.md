@@ -5,7 +5,7 @@
 * Update `package.json`, specifically the `version` field.
 * If the glTF Language Server changed at all, bump its own `version` number in `server/package.json`.
 * Run `vsce publish` to actually publish to the marketplace.
-* Add a git tag for the release.  For example: `git tag -a 2.0.1 -m "Release version 2.0.1"`
+* Add a git tag for the release.  For example: `git tag -a 2.1.0 -m "Release version 2.1.0"`
 * Push the branch & tag. `git push --tags`
 
 ## Credentials

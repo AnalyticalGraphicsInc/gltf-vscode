@@ -1,9 +1,10 @@
 # Change Log
 
-### 2.1.0 - UNRELEASED
+### 2.1.0 - 2017-11-14
 
 * Integrated Khronos glTF Validator
 * Recreated TreeView as an Explorer outline view that can navigate the glTF document.
+* Added an optional icon to the top toolbar to activate the glTF 3D preview.  Can turn this off in settings.
 
 ### 2.0.9 - 2017-11-06
 

@@ -1,2 +1,5 @@
 # Workaround for https://github.com/npm/npm/issues/17161
 package*.json text eol=lf
+
+# Because these are generated as such
+schemas/*/*.json text eol=lf
