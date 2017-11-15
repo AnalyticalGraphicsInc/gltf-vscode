@@ -104,6 +104,8 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
 
     private parseTree(): void {
         this.tree = null;
+        this.gltf = null;
+        this.pointers = null;
         this.editor = vscode.window.activeTextEditor;
         if (this.editor && this.editor.document && this.editor.document.languageId === 'json') {
             try {
@@ -117,6 +119,8 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
                 this.gltf = null;
                 this.pointers = null;
             }
+        } else {
+            return;
         }
 
         this.skinMap.clear();
