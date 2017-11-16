@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.1 - UNRELEASED
+### 2.1.1 - 2017-11-15
 
 * Fixed an issue where glTF commands sometimes wouldn't be available.
 
