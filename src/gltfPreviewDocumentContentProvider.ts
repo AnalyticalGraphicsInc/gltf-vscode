@@ -22,12 +22,16 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'UTF-8'));
     }
 
-    private getFilePath(file : string) : string {
-        return 'file:///' + this._context.asAbsolutePath(file);
+    private addFilePrefix(file: string): string {
+        return ((file[0] === '/') ? 'file://' : 'file:///') + file;
     }
 
-    private toUrl(file : string) : string {
-        return 'file:///' + file.replace(/\\/g, '/');
+    private getFilePath(file: string): string {
+        return this.addFilePrefix(this._context.asAbsolutePath(file));
+    }
+
+    private toUrl(file: string): string {
+        return this.addFilePrefix(file.replace(/\\/g, '/'));
     }
 
     // Instructions to open Chrome DevTools on the HTML preview window:
