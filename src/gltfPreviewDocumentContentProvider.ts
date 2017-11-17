@@ -56,7 +56,6 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const gltfContent = document.getText();
         const gltfFileName = path.basename(filePath);
-        //let gltfRootPath : string = path.dirname(filePath).replace(/\\/g, '/');
         let gltfRootPath : string = this.toUrl(path.dirname(filePath));
         if (!gltfRootPath.endsWith("/")) {
             gltfRootPath += "/";
