@@ -160,7 +160,7 @@ var CesiumView = function() {
         startRenderLoop();
 
         var gltfFileName = document.getElementById('gltfFileName').textContent;
-        var gltfRootPath = "file:///" + document.getElementById('gltfRootPath').textContent;
+        var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
         try {
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);

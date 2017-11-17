@@ -51,6 +51,8 @@ var BabylonView = function() {
         var gltfContent = document.getElementById('gltf').textContent;
 
         BABYLON.GLTFFileLoader.IncrementalLoading = false;
+        // https://github.com/BabylonJS/Babylon.js/blob/98d30944729822f9b50e756ffb7f53ef6c2eaa46/src/Loading/babylon.sceneLoader.ts#L346
+        debugger
         BABYLON.SceneLoader.Append(rootPath, 'data:' + gltfContent, scene, function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);

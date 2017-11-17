@@ -90,7 +90,7 @@ function updatePreview() {
     // 3D engine.
     var activeEngineInfo = mainViewModel.selectedEngine();
     var engineHtml = decodeURI(document.getElementById(activeEngineInfo.html).textContent);
-    var extensionRootPath = "file:///" + document.getElementById('extensionRootPath').textContent;
+    var extensionRootPath = document.getElementById('extensionRootPath').textContent;
     content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
 
     // Cesium has some external assets that it will need to locate.  We configure the hint here,

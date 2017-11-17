@@ -26,6 +26,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         return 'file:///' + this._context.asAbsolutePath(file);
     }
 
+    private toUrl(file : string) : string {
+        return 'file:///' + file.replace(/\\/g, '/');
+    }
+
     // Instructions to open Chrome DevTools on the HTML preview window:
     //
     // 1. With the HTML preview window open, click Help->Toggle Developer Tools.
@@ -52,7 +56,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const gltfContent = document.getText();
         const gltfFileName = path.basename(filePath);
-        let gltfRootPath : string = path.dirname(filePath).replace(/\\/g, '/');
+        //let gltfRootPath : string = path.dirname(filePath).replace(/\\/g, '/');
+        let gltfRootPath : string = this.toUrl(path.dirname(filePath));
         if (!gltfRootPath.endsWith("/")) {
             gltfRootPath += "/";
         }
@@ -82,10 +87,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         // Some engines can display "live" glTF contents, others must load from the glTF path and filename.
         // The path name is needed for glTF files that include external resources.
         const strings = [
-            { id: 'extensionRootPath', text: extensionRootPath },
+            { id: 'extensionRootPath', text: this.toUrl(extensionRootPath) },
             { id: 'defaultEngine', text: defaultEngine },
-            { id: 'defaultBabylonReflection', text: defaultBabylonReflection },
-            { id: 'defaultThreeReflection', text: defaultThreeReflection },
+            { id: 'defaultBabylonReflection', text: this.toUrl(defaultBabylonReflection) },
+            { id: 'defaultThreeReflection', text: this.toUrl(defaultThreeReflection) },
             { id: 'babylonHtml', text: this._babylonHtml },
             { id: 'cesiumHtml', text: this._cesiumHtml },
             { id: 'threeHtml', text: this._threeHtml },

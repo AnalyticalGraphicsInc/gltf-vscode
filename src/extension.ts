@@ -379,10 +379,10 @@ export function activate(context: vscode.ExtensionContext) {
         .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
 
         // This can be used to debug the preview HTML.
-        //vscode.workspace.openTextDocument(gltfPreviewUri).then((doc: vscode.TextDocument) => {
-        //    vscode.window.showTextDocument(doc, ViewColumn.Two, false).then(e => {
-        //    });
-        //}, (reason) => { vscode.window.showErrorMessage(reason); });
+        vscode.workspace.openTextDocument(gltfPreviewUri).then((doc: vscode.TextDocument) => {
+            vscode.window.showTextDocument(doc, ViewColumn.Three, false).then(e => {
+            });
+        }, (reason) => { vscode.window.showErrorMessage(reason); });
 
         gltfPreviewProvider.update(gltfPreviewUri);
     }));
