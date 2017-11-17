@@ -1,7 +1,10 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as Url from 'url';
+import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
+let stringHash = require('string-hash');
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 export function atob(str): string {
@@ -12,13 +15,13 @@ export function btoa(str): string {
     return Buffer.from(str, 'binary').toString('base64');
 }
 
-export function getFromPath(glTF, path : string) {
-    const pathSplit = path.split('/');
-    const numPathSegments = pathSplit.length;
+export function getFromJsonPointer(glTF, jsonPointer : string) {
+    const jsonPointerSplit = jsonPointer.split('/');
+    const numPointerSegments = jsonPointerSplit.length;
     let result = glTF;
     const firstValidIndex = 1; // Because the path has a leading slash.
-    for (let i = firstValidIndex; i < numPathSegments; ++i) {
-        result = result[pathSplit[i]];
+    for (let i = firstValidIndex; i < numPointerSegments; ++i) {
+        result = result[jsonPointerSplit[i]];
     }
     return result;
 }
@@ -26,6 +29,7 @@ export function getFromPath(glTF, path : string) {
 const gltfMimeTypes = {
     'image/png' : ['png'],
     'image/jpeg' : ['jpg', 'jpeg'],
+    'image/vnd-ms.dds' : ['dds'],
     'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
 };
 
@@ -51,15 +55,44 @@ export function guessMimeType(filename : string): string {
 export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
+    private _tempFiles: Uri[] = [];
+    private _tmpPathRoot: string;
 
     public UriPrefix = 'gltf-dataUri://';
 
     constructor(context: ExtensionContext) {
         this._context = context;
+        this._tmpPathRoot = path.join(os.tmpdir(), 'gltf-vscode');
+        try {
+            fs.mkdirSync(this._tmpPathRoot);
+        } catch (e) {}
+
+        this._context.subscriptions.push(vscode.window.onDidChangeVisibleTextEditors((textEditors: vscode.TextEditor[]) => {
+            let newTempList: Uri[] = [];
+            for (let tempFile of this._tempFiles) {
+                let found = false;
+                for (let editor of textEditors) {
+                    if (editor.document.uri == tempFile) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    try {
+                        fs.unlinkSync(tempFile.fsPath);
+                    } catch (ex) {
+                        console.log(`Couldn't delete ${tempFile.fsPath} because ${ex.toString()}`);
+                    }
+                } else {
+                    newTempList.push(tempFile);
+                }
+            }
+            this._tempFiles = newTempList;
+        }));
     }
 
-    public shouldOpenDocument(glTF, path : string) : string {
-        const data = getFromPath(glTF, path);
+    public uriIfNotDataUri(glTF, jsonPointer : string) : string {
+        const data = getFromJsonPointer(glTF, jsonPointer);
         if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
             const uri : string = data.uri;
             if (!uri.startsWith('data:')) {
@@ -69,39 +102,26 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         return null;
     }
 
-    public shouldUseHtmlPreview(path : string) : boolean {
-        if (path.startsWith('/images/')) {
-            return true;
-        }
-        return false;
+    public isImage(jsonPointer : string) : boolean {
+        return jsonPointer.startsWith('/images/');
     }
 
-    public isShader(path: string) : boolean {
-        return path.startsWith('/shaders/');
+    public isShader(jsonPointer: string) : boolean {
+        return jsonPointer.startsWith('/shaders/');
     }
 
-    public provideTextDocumentContent(uri: Uri): string {
-        if (uri.query === 'onDefinition' && uri.path.startsWith('/images/')) {
-            // We are coming from the language server definition request and this is an image path.
-            // The document that is opened in this case doesn't render Html so we close it and
-            // reissue the request with previewHtml.
-            vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-            vscode.commands.executeCommand('vscode.previewHtml', Uri.parse(this.UriPrefix + uri.authority + uri.path));
-
-            return '';
-        }
-
+    public async provideTextDocumentContent(uri: Uri): Promise<string> {
         const filename = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
         if (!document) {
             return 'ERROR: Can no longer find document in editor: ' + filename;
         }
         const glTF = JSON.parse(document.getText());
-        let path = uri.path;
-        if (this.isShader(path) && path.endsWith('.glsl')) {
-            path = path.substring(0, path.length - 5);
+        let jsonPointer = uri.path;
+        if (this.isShader(jsonPointer) && jsonPointer.endsWith('.glsl')) {
+            jsonPointer = jsonPointer.substring(0, jsonPointer.length - 5);
         }
-        const data = getFromPath(glTF, path);
+        const data = getFromJsonPointer(glTF, jsonPointer);
 
         if (data && (typeof data === 'object') && data.hasOwnProperty('uri')) {
             let dataUri : string = data.uri;
@@ -112,8 +132,32 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                 dataUri = 'data:image;base64,' + btoa(contents);
             }
 
-            if (path.startsWith('/images/')) {
-                return '<img src="' + dataUri + '" />';
+            if (jsonPointer.startsWith('/images/')) {
+                const mimeTypePos = dataUri.indexOf(';');
+                let extension;
+                if (mimeTypePos > 0) {
+                    let mimeType = dataUri.substring(5, mimeTypePos)
+                    extension = guessFileExtension(mimeType);
+
+                    const posBase = dataUri.indexOf('base64,');
+                    const body = dataUri.substring(posBase + 7);
+                    let hash = stringHash(body);
+                    let tmpFilePath = path.join(this._tmpPathRoot, hash.toString(16) + extension);
+                    let tempUri = Uri.file(tmpFilePath);
+
+                    let fileExisted = fs.existsSync(tmpFilePath);
+                    if (!fileExisted) {
+                        fs.writeFileSync(tmpFilePath, atob(body), {encoding: 'binary'});
+                    }
+
+                    // We'd like the image to open not using Html Preview but the image directly.
+                    let viewColumn = parseInt(uri.query);
+                    vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+                    await vscode.commands.executeCommand('vscode.open', tempUri, viewColumn);
+                    if (!fileExisted) {
+                        this._tempFiles.push(tempUri);
+                    }
+                }
             } else {
                 const posBase = dataUri.indexOf('base64,');
                 const body = dataUri.substring(posBase + 7);

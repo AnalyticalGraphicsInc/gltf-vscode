@@ -275,6 +275,7 @@
         "gltf-validator": "2.0.0-dev.1.3",
         "json-source-map": "^0.4.0",
         "vscode": "^1.1.5",
-        "vscode-languageclient": "^3.5.0"
+        "vscode-languageclient": "^3.5.0",
+        "string-hash": "^1.1.3"
     }
 }
