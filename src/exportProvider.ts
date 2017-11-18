@@ -33,6 +33,15 @@ function dataFromUri(buffer: any, basePath: string) : { mimeType: string, buffer
     }
 }
 
+export function getBuffer(glTF:any, bufferIndex: string, basePath: string): Buffer {
+    let gltfBuffer = glTF.buffers[bufferIndex];
+    let data = dataFromUri(gltfBuffer, basePath);
+    if (data != null) {
+        return data.buffer;
+    }
+    return null;
+}
+
 function alignedLength(value: number) : number
 {
     const alignValue = 4;
