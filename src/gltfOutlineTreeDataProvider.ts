@@ -56,8 +56,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
 
     constructor(private context: vscode.ExtensionContext) {
         vscode.window.onDidChangeActiveTextEditor(editor => {
-            this.parseTree();
-            this._onDidChangeTreeData.fire();
+            this.tryParseTreeAndNotify();
         });
         vscode.window.onDidChangeTextEditorSelection(e => {
             this.fillSelectedList();
@@ -67,10 +66,10 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             this.pauseUpdate = false;
         });
         vscode.workspace.onDidChangeTextDocument(e => {
-            this.parseTree();
-            this._onDidChangeTreeData.fire();
+            this.tryParseTreeAndNotify();
         });
-        this.parseTree();
+
+        this.tryParseTreeAndNotify();
     }
 
     select(range: vscode.Range) {
@@ -106,20 +105,18 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         this.tree = null;
         this.gltf = null;
         this.pointers = null;
+
         this.editor = vscode.window.activeTextEditor;
         if (this.editor && this.editor.document && this.editor.document.languageId === 'json') {
-            try {
-                let mapResult = jsonMap.parse(this.editor.document.getText());
-                this.gltf = mapResult.data;
-                this.pointers = mapResult.pointers;
-                if (!this.gltf || !this.gltf.asset || !this.gltf.asset.version || this.gltf.asset.version[0] !== '2') {
-                    this.gltf = null;
-                }
-            } catch (ex) {
+            let mapResult = jsonMap.parse(this.editor.document.getText());
+            this.gltf = mapResult.data;
+            this.pointers = mapResult.pointers;
+            if (!this.gltf || !this.gltf.asset || !this.gltf.asset.version || this.gltf.asset.version[0] !== '2') {
                 this.gltf = null;
-                this.pointers = null;
             }
-        } else {
+        }
+
+        if (!this.gltf) {
             return;
         }
 
@@ -148,6 +145,18 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         }
 
         this.fillSelectedList();
+    }
+
+    private tryParseTreeAndNotify() {
+        try {
+            this.parseTree();
+        } catch (ex) {
+            this.tree = null;
+            this.gltf = null;
+            this.pointers = null;
+            console.log("Can't parse glTF into tree: " + ex.toString());
+        }
+        this._onDidChangeTreeData.fire();
     }
 
     private populateSkinMap(skinIndex: number, skin: any) {

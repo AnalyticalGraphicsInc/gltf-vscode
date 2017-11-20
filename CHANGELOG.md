@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.1 - 2017-11-15
+
+* Fixed an issue where glTF commands sometimes wouldn't be available.
+
 ### 2.1.0 - 2017-11-14
 
 * Integrated Khronos glTF Validator
