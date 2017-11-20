@@ -34,13 +34,14 @@ The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `
 
 The user is given a "Save As..." dialog for the base `.gltf` output filename only.  The other files are saved to the same folder with names calculated by appending to the user's selected base name, and any pre-existing files with the same name will be overwritten.
 
-## Preview image files and data-URIs from inside the glTF document
+## Preview shaders, image files, binary data from files or data-URIs directly in the glTF document
 
 ![Sample image preview of normal map](images/SampleImagePreview.png)
 
-Command name: `glTF: Inspect Data URI`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>
+Command name: `glTF: Inspect Data URI`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>\
+Command name: `Go to Definition`, default keybinding: <kbd>F12</kbd>
 
-Above, the user is previewing a normal map that is part of the `BoomBox.gltf` model from the official sample model repository.  The preview works even if the filename is replaced by a `data: ...` formatted URI.  Place the document cursor on a dataURI, or on a block that has been folded closed with a dataURI in its `uri` field, then press <kbd>ALT</kbd> + <kbd>D</kbd> or look for the command `glTF: Inspect Data URI` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
+Above, the user is previewing Accessor 0 and a normal map that is part of the `BoomBox.gltf` model from the official sample model repository.  The preview works even if the filename is replaced by a `data: ...` formatted URI.  Place the document cursor on a dataURI, or on a block that has been folded closed with a dataURI in its `uri` field, then press <kbd>F12</kbd> or look for the command `glTF: Inspect Data URI` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
 
 If you plan to preview GLSL shader code, consider installing a 3rd-party syntax highlighter with support for the `*.glsl` extension, for example [Shader Language Support for VSCode by slevesque](https://marketplace.visualstudio.com/items?itemName=slevesque.shader), to enable syntax highlighting in shader previews.
 
@@ -54,6 +55,8 @@ In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), the
 
 This displays an Explorer outline revealing the node structure of the glTF file. This allows easier navigation of the scene structure.
 
+![Gltf Outline](images/GltfOutline.png)
+
 ## glTF Validation
 
 Files can be validated three different ways:
@@ -65,6 +68,10 @@ Files can be validated three different ways:
 * The glTF JSON schema is registered with VSCode for `*.gltf` files, and VSCode will find schema violations using its own JSON schema validation, without help from the glTF Validator.  This produces messages in the "Problems" window that *are not* marked `[glTF Validator]`.  This is less thorough than full glTF validation, but is the only method available to glTF 1.0 files.
 
 ## Other Features
+
+### &bull; `Go to Definition` command works for all indexed glTF references
+
+Place the cursor on the 3 in `"POSITION": 3` and press <kbd>F12</kbd> to navigate to the defining Accessor.
 
 ### &bull; Tooltips for glTF enum values
 

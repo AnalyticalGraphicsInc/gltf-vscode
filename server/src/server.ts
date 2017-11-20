@@ -460,10 +460,10 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
             }
             else if (result.uri !== undefined) {
-                if (!result.uri.startsWith('data:')) {
+                if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
                     return makeLocation(null, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
                 } else {
-                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath + '?onDefinition';
+                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
                     return makeLocation(null, uri);
                 }
             } else if (part === 'accessors') {
@@ -520,11 +520,7 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         };
     }
 
-    let contents: MarkedString[] = [path];
-    return {
-        contents: contents,
-        range: Range.create(pathData.start, pathData.end)
-    };
+    return null;
 });
 
 // Listen on the connection

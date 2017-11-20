@@ -162,7 +162,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        if (notDataUri) {
+        if (notDataUri && !isImage) {
             let finalUri = Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
             await vscode.commands.executeCommand('vscode.open', finalUri, ViewColumn.Two);
         } else {
@@ -173,7 +173,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
                 encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
-                jsonPointer + '?' + ViewColumn.Two);
+                jsonPointer + '?viewColumn=' + ViewColumn.Two);
             await vscode.commands.executeCommand('vscode.open', previewUri, ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
         }

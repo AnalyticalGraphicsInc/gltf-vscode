@@ -4,8 +4,8 @@ import * as Url from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
+import * as querystring from 'querystring';
 import { getBuffer } from './exportProvider';
-let stringHash = require('string-hash');
 let sprintf = require("sprintf-js").sprintf;
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
@@ -98,43 +98,19 @@ export function guessMimeType(filename : string): string {
     return 'application/octet-stream';
 }
 
+interface QueryDataUri {
+    viewColumn?: string,
+    previewHtml?: string,
+}
+
 export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
-    private _tempFiles: Uri[] = [];
-    private _tmpPathRoot: string;
 
     public UriPrefix = 'gltf-dataUri://';
 
     constructor(context: ExtensionContext) {
         this._context = context;
-        this._tmpPathRoot = path.join(os.tmpdir(), 'gltf-vscode');
-        try {
-            fs.mkdirSync(this._tmpPathRoot);
-        } catch (e) {}
-
-        this._context.subscriptions.push(vscode.window.onDidChangeVisibleTextEditors((textEditors: vscode.TextEditor[]) => {
-            let newTempList: Uri[] = [];
-            for (let tempFile of this._tempFiles) {
-                let found = false;
-                for (let editor of textEditors) {
-                    if (editor.document.uri == tempFile) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    try {
-                        fs.unlinkSync(tempFile.fsPath);
-                    } catch (ex) {
-                        console.log(`Couldn't delete ${tempFile.fsPath} because ${ex.toString()}`);
-                    }
-                } else {
-                    newTempList.push(tempFile);
-                }
-            }
-            this._tempFiles = newTempList;
-        }));
     }
 
     public uriIfNotDataUri(glTF, jsonPointer : string) : string {
@@ -158,6 +134,8 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
 
     public async provideTextDocumentContent(uri: Uri): Promise<string> {
         const filename = decodeURIComponent(uri.authority);
+        const query = querystring.parse<QueryDataUri>(uri.query);
+        query.viewColumn = query.viewColumn || ViewColumn.Active.toString();
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
         if (!document) {
             return 'ERROR: Can no longer find document in editor: ' + filename;
@@ -180,30 +158,14 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                 }
 
                 if (jsonPointer.startsWith('/images/')) {
-                    const mimeTypePos = dataUri.indexOf(';');
-                    let extension;
-                    if (mimeTypePos > 0) {
-                        let mimeType = dataUri.substring(5, mimeTypePos)
-                        extension = guessFileExtension(mimeType);
-
-                        const posBase = dataUri.indexOf('base64,');
-                        const body = dataUri.substring(posBase + 7);
-                        let hash = stringHash(body);
-                        let tmpFilePath = path.join(this._tmpPathRoot, hash.toString(16) + extension);
-                        let tempUri = Uri.file(tmpFilePath);
-
-                        let fileExisted = fs.existsSync(tmpFilePath);
-                        if (!fileExisted) {
-                            fs.writeFileSync(tmpFilePath, atob(body), {encoding: 'binary'});
-                        }
-
-                        // We'd like the image to open not using Html Preview but the image directly.
-                        let viewColumn = parseInt(uri.query);
+                    if (!query.previewHtml || query.previewHtml !== 'true') {
                         vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-                        await vscode.commands.executeCommand('vscode.open', tempUri, viewColumn);
-                        if (!fileExisted) {
-                            this._tempFiles.push(tempUri);
-                        }
+                        let previewUri: Uri = Uri.parse(this.UriPrefix + uri.authority + uri.path + '?previewHtml=true');
+                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
+                        return '';
+                    } else {
+                        return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
+                            `<body><div class="monaco-resource-viewer image oversized" onclick="this.classList.toggle(\'full-size\');" ><img src="${dataUri}" /></div></body></html>`;
                     }
                 } else {
                     const posBase = dataUri.indexOf('base64,');
