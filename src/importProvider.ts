@@ -4,6 +4,7 @@ import * as Url from 'url';
 import { Uri, ViewColumn } from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { alignedLength } from './exportProvider';
 import { guessFileExtension } from './dataUriTextDocumentContentProvider';
 
 export async function load(sourceFilename: string) {
@@ -131,8 +132,13 @@ export async function load(sourceFilename: string) {
         let view = gltf.bufferViews[bufferViewIndex];
         const offset: number = view.byteOffset === undefined ? 0 : view.byteOffset;
         const length: number = view.byteLength;
-
-        const bufPart = buf.slice(offset, offset + length);
+        const aLength = alignedLength(length);
+        let bufPart: Buffer;
+        if (length == aLength) {
+            bufPart = buf.slice(offset, offset + length);
+        } else {
+            bufPart = Buffer.alloc(aLength, buf.slice(offset, offset + length));
+        }
 
         bufferViewList.push(bufferViewIndex);
         bufferDataList.push(bufPart);
@@ -160,9 +166,9 @@ export async function load(sourceFilename: string) {
     // create a file for the rest of the buffer data
     let newBufferView = [];
     let currentOffset = 0;
-    for (let bufferViewIndex of bufferViewList) {
-        let view = gltf.bufferViews[bufferViewIndex];
-        const length: number = view.byteLength;
+    for (let i=0; i < bufferViewList.length; i++) {
+        let view = gltf.bufferViews[bufferViewList[i]];
+        const length: number = bufferDataList[i].length;
         view.buffer = 0;
         view.byteOffset = currentOffset;
         view.byteLength = length;

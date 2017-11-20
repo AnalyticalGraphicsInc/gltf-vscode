@@ -42,7 +42,7 @@ export function getBuffer(glTF:any, bufferIndex: string, basePath: string): Buff
     return null;
 }
 
-function alignedLength(value: number) : number
+export function alignedLength(value: number) : number
 {
     const alignValue = 4;
     if (value == 0) {
