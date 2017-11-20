@@ -73,6 +73,12 @@ const AccessorTypeToNumComponents = {
     MAT4: 16
 };
 
+const MatrixSquare = {
+    MAT2: 2,
+    MAT3: 3,
+    MAT4: 4
+}
+
 export function guessFileExtension(mimeType) {
     if (gltfMimeTypes.hasOwnProperty(mimeType)) {
         return '.' + gltfMimeTypes[mimeType][0];
@@ -214,18 +220,46 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         return 'Unknown:\n' + jsonPointer;
     }
 
+    private buildArrayBuffer(arrayType: any, data: Buffer, byteOffset: number, count: number, numComponents: number, byteStride?: number): any {
+        byteOffset += data.byteOffset;
+        const targetLength = count * numComponents;
+
+        if (byteStride == null || byteStride === numComponents * arrayType.BYTES_PER_ELEMENT) {
+            return new arrayType(data.buffer, byteOffset, targetLength);
+        }
+
+        const elementStride = byteStride / arrayType.BYTES_PER_ELEMENT;
+        const sourceBuffer = new arrayType(data.buffer, byteOffset, elementStride * count);
+        const targetBuffer = new arrayType(targetLength);
+        let sourceIndex = 0;
+        let targetIndex = 0;
+
+        while (targetIndex < targetLength) {
+            for (let componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                targetBuffer[targetIndex] = sourceBuffer[sourceIndex + componentIndex];
+                targetIndex++;
+            }
+
+            sourceIndex += elementStride;
+        }
+
+        return targetBuffer;
+    }
+
     private formatAccessor(buffer: Buffer, accessor: any, bufferView: any, normalizeOverride?: boolean): string {
-        const bufferOffset: number = bufferView.byteOffset === undefined ? 0 : bufferView.byteOffset;
+        const bufferOffset: number = bufferView.byteOffset || 0;
         const bufferLength: number = bufferView.byteLength;
-        const bufferStride: number = bufferView.byteStride === undefined ? 4 : bufferView.byteStride;
+        const bufferStride: number = bufferView.byteStride;
         const bufferViewBuf: Buffer = buffer.slice(bufferOffset, bufferOffset + bufferLength);
-        const accessorByteOffset: number = accessor.byteOffset === undefined ? 0 : accessor.byteOffset;
-        const accessorBuf: Buffer = bufferViewBuf.slice(accessorByteOffset, accessor.count * AccessorTypeToNumComponents[accessor.type] * ComponentTypeToBytesPerElement[parseInt(accessor.componentType)]);
+        const accessorByteOffset: number = accessor.byteOffset || 0;
         let normalize: boolean = accessor.normalized === undefined ? (normalizeOverride == undefined ? false : normalizeOverride) : accessor.normalized;
 
         let result: string = '';
         function formatNumber(value: number, index: number, array: any) {
             if (index % AccessorTypeToNumComponents[accessor.type] == 0 && index !== 0) {
+                result += '\n';
+            }
+            if (accessor.type.startsWith('MAT') && index !== 0 && index % MatrixSquare[accessor.type] == 0) {
                 result += '\n';
             }
 
@@ -252,33 +286,33 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
 
         switch (parseInt(accessor.componentType)) {
             case ComponentType.BYTE:
-                const int8Array = new Int8Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Int8Array.BYTES_PER_ELEMENT);
+                const int8Array = this.buildArrayBuffer(Int8Array, bufferViewBuf, bufferOffset + accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 int8Array.forEach(formatNumber);
             break;
 
             case ComponentType.UNSIGNED_BYTE:
-                const uint8Array = new Uint8Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Uint8Array.BYTES_PER_ELEMENT);
+                const uint8Array = this.buildArrayBuffer(Uint8Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 uint8Array.forEach(formatNumber);
             break;
 
             case ComponentType.SHORT:
-                const int16Array = new Int16Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Int16Array.BYTES_PER_ELEMENT);
+                const int16Array = this.buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 int16Array.forEach(formatNumber);
             break;
 
             case ComponentType.UNSIGNED_SHORT:
-                const uint16Array = new Uint16Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Uint16Array.BYTES_PER_ELEMENT);
+                const uint16Array = this.buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 uint16Array.forEach(formatNumber);
             break;
 
             case ComponentType.UNSIGNED_INT:
-                const uint32Array = new Uint32Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Uint32Array.BYTES_PER_ELEMENT);
+                const uint32Array = this.buildArrayBuffer(Uint32Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 uint32Array.forEach(formatNumber);
             break;
 
             case ComponentType.FLOAT:
                 normalize = true;
-                const floatArray = new Float32Array(accessorBuf.buffer, accessorBuf.byteOffset, accessorBuf.byteLength / Float32Array.BYTES_PER_ELEMENT);
+                const floatArray = this.buildArrayBuffer(Float32Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
                 floatArray.forEach(formatNumber);
             break;
         }
