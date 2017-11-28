@@ -5,8 +5,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as querystring from 'querystring';
-import { getBuffer } from './exportProvider';
-let sprintf = require("sprintf-js").sprintf;
+import { getBuffer } from 'gltf-import-export';
+import { sprintf } from 'sprintf-js';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 export function atob(str): string {
@@ -132,6 +132,10 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         return jsonPointer.startsWith('/shaders/');
     }
 
+    public isAccessor(jsonPointer: string) : boolean {
+        return jsonPointer.startsWith('/accessors/');
+    }
+
     public async provideTextDocumentContent(uri: Uri): Promise<string> {
         const filename = decodeURIComponent(uri.authority);
         const query = querystring.parse<QueryDataUri>(uri.query);
@@ -152,7 +156,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                 let dataUri : string = data.uri;
                 if (!dataUri.startsWith('data:')) {
                     // Not a DataURI: Look up external reference.
-                    const name = Url.resolve(document.fileName, dataUri);
+                    const name = decodeURI(Url.resolve(document.fileName, dataUri));
                     const contents = fs.readFileSync(name);
                     dataUri = 'data:image;base64,' + btoa(contents);
                 }

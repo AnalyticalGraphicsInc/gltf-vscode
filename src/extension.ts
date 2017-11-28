@@ -7,8 +7,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
-import * as GlbExport from './exportProvider';
-import * as GlbImport from './importProvider';
+import { ConvertGLBtoGltf, ConvertToGLB} from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
@@ -153,11 +152,12 @@ export function activate(context: vscode.ExtensionContext) {
         const notDataUri = dataPreviewProvider.uriIfNotDataUri(map.data, jsonPointer);
         const isShader = dataPreviewProvider.isShader(jsonPointer);
         const isImage = dataPreviewProvider.isImage(jsonPointer);
+        const isAccessor = dataPreviewProvider.isAccessor(jsonPointer);
 
         let previewUri;
 
-        if (!isImage && !isShader) {
-            vscode.window.showErrorMessage('This feature currently works only with images and shaders.');
+        if (!isImage && !isShader && !isAccessor) {
+            vscode.window.showErrorMessage('This feature currently works only with accessors, images, and shaders.');
             console.log('gltf-vscode: No preview for: ' + jsonPointer);
             return;
         }
@@ -337,7 +337,7 @@ export function activate(context: vscode.ExtensionContext) {
             let uri = await vscode.window.showSaveDialog(options);
             if (uri !== undefined) {
                 try {
-                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    ConvertToGLB(gltf, editor.document.uri.fsPath, uri.fsPath);
                     vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
                 } catch (ex) {
                     vscode.window.showErrorMessage(ex.toString());
@@ -345,7 +345,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         } else {
             try {
-                GlbExport.save(gltf, editor.document.uri.fsPath, glbPath);
+                ConvertToGLB(gltf, editor.document.uri.fsPath, glbPath);
                 vscode.window.showInformationMessage('Glb exported as: ' + glbPath);
             } catch (ex) {
                 vscode.window.showErrorMessage(ex.toString());
@@ -417,7 +417,32 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         try {
-            await GlbImport.load(fileUri.fsPath);
+            if (typeof fileUri.fsPath == 'undefined') {
+                return;
+            }
+            if (!fs.existsSync(fileUri.fsPath)) {
+                throw new Error('File not found.');
+            }
+
+            // Compose a target filename
+            let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
+            if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
+                const options: vscode.SaveDialogOptions = {
+                    defaultUri: Uri.file(targetFilename),
+                    filters: {
+                        'glTF': ['gltf'],
+                        'All files': ['*']
+                    }
+                };
+                let uri = await vscode.window.showSaveDialog(options);
+                if (!uri) {
+                    return;
+                }
+                targetFilename = uri.fsPath;
+            }
+            ConvertGLBtoGltf(fileUri.fsPath, targetFilename);
+
+            vscode.commands.executeCommand('vscode.open', Uri.file(targetFilename));
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
