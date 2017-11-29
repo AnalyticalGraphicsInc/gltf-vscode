@@ -163,7 +163,13 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
 
                 if (jsonPointer.startsWith('/images/')) {
                     if (!query.previewHtml || query.previewHtml !== 'true') {
-                        vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+                        // Peek Definition requests have a document that matches the current document
+                        // Go to Definition has a null activeTextEditor
+                        // Inspect Data Uri has a document that matches current but we provide a non-default viewColumn
+                        // In the last two cases we want to close the current (to be empty editor), for Peek we leave it open.
+                        if (vscode.window.activeTextEditor == null || vscode.window.activeTextEditor.document != document || query.viewColumn != ViewColumn.Active.toString()) {
+                            vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+                        }
                         let previewUri: Uri = Uri.parse(this.UriPrefix + uri.authority + uri.path + '?previewHtml=true');
                         await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
                         return '';
