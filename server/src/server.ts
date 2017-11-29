@@ -2,9 +2,11 @@
 
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
-    Diagnostic, DiagnosticSeverity, InitializeResult, Range
+    Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams, Hover, MarkedString,
+    Location
 } from 'vscode-languageserver';
 import Uri from 'vscode-uri';
+import * as Url from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as jsonMap from 'json-source-map';
@@ -21,8 +23,18 @@ let documents: TextDocuments = new TextDocuments();
 // for open, change and close text document events
 documents.listen(connection);
 
-let documentsToValidate: TextDocument[] = [];
-let debounceValidateTimer: NodeJS.Timer;
+interface JsonMap {
+    data: any,
+    pointers: any;
+};
+
+interface ParseResult {
+    jsonMap: JsonMap,
+    parseable: boolean
+}
+
+let documentsToHandle: Map<TextDocument, ParseResult> = new Map<TextDocument, ParseResult>();
+let debounceTimer: NodeJS.Timer;
 
 /**
  * Attempt to parse a JSON document into a map of JSON pointers.
@@ -31,7 +43,7 @@ let debounceValidateTimer: NodeJS.Timer;
  * @param textDocument The document to parse
  * @return A map of JSON pointers to document text locations, or `undefined`
  */
-function tryGetJsonMap(textDocument: TextDocument) {
+function tryGetJsonMap(textDocument: TextDocument): JsonMap {
     try {
         return jsonMap.parse(textDocument.getText());
     } catch (ex) {
@@ -52,13 +64,17 @@ function isLocalGltf(textDocument: TextDocument): boolean {
     return (lowerUri.startsWith('file:///') && lowerUri.endsWith('.gltf'));
 }
 
-// After the server has started the client sends an initilize request. The server receives
-// in the passed params the rootPath of the workspace plus the client capabilites.
+// After the server has started the client sends an initialize request. The server receives
+// in the passed params the rootPath of the workspace plus the client capabilities.
 connection.onInitialize((): InitializeResult => {
     return {
         capabilities: {
             // Tell the client that the server works in FULL text document sync mode
-            textDocumentSync: documents.syncKind
+            textDocumentSync: documents.syncKind,
+            // Tell the client we provide hovers
+            hoverProvider: true,
+            // Tell the client we provide definitions
+            definitionProvider: true,
         }
     }
 });
@@ -85,13 +101,13 @@ connection.onDidChangeConfiguration((change) => {
     currentSettings = <GltfSettings>change.settings.glTF;
     if (currentSettings.Validation.enable) {
         // Schedule revalidation of all open text documents using the new settings.
-        documents.all().forEach(scheduleValidation);
+        documents.all().forEach(scheduleParsing);
     } else {
-        if (debounceValidateTimer) {
-            clearTimeout(debounceValidateTimer);
-            debounceValidateTimer = undefined;
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = undefined;
         }
-        documents.all().forEach(clearValidationTextDocument);
+        documents.all().forEach(clearTextDocument);
     }
 });
 
@@ -99,35 +115,34 @@ connection.onDidChangeConfiguration((change) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
     if (currentSettings.Validation.enable) {
-        scheduleValidation(change.document);
+        scheduleParsing(change.document);
     }
 });
 
 // Turn off validation of closed documents.
 documents.onDidClose(change => {
     if (currentSettings.Validation.enable) {
-        unscheduleValidation(change.document);
+        unscheduleParsing(change.document);
     }
+    // A text document was closed we clear the diagnostics
+    connection.sendDiagnostics({ uri: change.document.uri, diagnostics: [] });
 });
 
 /**
- * Schedule a document for glTF validation after the debounce timeout.
+ * Schedule a document for glTF parsing after the debounce timeout.
  *
  * @param textDocument The document to schedule validator for.
  */
-function scheduleValidation(textDocument: TextDocument): void {
+function scheduleParsing(textDocument: TextDocument): void {
     if (isLocalGltf(textDocument)) {
         console.log('schedule ' + textDocument.uri);
-        if (documentsToValidate.indexOf(textDocument) < 0) {
-            documentsToValidate.push(textDocument);
+        documentsToHandle.set(textDocument, { jsonMap: null, parseable: true});
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = undefined;
         }
-        if (debounceValidateTimer) {
-            clearTimeout(debounceValidateTimer);
-            debounceValidateTimer = undefined;
-        }
-        debounceValidateTimer = setTimeout(() => {
-            documentsToValidate.forEach(validateTextDocument);
-            documentsToValidate = [];
+        debounceTimer = setTimeout(() => {
+            documentsToHandle.forEach(parseTextDocument);
         }, currentSettings.Validation.debounce);
     }
 }
@@ -138,12 +153,9 @@ function scheduleValidation(textDocument: TextDocument): void {
  *
  * @param textDocument The document to un-schedule
  */
-function unscheduleValidation(textDocument: TextDocument): void {
-    var index = documentsToValidate.indexOf(textDocument);
-    if (index >= 0) {
-        console.log('un-schedule ' + textDocument.uri);
-        documentsToValidate.splice(index, 1);
-    }
+function unscheduleParsing(textDocument: TextDocument): void {
+    console.log('un-schedule ' + textDocument.uri);
+    documentsToHandle.delete(textDocument);
 }
 
 /**
@@ -152,7 +164,8 @@ function unscheduleValidation(textDocument: TextDocument): void {
  *
  * @param textDocument The document to clear
  */
-function clearValidationTextDocument(textDocument: TextDocument): void {
+function clearTextDocument(textDocument: TextDocument): void {
+    unscheduleParsing(textDocument);
     if (isLocalGltf(textDocument)) {
         console.log('disable validation ' + textDocument.uri);
         const diagnostics: Diagnostic[] = [];
@@ -165,7 +178,7 @@ function clearValidationTextDocument(textDocument: TextDocument): void {
  *
  * @param textDocument The document to validate
  */
-function validateTextDocument(textDocument: TextDocument): void {
+function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument): void {
     console.log('validate ' + textDocument.uri);
 
     const fileName = Uri.parse(textDocument.uri).fsPath;
@@ -174,19 +187,25 @@ function validateTextDocument(textDocument: TextDocument): void {
     const gltfText = textDocument.getText();
     const folderName = path.resolve(fileName, '..');
 
-    const map = tryGetJsonMap(textDocument);
-    if (!map) {
-        let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'Error parsing JSON document.' }, {})];
-        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-        return;
+    if (parseResult.parseable) {
+        if (!parseResult.jsonMap) {
+            parseResult.jsonMap = tryGetJsonMap(textDocument);
+            if (!parseResult.jsonMap) {
+                parseResult.parseable = false;
+                let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'Error parsing JSON document.' }, {data: null, pointers: null})];
+                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+                return;
+            }
+        }
     }
 
-    if ((!map.data.asset) || (!map.data.asset.version) || (map.data.asset.version[0] === '1')) {
+    if ((!parseResult.jsonMap.data.asset) || (!parseResult.jsonMap.data.asset.version) || (parseResult.jsonMap.data.asset.version[0] === '1')) {
         let diagnostics: Diagnostic[] = [getDiagnostic({
             message: 'Validation not available for glTF 1.0 files.',
             severity: 2
-        }, map)];
+        }, jsonMap)];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        parseResult.parseable = false;
         return;
     }
 
@@ -218,14 +237,14 @@ function validateTextDocument(textDocument: TextDocument): void {
             for (let i = 0; i < numMessages; ++i) {
                 let info = messages[i];
                 if (info.message) {
-                    diagnostics.push(getDiagnostic(info, map));
+                    diagnostics.push(getDiagnostic(info, parseResult.jsonMap));
                 }
             }
 
             if (result.issues.truncated) {
                 diagnostics.push(getDiagnostic({
                     message: 'VALIDATION ABORTED: Too many messages produced.'
-                }, map));
+                }, parseResult.jsonMap));
             }
         }
         // Send the computed diagnostics to VSCode, clearing any old messages.
@@ -239,19 +258,19 @@ function validateTextDocument(textDocument: TextDocument): void {
         // Validator's error
         console.warn('glTF Validator failed on: ' + fileName);
         console.warn(result);
-        let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'glTF Validator error: ' + result }, {})];
+        let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'glTF Validator error: ' + result }, {data: null, pointers: null})];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     });
 }
 
 /**
- * Convert an individual glTF Validator messgae to a Language Server Diagnostic.
+ * Convert an individual glTF Validator message to a Language Server Diagnostic.
  *
  * @param info An object containing a message from the glTF Validator's output messages
  * @param map A map of JSON pointers to document text locations
  * @return A `Diagnostic` to send back to the client
  */
-function getDiagnostic(info: any, map: any): Diagnostic {
+function getDiagnostic(info: any, map: JsonMap): Diagnostic {
     let range: Range = {
         start: { line: 0, character: 0 },
         end: { line: 0, character: Number.MAX_VALUE }
@@ -294,6 +313,216 @@ function getDiagnostic(info: any, map: any): Diagnostic {
         source: 'glTF Validator'
     };
 }
+
+function positionContained(selection: Position, rangeStart: Position, rangeEnd: Position): boolean {
+    return ((rangeStart.line === selection.line && rangeStart.character <= selection.character) || rangeStart.line < selection.line) &&
+            ((rangeEnd.line === selection.line && rangeEnd.character >= selection.character) || rangeEnd.line > selection.line);
+}
+
+function getFromPath(glTF: any, path : string) {
+    const pathSplit = path.split('/');
+    const numPathSegments = pathSplit.length;
+    let result = glTF;
+    const firstValidIndex = 1; // Because the path has a leading slash.
+    for (let i = firstValidIndex; i < numPathSegments; ++i) {
+        result = result[pathSplit[i]];
+    }
+    return result;
+}
+
+interface PathData {
+    path: string,
+    start: Position,
+    end: Position,
+    jsonMap: JsonMap
+};
+
+function getPath(textDocumentPosition: TextDocumentPositionParams): PathData {
+    let hoverPos = textDocumentPosition.position;
+    let document = documents.get(textDocumentPosition.textDocument.uri);
+    let parseResult = documentsToHandle.get(document);
+
+    if (!parseResult || !parseResult.parseable || !parseResult.jsonMap) {
+        return null;
+    }
+
+    let jsonMap = parseResult.jsonMap;
+
+    let lastPath: string;
+    let lastStartPos: Position;
+    let lastEndPos: Position;
+    for (let path of Object.keys(jsonMap.pointers)) {
+        let position = jsonMap.pointers[path];
+        let startPos = document.positionAt(position.value.pos);
+        let endPos = document.positionAt(position.valueEnd.pos);
+        if (positionContained(hoverPos, startPos, endPos)) {
+            lastPath = path;
+            lastStartPos = startPos;
+            lastEndPos = endPos;
+        }
+    }
+
+    if (!lastPath) {
+        return null;
+    }
+
+    return { path: lastPath, start: lastStartPos, end: lastEndPos, jsonMap: jsonMap };
+}
+
+connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Location => {
+    let pathData = getPath(textDocumentPosition);
+    if (!pathData) {
+        return null;
+    }
+
+    let path = pathData.path;
+    let document = documents.get(textDocumentPosition.textDocument.uri);
+
+    const pathSplit = path.split('/');
+    const numPathSegments = pathSplit.length;
+    let result = pathData.jsonMap.data;
+
+    function makeLocation(position?: any, uri?: string) {
+        let range: Range;
+        if (position == null) {
+            range = Range.create(0, 0, 0, 0);
+        } else {
+            range = Range.create(document.positionAt(position.value.pos), document.positionAt(position.valueEnd.pos));
+        }
+
+        if (uri == null) {
+            uri = textDocumentPosition.textDocument.uri;
+        }
+
+        return Location.create(uri, range);
+    }
+
+    const firstValidIndex = 1; // Because the path has a leading slash.
+    let inNodes: boolean = false;
+    let inChannels: boolean = false;
+    let inAccessors: boolean = false;
+    let currentPath: string = '';
+    let currentAnimationPath: string;
+    for (let i = firstValidIndex; i < numPathSegments; ++i) {
+        let part = pathSplit[i];
+        currentPath += '/' + part;
+        result = result[part];
+        if (typeof result != 'object')
+        {
+            if (part === 'scene') {
+                return makeLocation(pathData.jsonMap.pointers['/scenes/' + result]);
+            }
+            else if (part === 'mesh') {
+                return makeLocation(pathData.jsonMap.pointers['/meshes/' + result]);
+            }
+            else if (part === 'skin') {
+                return makeLocation(pathData.jsonMap.pointers['/skins/' + result]);
+            }
+            else if (part === 'material') {
+                return makeLocation(pathData.jsonMap.pointers['/materials/' + result]);
+            }
+            else if (part === 'input' || part === 'output' || part === 'indices' || part === 'inverseBindMatrices' || part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
+                return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
+            }
+            else if (part === 'node' || part === 'skeleton' || inNodes ) {
+                return makeLocation(pathData.jsonMap.pointers['/nodes/' + result]);
+            }
+            else if (part === 'bufferView') {
+                return makeLocation(pathData.jsonMap.pointers['/bufferViews/' + result]);
+            }
+            else if (part === 'buffer') {
+                return makeLocation(pathData.jsonMap.pointers['/buffers/' + result]);
+            }
+            else if (part === 'index') {
+                return makeLocation(pathData.jsonMap.pointers['/textures/' + result]);
+            }
+            else if (part === 'sampler') {
+                if (inChannels) {
+                    return makeLocation(pathData.jsonMap.pointers[currentAnimationPath + '/samplers/' + result]);
+                } else {
+                    return makeLocation(pathData.jsonMap.pointers['/samplers/' + result]);
+                }
+            }
+            else if (part === 'source') {
+                return makeLocation(pathData.jsonMap.pointers['/images/' + result]);
+            }
+            else if (part === 'camera') {
+                return makeLocation(pathData.jsonMap.pointers['/cameras/' + result]);
+            } else if (part === 'fragmentShader' || part === 'vertexShader') {
+                return makeLocation(pathData.jsonMap.pointers['/shaders/' + result]);
+            }
+        }
+        else {
+            if (part === 'nodes' || part === 'children' || part === 'joints') {
+                inNodes = true;
+            }
+            else if (part === 'channels') {
+                inChannels = true;
+                currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
+            }
+            else if (result.uri !== undefined) {
+                if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
+                    return makeLocation(null, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
+                } else {
+                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                    return makeLocation(null, uri);
+                }
+            } else if (part === 'accessors') {
+                inAccessors = true;
+            } else if (inAccessors && !path.includes('bufferView')) {
+                let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                return makeLocation(null, uri);
+            }
+        }
+    }
+
+    return null;
+});
+
+connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => {
+    let pathData = getPath(textDocumentPosition);
+    if (!pathData) {
+        return null;
+    }
+
+    let path = pathData.path;
+
+    if (path.startsWith('/images/')) {
+        let imageData = getFromPath(pathData.jsonMap.data, path);
+        if (imageData) {
+            if (!path.endsWith('/uri')) {
+                imageData = imageData.uri;
+            }
+            if (!imageData.startsWith('data:')) {
+                imageData = Url.resolve(textDocumentPosition.textDocument.uri, imageData);
+            }
+            let contents: MarkedString[] = [`![${path}](${imageData})`];
+            return {
+                contents: contents,
+                range: Range.create(pathData.start, pathData.end)
+            };
+        }
+    }
+
+    if (path.includes('diffuseFactor') || path.includes('specularFactor') || path.includes('baseColorFactor') || path.includes('emissiveFactor'))
+    {
+        if (!Number.isNaN(parseInt(path.charAt(path.length-1)))) {
+            path = path.substring(0, path.length-2);
+        }
+        let colorData = getFromPath(pathData.jsonMap.data, path);
+        let red = Math.round(colorData[0] * 255);
+        let blue = Math.round(colorData[1] * 255);
+        let green = Math.round(colorData[2] * 255);
+        let hexColor = ((red < 16) ? '0' : '') + red.toString(16) + ((blue < 16) ? '0' : '') +  blue.toString(16) + ((green < 16) ? '0' : '') +  green.toString(16);
+        let contents: MarkedString[] = [`![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`];
+        return {
+            contents: contents,
+            range: Range.create(pathData.start, pathData.end)
+        };
+    }
+
+    return null;
+});
 
 // Listen on the connection
 connection.listen();

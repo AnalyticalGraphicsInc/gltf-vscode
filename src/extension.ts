@@ -4,11 +4,10 @@
 import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
-import { DataUriTextDocumentContentProvider, getFromPath, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
+import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
-import * as GlbExport from './exportProvider';
-import * as GlbImport from './importProvider';
+import { ConvertGLBtoGltfLoadFirst, ConvertToGLB} from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
@@ -45,7 +44,7 @@ function tryGetJsonMap() {
     return undefined;
 }
 
-function tryGetCurrentUriKey(map) {
+function tryGetCurrentJsonPointer(map) {
     const selection = vscode.window.activeTextEditor.selection;
     const pointers = map.pointers;
 
@@ -135,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Inspect the contents of a uri or dataURI.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', async () => {
         if (!checkValidEditor()) {
             return;
         }
@@ -145,43 +144,45 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        let bestKey = tryGetCurrentUriKey(map);
-        if (!bestKey) {
+        let jsonPointer = tryGetCurrentJsonPointer(map);
+        if (!jsonPointer) {
             return;
         }
 
-        const shouldOpenDocument = dataPreviewProvider.shouldOpenDocument(map.data, bestKey);
-        const useHtml = dataPreviewProvider.shouldUseHtmlPreview(bestKey);
-        const isShader = dataPreviewProvider.isShader(bestKey);
+        const notDataUri = dataPreviewProvider.uriIfNotDataUri(map.data, jsonPointer);
+        const isShader = dataPreviewProvider.isShader(jsonPointer);
+        const isImage = dataPreviewProvider.isImage(jsonPointer);
+        const isAccessor = dataPreviewProvider.isAccessor(jsonPointer);
+
         let previewUri;
 
-        if (isShader && shouldOpenDocument) {
-            previewUri = Url.resolve(vscode.window.activeTextEditor.document.fileName, shouldOpenDocument);
+        if (!isImage && !isShader && !isAccessor) {
+            vscode.window.showErrorMessage('This feature currently works only with accessors, images, and shaders.');
+            console.log('gltf-vscode: No preview for: ' + jsonPointer);
+            return;
+        }
+
+        if (isAccessor) {
+            // Truncate the jsonPointer at the accessor index level, so data can be previewed.
+            let components = jsonPointer.split('/');
+            components.splice(3);
+            jsonPointer = components.join('/');
+        }
+
+        if (notDataUri && !isImage) {
+            let finalUri = Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
+            await vscode.commands.executeCommand('vscode.open', finalUri, ViewColumn.Two);
         } else {
+            // This is a data: type uri
             if (isShader) {
-                bestKey += '.glsl';
+                jsonPointer += '.glsl';
             }
 
             previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
                 encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
-                bestKey);
-        }
-
-        if (useHtml) {
-            vscode.commands.executeCommand('vscode.previewHtml', previewUri, ViewColumn.Two, bestKey)
-                .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
-
+                jsonPointer + '?viewColumn=' + ViewColumn.Two);
+            await vscode.commands.executeCommand('vscode.open', previewUri, ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
-        } else if (isShader) {
-            vscode.workspace.openTextDocument(previewUri).then((doc: vscode.TextDocument) => {
-                vscode.window.showTextDocument(doc, ViewColumn.Two, false).then(e => {
-                });
-            }, (reason) => { vscode.window.showErrorMessage(reason); });
-
-            dataPreviewProvider.update(previewUri);
-        } else {
-            vscode.window.showErrorMessage('This feature currently works only with images and shaders.');
-            console.log('gltf-vscode: No preview for: ' + bestKey);
         }
     }));
 
@@ -198,13 +199,13 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        let bestKey = tryGetCurrentUriKey(map);
+        let bestKey = tryGetCurrentJsonPointer(map);
         if (!bestKey) {
             return;
         }
 
         const activeTextEditor = vscode.window.activeTextEditor;
-        const data = getFromPath(map.data, bestKey);
+        const data = getFromJsonPointer(map.data, bestKey);
         let dataUri : string = data.uri;
         if (dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is already a dataURI.');
@@ -259,13 +260,13 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        let bestKey = tryGetCurrentUriKey(map);
+        let bestKey = tryGetCurrentJsonPointer(map);
         if (!bestKey) {
             return;
         }
 
         const activeTextEditor = vscode.window.activeTextEditor;
-        const data = getFromPath(map.data, bestKey);
+        const data = getFromJsonPointer(map.data, bestKey);
         let dataUri : string = data.uri;
         if (!dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is not a dataURI.');
@@ -343,7 +344,7 @@ export function activate(context: vscode.ExtensionContext) {
             let uri = await vscode.window.showSaveDialog(options);
             if (uri !== undefined) {
                 try {
-                    GlbExport.save(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    ConvertToGLB(gltf, editor.document.uri.fsPath, uri.fsPath);
                     vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
                 } catch (ex) {
                     vscode.window.showErrorMessage(ex.toString());
@@ -351,7 +352,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         } else {
             try {
-                GlbExport.save(gltf, editor.document.uri.fsPath, glbPath);
+                ConvertToGLB(gltf, editor.document.uri.fsPath, glbPath);
                 vscode.window.showInformationMessage('Glb exported as: ' + glbPath);
             } catch (ex) {
                 vscode.window.showErrorMessage(ex.toString());
@@ -423,7 +424,36 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         try {
-            await GlbImport.load(fileUri.fsPath);
+            if (typeof fileUri.fsPath == 'undefined') {
+                return;
+            }
+            if (!fs.existsSync(fileUri.fsPath)) {
+                throw new Error('File not found.');
+            }
+            let getTargetFilename = async (): Promise<string> => {
+                // Compose a target filename
+                let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
+                if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
+                    const options: vscode.SaveDialogOptions = {
+                        defaultUri: Uri.file(targetFilename),
+                        filters: {
+                            'glTF': ['gltf'],
+                            'All files': ['*']
+                        }
+                    };
+                    let uri = await vscode.window.showSaveDialog(options);
+                    if (!uri) {
+                        return null;
+                    }
+                    targetFilename = uri.fsPath;
+                }
+                return targetFilename;
+            }
+            let targetFilename = await ConvertGLBtoGltfLoadFirst(fileUri.fsPath, getTargetFilename);
+
+            if (targetFilename != null) {
+                vscode.commands.executeCommand('vscode.open', Uri.file(targetFilename));
+            }
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
