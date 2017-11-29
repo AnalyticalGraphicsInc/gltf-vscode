@@ -391,11 +391,12 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
         }
 
         if (uri == null) {
-            uri = textDocumentPosition.textDocument.uri
+            uri = textDocumentPosition.textDocument.uri;
         }
 
         return Location.create(uri, range);
     }
+
     const firstValidIndex = 1; // Because the path has a leading slash.
     let inNodes: boolean = false;
     let inChannels: boolean = false;
@@ -475,7 +476,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
         }
     }
 
-    return null
+    return null;
 });
 
 connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => {
@@ -503,7 +504,7 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         }
     }
 
-    if (path.includes('diffuseFactor') || path.includes('specularFactor') || path.includes('baseColorFactor'))
+    if (path.includes('diffuseFactor') || path.includes('specularFactor') || path.includes('baseColorFactor') || path.includes('emissiveFactor'))
     {
         if (!Number.isNaN(parseInt(path.charAt(path.length-1)))) {
             path = path.substring(0, path.length-2);

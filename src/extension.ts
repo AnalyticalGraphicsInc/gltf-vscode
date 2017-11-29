@@ -162,6 +162,13 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
+        if (isAccessor) {
+            // Truncate the jsonPointer at the accessor index level, so data can be previewed.
+            let components = jsonPointer.split('/');
+            components.splice(3);
+            jsonPointer = components.join('/');
+        }
+
         if (notDataUri && !isImage) {
             let finalUri = Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
             await vscode.commands.executeCommand('vscode.open', finalUri, ViewColumn.Two);
