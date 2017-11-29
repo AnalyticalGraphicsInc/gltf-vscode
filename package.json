@@ -271,8 +271,8 @@
         "yargs": "^6.5.0"
     },
     "dependencies": {
-        "gltf-import-export": "^1.0.5",
         "babylonjs": "^3.1.0-beta6",
+        "gltf-import-export": "^1.0.6",
         "gltf-validator": "2.0.0-dev.1.3",
         "json-source-map": "^0.4.0",
         "sprintf-js": "^1.1.1",

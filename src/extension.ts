@@ -7,7 +7,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
-import { ConvertGLBtoGltf, ConvertToGLB} from 'gltf-import-export';
+import { ConvertGLBtoGltfLoadFirst, ConvertToGLB} from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
@@ -423,26 +423,30 @@ export function activate(context: vscode.ExtensionContext) {
             if (!fs.existsSync(fileUri.fsPath)) {
                 throw new Error('File not found.');
             }
-
-            // Compose a target filename
-            let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
-            if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
-                const options: vscode.SaveDialogOptions = {
-                    defaultUri: Uri.file(targetFilename),
-                    filters: {
-                        'glTF': ['gltf'],
-                        'All files': ['*']
+            let getTargetFilename = async (): Promise<string> => {
+                // Compose a target filename
+                let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
+                if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
+                    const options: vscode.SaveDialogOptions = {
+                        defaultUri: Uri.file(targetFilename),
+                        filters: {
+                            'glTF': ['gltf'],
+                            'All files': ['*']
+                        }
+                    };
+                    let uri = await vscode.window.showSaveDialog(options);
+                    if (!uri) {
+                        return null;
                     }
-                };
-                let uri = await vscode.window.showSaveDialog(options);
-                if (!uri) {
-                    return;
+                    targetFilename = uri.fsPath;
                 }
-                targetFilename = uri.fsPath;
+                return targetFilename;
             }
-            ConvertGLBtoGltf(fileUri.fsPath, targetFilename);
+            let targetFilename = await ConvertGLBtoGltfLoadFirst(fileUri.fsPath, getTargetFilename);
 
-            vscode.commands.executeCommand('vscode.open', Uri.file(targetFilename));
+            if (targetFilename != null) {
+                vscode.commands.executeCommand('vscode.open', Uri.file(targetFilename));
+            }
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
