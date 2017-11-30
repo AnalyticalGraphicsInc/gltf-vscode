@@ -220,7 +220,7 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
         severityOverrides: currentSettings.Validation.severityOverrides,
         externalResourceFunction: (uri) =>
             new Promise((resolve, reject) => {
-                uri = path.resolve(folderName, uri);
+                uri = path.resolve(folderName, decodeURIComponent(uri));
                 fs.readFile(uri, (err, data) => {
                     console.log("Loading external file: " + uri);
                     if (err) {
