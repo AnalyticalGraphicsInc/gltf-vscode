@@ -38,7 +38,7 @@ export async function validate(sourceFilename: string) {
         severityOverrides: currentSettings.severityOverrides,
         externalResourceFunction: (uri) =>
             new Promise((resolve, reject) => {
-                uri = path.resolve(folderName, uri);
+                uri = path.resolve(folderName, decodeURIComponent(uri));
                 fs.readFile(uri, (err, data) => {
                     if (err) {
                         reject(err.toString());
