@@ -192,7 +192,10 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
             parseResult.jsonMap = tryGetJsonMap(textDocument);
             if (!parseResult.jsonMap) {
                 parseResult.parseable = false;
-                let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'Error parsing JSON document.' }, {data: null, pointers: null})];
+                let diagnostics: Diagnostic[] = [getDiagnostic({
+                    message: 'Error parsing JSON document.',
+                    isFromLanguageServer: true
+                }, {data: null, pointers: null})];
                 connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
                 return;
             }
@@ -202,6 +205,7 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
     if ((!parseResult.jsonMap.data.asset) || (!parseResult.jsonMap.data.asset.version) || (parseResult.jsonMap.data.asset.version[0] === '1')) {
         let diagnostics: Diagnostic[] = [getDiagnostic({
             message: 'Validation not available for glTF 1.0 files.',
+            isFromLanguageServer: true,
             severity: 2
         }, jsonMap)];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -243,7 +247,8 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
 
             if (result.issues.truncated) {
                 diagnostics.push(getDiagnostic({
-                    message: 'VALIDATION ABORTED: Too many messages produced.'
+                    message: 'VALIDATION ABORTED: Too many messages produced.',
+                    isFromLanguageServer: true
                 }, parseResult.jsonMap));
             }
         }
@@ -258,7 +263,10 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
         // Validator's error
         console.warn('glTF Validator failed on: ' + fileName);
         console.warn(result);
-        let diagnostics: Diagnostic[] = [getDiagnostic({ message: 'glTF Validator error: ' + result }, {data: null, pointers: null})];
+        let diagnostics: Diagnostic[] = [getDiagnostic({
+            message: 'glTF Validator error: ' + result,
+            isFromLanguageServer: true
+        }, {data: null, pointers: null})];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     });
 }
@@ -310,7 +318,7 @@ function getDiagnostic(info: any, map: JsonMap): Diagnostic {
         severity: severity,
         range,
         message: info.message,
-        source: 'glTF Validator'
+        source: (info.isFromLanguageServer ? 'glTF Language Server' : 'glTF Validator')
     };
 }
 
