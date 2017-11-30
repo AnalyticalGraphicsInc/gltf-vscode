@@ -114,10 +114,11 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             'pages/previewModel.js'
         ];
 
+        // Note that with the file: protocol, we must manually specify the UTF-8 charset.
         const content = this._mainHtml.replace('{assets}',
             styles.map(s => `<link rel="stylesheet" href="${this.getFilePath(s)}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
-            scripts.map(s => `<script type="text/javascript" src="${this.getFilePath(s)}"></script>\n`).join(''));
+            scripts.map(s => `<script type="text/javascript" charset="UTF-8" src="${this.getFilePath(s)}"></script>\n`).join(''));
 
         return content;
     }
