@@ -1,5 +1,14 @@
 # Change Log
 
+### 2.1.2 - UNRELEASED
+
+* Hover shows a snapshot of textures and colors
+* Definition provider allows navigation on any index reference
+* View buffer data provided by Accessor (Go to Definition (F12))
+* Changed viewing texture data to match VSCode inline viewer.
+* Updated to latest glTF Validator and glTF schemas.
+* Clarified error sources, from glTF Validator vs glTF Language Server.
+
 ### 2.1.1 - 2017-11-15
 
 * Fixed an issue where glTF commands sometimes wouldn't be available.

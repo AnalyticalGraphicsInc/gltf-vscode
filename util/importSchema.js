@@ -130,29 +130,11 @@ function upgradeDescriptions(data) {
     }
 }
 
-function upgradeUriRefs(data) {
-    for (var key in data) {
-        if (data.hasOwnProperty(key)) {
-            var val = data[key];
-            if (typeof(val) === 'object') {
-                upgradeUriRefs(val);
-            }
-        }
-    }
-
-    // See: https://github.com/KhronosGroup/glTF/issues/1149
-    if (data && data.format && data.format === 'uri') {
-        console.log('NOTE: uri upgraded to uriref.');
-        data.format = 'uriref';
-    }
-}
-
 function transformFile(inputFile, outputFile) {
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
     upgradeDescriptions(schema);
-    upgradeUriRefs(schema);
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }
