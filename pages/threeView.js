@@ -252,7 +252,7 @@ var ThreeView = function() {
     };
 
     this.startPreview = function() {
-        var rootPath = "file:///" + document.getElementById("gltfRootPath").textContent;
+        var rootPath = document.getElementById("gltfRootPath").textContent;
         var fileName = document.getElementById("gltfFileName").textContent;
         sceneList = [
             {
