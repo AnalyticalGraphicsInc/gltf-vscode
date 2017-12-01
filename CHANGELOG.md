@@ -1,13 +1,18 @@
 # Change Log
 
-### 2.1.2 - UNRELEASED
+### 2.1.2 - 2017-12-01
 
-* Hover shows a snapshot of textures and colors
-* Definition provider allows navigation on any index reference
-* View buffer data provided by Accessor (Go to Definition (F12))
+* Fixed file path problems in glTF Preview window for Mac and Linux systems.
+* Hover shows a snapshot of textures and colors.
+* Definition provider allows navigation on any index reference.
+* View buffer data provided by Accessor (Go to Definition (F12)).
 * Changed viewing texture data to match VSCode inline viewer.
 * Updated to latest glTF Validator and glTF schemas.
 * Clarified error sources, from glTF Validator vs glTF Language Server.
+* Checkerboard appears behind images viewed with "Inspect Data URI".
+* Moved GLB import/export code to an npm package, for use outside this project.
+* Fixed a byte alignment issue with GLB import.
+* Preview window updated to Cesium 1.40 and Babylon 3.1.0-beta6.
 
 ### 2.1.1 - 2017-11-15
 
