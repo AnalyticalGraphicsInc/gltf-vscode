@@ -105,13 +105,19 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         this.tree = null;
         this.gltf = null;
         this.pointers = null;
+        vscode.commands.executeCommand('setContext', 'gltfFileActive', false);
 
         this.editor = vscode.window.activeTextEditor;
         if (this.editor && this.editor.document && this.editor.document.languageId === 'json') {
             let mapResult = jsonMap.parse(this.editor.document.getText());
             this.gltf = mapResult.data;
             this.pointers = mapResult.pointers;
-            if (!this.gltf || !this.gltf.asset || !this.gltf.asset.version || this.gltf.asset.version[0] !== '2') {
+            if (this.gltf && this.gltf.asset && this.gltf.asset.version) {
+                vscode.commands.executeCommand('setContext', 'gltfFileActive', true);
+                if (this.gltf.asset.version[0] !== '2') {
+                    this.gltf = null;
+                }
+            } else {
                 this.gltf = null;
             }
         }
@@ -201,7 +207,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             this.createMesh(node.mesh, nodeIndex, nodeObj);
         }
         if (node.skin !== undefined) {
-            let gltfNode = this.createSkin(node.skin, nodeObj);
+            let gltfNode = this.createSkin(node.skin, nodeObj, followBones);
         }
         if (node.children) {
             for (let nodeChildrenIndex = 0; nodeChildrenIndex < node.children.length; nodeChildrenIndex++) {
@@ -249,7 +255,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         });
     }
 
-    private createSkin(skinIndex: string, parent: GltfNode): void {
+    private createSkin(skinIndex: string, parent: GltfNode, followBones: boolean): void {
         let skin = this.gltf.skins[skinIndex];
         let name = this.createName('Skin', skinIndex, skin);
 
@@ -264,7 +270,9 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         };
         parent.children.push(skinObj);
 
-        this.createNode(skeletonNode, skin.skeleton, true, skinObj);
+        if (!followBones) {
+            this.createNode(skeletonNode, skin.skeleton, true, skinObj);
+        }
     }
 
     private createMesh(meshIndex: string, nodeIndex: string, parent: GltfNode): void {
