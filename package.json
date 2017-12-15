@@ -17,6 +17,7 @@
         "Linters"
     ],
     "activationEvents": [
+        "onView:gltfOutline",
         "onLanguage:json",
         "onCommand:gltf.inspectDataUri",
         "onCommand:gltf.importUri",
@@ -24,8 +25,7 @@
         "onCommand:gltf.previewModel",
         "onCommand:gltf.validateFile",
         "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile",
-        "onView:gltfOutline"
+        "onCommand:gltf.importGlbFile"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -148,19 +148,19 @@
                 "command": "gltf.inspectDataUri",
                 "key": "alt+d",
                 "mac": "alt+d",
-                "when": "editorTextFocus && editorLangId == 'json'"
+                "when": "editorTextFocus && gltfFileActive"
             },
             {
                 "command": "gltf.previewModel",
                 "key": "alt+g",
                 "mac": "alt+g",
-                "when": "editorTextFocus && editorLangId == 'json'"
+                "when": "editorTextFocus && gltfFileActive"
             },
             {
                 "command": "gltf.exportGlbFile",
                 "key": "alt+shift+s e",
                 "mac": "alt+shift+s e",
-                "when": "editorTextFocus && editorLangId == 'json'"
+                "when": "editorTextFocus && gltfFileActive"
             }
         ],
         "menus": {
@@ -177,46 +177,46 @@
             "editor/context": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.inspectDataUri",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 }
             ],
             "editor/title": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json && glTF_showToolbar3D",
+                    "when": "gltfFileActive && glTF_showToolbar3D",
                     "group": "navigation"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.inspectDataUri",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.importUri",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.exportUri",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.exportGlbFile",
-                    "when": "resourceLangId == json",
+                    "when": "gltfFileActive",
                     "group": "glTF"
                 },
                 {
@@ -248,7 +248,7 @@
                 {
                     "id": "gltfOutline",
                     "name": "glTF Outline",
-                    "when": "resourceLangId == 'json'"
+                    "when": "gltfFileActive"
                 }
             ]
         }
@@ -264,19 +264,19 @@
     },
     "devDependencies": {
         "@types/mocha": "^2.2.42",
-        "@types/node": "^8.0.52",
+        "@types/node": "^8.0.58",
         "jshint": "^2.9.4",
         "mocha": "^4.0.1",
         "typescript": "^2.6.2",
         "yargs": "^6.5.0"
     },
     "dependencies": {
-        "babylonjs": "^3.1.0-beta6",
+        "babylonjs": "^3.1.0-rc-0",
         "gltf-import-export": "^1.0.6",
         "gltf-validator": "2.0.0-dev.1.6",
         "json-source-map": "^0.4.0",
         "sprintf-js": "^1.1.1",
-        "vscode": "^1.1.8",
+        "vscode": "^1.1.10",
         "vscode-languageclient": "^3.5.0"
     }
 }
