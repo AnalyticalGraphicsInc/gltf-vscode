@@ -4,6 +4,7 @@
 
 * Fixed a broken animation control in the Cesium preview.
 * Fixed some bugs exposed by Project Polly from the Khronos Blender Exporter.
+* Updated to latest ThreeJS glTF loader for preview window.
 
 ### 2.1.2 - 2017-12-01
 
