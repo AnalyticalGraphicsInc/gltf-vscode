@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.1.3 - UNRELEASED
+
+* Fixed a broken animation control in the Cesium preview.
+* Fixed some bugs exposed by Project Polly from the Khronos Blender Exporter.
+
 ### 2.1.2 - 2017-12-01
 
 * Fixed file path problems in glTF Preview window for Mac and Linux systems.
