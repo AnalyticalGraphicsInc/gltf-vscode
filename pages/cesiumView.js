@@ -33,7 +33,7 @@ var CesiumView = function() {
                 anim.animation = undefined;
             } else {
                 anim.animation = model.activeAnimations.add({
-                    name: anim.index,
+                    index: anim.index,
                     loop: Cesium.ModelAnimationLoop.REPEAT
                 });
             }
