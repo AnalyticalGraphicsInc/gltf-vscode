@@ -94,7 +94,7 @@ var ThreeView = function() {
             scene.add(ground);
         }
 
-        loader = new THREE.GLTF2Loader();
+        loader = new THREE.GLTFLoader();
 
         var url = sceneInfo.url;
 
