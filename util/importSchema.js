@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/*eslint-env node*/
 'use strict';
 var fs = require('fs');
 var path = require('path');
@@ -86,7 +87,7 @@ function transformEnums(data) {
                 description = ' - ' + data.description;
             }
             for (var i = 0; i < numEnums; ++i) {
-                oneOf.push({ "enum": [data.enum[i]], "description": data.gltf_enumNames[i] + description });
+                oneOf.push({ 'enum': [data.enum[i]], 'description': data.gltf_enumNames[i] + description });
             }
             data.oneOf = oneOf;
             delete data.enum;

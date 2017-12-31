@@ -265,7 +265,9 @@
     "devDependencies": {
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.0.58",
-        "jshint": "^2.9.4",
+        "eslint": "^4.14.0",
+        "eslint-config-cesium": "^3.0.0",
+        "eslint-plugin-html": "^4.0.1",
         "mocha": "^4.0.1",
         "typescript": "^2.6.2",
         "yargs": "^6.5.0"
