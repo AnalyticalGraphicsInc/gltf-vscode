@@ -1,3 +1,7 @@
+/*global Cesium,ko,CesiumView,ThreeView,BabylonView*/
+(function() {
+    'use strict';
+
 // Defines the 3D engines that the menu allows the users to choose from.
 var engineInfo = [{
     name: 'Babylon.js',
@@ -23,9 +27,9 @@ var ANIM_PLAY_ALL = 'All';
 var ANIM_PLAY_NONE = 'None';
 
 // This is the main view model for the UI controls.
-var mainViewModel = {
+var mainViewModel = window.mainViewModel = {
     engineInfo: ko.observableArray(engineInfo),
-    selectedEngine: ko.observable(engineInfo.find(e => e.name === document.getElementById("defaultEngine").textContent)),
+    selectedEngine: ko.observable(engineInfo.find(e => e.name === document.getElementById('defaultEngine').textContent)),
     showControls: ko.observable(true),
     hasBackground: ko.observable(false),
     showBackground: ko.observable(false),
@@ -84,7 +88,7 @@ function updatePreview() {
     // Clear errors/warnings.
     mainViewModel.errorText(undefined);
 
-    var content = document.getElementById("content");
+    var content = document.getElementById('content');
 
     // Update the DOM's "content" div with the HTML content for the currently selected
     // 3D engine.
@@ -108,7 +112,7 @@ function initPreview()
     ko.applyBindings(mainViewModel, mainUI);
 
     // Bind the viewModel to the warning UI
-    var errorUI = document.getElementById('warningContainer');
+    var warningContainer = document.getElementById('warningContainer');
     ko.applyBindings(mainViewModel, warningContainer);
 
     // Subscribe to changes in the viewModel
@@ -128,3 +132,4 @@ function initPreview()
 }
 
 window.addEventListener('load', initPreview, false);
+})();

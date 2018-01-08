@@ -17,6 +17,8 @@ Please email a completed CLA with all fields filled in to [cla@agi.com](mailto:c
 
 [VSCode](https://code.visualstudio.com/) itself is used for developing and debugging its own extensions.
 
+Please install the [ESLint extension by Dirk Baeumer](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) into VSCode.
+
 You will also need [NodeJS](https://nodejs.org/en/) installed, for npm package management.
 
 1. Use `git` to clone this repository to a local disk.

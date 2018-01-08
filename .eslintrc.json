@@ -1,0 +1,12 @@
+{
+    "extends": "./node_modules/eslint-config-cesium/browser.js",
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "plugins": [
+        "html"
+    ],
+    "rules": {
+        "quotes": ["warn", "single", { "avoidEscape": true }]
+    }
+}

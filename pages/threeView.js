@@ -1,7 +1,11 @@
+/*global THREE,mainViewModel*/
+(function() {
+    'use strict';
+
 // This is a modified/simplified version of the published example:
 //     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
 
-var ThreeView = function() {
+window.ThreeView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 
@@ -252,11 +256,11 @@ var ThreeView = function() {
     };
 
     this.startPreview = function() {
-        var rootPath = document.getElementById("gltfRootPath").textContent;
-        var fileName = document.getElementById("gltfFileName").textContent;
+        var rootPath = document.getElementById('gltfRootPath').textContent;
+        var fileName = document.getElementById('gltfFileName').textContent;
         sceneList = [
             {
-                name: "glTF Preview", url: rootPath + fileName,
+                name: 'glTF Preview', url: rootPath + fileName,
                 cameraPos: new THREE.Vector3(-0.2, 0.4, 1.4),
                 addLights: true
             }
@@ -268,3 +272,4 @@ var ThreeView = function() {
         window.addEventListener('resize', onWindowResize, false);
     };
 };
+})();

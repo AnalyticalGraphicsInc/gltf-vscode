@@ -1,4 +1,7 @@
-var CesiumView = function() {
+/*global Cesium,ko,mainViewModel*/
+(function() {
+    'use strict';
+window.CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;
@@ -172,7 +175,7 @@ var CesiumView = function() {
             loadModelFromContent(gltfContent, gltfRootPath, true);
         }
         catch (ex) {
-            console.warn("Cesium: Loading glTF content from saved file.");
+            console.warn('Cesium: Loading glTF content from saved file.');
 
             // If the glTF content is missing or not valid JSON, then try to load the
             // model directly from the glTF file.
@@ -180,3 +183,4 @@ var CesiumView = function() {
         }
     };
 };
+})();

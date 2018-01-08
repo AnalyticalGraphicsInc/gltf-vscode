@@ -1,5 +1,8 @@
+/*global BABYLON,mainViewModel*/
+(function() {
+    'use strict';
 
-var BabylonView = function() {
+window.BabylonView = function() {
     // Tracks if this engine is currently the active engine.
     var enabled = false;
 
@@ -40,14 +43,14 @@ var BabylonView = function() {
     this.startPreview = function() {
         enabled = true;
         BABYLON.SceneLoader.ShowLoadingScreen = false;
-        canvas = document.getElementById("babylonRenderCanvas");
+        canvas = document.getElementById('babylonRenderCanvas');
         engine = new BABYLON.Engine(canvas, true);
         engine.enableOfflineSupport = false;
         scene = new BABYLON.Scene(engine);
         scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
 
-        var defaultBabylonReflection = document.getElementById("defaultBabylonReflection").textContent;
-        var rootPath = document.getElementById("gltfRootPath").textContent;
+        var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
+        var rootPath = document.getElementById('gltfRootPath').textContent;
         var gltfContent = document.getElementById('gltf').textContent;
 
         BABYLON.GLTFFileLoader.IncrementalLoading = false;
@@ -88,6 +91,7 @@ var BabylonView = function() {
             mainViewModel.errorText(error.toString());
         });
 
-        window.addEventListener("resize", onWindowResize);
+        window.addEventListener('resize', onWindowResize);
     };
 };
+})();
