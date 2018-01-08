@@ -7,6 +7,9 @@ npm-debug.log
 debug.log
 package-lock.json
 
+# For debugging
+engines/CesiumUnminified
+
 # Currently, VSCode insists on compiling the server to an output folder
 # named "server" at the root of the client, which is our workspace root.
 server/server.js*
