@@ -62,3 +62,8 @@ VSCode's Electron-based user interface.  Here are the steps:
 5. In the top of the Console tab of the remaining un-docked DevTools, click the pull-down and change `top` to `active-frame (webview.html)`.
 
 Now you can debug the HTML preview in the sandboxed iframe.
+
+## Code of Conduct
+
+To ensure an inclusive community, contributors and users in the Cesium community should follow the [code of conduct](./CODE_OF_CONDUCT.md).
+

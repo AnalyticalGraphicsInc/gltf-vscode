@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.4 - UNRELEASED
+
+* Added separate file for the Cesium [Code of Conduct](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/CODE_OF_CONDUCT.md). [#82](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/82)
+
 ### 2.1.3 - 2017-12-22
 
 * Fixed a broken animation control in the Cesium preview.
