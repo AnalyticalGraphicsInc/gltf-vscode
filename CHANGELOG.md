@@ -6,7 +6,7 @@
 * Fixed some bugs exposed by Project Polly from the Khronos Blender Exporter.
 * Updated to latest ThreeJS glTF loader for preview window.
 * Updated to Babylon 3.1.1 stable.
-* Added separate file for the Cesium [Code of Conduct](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/CODE_OF_CONDUCT.md). [#6129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/6129)
+* Added separate file for the Cesium [Code of Conduct](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/CODE_OF_CONDUCT.md). [#6129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/82)
 
 ### 2.1.2 - 2017-12-01
 
