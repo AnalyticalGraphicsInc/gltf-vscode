@@ -19,15 +19,15 @@ You can preview glTF files in a number of different rendering engines: BabylonJS
 Command name: `glTF: Export to GLB (Binary file)`\
 Command name: `glTF: Import from GLB`
 
-The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.
+The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension, often with references to external files such as texturemaps and binary mesh data.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.
 
-The `glTF: Export to GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary chunks, and the resulting file becomes a self-contained transportable file that can be easily shared.
+The `glTF: Export to GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary bufferViews, and the resulting file becomes a self-contained transportable file that can be easily shared.
 
-The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating separate files for each of the GLB binary chunks.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
+The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating a separate file for the binary and additional files for each of the included images.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
 
 * `Lantern.gltf` - The JSON structure.
 * `Lantern_data.bin` - The binary mesh data
-* `Lantern_img0.png` - Image file(s) extracted from the GLB's binary chunks
+* `Lantern_img0.png` - Image file(s) extracted from the GLB
 * `Lantern_img1.png`
 * `Lantern_img2.png`
 * `Lantern_img3.png`
