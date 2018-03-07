@@ -7,7 +7,12 @@ window.CesiumView = function() {
     var enabled = false;
     var scene = null;
     var canvas = null;
-    var clock = new Cesium.Clock();
+
+    // The model is placed at the North Pole so the star map is completely right-side up.
+    // But the pole doesn't get much sunlight.  STK says 23.444 degrees solar elevation
+    // on 20 Jun 2020 12:11:47.754.  But that puts the Sun straight behind the camera, so
+    // I moved it a little.  The Sun stays close to that elevation all day.
+    var currentTime = Cesium.JulianDate.fromIso8601('2020-06-20T14:00:00Z');
 
     function resize() {
         var zoomFactor = Cesium.defaultValue(window.devicePixelRatio, 1.0);
@@ -67,7 +72,6 @@ window.CesiumView = function() {
 
         scene.initializeFrame();
         resize();
-        var currentTime = clock.tick();
         scene.render(currentTime);
         Cesium.requestAnimationFrame(startRenderLoop);
     }
