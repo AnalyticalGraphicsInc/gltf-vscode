@@ -7,6 +7,7 @@
 * Updated Three.js to r90
 * Updated CesiumJS to 1.43
 * Updated README wording about how images are stored in GLB files. [#83](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/83)
+* Update glTF-Validator to 2.0.0-dev.1.7
 
 ### 2.1.3 - 2017-12-22
 
