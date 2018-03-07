@@ -6,6 +6,7 @@ test/**
 util/**
 src/**
 server/src/**
+engines/CesiumUnminified/**
 **/*.map
 .gitignore
 tsconfig.json
