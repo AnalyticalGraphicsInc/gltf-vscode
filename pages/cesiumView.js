@@ -33,9 +33,9 @@ window.CesiumView = function() {
         }
     }
 
-    function addAnimUpdate(model, anim) {
+    function subscribeToAnimUI(model, anim) {
         anim.active.subscribe(function(newValue) {
-            mainViewModel.oneAnimChanged();
+            mainViewModel.anyAnimChanged();
             if (!newValue) {
                 model.activeAnimations.remove(anim.animation);
                 anim.animation = undefined;
@@ -58,11 +58,11 @@ window.CesiumView = function() {
                 name: gltfAnimations[i].name || i,
                 active: ko.observable(false)
             };
-            addAnimUpdate(model, anim);
+            subscribeToAnimUI(model, anim);
             animations.push(anim);
         }
         mainViewModel.animations(animations);
-        mainViewModel.oneAnimChanged();
+        mainViewModel.anyAnimChanged();
     }
 
     function startRenderLoop() {

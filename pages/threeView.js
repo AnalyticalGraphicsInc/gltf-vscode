@@ -21,9 +21,9 @@ window.ThreeView = function() {
     var sceneList = null;
     var backgroundSubscription;
 
-    function addAnimUpdate(anim) {
+    function subscribeToAnimUI(anim) {
         anim.active.subscribe(function(newValue) {
-            mainViewModel.oneAnimChanged();
+            mainViewModel.anyAnimChanged();
             var action = anim.clipAction;
             if (!newValue) {
                 action.stop();
@@ -209,12 +209,12 @@ window.ThreeView = function() {
                         active: ko.observable(false),
                         clipAction: clipAction
                     };
-                    addAnimUpdate(anim);
+                    subscribeToAnimUI(anim);
                     koAnimations.push(anim);
                 }
 
                 mainViewModel.animations(koAnimations);
-                mainViewModel.oneAnimChanged();
+                mainViewModel.anyAnimChanged();
             }
 
             scene.add(object);
