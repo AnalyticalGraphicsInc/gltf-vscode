@@ -43,9 +43,14 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         }
 
         let name = node.name;
-        if (node.size !== undefined)
-        {
-            name += sprintf(' %0.1fKB', node.size / 1024);
+        if (node.size !== undefined) {
+            if (node.size < 1024) {
+                name += ` ${node.size}B`;
+            } else if (node.size > 1024 && node.size < (1024 * 1024)) {
+                name += sprintf(' %0.1fKB', node.size / 1024);
+            } else {
+                name += sprintf(' %0.1fMB', node.size / (1024 * 1024));
+            }
         }
         let treeItem: vscode.TreeItem = new vscode.TreeItem(name, treeState);
         treeItem.command = {
@@ -157,8 +162,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             range: new vscode.Range(this.editor.document.positionAt(this.pointers[''].value.pos), this.editor.document.positionAt(this.pointers[''].valueEnd.pos))
         };
 
-        if (this.gltf)
-        {
+        if (this.gltf) {
             this.createAsset(this.tree);
 
             if (this.gltf.scenes) {
@@ -185,14 +189,12 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
     }
 
     private populateSkinMap(skinIndex: number, skin: any) {
-        if (!this.skeletonMap.has(skin.skeleton))
-        {
+        if (!this.skeletonMap.has(skin.skeleton)) {
             this.skeletonMap.set(skin.skeleton, new Set<string>());
         }
         this.skeletonMap.get(skin.skeleton).add(skinIndex.toString());
         for (let joint of skin.joints) {
-            if (!this.skinMap.has(joint))
-            {
+            if (!this.skinMap.has(joint)) {
                 this.skinMap.set(joint, new Set<string>());
             }
             this.skinMap.get(joint).add(skinIndex.toString());
@@ -218,8 +220,14 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         };
         parent.children.push(assetObj);
 
-        if (this.gltf.meshes && this.gltf.meshes.length > 0)
-        {
+        let totalSize = this.editor.document.getText().length;
+        if (this.gltf.buffers && this.gltf.buffers.length > 0) {
+            for (let buffer of this.gltf.buffers) {
+                totalSize += buffer.byteLength;
+            }
+        }
+
+        if (this.gltf.meshes && this.gltf.meshes.length > 0) {
             let meshesPointer = this.pointers['/meshes'];
             let meshesObj: GltfNode = {
                 name: 'Meshes',
@@ -231,8 +239,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             };
             assetObj.children.push(meshesObj);
             let vertices = 0;
-            for (let index = 0; index < this.gltf.meshes.length; index++)
-            {
+            for (let index = 0; index < this.gltf.meshes.length; index++) {
                 let sizeInfo = this.createMesh(index.toString(), undefined, meshesObj, true);
                 meshesObj.size += sizeInfo.size;
                 vertices += sizeInfo.vertices;
@@ -240,8 +247,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             meshesObj.name += ` (${this.formatVertices(vertices)} vertices)`;
         }
 
-        if (this.gltf.animations && this.gltf.animations.length > 0)
-        {
+        if (this.gltf.animations && this.gltf.animations.length > 0) {
             let animationsPointer = this.pointers['/animations'];
             let animationObj: GltfNode = {
                 name: 'Animations',
@@ -252,14 +258,12 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
                 range: new vscode.Range(this.editor.document.positionAt(animationsPointer.value.pos), this.editor.document.positionAt(animationsPointer.valueEnd.pos))
             };
             assetObj.children.push(animationObj);
-            for (let index = 0; index < this.gltf.animations.length; index++)
-            {
+            for (let index = 0; index < this.gltf.animations.length; index++) {
                 animationObj.size += this.createAnimation(index.toString(), animationObj);
             }
         }
 
-        if (this.gltf.textures && this.gltf.textures.length > 0)
-        {
+        if (this.gltf.textures && this.gltf.textures.length > 0) {
             let texturePointer = this.pointers['/textures'];
             let textureObj: GltfNode = {
                 name: 'Textures',
@@ -270,11 +274,26 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
                 range: new vscode.Range(this.editor.document.positionAt(texturePointer.value.pos), this.editor.document.positionAt(texturePointer.valueEnd.pos))
             };
             assetObj.children.push(textureObj);
-            for (let index = 0; index < this.gltf.textures.length; index++)
-            {
-                textureObj.size += this.createTexture("Asset", { index: index.toString() }, textureObj, true);
+            for (let index = 0; index < this.gltf.textures.length; index++) {
+                textureObj.size += this.createTexture('"Asset', { index: index.toString() }, textureObj, true);
             }
+            totalSize += textureObj.size;
         }
+
+        assetObj.size = totalSize;
+        let otherSize = totalSize;
+        for (let childObj of assetObj.children) {
+            otherSize -= childObj.size;
+        }
+        let otherObj: GltfNode = {
+            name: 'Other',
+            children: [],
+            type: 'node',
+            parent: assetPointer,
+            size: otherSize,
+            range: new vscode.Range(this.editor.document.positionAt(assetPointer.value.pos), this.editor.document.positionAt(assetPointer.valueEnd.pos))
+        };
+        assetObj.children.push(otherObj);
     }
 
     private createAnimation(animationIndex: string, parent: GltfNode): number {
