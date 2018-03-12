@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.6 - UNRELEASED
+
+* Added size estimate breakdowns to the glTF tree view. [#88](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/88)
+
 ### 2.1.5 - 2018-03-12
 
 * Added animation controls to the ThreeJS preview window. [#86](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/86)
