@@ -40,7 +40,7 @@ var mainViewModel = window.mainViewModel = {
     animations: ko.observableArray([]),
     animPlayAllNone: ko.observable(ANIM_PLAY_NONE),
     animPlayAllNoneOptions: ko.observableArray([ANIM_PLAY_ALL, ANIM_PLAY_NONE]),
-    oneAnimChanged: () => {
+    anyAnimChanged: () => {
         // After any animation is toggled individually, we must check if all animations
         // have become the same state, or if there are different states in use now,
         // so that the All/None radio buttons can update accordingly.

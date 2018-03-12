@@ -1,4 +1,4 @@
-/*global THREE,mainViewModel*/
+/*global THREE,mainViewModel,ko*/
 (function() {
     'use strict';
 
@@ -20,6 +20,18 @@ window.ThreeView = function() {
     var clock = new THREE.Clock();
     var sceneList = null;
     var backgroundSubscription;
+
+    function subscribeToAnimUI(anim) {
+        anim.active.subscribe(function(newValue) {
+            mainViewModel.anyAnimChanged();
+            var action = anim.clipAction;
+            if (!newValue) {
+                action.stop();
+            } else {
+                action.play();
+            }
+        });
+    }
 
     function initScene() {
         container = document.getElementById('threeContainer');
@@ -175,12 +187,13 @@ window.ThreeView = function() {
                 object.scale.copy(sceneInfo.objectScale);
             }
 
-            var animations = gltf.animations;
-            if (animations && animations.length) {
+            var gltfAnimations = gltf.animations;
+            var koAnimations = [];
+            if (gltfAnimations && gltfAnimations.length) {
                 mixer = new THREE.AnimationMixer(object);
 
-                for (var i = 0; i < animations.length; i++) {
-                    var animation = animations[i];
+                for (let i = 0; i < gltfAnimations.length; i++) {
+                    var animation = gltfAnimations[i];
 
                     // There's .3333 seconds junk at the tail of the Monster animation that
                     // keeps it from looping cleanly. Clip it at 3 seconds
@@ -188,8 +201,20 @@ window.ThreeView = function() {
                         animation.duration = sceneInfo.animationTime;
                     }
 
-                    mixer.clipAction(animation).play();
+                    var clipAction = mixer.clipAction(animation);
+
+                    var anim = {
+                        index: i,
+                        name: gltfAnimations[i].name || i,
+                        active: ko.observable(false),
+                        clipAction: clipAction
+                    };
+                    subscribeToAnimUI(anim);
+                    koAnimations.push(anim);
                 }
+
+                mainViewModel.animations(koAnimations);
+                mainViewModel.anyAnimChanged();
             }
 
             scene.add(object);
@@ -251,6 +276,7 @@ window.ThreeView = function() {
             return;
         }
 
+        mainViewModel.animations([]);
         mixer.stopAllAction();
         window.removeEventListener('resize', onWindowResize, false);
     };

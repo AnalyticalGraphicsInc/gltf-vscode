@@ -12,7 +12,14 @@ window.CesiumView = function() {
     // But the pole doesn't get much sunlight.  STK says 23.444 degrees solar elevation
     // on 20 Jun 2020 12:11:47.754.  But that puts the Sun straight behind the camera, so
     // I moved it a little.  The Sun stays close to that elevation all day.
-    var currentTime = Cesium.JulianDate.fromIso8601('2020-06-20T14:00:00Z');
+    var startTime = Cesium.JulianDate.fromIso8601('2020-06-20T14:00:00Z');
+
+    // Still need to animate time forwards, to enable glTF animations.
+    var clock = new Cesium.Clock({
+        startTime: startTime,
+        currentTime: startTime,
+        shouldAnimate: true
+    });
 
     function resize() {
         var zoomFactor = Cesium.defaultValue(window.devicePixelRatio, 1.0);
@@ -33,9 +40,9 @@ window.CesiumView = function() {
         }
     }
 
-    function addAnimUpdate(model, anim) {
+    function subscribeToAnimUI(model, anim) {
         anim.active.subscribe(function(newValue) {
-            mainViewModel.oneAnimChanged();
+            mainViewModel.anyAnimChanged();
             if (!newValue) {
                 model.activeAnimations.remove(anim.animation);
                 anim.animation = undefined;
@@ -58,11 +65,11 @@ window.CesiumView = function() {
                 name: gltfAnimations[i].name || i,
                 active: ko.observable(false)
             };
-            addAnimUpdate(model, anim);
+            subscribeToAnimUI(model, anim);
             animations.push(anim);
         }
         mainViewModel.animations(animations);
-        mainViewModel.oneAnimChanged();
+        mainViewModel.anyAnimChanged();
     }
 
     function startRenderLoop() {
@@ -72,6 +79,7 @@ window.CesiumView = function() {
 
         scene.initializeFrame();
         resize();
+        var currentTime = clock.tick();
         scene.render(currentTime);
         Cesium.requestAnimationFrame(startRenderLoop);
     }
