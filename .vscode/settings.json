@@ -21,6 +21,7 @@
     "editor.tabSize": 4,
     "editor.detectIndentation": false,
     "jshint.enable": false,
+    "eslint.enable": true,
     "javascript.format.insertSpaceAfterCommaDelimiter": true,
     "javascript.format.insertSpaceAfterSemicolonInForStatements": true,
     "javascript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
