@@ -35,7 +35,7 @@ const gltfMimeTypes = {
     'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
 };
 
-enum ComponentType {
+export enum ComponentType {
     BYTE = 5120,
     UNSIGNED_BYTE = 5121,
     SHORT = 5122,
@@ -44,7 +44,7 @@ enum ComponentType {
     FLOAT = 5126
 };
 
-const ComponentTypeToBytesPerElement = {
+export const ComponentTypeToBytesPerElement = {
     5120: Int8Array.BYTES_PER_ELEMENT,
     5121: Uint8Array.BYTES_PER_ELEMENT,
     5122: Int16Array.BYTES_PER_ELEMENT,
@@ -53,7 +53,7 @@ const ComponentTypeToBytesPerElement = {
     5126: Float32Array.BYTES_PER_ELEMENT
 };
 
-enum AccessorType {
+export enum AccessorType {
     'SCALAR',
     'VEC2',
     'VEC3',
@@ -63,7 +63,7 @@ enum AccessorType {
     'MAT4'
 };
 
-const AccessorTypeToNumComponents = {
+export const AccessorTypeToNumComponents = {
     SCALAR: 1,
     VEC2: 2,
     VEC3: 3,
