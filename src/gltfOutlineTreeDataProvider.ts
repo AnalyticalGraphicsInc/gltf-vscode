@@ -275,7 +275,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             };
             assetObj.children.push(textureObj);
             for (let index = 0; index < this.gltf.textures.length; index++) {
-                textureObj.size += this.createTexture('"Asset', { index: index.toString() }, textureObj, true);
+                textureObj.size += this.createTexture('Asset', { index: index.toString() }, textureObj, true);
             }
             totalSize += textureObj.size;
         }
