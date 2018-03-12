@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.5 - UNRELEASED
+### 2.1.5 - 2018-03-12
 
 * Added animation controls to the ThreeJS preview window. [#86](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/86)
 * Fixed an issue where Cesium animations stopped, introduced in the previous version.
