@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.7 - UNRELEASED
+
+* Allow Cesium camera to move much closer to the model.
+
 ### 2.1.6 - 2018-03-12
 
 * Added size estimate breakdowns to the glTF tree view. [#88](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/88)
