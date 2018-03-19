@@ -263,22 +263,24 @@
         "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^8.0.58",
+        "@types/mocha": "^2.2.48",
+        "@types/node": "^8.9.5",
         "eslint": "^4.18.1",
         "eslint-config-cesium": "^3.0.0",
         "eslint-plugin-html": "^4.0.2",
-        "mocha": "^4.0.1",
+        "mocha": "^4.1.0",
         "typescript": "^2.7.2",
         "yargs": "^11.0.0"
     },
     "dependencies": {
-        "babylonjs": "^3.1.1",
+        "babylonjs": "^3.2.0-beta.1",
+        "babylonjs-loaders": "^3.2.0-beta.1",
+        "draco3dgltf": "^1.2.6",
         "gltf-import-export": "^1.0.7",
         "gltf-validator": "2.0.0-dev.1.7",
         "json-source-map": "^0.4.0",
         "sprintf-js": "^1.1.1",
-        "vscode": "^1.1.10",
-        "vscode-languageclient": "^3.5.0"
+        "vscode": "^1.1.13",
+        "vscode-languageclient": "^3.5.1"
     }
 }

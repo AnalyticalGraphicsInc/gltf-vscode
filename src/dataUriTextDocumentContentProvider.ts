@@ -5,9 +5,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as querystring from 'querystring';
+import * as draco3dgltf from 'draco3dgltf';
 import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
+const decoderModule = draco3dgltf.createDecoderModule({});
 
 export function atob(str): string {
     return Buffer.from(str, 'base64').toString('binary');
@@ -183,13 +185,126 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                     return atob(body);
                 }
             } else if (jsonPointer.startsWith('/accessors/')) {
-                let bufferView = glTF.bufferViews[data.bufferView];
-                let buffer = getBuffer(glTF, bufferView.buffer, document.fileName);
-                return this.formatAccessor(buffer, data, bufferView);
+                if (data.bufferView !== undefined) {
+                    let bufferView = glTF.bufferViews[data.bufferView];
+                    let buffer = getBuffer(glTF, bufferView.buffer, document.fileName);
+                    return this.formatAccessor(buffer, data, bufferView);
+                } else {
+                    return 'Accessor does not contain a bufferView';
+                }
             }
+        } else if (jsonPointer.includes('KHR_draco_mesh_compression')) {
+            return this.formatDraco(glTF, jsonPointer, document.fileName);
         }
 
         return 'Unknown:\n' + jsonPointer;
+    }
+
+    private formatDraco(glTF: any, jsonPointer: string, fileName: string): string {
+        const attrIndex = jsonPointer.lastIndexOf('/');
+        if (attrIndex == -1) {
+            return 'Invalid path:\n' + jsonPointer;
+        }
+        let attrName = jsonPointer.substr(attrIndex + 1);
+        const dracoIndex = jsonPointer.lastIndexOf('/', attrIndex - 1);
+        if (dracoIndex == -1) {
+            return 'Invalid path:\n' + jsonPointer;
+        }
+        const extIndex = jsonPointer.lastIndexOf('/', dracoIndex - 1);
+        if (extIndex == -1) {
+            return 'Invalid path:\n' + jsonPointer;
+        }
+        const primitiveIndex = jsonPointer.lastIndexOf('/', extIndex - 1);
+        if (primitiveIndex == -1) {
+            return 'Invalid path:\n' + jsonPointer;
+        }
+        const primitivePointer = jsonPointer.substring(0, primitiveIndex);
+        const primitive = getFromJsonPointer(glTF, primitivePointer);
+        const dracoExtension = primitive.extensions['KHR_draco_mesh_compression'];
+
+        let accessor;
+        if (attrName !== 'indices') {
+            accessor = glTF.accessors[primitive.attributes[attrName]];
+        }
+
+        let bufferView = glTF.bufferViews[dracoExtension.bufferView];
+        let glTFBuffer = getBuffer(glTF, bufferView.buffer, fileName);
+        const bufferOffset: number = bufferView.byteOffset || 0;
+        const bufferLength: number = bufferView.byteLength;
+        const bufferStride: number = bufferView.byteStride;
+        const bufferViewBuf: Buffer = glTFBuffer.slice(bufferOffset, bufferOffset + bufferLength);
+
+        const decoder = new decoderModule.Decoder();
+        const dracoBuffer = new decoderModule.DecoderBuffer();
+        let dracoGeometry;
+        let dracoMeshData;
+        let faceIndices;
+
+        try {
+            dracoBuffer.Init(new Int8Array(bufferViewBuf), bufferViewBuf.byteLength);
+            const geometryType = decoder.GetEncodedGeometryType(dracoBuffer);
+
+            let status;
+            switch (geometryType) {
+                case decoderModule.TRIANGULAR_MESH:
+                    dracoGeometry = new decoderModule.Mesh();
+                    status = decoder.DecodeBufferToMesh(dracoBuffer, dracoGeometry);
+                    break;
+                    case decoderModule.POINT_CLOUD:
+                    if (attrName === 'indices') {
+                        return "Indices only valid for TRIANGULAR_MESH geometry.";
+                    }
+                    dracoGeometry = new decoderModule.PointCloud();
+                    status = decoder.DecodeBufferToPointCloud(dracoBuffer, dracoGeometry);
+                    break;
+                default:
+                    return `Invalid geometry type ${geometryType}`;
+            }
+
+            if (!status.ok() || !dracoGeometry.ptr) {
+                return status.error_msg();
+            }
+
+            let result: string = '';
+            if (attrName === 'indices') {
+                const faceIndices = new decoderModule.DracoInt32Array();
+                for (let i = 0; i < dracoGeometry.num_faces(); i++) {
+                    decoder.GetFaceFromMesh(dracoGeometry, i, faceIndices);
+                    result += sprintf('%5d\n%5d\n%5d\n', faceIndices.GetValue(0), faceIndices.GetValue(1), faceIndices.GetValue(2));
+                }
+            } else {
+                const attributeId = getFromJsonPointer(glTF, jsonPointer);
+                const attribute = decoder.GetAttributeByUniqueId(dracoGeometry, attributeId);
+                dracoMeshData = new decoderModule.DracoFloat32Array();
+                decoder.GetAttributeFloatForAllPoints(dracoGeometry, attribute, dracoMeshData);
+                const numPoints = dracoGeometry.num_points();
+                const numComponents = attribute.num_components();
+                for (let i = 0; i < (numPoints * numComponents); i++) {
+                    const value = dracoMeshData.GetValue(i);
+                    if (i % numComponents == 0 && i !== 0) {
+                        result += '\n';
+                    }
+                    if (accessor.componentType === ComponentType.FLOAT) {
+                        result += sprintf('%11.5f', value) + ' ';
+                    } else {
+                        result += sprintf('%5d', value) + ' ';
+                    }
+                }
+            }
+            return result;
+        } finally {
+            if (faceIndices) {
+                decoderModule.destroy(faceIndices);
+            }
+            if (dracoMeshData) {
+                decoderModule.destroy(dracoMeshData);
+            }
+            if (dracoGeometry) {
+                decoderModule.destroy(dracoGeometry);
+            }
+            decoderModule.destroy(dracoBuffer);
+            decoderModule.destroy(decoder);
+        }
     }
 
     private buildArrayBuffer(arrayType: any, data: Buffer, byteOffset: number, count: number, numComponents: number, byteStride?: number): any {

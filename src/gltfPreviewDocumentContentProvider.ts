@@ -111,8 +111,8 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const scripts = [
             'engines/Cesium/Cesium.js',
-            'node_modules/babylonjs/dist/preview release/babylon.js',
-            'node_modules/babylonjs/dist/preview release/loaders/babylonjs.loaders.js',
+            'node_modules/babylonjs/babylon.max.js',
+            'node_modules/babylonjs-loaders/babylonjs.loaders.js',
             'engines/Three/three.min.js',
             'engines/Three/GLTFLoader.js',
             'engines/Three/OrbitControls.js',
@@ -124,6 +124,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         // Note that with the file: protocol, we must manually specify the UTF-8 charset.
         const content = this._mainHtml.replace('{assets}',
+            `<script type="text/x-draco-decoder" src="${this.getFilePath('engines/Draco/draco_decoder.js')}"></script>` +
             styles.map(s => `<link rel="stylesheet" href="${this.getFilePath(s)}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
             scripts.map(s => `<script type="text/javascript" charset="UTF-8" src="${this.getFilePath(s)}"></script>\n`).join(''));
