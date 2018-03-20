@@ -112,6 +112,16 @@ window.ThreeView = function() {
 
         loader = new THREE.GLTFLoader();
 
+        for (let i = 0; i < document.scripts.length; i++) {
+            if (document.scripts[i].type === "text/x-draco-decoder") {
+                let scriptPath = document.scripts[i].src;
+                let lastIndex = scriptPath.lastIndexOf('/');
+                THREE.DRACOLoader.setDecoderPath(scriptPath.substring(0, lastIndex + 1));
+            }
+        }
+
+        loader.setDRACOLoader( new THREE.DRACOLoader() );
+
         var url = sceneInfo.url;
 
         loader.load(url, function(data) {
