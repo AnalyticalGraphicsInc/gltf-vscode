@@ -2,6 +2,10 @@
 
 ### 2.1.7 - UNRELEASED
 
+* Add support for Draco mesh decompression.  Use "Peek Definition (Alt+F12)" to decode mesh data. [#90](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/90)
+* Update Babylon to 3.2.0-beta.1, enabling Draco mesh decompression.
+* Update ThreeJS to r91, enabling Draco mesh decompression.
+* Update Cesium to master@3f075ade3c6 (a pre-release of 1.44), enabling Draco mesh decompression.
 * Allow Cesium camera to move much closer to the model.
 
 ### 2.1.6 - 2018-03-12
