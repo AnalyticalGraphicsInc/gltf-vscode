@@ -112,13 +112,10 @@ window.ThreeView = function() {
 
         loader = new THREE.GLTFLoader();
 
-        for (let i = 0; i < document.scripts.length; i++) {
-            if (document.scripts[i].type === "text/x-draco-decoder") {
-                let scriptPath = document.scripts[i].src;
-                let lastIndex = scriptPath.lastIndexOf('/');
-                THREE.DRACOLoader.setDecoderPath(scriptPath.substring(0, lastIndex + 1));
-            }
-        }
+        var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
+        // Replace a slash followed by anything but a slash, to the end, with just a slash.
+        var dracoLoaderPath = dracoLoaderPathAndFile.replace(/\/[^\/]*$/, '/');
+        THREE.DRACOLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( new THREE.DRACOLoader() );
 
