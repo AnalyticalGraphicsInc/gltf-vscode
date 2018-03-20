@@ -84,6 +84,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             .get('environment')).replace('{extensionRootPath}', extensionRootPath.replace(/\/$/, ''));
         const defaultThreeReflection = String(vscode.workspace.getConfiguration('glTF.Three')
             .get('environment')).replace('{extensionRootPath}', extensionRootPath.replace(/\/$/, ''));
+        const dracoLoaderPath = extensionRootPath + 'engines/Draco/draco_decoder.js';
 
         // These strings are available in JavaScript by looking up the ID.  They provide the extension's root
         // path (needed for locating additional assets), various settings, and the glTF name and contents.
@@ -94,6 +95,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             { id: 'defaultEngine', text: defaultEngine },
             { id: 'defaultBabylonReflection', text: this.toUrl(defaultBabylonReflection) },
             { id: 'defaultThreeReflection', text: this.toUrl(defaultThreeReflection) },
+            { id: 'dracoLoaderPath', text: this.toUrl(dracoLoaderPath) },
             { id: 'babylonHtml', text: this._babylonHtml },
             { id: 'cesiumHtml', text: this._cesiumHtml },
             { id: 'threeHtml', text: this._threeHtml },
@@ -111,9 +113,10 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const scripts = [
             'engines/Cesium/Cesium.js',
-            'node_modules/babylonjs/dist/preview release/babylon.js',
-            'node_modules/babylonjs/dist/preview release/loaders/babylonjs.loaders.js',
+            'node_modules/babylonjs/babylon.max.js',
+            'node_modules/babylonjs-loaders/babylonjs.loaders.js',
             'engines/Three/three.min.js',
+            'engines/Three/DRACOLoader.js',
             'engines/Three/GLTFLoader.js',
             'engines/Three/OrbitControls.js',
             'pages/babylonView.js',

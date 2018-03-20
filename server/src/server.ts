@@ -409,6 +409,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     let inNodes: boolean = false;
     let inChannels: boolean = false;
     let inAccessors: boolean = false;
+    let inDraco: boolean = false;
     let currentPath: string = '';
     let currentAnimationPath: string;
     for (let i = firstValidIndex; i < numPathSegments; ++i) {
@@ -429,8 +430,27 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             else if (part === 'material') {
                 return makeLocation(pathData.jsonMap.pointers['/materials/' + result]);
             }
-            else if (part === 'input' || part === 'output' || part === 'indices' || part === 'inverseBindMatrices' || part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
+            else if (part === 'input' || part === 'output' || part === 'inverseBindMatrices') {
                 return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
+            }
+            else if (part === 'indices') {
+                let primitivePath = currentPath.substr(0, currentPath.length - '/indices'.length);
+                let primitive = getFromPath(pathData.jsonMap.data, primitivePath);
+                if (primitive && primitive.extensions && primitive.extensions['KHR_draco_mesh_compression']) {
+                    let indicesPath = primitivePath + '/extensions/KHR_draco_mesh_compression/attributes/indices';
+                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + indicesPath;
+                    return makeLocation(null, uri);
+                } else {
+                    return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
+                }
+            }
+            else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
+                if (inDraco) {
+                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                    return makeLocation(null, uri);
+                } else {
+                    return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
+                }
             }
             else if (part === 'node' || part === 'skeleton' || inNodes ) {
                 return makeLocation(pathData.jsonMap.pointers['/nodes/' + result]);
@@ -477,6 +497,8 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 }
             } else if (part === 'accessors') {
                 inAccessors = true;
+            } else if (part === 'KHR_draco_mesh_compression') {
+                inDraco = true;
             } else if (inAccessors && !path.includes('bufferView')) {
                 let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
                 return makeLocation(null, uri);

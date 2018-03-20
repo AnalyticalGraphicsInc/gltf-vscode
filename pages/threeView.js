@@ -112,6 +112,13 @@ window.ThreeView = function() {
 
         loader = new THREE.GLTFLoader();
 
+        var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
+        // Replace a slash followed by anything but a slash, to the end, with just a slash.
+        var dracoLoaderPath = dracoLoaderPathAndFile.replace(/\/[^\/]*$/, '/');
+        THREE.DRACOLoader.setDecoderPath(dracoLoaderPath);
+
+        loader.setDRACOLoader( new THREE.DRACOLoader() );
+
         var url = sceneInfo.url;
 
         loader.load(url, function(data) {
