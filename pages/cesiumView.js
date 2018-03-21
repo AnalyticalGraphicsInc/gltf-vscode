@@ -126,7 +126,7 @@ window.CesiumView = function() {
     function loadModel(model, resetCamera) {
         Cesium.when(model.readyPromise).then(function(model) {
             if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
-                model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.999, 0.0));
+                model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
             }
 
             if (resetCamera) {
