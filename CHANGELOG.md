@@ -1,8 +1,8 @@
 # Change Log
 
-### 2.1.7 - UNRELEASED
+### 2.1.7 - 2018-03-20
 
-* Add support for Draco mesh decompression.  Use "Peek Definition (Alt+F12)" to decode mesh data. [#90](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/90)
+* Add support for Draco mesh decompression.  Use "Peek Definition (Alt+F12)" on one of the mesh attributes inside the extension to decode mesh data. [#90](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/90)
 * Update Babylon to 3.2.0-beta.1, enabling Draco mesh decompression.
 * Update ThreeJS to r91, enabling Draco mesh decompression.
 * Update Cesium to master@3f075ade3c6 (a pre-release of 1.44), enabling Draco mesh decompression.
