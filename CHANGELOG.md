@@ -7,6 +7,7 @@
 * Update ThreeJS to r91, enabling Draco mesh decompression.
 * Update Cesium to master@3f075ade3c6 (a pre-release of 1.44), enabling Draco mesh decompression.
 * Allow Cesium camera to move much closer to the model.
+* Tweak Babylon camera to not zoom so fast.
 
 ### 2.1.6 - 2018-03-12
 

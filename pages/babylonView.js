@@ -58,6 +58,7 @@ window.BabylonView = function() {
         BABYLON.SceneLoader.Append(rootPath, 'data:' + gltfContent, scene, function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
+            scene.activeCamera.wheelPrecision = 50;
             // glTF assets use a +Z forward convention while the default camera faces +Z.
             // Rotate the camera to look at the front of the asset.
             scene.activeCamera.alpha += Math.PI;
