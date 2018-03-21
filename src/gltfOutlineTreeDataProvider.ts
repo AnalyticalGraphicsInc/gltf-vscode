@@ -13,7 +13,7 @@ export declare type GltfNodeType = 'animation' | 'material' | 'mesh' |  'node' |
 interface GltfNode {
     parent?: GltfNode;
     children: GltfNode[];
-    range: vscode.Range;
+    range?: vscode.Range;
     name: string;
     type: GltfNodeType;
     size?: number;
@@ -53,11 +53,14 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             }
         }
         let treeItem: vscode.TreeItem = new vscode.TreeItem(name, treeState);
-        treeItem.command = {
-            command: 'gltf.openGltfSelection',
-            title: '',
-            arguments: [node.range]
-        };
+        if (node.range !== undefined)
+        {
+            treeItem.command = {
+                command: 'gltf.openGltfSelection',
+                title: '',
+                arguments: [node.range]
+            };
+        }
         treeItem.iconPath = this.getIcon(node.type);
         treeItem.contextValue = node.type;
         return treeItem;
@@ -215,8 +218,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             name: 'Asset',
             children: [],
             type: 'node',
-            parent: parent,
-            range: new vscode.Range(this.editor.document.positionAt(assetPointer.value.pos), this.editor.document.positionAt(assetPointer.valueEnd.pos))
+            parent: parent
         };
         parent.children.push(assetObj);
 
@@ -285,15 +287,16 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         for (let childObj of assetObj.children) {
             otherSize -= childObj.size;
         }
-        let otherObj: GltfNode = {
-            name: 'Other',
-            children: [],
-            type: 'node',
-            parent: assetPointer,
-            size: otherSize,
-            range: new vscode.Range(this.editor.document.positionAt(assetPointer.value.pos), this.editor.document.positionAt(assetPointer.valueEnd.pos))
-        };
-        assetObj.children.push(otherObj);
+        if (otherSize > 0) {
+            let otherObj: GltfNode = {
+                name: 'Other',
+                children: [],
+                type: 'node',
+                parent: assetPointer,
+                size: otherSize
+            };
+            assetObj.children.push(otherObj);
+        }
     }
 
     private createAnimation(animationIndex: string, parent: GltfNode): number {
