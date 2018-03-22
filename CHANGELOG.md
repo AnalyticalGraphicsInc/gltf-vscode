@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.8 - UNRELEASED
+### 2.1.8 - 2018-03-22
 
 * Fixed an issue where the glTF outline for a Draco-compressed model could show negative sizes. [#91](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/91)
 * Fixed an issue where "Go To Definition" on a temporary document didn't work. [#89 (comment)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/89#issuecomment-374876626)
