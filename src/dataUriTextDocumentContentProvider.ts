@@ -139,14 +139,18 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
     }
 
     public async provideTextDocumentContent(uri: Uri): Promise<string> {
-        const filename = decodeURIComponent(uri.authority);
+        let fileName = decodeURIComponent(uri.authority);
         const query = querystring.parse<QueryDataUri>(uri.query);
         query.viewColumn = query.viewColumn || ViewColumn.Active.toString();
-        const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filename.toLowerCase());
-        if (!document) {
-            return 'ERROR: Can no longer find document in editor: ' + filename;
+        let glTFContent: string;
+        const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === fileName.toLowerCase());
+        if (document) {
+            fileName = document.fileName;
+            glTFContent = document.getText();
+        } else {
+            glTFContent = fs.readFileSync(fileName, 'UTF-8');
         }
-        const glTF = JSON.parse(document.getText());
+        const glTF = JSON.parse(glTFContent);
         let jsonPointer = uri.path;
         if (this.isShader(jsonPointer) && jsonPointer.endsWith('.glsl')) {
             jsonPointer = jsonPointer.substring(0, jsonPointer.length - 5);
@@ -158,7 +162,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                 let dataUri : string = data.uri;
                 if (!dataUri.startsWith('data:')) {
                     // Not a DataURI: Look up external reference.
-                    const name = decodeURI(Url.resolve(document.fileName, dataUri));
+                    const name = decodeURI(Url.resolve(fileName, dataUri));
                     const contents = fs.readFileSync(name);
                     dataUri = 'data:image;base64,' + btoa(contents);
                 }
@@ -187,14 +191,14 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
             } else if (jsonPointer.startsWith('/accessors/')) {
                 if (data.bufferView !== undefined) {
                     let bufferView = glTF.bufferViews[data.bufferView];
-                    let buffer = getBuffer(glTF, bufferView.buffer, document.fileName);
+                    let buffer = getBuffer(glTF, bufferView.buffer, fileName);
                     return this.formatAccessor(buffer, data, bufferView);
                 } else {
                     return 'Accessor does not contain a bufferView';
                 }
             }
         } else if (jsonPointer.includes('KHR_draco_mesh_compression')) {
-            return this.formatDraco(glTF, jsonPointer, document.fileName);
+            return this.formatDraco(glTF, jsonPointer, fileName);
         }
 
         return 'Unknown:\n' + jsonPointer;
