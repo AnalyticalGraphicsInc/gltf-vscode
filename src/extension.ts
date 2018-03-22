@@ -180,7 +180,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
                 encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
-                jsonPointer + '?viewColumn=' + ViewColumn.Two);
+                '?viewColumn=' + ViewColumn.Two + '#' + jsonPointer);
             await vscode.commands.executeCommand('vscode.open', previewUri, ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
         }

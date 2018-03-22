@@ -438,7 +438,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 let primitive = getFromPath(pathData.jsonMap.data, primitivePath);
                 if (primitive && primitive.extensions && primitive.extensions['KHR_draco_mesh_compression']) {
                     let indicesPath = primitivePath + '/extensions/KHR_draco_mesh_compression/attributes/indices';
-                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + indicesPath;
+                    let uri = 'gltf-dataUri:///' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + '#' + indicesPath;
                     return makeLocation(null, uri);
                 } else {
                     return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
@@ -446,7 +446,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             }
             else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
                 if (inDraco) {
-                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                    let uri = 'gltf-dataUri:///' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + '#' + currentPath;
                     return makeLocation(null, uri);
                 } else {
                     return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
@@ -492,7 +492,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
                     return makeLocation(null, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
                 } else {
-                    let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                    let uri = 'gltf-dataUri:///' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + '#' + currentPath;
                     return makeLocation(null, uri);
                 }
             } else if (part === 'accessors') {
@@ -500,7 +500,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             } else if (part === 'KHR_draco_mesh_compression') {
                 inDraco = true;
             } else if (inAccessors && !path.includes('bufferView')) {
-                let uri = 'gltf-dataUri://' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + currentPath;
+                let uri = 'gltf-dataUri:///' + encodeURIComponent(Uri.parse(textDocumentPosition.textDocument.uri).fsPath) + '#' + currentPath;
                 return makeLocation(null, uri);
             }
         }

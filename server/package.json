@@ -14,7 +14,7 @@
     "dependencies": {
         "gltf-validator": "2.0.0-dev.1.7",
         "json-source-map": "^0.4.0",
-        "vscode-languageserver": "3.5.0",
+        "vscode-languageserver": "^3.5.1",
         "vscode-uri": "^1.0.1"
     },
     "scripts": {
