@@ -1,5 +1,11 @@
 # Change Log
 
+### 2.1.8 - UNRELEASED
+
+* Fixed an issue where the glTF outline for a Draco-compressed model could show negative sizes. [#91](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/91)
+* Fixed an issue where "Go To Definition" on a temporary document didn't work. [#89 (comment)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/89#issuecomment-374876626)
+* Fix Babylon camera zoom speed to be relative to distance from model.
+
 ### 2.1.7 - 2018-03-20
 
 * Add support for Draco mesh decompression.  Use "Peek Definition (Alt+F12)" on one of the mesh attributes inside the extension to decode mesh data. [#90](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/90)
