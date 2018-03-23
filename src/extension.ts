@@ -154,8 +154,6 @@ export function activate(context: vscode.ExtensionContext) {
         const isImage = dataPreviewProvider.isImage(jsonPointer);
         const isAccessor = dataPreviewProvider.isAccessor(jsonPointer);
 
-        let previewUri;
-
         if (!isImage && !isShader && !isAccessor) {
             vscode.window.showErrorMessage('This feature currently works only with accessors, images, and shaders.');
             console.log('gltf-vscode: No preview for: ' + jsonPointer);
@@ -178,9 +176,8 @@ export function activate(context: vscode.ExtensionContext) {
                 jsonPointer += '.glsl';
             }
 
-            previewUri = Uri.parse(dataPreviewProvider.UriPrefix +
-                encodeURIComponent(vscode.window.activeTextEditor.document.fileName) +
-                jsonPointer + '?viewColumn=' + ViewColumn.Two);
+            const previewUri = Uri.parse(dataPreviewProvider.UriPrefix + jsonPointer + '?viewColumn=' + ViewColumn.Two + '#' +
+                encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
             await vscode.commands.executeCommand('vscode.open', previewUri, ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
         }
