@@ -109,7 +109,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
 
-    public UriPrefix = 'gltf-dataUri:///';
+    public UriPrefix = 'gltf-dataUri://x/';
 
     constructor(context: ExtensionContext) {
         this._context = context;
