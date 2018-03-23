@@ -406,7 +406,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     }
 
     function makeDataUri(doc: TextDocumentPositionParams, path: string): string {
-        return 'gltf-dataUri://x/' + encodeURIComponent(Uri.parse(doc.textDocument.uri).fsPath) + '#' + path;
+        return 'gltf-dataUri:' + path + '#' + encodeURIComponent(Uri.parse(doc.textDocument.uri).fsPath);
     }
 
     const firstValidIndex = 1; // Because the path has a leading slash.

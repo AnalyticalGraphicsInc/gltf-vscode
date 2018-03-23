@@ -109,7 +109,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
     private _onDidChange = new EventEmitter<Uri>();
     private _context: ExtensionContext;
 
-    public UriPrefix = 'gltf-dataUri://x/';
+    public UriPrefix = 'gltf-dataUri:';
 
     constructor(context: ExtensionContext) {
         this._context = context;
@@ -139,24 +139,18 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
     }
 
     public async provideTextDocumentContent(uri: Uri): Promise<string> {
-        let encodedFilename = uri.path;
-        if (encodedFilename.length > 0) {
-            encodedFilename = encodedFilename.substr(1);  // trim the initial '/'
-        }
-
-        let fileName = decodeURIComponent(encodedFilename);
+        const fileName = decodeURIComponent(uri.fragment);
         const query = querystring.parse<QueryDataUri>(uri.query);
         query.viewColumn = query.viewColumn || ViewColumn.Active.toString();
         let glTFContent: string;
-        const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName.toLowerCase() === fileName.toLowerCase());
+        const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
         if (document) {
-            fileName = document.fileName;
             glTFContent = document.getText();
         } else {
             glTFContent = fs.readFileSync(fileName, 'UTF-8');
         }
         const glTF = JSON.parse(glTFContent);
-        let jsonPointer = uri.fragment;
+        let jsonPointer = uri.path;
         if (this.isShader(jsonPointer) && jsonPointer.endsWith('.glsl')) {
             jsonPointer = jsonPointer.substring(0, jsonPointer.length - 5);
         }
@@ -181,7 +175,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                         if (vscode.window.activeTextEditor == null || vscode.window.activeTextEditor.document != document || query.viewColumn != ViewColumn.Active.toString()) {
                             vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                         }
-                        let previewUri: Uri = Uri.parse(this.UriPrefix + encodeURIComponent(encodedFilename) + '?previewHtml=true' + '#' + uri.fragment);
+                        const previewUri: Uri = Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
                         await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
                         return '';
                     } else {
