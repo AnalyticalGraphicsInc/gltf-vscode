@@ -46,10 +46,10 @@ window.BabylonView = function() {
             mainViewModel.anyAnimChanged();
             var animGroup = anim.animationGroup;
             if (!newValue) {
-                animGroup.pause();
                 animGroup.reset();
+                animGroup.stop();
             } else {
-                animGroup.restart();
+                animGroup.start(true);
             }
         });
     }
@@ -63,6 +63,10 @@ window.BabylonView = function() {
         engine.enableOfflineSupport = false;
         scene = new BABYLON.Scene(engine);
         scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
+
+        BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
+            plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+        });
 
         var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
         var rootPath = document.getElementById('gltfRootPath').textContent;
@@ -79,13 +83,7 @@ window.BabylonView = function() {
             let koAnimations = [];
             for (let i = 0; i < numAnimations; ++i) {
                 let animGroup = scene.animationGroups[i];
-                if (!animGroup.isStarted) {
-                    animGroup.start(true);
-                }
-                animGroup.pause();
-                animGroup.reset();
-
-                var anim = {
+                let anim = {
                     index: i,
                     name: animGroup.name || i,
                     active: ko.observable(false),
