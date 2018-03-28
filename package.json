@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.1.8",
+    "version": "2.1.9",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -273,8 +273,8 @@
         "yargs": "^11.1.0"
     },
     "dependencies": {
-        "babylonjs": "^3.2.0-beta.1",
-        "babylonjs-loaders": "^3.2.0-beta.1",
+        "babylonjs": "^3.2.0-beta.3",
+        "babylonjs-loaders": "^3.2.0-beta.3",
         "draco3dgltf": "^1.2.6",
         "gltf-import-export": "^1.0.7",
         "gltf-validator": "2.0.0-dev.1.7",

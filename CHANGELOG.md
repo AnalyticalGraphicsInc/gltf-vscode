@@ -1,9 +1,10 @@
 # Change Log
 
-### 2.1.9 - UNRELEASED
+### 2.1.9 - 2018-03-27
 
 * Fixed an issue with previewing data from a temporary document on a case-sensitive file system. [#95](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/95)
 * Added animation controls to Babylon preview UI. [#97](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/97)
+* Update Babylon to 3.2.0-beta.3
 
 ### 2.1.8 - 2018-03-22
 
