@@ -1,4 +1,4 @@
-/*global BABYLON,mainViewModel*/
+/*global BABYLON,mainViewModel,ko*/
 (function() {
     'use strict';
 
@@ -23,6 +23,7 @@ window.BabylonView = function() {
             backgroundSubscription.dispose();
             backgroundSubscription = undefined;
         }
+        mainViewModel.animations([]);
         enabled = false;
         window.removeEventListener('resize', onWindowResize);
         engine.stopRenderLoop(render);
@@ -40,6 +41,19 @@ window.BabylonView = function() {
         engine.resize();
     }
 
+    function subscribeToAnimUI(anim) {
+        anim.active.subscribe(function(newValue) {
+            mainViewModel.anyAnimChanged();
+            var animGroup = anim.animationGroup;
+            if (!newValue) {
+                animGroup.reset();
+                animGroup.stop();
+            } else {
+                animGroup.start(true);
+            }
+        });
+    }
+
     this.startPreview = function() {
         enabled = true;
         BABYLON.DracoCompression.DecoderUrl = document.getElementById('dracoLoaderPath').textContent;
@@ -50,6 +64,10 @@ window.BabylonView = function() {
         scene = new BABYLON.Scene(engine);
         scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
 
+        BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
+            plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+        }, undefined, undefined, undefined, true);
+
         var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
         var rootPath = document.getElementById('gltfRootPath').textContent;
         var gltfContent = document.getElementById('gltf').textContent;
@@ -59,6 +77,24 @@ window.BabylonView = function() {
             scene.createDefaultCameraOrLight(true);
             scene.activeCamera.attachControl(canvas);
             scene.activeCamera.wheelDeltaPercentage = 0.005;
+
+            // Hook up animations to the UI.
+            let numAnimations = scene.animationGroups.length;
+            let koAnimations = [];
+            for (let i = 0; i < numAnimations; ++i) {
+                let animGroup = scene.animationGroups[i];
+                let anim = {
+                    index: i,
+                    name: animGroup.name || i,
+                    active: ko.observable(false),
+                    animationGroup: animGroup
+                };
+                subscribeToAnimUI(anim);
+                koAnimations.push(anim);
+            }
+            mainViewModel.animations(koAnimations);
+            mainViewModel.anyAnimChanged();
+
             // glTF assets use a +Z forward convention while the default camera faces +Z.
             // Rotate the camera to look at the front of the asset.
             scene.activeCamera.alpha += Math.PI;
