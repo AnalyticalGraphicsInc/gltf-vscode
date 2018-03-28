@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.10 - 2018-03-28
+
+* Update Khronos glTF-Validator to 2.0.0-dev.1.8
+
 ### 2.1.9 - 2018-03-27
 
 * Fixed an issue with previewing data from a temporary document on a case-sensitive file system. [#95](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/95)
