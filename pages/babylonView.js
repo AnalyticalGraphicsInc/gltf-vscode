@@ -66,7 +66,7 @@ window.BabylonView = function() {
 
         BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
             plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
-        });
+        }, undefined, undefined, undefined, true);
 
         var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
         var rootPath = document.getElementById('gltfRootPath').textContent;
