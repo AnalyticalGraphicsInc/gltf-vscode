@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.11 - UNRELEASED
+
+* Add error reporting to ThreeJS preview window.
+
 ### 2.1.10 - 2018-03-28
 
 * Update Khronos glTF-Validator to 2.0.0-dev.1.8

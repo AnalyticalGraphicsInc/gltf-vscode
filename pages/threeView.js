@@ -139,7 +139,6 @@ window.ThreeView = function() {
             object.traverse(function(node) {
                 if (node.material && 'envMap' in node.material) {
                     node.material.envMap = envMap;
-                    node.material.normalScale.x = -1; // This fixes normal maps for ThreeJS.
                     node.material.needsUpdate = true;
                 }
             });
@@ -226,6 +225,9 @@ window.ThreeView = function() {
 
             scene.add(object);
             onWindowResize();
+        }, undefined, function(error) {
+            console.error(error);
+            mainViewModel.errorText(error.stack);
         });
 
         orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
