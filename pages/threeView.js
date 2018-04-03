@@ -78,6 +78,7 @@ window.ThreeView = function() {
         renderer.setClearColor(0x222222);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.gammaOutput = true;
 
         if (sceneInfo.shadows) {
             renderer.shadowMap.enabled = true;
