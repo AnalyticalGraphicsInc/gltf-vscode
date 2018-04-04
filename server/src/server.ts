@@ -522,11 +522,13 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
     let path = pathData.path;
 
     if (path.startsWith('/images/')) {
+        let splitPath = path.split('/');
+        if (splitPath.length > 3) {
+            path = splitPath.slice(0, 3).join('/');
+        }
         let imageData = getFromPath(pathData.jsonMap.data, path);
-        if (imageData) {
-            if (!path.endsWith('/uri')) {
-                imageData = imageData.uri;
-            }
+        if (imageData && imageData.uri) {
+            imageData = imageData.uri;
             if (!imageData.startsWith('data:')) {
                 imageData = Url.resolve(textDocumentPosition.textDocument.uri, imageData);
             }
