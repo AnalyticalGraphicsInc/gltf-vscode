@@ -10,3 +10,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to gltf-
    * [Howard Wolosky](https://github.com/HowardWolosky)
    * [David Catuhe](https://github.com/deltakosh)
    * [Jamie Marconi](https://github.com/najadojo)
+   * [Johan Bowald](https://github.com/bowald)
