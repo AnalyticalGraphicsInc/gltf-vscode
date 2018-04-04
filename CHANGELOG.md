@@ -2,6 +2,7 @@
 
 ### 2.1.11 - UNRELEASED
 
+* Fixed a problem that made ThreeJS models too dark. [#99](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/99)
 * Add error reporting to ThreeJS preview window.
 
 ### 2.1.10 - 2018-03-28
