@@ -7,6 +7,7 @@
 * Fixed an issue with hovering image MIME types. [#101](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/101)
 * Update Babylon to 3.2.0-beta.4
 * Update Khronos glTF-Validator to 2.0.0-dev.2.0
+* Update Cesium to master@091200cd096 (version 1.44 plus two glTF fixes that got merged just afterwards)
 
 ### 2.1.10 - 2018-03-28
 
