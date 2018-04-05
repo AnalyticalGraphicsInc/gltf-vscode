@@ -2,9 +2,11 @@
 
 ### 2.1.11 - UNRELEASED
 
-* Fixed a problem that made ThreeJS models too dark. [#99](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/99)
+* Fixed a problem that made models in the ThreeJS preview too dark. [#99](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/99)
 * Add error reporting to ThreeJS preview window.
 * Fixed an issue with hovering image MIME types. [#101](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/101)
+* Update Babylon to 3.2.0-beta.4
+* Update Khronos glTF-Validator to 2.0.0-dev.2.0
 
 ### 2.1.10 - 2018-03-28
 

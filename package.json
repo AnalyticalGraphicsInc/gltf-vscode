@@ -273,11 +273,11 @@
         "yargs": "^11.1.0"
     },
     "dependencies": {
-        "babylonjs": "^3.2.0-beta.3",
-        "babylonjs-loaders": "^3.2.0-beta.3",
+        "babylonjs": "^3.2.0-beta.4",
+        "babylonjs-loaders": "^3.2.0-beta.4",
         "draco3dgltf": "^1.2.6",
         "gltf-import-export": "^1.0.7",
-        "gltf-validator": "2.0.0-dev.1.8",
+        "gltf-validator": "2.0.0-dev.2.0",
         "json-source-map": "^0.4.0",
         "sprintf-js": "^1.1.1",
         "vscode": "^1.1.14",
