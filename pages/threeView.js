@@ -48,15 +48,12 @@ window.ThreeView = function() {
         var spot1 = null;
 
         if (sceneInfo.addLights) {
-            var ambient = new THREE.AmbientLight(0x222222);
-            scene.add(ambient);
-
-            var directionalLight = new THREE.DirectionalLight(0xcccccc);
-            directionalLight.position.set(-1, 0, -2).normalize();
-            scene.add(directionalLight);
+          var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 1.2);
+          scene.add(hemispheric);
 
             if (sceneInfo.shadows) {
-                spot1 = new THREE.SpotLight(0xffffff, 1);
+                hemispheric.intensity = 0.5;
+                spot1 = new THREE.SpotLight(0xffffff, 0.7);
                 spot1.position.set(10, 20, 10);
                 spot1.angle = 0.25;
                 spot1.distance = 1024;
@@ -66,10 +63,6 @@ window.ThreeView = function() {
                 spot1.shadow.mapSize.width = 2048;
                 spot1.shadow.mapSize.height = 2048;
                 scene.add(spot1);
-            } else {
-                var directionalLight2 = new THREE.DirectionalLight(0xdddddd);
-                directionalLight2.position.set(1, 2, 2).normalize();
-                scene.add(directionalLight2);
             }
         }
 
