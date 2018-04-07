@@ -152,6 +152,10 @@ window.ThreeView = function() {
 
                 orbitControls.reset();
                 orbitControls.maxDistance = modelSize * 50;
+                orbitControls.enableDamping = true;
+                orbitControls.dampingFactor = 0.07;
+                orbitControls.rotateSpeed = 0.07;
+                orbitControls.panSpeed = 0.07;
 
                 object.position.x = -modelCenter.x;
                 object.position.y = -modelCenter.y;
