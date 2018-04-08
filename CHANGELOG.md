@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.1.12 - UNRELEASED
+
+* Tweak lighting setup in ThreeJS view. [#104](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/104)
+* Update Khronos glTF-Validator to 2.0.0-dev.2.1
+
 ### 2.1.11 - 2018-04-04
 
 * Fixed a problem that made models in the ThreeJS preview too dark. [#99](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/99)
