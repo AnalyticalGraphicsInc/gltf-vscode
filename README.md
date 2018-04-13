@@ -99,7 +99,7 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 ### Reflection Environments
 
-* `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](http://doc.babylonjs.com/overviews/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
+* `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
 
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  There are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The files must be in a format usable on the web, such as PNG or JPEG.
 
