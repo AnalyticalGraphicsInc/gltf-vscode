@@ -55,7 +55,7 @@
                 "glTF.Babylon.environment": {
                     "type": "string",
                     "default": "{extensionRootPath}/environments/babylon/countrySpecularHDR.dds",
-                    "description": "The path to a BabylonJS-ready DDS environment file.  See: http://doc.babylonjs.com/overviews/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image"
+                    "description": "The path to a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image"
                 },
                 "glTF.Three.environment": {
                     "type": "string",
