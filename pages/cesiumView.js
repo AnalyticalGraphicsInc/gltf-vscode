@@ -7,6 +7,7 @@ window.CesiumView = function() {
     var enabled = false;
     var scene = null;
     var canvas = null;
+    var fixLogo = true;
 
     // The model is placed at the North Pole so the star map is completely right-side up.
     // But the pole doesn't get much sunlight.  STK says 23.444 degrees solar elevation
@@ -82,6 +83,14 @@ window.CesiumView = function() {
         var currentTime = clock.tick();
         scene.render(currentTime);
         Cesium.requestAnimationFrame(startRenderLoop);
+
+        if (fixLogo) {
+            fixLogo = false;
+            const element = document.querySelector('.cesium-credit-logoContainer img');
+            if (element) {
+                element.src = Cesium.buildModuleUrl('Assets/Images/cesium_credit.png');
+            }
+        }
     }
 
     function setCamera(scene, model) {
