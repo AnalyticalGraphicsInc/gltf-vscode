@@ -116,6 +116,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             'node_modules/babylonjs/babylon.max.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.js',
             'engines/Three/three.min.js',
+            'engines/Three/DDSLoader.js',
             'engines/Three/DRACOLoader.js',
             'engines/Three/GLTFLoader.js',
             'engines/Three/OrbitControls.js',
