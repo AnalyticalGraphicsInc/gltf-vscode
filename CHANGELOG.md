@@ -8,6 +8,7 @@
 * Update Babylon to 3.2.0-rc.1
 * Update ThreeJS to r92
 * Update Cesium to master@7307f816c1e4ed (post v1.44)
+* Fix Cesium logo. [#105](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/105)
 
 ### 2.1.11 - 2018-04-04
 
