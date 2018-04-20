@@ -5,6 +5,8 @@
 * Tweak lighting setup in ThreeJS view. [#104](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/104)
 * Update Khronos glTF-Validator to 2.0.0-dev.2.1
 * Fix broken documentation link in Babylon settings. [#107](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/107)
+* Update Babylon to 3.2.0-rc.1
+* Update ThreeJS to r92
 
 ### 2.1.11 - 2018-04-04
 

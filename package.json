@@ -269,12 +269,12 @@
         "eslint-config-cesium": "^3.0.0",
         "eslint-plugin-html": "^4.0.3",
         "mocha": "^4.1.0",
-        "typescript": "^2.8.1",
+        "typescript": "^2.8.3",
         "yargs": "^11.1.0"
     },
     "dependencies": {
-        "babylonjs": "^3.2.0-beta.5",
-        "babylonjs-loaders": "^3.2.0-beta.4",
+        "babylonjs": "^3.2.0-rc.1",
+        "babylonjs-loaders": "^3.2.0-rc.1",
         "draco3dgltf": "^1.2.7",
         "gltf-import-export": "^1.0.8",
         "gltf-validator": "2.0.0-dev.2.1",
