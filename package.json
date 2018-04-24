@@ -141,6 +141,14 @@
             {
                 "command": "gltf.importGlbFile",
                 "title": "glTF: Import from GLB"
+            },
+            {
+                "command": "gltf.importAnimation",
+                "title": "glTF: Import animation"
+            },
+            {
+                "command": "gltf.exportAnimation",
+                "title": "glTF: Export animation"
             }
         ],
         "keybindings": [
@@ -160,6 +168,18 @@
                 "command": "gltf.exportGlbFile",
                 "key": "alt+shift+s e",
                 "mac": "alt+shift+s e",
+                "when": "editorTextFocus && gltfFileActive"
+            },
+            {
+                "command": "gltf.importAnimation",
+                "key": "alt+i",
+                "mac": "alt+i",
+                "when": "editorTextFocus && gltfFileActive"
+            },
+            {
+                "command": "gltf.exportAnimation",
+                "key": "alt+o",
+                "mac": "alt+o",
                 "when": "editorTextFocus && gltfFileActive"
             }
         ],
