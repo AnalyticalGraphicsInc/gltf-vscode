@@ -118,7 +118,9 @@ Press <kbd>ALT</kbd> + <kbd>i</kbd> on an animation sampler to import values int
 },
 ```
 
-Modify the `vscode_gltf_input` and `vscode_gltf_output` arrays for your needs and then press <kbd>ALT</kbd> + <kbd>o</kbd> to rewrite the glTF buffer and JSON with new values.
+Modify the `vscode_gltf_input` and `vscode_gltf_output` arrays for your needs and then press <kbd>ALT</kbd> + <kbd>o</kbd> to rewrite the glTF buffer and JSON with new values. **Warning** this will overwrite the existing binary buffer and can not be undone. Save the edited document and use `glTF: Preview 3D Model` to view your changes.
+
+New samplers can be created as well simply use `-1` for the accessor reference and new accessors will be automatically created.
 
 ## Extension Settings
 

@@ -536,21 +536,33 @@ export function activate(context: vscode.ExtensionContext) {
         for (const key of ['input', 'output']) {
             const accessorId = animationPointer.json[key];
             const accessor = glTF.accessors[accessorId];
-            const bufferView = glTF.bufferViews[accessor.bufferView];
-            const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
-            let accessorValues = getAccessorArrayBuffer(buffer, accessor, bufferView);
+            let accessorValues = [];
+            if (accessor != undefined) {
+                const bufferView = glTF.bufferViews[accessor.bufferView];
+                const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
+                accessorValues = getAccessorArrayBuffer(buffer, accessor, bufferView);
+            }
             animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(accessorValues);
-            animationPointer.json.extras['vscode_gltf_type'] = accessor.type;
+            animationPointer.json.extras['vscode_gltf_type'] = accessor ? accessor.type : 'SCALAR';
         }
 
         const pointer = map.pointers[animationPointer.path];
 
-        const newJson = JSON.stringify(animationPointer.json);
+        const tabSize = activeTextEditor.options.tabSize as number;
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        let newJson = JSON.stringify(animationPointer.json, null, space);
+        const newJsonLines = newJson.split(/\n/);
+        const fullTab = new Array(5).join(space);
+        for (let i = 1; i < newJsonLines.length; i++) {
+            newJsonLines[i] = fullTab + newJsonLines[i];
+        }
+        newJson = newJsonLines.join('\n');
+
+        const newRange = new vscode.Range(pointer.value.line, pointer.value.column,
+            pointer.valueEnd.line, pointer.valueEnd.column);
         await activeTextEditor.edit(editBuilder => {
-            editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column,
-                pointer.valueEnd.line, pointer.valueEnd.column), newJson);
+            editBuilder.replace(newRange, newJson);
         });
-        await vscode.commands.executeCommand('editor.action.formatDocument', activeTextEditor.document.uri);
     }));
 
     //
@@ -602,9 +614,13 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         const inputAccessor = glTF.accessors[animationPointer.json.input];
-        const bufferView = glTF.bufferViews[inputAccessor.bufferView];
-        const bufferJson = glTF.buffers[bufferView.buffer];
-        const bufferData = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
+        let bufferIndex = 0;
+        if (inputAccessor != undefined) {
+            const bufferView = glTF.bufferViews[inputAccessor.bufferView];
+            bufferIndex = bufferView.buffer;
+        }
+        const bufferJson = glTF.buffers[bufferIndex];
+        const bufferData = getBuffer(glTF, bufferIndex.toString(), activeTextEditor.document.fileName);
         const alignedLength = (value: number) => {
             const alignValue = 4;
             if (value == 0) {
@@ -647,9 +663,17 @@ export function activate(context: vscode.ExtensionContext) {
                 "max": max,
                 "min": min
             };
-            glTF.accessors[animationPointer.json[accessorType]] = accessor;
+
+            const accessorId = animationPointer.json[accessorType];
+            if (glTF.accessors[accessorId] == undefined) {
+                animationPointer.json[accessorType] = glTF.accessors.length;
+                glTF.accessors.push(accessor);
+            } else {
+                glTF.accessors[accessorId] = accessor;
+            }
+
             const newBufferView = {
-                "buffer": bufferView.buffer,
+                "buffer": bufferIndex,
                 "byteOffset": bufferOffset,
                 "byteLength": float32Values.byteLength,
             };
@@ -682,9 +706,19 @@ export function activate(context: vscode.ExtensionContext) {
         fs.writeFileSync(targetFilename, finalBuffer, 'binary');
 
         bufferJson.byteLength = finalBuffer.length;
-        const newJson = JSON.stringify(glTF, null, '  ');
-        await activeTextEditor.document.save();
-        fs.writeFileSync(activeTextEditor.document.fileName, newJson, 'utf8');
+        const tabSize = activeTextEditor.options.tabSize as number;
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        const newJson = JSON.stringify(glTF, null, space);
+
+        const newRange = new vscode.Range(0, 0, activeTextEditor.document.lineCount + 1, 0);
+        await activeTextEditor.edit(editBuilder => {
+            editBuilder.replace(newRange, newJson);
+        });
+
+        const newMap = tryGetJsonMap();
+        const newPointer = newMap.pointers[animationPointer.path];
+
+        activeTextEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
     }));
 
     //
