@@ -685,26 +685,9 @@ export function activate(context: vscode.ExtensionContext) {
             outputBuffers.push(Buffer.from(float32Values.buffer));
         }
 
-        const createBufferFilename = !bufferJson.hasOwnProperty('uri') || bufferJson.uri.startsWith('data:');
-
-        let binFilename = bufferJson.uri;
-        if (createBufferFilename) {
-            let targetBasename = activeTextEditor.document.fileName;
-            if (path.extname(activeTextEditor.document.fileName).length > 1) {
-                const components = activeTextEditor.document.fileName.split('.');
-                components.pop();
-                targetBasename = components.join('.');
-            }
-            binFilename = targetBasename + '_data.bin';
-        }
-        bufferJson.uri = binFilename;
-
-        const dir = path.dirname(activeTextEditor.document.fileName);
-        const targetFilename = path.join(dir, binFilename);
-
         const finalBuffer = Buffer.concat(outputBuffers);
-        fs.writeFileSync(targetFilename, finalBuffer, 'binary');
 
+        bufferJson.uri = 'data:application/octet-stream;base64,' + finalBuffer.toString('base64');
         bufferJson.byteLength = finalBuffer.length;
         const tabSize = activeTextEditor.options.tabSize as number;
         const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
