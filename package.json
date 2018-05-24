@@ -141,6 +141,14 @@
             {
                 "command": "gltf.importGlbFile",
                 "title": "glTF: Import from GLB"
+            },
+            {
+                "command": "gltf.importAnimation",
+                "title": "glTF: Import animation"
+            },
+            {
+                "command": "gltf.exportAnimation",
+                "title": "glTF: Export animation"
             }
         ],
         "keybindings": [
@@ -160,6 +168,18 @@
                 "command": "gltf.exportGlbFile",
                 "key": "alt+shift+s e",
                 "mac": "alt+shift+s e",
+                "when": "editorTextFocus && gltfFileActive"
+            },
+            {
+                "command": "gltf.importAnimation",
+                "key": "alt+i",
+                "mac": "alt+i",
+                "when": "editorTextFocus && gltfFileActive"
+            },
+            {
+                "command": "gltf.exportAnimation",
+                "key": "alt+o",
+                "mac": "alt+o",
                 "when": "editorTextFocus && gltfFileActive"
             }
         ],
@@ -264,7 +284,7 @@
     },
     "devDependencies": {
         "@types/mocha": "^2.2.48",
-        "@types/node": "^8.10.8",
+        "@types/node": "^8.10.12",
         "eslint": "^4.19.1",
         "eslint-config-cesium": "^3.0.0",
         "eslint-plugin-html": "^4.0.3",
@@ -273,14 +293,14 @@
         "yargs": "^11.1.0"
     },
     "dependencies": {
-        "babylonjs": "^3.2.0-rc.1",
-        "babylonjs-loaders": "^3.2.0-rc.1",
-        "draco3dgltf": "^1.2.7",
-        "gltf-import-export": "^1.0.8",
+        "babylonjs": "^3.2.0",
+        "babylonjs-loaders": "^3.2.0",
+        "draco3dgltf": "^1.3.1",
+        "gltf-import-export": "^1.0.9",
         "gltf-validator": "2.0.0-dev.2.1",
         "json-source-map": "^0.4.0",
         "sprintf-js": "^1.1.1",
-        "vscode": "^1.1.14",
+        "vscode": "^1.1.17",
         "vscode-languageclient": "^3.5.1"
     }
 }

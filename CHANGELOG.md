@@ -3,6 +3,7 @@
 ### 2.1.13 - UNRELEASED
 
 * Fix forgotten DDS script import. [#111](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/111)
+* Create animation editor.
 
 ### 2.1.12 - 2018-04-19
 

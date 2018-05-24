@@ -4,10 +4,10 @@
 import * as vscode from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
-import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension } from './dataUriTextDocumentContentProvider';
+import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension, getAccessorArrayBuffer, AccessorTypeToNumComponents } from './dataUriTextDocumentContentProvider';
 import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
-import { ConvertGLBtoGltfLoadFirst, ConvertToGLB} from 'gltf-import-export';
+import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as jsonMap from 'json-source-map';
 import * as path from 'path';
@@ -484,6 +484,224 @@ export function activate(context: vscode.ExtensionContext) {
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
+    }));
+
+    function getAnimationFromJsonPointer(glTF, jsonPointer : string): { json: any, path: string } {
+        let inAnimation = false;
+        let inSampler = false;
+        const jsonPointerSplit = jsonPointer.split('/');
+        const numPointerSegments = Math.min(5, jsonPointerSplit.length);
+        let result = glTF;
+        let path = '';
+        const firstValidIndex = 1; // Because the path has a leading slash.
+        for (let i = firstValidIndex; i < numPointerSegments; ++i) {
+            inAnimation = inAnimation || (jsonPointerSplit[i] == 'animations');
+            inSampler = inAnimation && (inSampler || (jsonPointerSplit[i] == 'samplers'));
+            result = result[jsonPointerSplit[i]];
+            path += '/' + jsonPointerSplit[i];
+        }
+        if (!inSampler) {
+            vscode.window.showErrorMessage('Please select an animation sampler to import.');
+            result = undefined;
+        }
+        return { json: result, path: path };
+    }
+
+    //
+    // Import an animation for editing.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.importAnimation', async (te, t) => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
+        const map = tryGetJsonMap();
+        if (!map) {
+            return;
+        }
+
+        const bestKey = tryGetCurrentJsonPointer(map);
+        if (!bestKey) {
+            return;
+        }
+        const glTF = map.data;
+
+        const activeTextEditor = vscode.window.activeTextEditor;
+        const animationPointer = getAnimationFromJsonPointer(glTF, bestKey);
+        if (!animationPointer.json) {
+            return;
+        }
+
+        animationPointer.json.extras = animationPointer.json.extras || {};
+        for (const key of ['input', 'output']) {
+            const accessorId = animationPointer.json[key];
+            const accessor = glTF.accessors[accessorId];
+            let accessorValues = [];
+            if (accessor != undefined) {
+                const bufferView = glTF.bufferViews[accessor.bufferView];
+                const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
+                accessorValues = getAccessorArrayBuffer(buffer, accessor, bufferView);
+            }
+            animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(accessorValues);
+            animationPointer.json.extras['vscode_gltf_type'] = accessor ? accessor.type : 'SCALAR';
+        }
+
+        const pointer = map.pointers[animationPointer.path];
+
+        const tabSize = activeTextEditor.options.tabSize as number;
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        let newJson = JSON.stringify(animationPointer.json, null, space);
+        const newJsonLines = newJson.split(/\n/);
+        const fullTab = new Array(5).join(space);
+        for (let i = 1; i < newJsonLines.length; i++) {
+            newJsonLines[i] = fullTab + newJsonLines[i];
+        }
+        newJson = newJsonLines.join('\n');
+
+        const newRange = new vscode.Range(pointer.value.line, pointer.value.column,
+            pointer.valueEnd.line, pointer.valueEnd.column);
+        await activeTextEditor.edit(editBuilder => {
+            editBuilder.replace(newRange, newJson);
+        });
+    }));
+
+    //
+    // Export an editable animation.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportAnimation', async (te, t) => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
+        const map = tryGetJsonMap();
+        if (!map) {
+            return;
+        }
+        let bestKey = tryGetCurrentJsonPointer(map);
+        if (!bestKey) {
+            return;
+        }
+
+        const glTF = map.data;
+        const activeTextEditor = vscode.window.activeTextEditor;
+        const animationPointer = getAnimationFromJsonPointer(map.data, bestKey);
+        if (!animationPointer.json ||
+            !animationPointer.json.extras ||
+            !animationPointer.json.extras.vscode_gltf_type ||
+            !animationPointer.json.extras.vscode_gltf_input ||
+            !animationPointer.json.extras.vscode_gltf_output) {
+
+            vscode.window.showErrorMessage('Please select an animation sampler with vscode_gltf extras.');
+            return;
+        }
+
+        const samplerType = animationPointer.json.extras.vscode_gltf_type;
+        const components = AccessorTypeToNumComponents[samplerType];
+        const interpMulti = animationPointer.json.interpolation == 'CUBICSPLINE' ? 3 : 1;
+        const newData = {
+            input: animationPointer.json.extras.vscode_gltf_input,
+            output: animationPointer.json.extras.vscode_gltf_output
+        };
+        if ((newData.input.length * components * interpMulti) != newData.output.length) {
+            vscode.window.showErrorMessage(`Number of input values (${newData.input.length}) does not equal output values (${newData.output.length / components / interpMulti}).`);
+            return;
+        }
+        delete animationPointer.json.extras.vscode_gltf_type;
+        delete animationPointer.json.extras.vscode_gltf_input;
+        delete animationPointer.json.extras.vscode_gltf_output;
+        if (Object.keys(animationPointer.json.extras).length == 0) {
+            delete animationPointer.json.extras;
+        }
+
+        const inputAccessor = glTF.accessors[animationPointer.json.input];
+        let bufferIndex = 0;
+        if (inputAccessor != undefined) {
+            const bufferView = glTF.bufferViews[inputAccessor.bufferView];
+            bufferIndex = bufferView.buffer;
+        }
+        const bufferJson = glTF.buffers[bufferIndex];
+        const bufferData = getBuffer(glTF, bufferIndex.toString(), activeTextEditor.document.fileName);
+        const alignedLength = (value: number) => {
+            const alignValue = 4;
+            if (value == 0) {
+                return value;
+            }
+
+            const multiple = value % alignValue;
+            if (multiple === 0) {
+                return value;
+            }
+
+            return value + (alignValue - multiple);
+        }
+        let bufferOffset = alignedLength(bufferData.length);
+
+        const outputBuffers = [bufferData];
+        if (bufferOffset != bufferData.length) {
+            outputBuffers.push(new Buffer(bufferOffset - bufferData.length));
+        }
+
+        for (const accessorType of ['input', 'output']) {
+            const values = newData[accessorType];
+            const accessorComponents = accessorType == 'input' ? 1 : components;
+            const max = new Array(accessorComponents).fill(Number.NEGATIVE_INFINITY);
+            for (let i = 0; i < values.length; i++) {
+                const j = i % accessorComponents;
+                max[j] = Math.max(max[j], values[i]);
+            }
+            const min = new Array(accessorComponents).fill(Number.POSITIVE_INFINITY);
+            for (let i = 0; i < values.length; i++) {
+                const j = i % accessorComponents;
+                min[j] = Math.min(min[j], values[i]);
+            }
+            const float32Values = Float32Array.from(values);
+            const accessor = {
+                "bufferView": glTF.bufferViews.length,
+                "componentType": 5126,
+                "count": values.length / accessorComponents,
+                "type": accessorType == 'input' ? 'SCALAR' : samplerType,
+                "max": max,
+                "min": min
+            };
+
+            const accessorId = animationPointer.json[accessorType];
+            if (glTF.accessors[accessorId] == undefined) {
+                animationPointer.json[accessorType] = glTF.accessors.length;
+                glTF.accessors.push(accessor);
+            } else {
+                glTF.accessors[accessorId] = accessor;
+            }
+
+            const newBufferView = {
+                "buffer": bufferIndex,
+                "byteOffset": bufferOffset,
+                "byteLength": float32Values.byteLength,
+            };
+            glTF.bufferViews.push(newBufferView);
+            if (alignedLength(float32Values.byteLength) != float32Values.byteLength) {
+                throw new Error('Float32Array not 4 byte length');
+            }
+            bufferOffset += float32Values.byteLength;
+            outputBuffers.push(Buffer.from(float32Values.buffer));
+        }
+
+        const finalBuffer = Buffer.concat(outputBuffers);
+
+        bufferJson.uri = 'data:application/octet-stream;base64,' + finalBuffer.toString('base64');
+        bufferJson.byteLength = finalBuffer.length;
+        const tabSize = activeTextEditor.options.tabSize as number;
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        const newJson = JSON.stringify(glTF, null, space);
+
+        const newRange = new vscode.Range(0, 0, activeTextEditor.document.lineCount + 1, 0);
+        await activeTextEditor.edit(editBuilder => {
+            editBuilder.replace(newRange, newJson);
+        });
+
+        const newMap = tryGetJsonMap();
+        const newPointer = newMap.pointers[animationPointer.path];
+
+        activeTextEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
     }));
 
     //

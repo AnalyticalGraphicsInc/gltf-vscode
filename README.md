@@ -89,6 +89,39 @@ This works for arrays as well, for example the list of enabled render states.  H
 
 ![Render states enable](images/StatesEnable.png)
 
+### &bull; Animation editor
+
+Press <kbd>ALT</kbd> + <kbd>i</kbd> on an animation sampler to import values into the glTF JSON.
+
+```json
+"samplers": [
+{
+    "input": 6,
+    "interpolation": "LINEAR",
+    "output": 7,
+    "extras": {
+    "vscode_gltf_input": [
+        1.25,
+        2.5
+    ],
+    "vscode_gltf_type": "VEC4",
+    "vscode_gltf_output": [
+        0,
+        0,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        4.4896593387466766e-11
+    ]
+},
+```
+
+Modify the `vscode_gltf_input` and `vscode_gltf_output` arrays for your needs and then press <kbd>ALT</kbd> + <kbd>o</kbd> to rewrite the glTF buffer and JSON with new values. This will use a Data URI for the buffer so the changes can be completely undone; `glTF: Export a Data URI to a file` is available if a binary file is required. Save the edited document and use `glTF: Preview 3D Model` to view your changes.
+
+New samplers can be created as well simply use `-1` for the accessor references and new accessors will be automatically created.
+
 ## Extension Settings
 
 ### Default rendering engines
