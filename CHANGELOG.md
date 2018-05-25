@@ -3,7 +3,9 @@
 ### 2.1.13 - UNRELEASED
 
 * Fix forgotten DDS script import. [#111](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/111)
-* Create animation editor.
+* Create animation editor. [#112](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/112)
+* Update Babylon to 3.2.0.
+* Update Cesium to 1.45.
 
 ### 2.1.12 - 2018-04-19
 
