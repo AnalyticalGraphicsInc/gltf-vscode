@@ -156,6 +156,7 @@ window.ThreeView = function() {
                 orbitControls.dampingFactor = 0.07;
                 orbitControls.rotateSpeed = 0.07;
                 orbitControls.panSpeed = 0.07;
+                orbitControls.screenSpacePanning = true;
 
                 object.position.x = -modelCenter.x;
                 object.position.y = -modelCenter.y;
