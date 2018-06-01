@@ -1,13 +1,14 @@
 # Change Log
 
-### 2.1.13 - UNRELEASED
+### 2.1.13 - 2018-06-01
 
 * Fix forgotten DDS script import. [#111](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/111)
 * Create animation editor. [#112](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/112)
 * Update Babylon to 3.2.0.
 * Update Cesium to 1.46, trim some unused assets.
 * Update Khronos glTF-Validator to 2.0.0-dev.2.2
-* Fixed use of plural/singular in validation summary. [#115](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/115)
+* Increase default max validation errors from 100 to 200. [#115](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/115)
+* Fixed use of plural/singular in validation summary. [#114](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/114)
 
 ### 2.1.12 - 2018-04-19
 

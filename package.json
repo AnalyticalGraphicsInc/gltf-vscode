@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for editing and previewing glTF files",
-    "version": "2.1.12",
+    "version": "2.1.13",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -286,7 +286,7 @@
         "@types/mocha": "^2.2.48",
         "@types/node": "^8.10.12",
         "eslint": "^4.19.1",
-        "eslint-config-cesium": "^3.0.0",
+        "eslint-config-cesium": "^5.0.0",
         "eslint-plugin-html": "^4.0.3",
         "mocha": "^4.1.0",
         "typescript": "^2.8.3",
