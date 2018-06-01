@@ -5,7 +5,7 @@
 * Fix forgotten DDS script import. [#111](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/111)
 * Create animation editor. [#112](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/112)
 * Update Babylon to 3.2.0.
-* Update Cesium to 1.45.
+* Update Cesium to 1.46, trim some unused assets.
 * Update Khronos glTF-Validator to 2.0.0-dev.2.2
 
 ### 2.1.12 - 2018-04-19
