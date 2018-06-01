@@ -92,7 +92,7 @@
                 "glTF.Validation.maxIssues": {
                     "scope": "resource",
                     "type": "number",
-                    "default": 100,
+                    "default": 200,
                     "description": "Controls the maximum number of issues reported by the glTF Validator."
                 },
                 "glTF.Validation.ignoredIssues": {
