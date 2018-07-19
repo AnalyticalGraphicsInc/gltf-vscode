@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.1.14 - 2018-07-18
+
+* Update Khronos glTF-Validator to 2.0.0-dev.2.4
+* Update ThreeJS to r94
+
 ### 2.1.13 - 2018-06-01
 
 * Fix forgotten DDS script import. [#111](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/111)

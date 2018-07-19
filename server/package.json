@@ -1,7 +1,7 @@
 {
     "name": "gltf-language-server",
     "description": "glTF Language Server",
-    "version": "1.1.10",
+    "version": "1.1.11",
     "author": "Analytical Graphics, Inc. and outside contributors",
     "license": "Apache-2.0",
     "engines": {
@@ -12,10 +12,10 @@
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
     "dependencies": {
-        "gltf-validator": "2.0.0-dev.2.2",
+        "gltf-validator": "2.0.0-dev.2.4",
         "json-source-map": "^0.4.0",
         "vscode-languageserver": "^3.5.1",
-        "vscode-uri": "^1.0.3"
+        "vscode-uri": "^1.0.5"
     },
     "scripts": {
         "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",
