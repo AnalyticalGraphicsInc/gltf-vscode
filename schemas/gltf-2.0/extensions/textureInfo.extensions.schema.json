@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "title": "Texture Info Extensions",
+    "type": "object",
+    "description": "Dictionary object with extension-specific objects.",
+    "properties": {
+        "KHR_texture_transform": {
+            "allOf" : [
+                {
+                    "$ref" : "KHR_texture_transform/KHR_texture_transform.textureInfo.schema.json"
+                }
+            ]
+        }
+    },
+    "additionalProperties": {
+        "type": "object"
+    }
+}

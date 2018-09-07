@@ -3,3 +3,5 @@ package*.json text eol=lf
 
 # Because these are generated as such
 schemas/*/*.json text eol=lf
+schemas/*/*/*.json text eol=lf
+schemas/*/*/*/*.json text eol=lf

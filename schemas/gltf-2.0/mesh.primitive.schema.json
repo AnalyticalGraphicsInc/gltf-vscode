@@ -99,7 +99,13 @@
             },
             "minItems" : 1
         },
-        "extensions" : {},
+        "extensions" : {
+            "allOf" : [
+                {
+                    "$ref" : "extensions/mesh.primitive.extensions.schema.json"
+                }
+            ]
+        },
         "extras" : {}
     },
     "gltf_webgl" : "`drawElements()` and `drawArrays()`",

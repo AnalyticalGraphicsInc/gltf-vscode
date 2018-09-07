@@ -28,6 +28,11 @@ function parseArguments(args) {
                 describe: 'output=PATH, Write transformed schema to this folder.',
                 normalize: true,
                 type: 'string'
+            },
+            'extensions': {
+                alias: 'e',
+                describe: 'Look for glTF extensions',
+                type: 'boolean'
             }
         }).parse(args);
 
@@ -41,7 +46,8 @@ function parseArguments(args) {
 
     return {
         schemaPath: schemaPath,
-        outputPath: outputPath
+        outputPath: outputPath,
+        shouldAddExtensions: argv.e
     };
 }
 
@@ -131,11 +137,36 @@ function upgradeDescriptions(data) {
     }
 }
 
-function transformFile(inputFile, outputFile) {
+function addExtensions(schema, file, options) {
+    var extensionFile =  'extensions/' + file.replace('.schema.json', '.extensions.schema.json');
+
+    if (fs.existsSync(path.join(options.outputPath, extensionFile))) {
+        console.log('Adding extensions from: ' + extensionFile);
+        if (!(schema.properties && schema.properties.extensions)) {
+            console.log('ERROR: Can\'t find extensions property!');
+        } else {
+            schema.properties.extensions = {
+                'allOf': [
+                    {
+                        '$ref': extensionFile
+                    }
+                ]
+            };
+        }
+    }
+}
+
+function transformFile(file, options) {
+    var inputFile = path.join(options.schemaPath, file);
+    var outputFile = path.join(options.outputPath, file);
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
     upgradeDescriptions(schema);
+
+    if (options.shouldAddExtensions) {
+        addExtensions(schema, file, options);
+    }
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }
@@ -149,14 +180,11 @@ function main() {
         return;
     }
 
-    var schemaPath = options.schemaPath;
-    var outputPath = options.outputPath;
-
-    var files = fs.readdirSync(schemaPath);
+    var files = fs.readdirSync(options.schemaPath);
     files.forEach(function(file) {
         if (file.endsWith('.schema.json')) {
             console.log(file);
-            transformFile(path.join(schemaPath, file), path.join(outputPath, file));
+            transformFile(file, options);
         }
     });
 

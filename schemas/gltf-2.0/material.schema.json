@@ -10,7 +10,13 @@
     ],
     "properties" : {
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "allOf" : [
+                {
+                    "$ref" : "extensions/material.extensions.schema.json"
+                }
+            ]
+        },
         "extras" : {},
         "pbrMetallicRoughness" : {
             "allOf" : [

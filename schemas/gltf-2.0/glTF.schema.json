@@ -156,7 +156,13 @@
             },
             "minItems" : 1
         },
-        "extensions" : {},
+        "extensions" : {
+            "allOf" : [
+                {
+                    "$ref" : "extensions/glTF.extensions.schema.json"
+                }
+            ]
+        },
         "extras" : {}
     },
     "dependencies" : {
