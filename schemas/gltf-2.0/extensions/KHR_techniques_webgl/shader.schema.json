@@ -5,7 +5,7 @@
     "description" : "A vertex or fragment shader. Exactly one of `uri` or `bufferView` must be provided for the GLSL source.",
     "allOf" : [
         {
-            "$ref" : "glTFChildOfRootProperty.schema.json"
+            "$ref" : "../../glTFChildOfRootProperty.schema.json"
         }
     ],
     "properties" : {
@@ -37,7 +37,7 @@
         "bufferView" : {
             "allOf" : [
                 {
-                    "$ref" : "glTFid.schema.json"
+                    "$ref" : "../../glTFid.schema.json"
                 }
             ],
             "description" : "The index of the bufferView that contains the GLSL shader source. Use this instead of the shader's uri property."

@@ -6,7 +6,7 @@
         "bufferView" : {
             "allOf" : [
                 {
-                    "$ref" : "glTFid.schema.json"
+                    "$ref" : "../../glTFid.schema.json"
                 }
             ],
             "description" : "The index of the bufferView."
@@ -15,7 +15,7 @@
             "type" : "object",
             "minProperties" : 1,
             "additionalProperties" : {
-                "$ref" : "glTFid.schema.json"
+                "$ref" : "../../glTFid.schema.json"
             },
             "description" : "A dictionary object, where each key corresponds to an attribute and its unique attribute id stored in the compressed geometry."
         }

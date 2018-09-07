@@ -5,14 +5,14 @@
     "description" : "The technique to use for a material and any additional uniform values.",
     "allOf" : [
         {
-            "$ref" : "glTFProperty.schema.json"
+            "$ref" : "../../glTFProperty.schema.json"
         }
     ],
     "properties" : {
         "technique" : {
             "allOf" : [
                 {
-                    "$ref" : "glTFid.schema.json"
+                    "$ref" : "../../glTFid.schema.json"
                 }
             ],
             "description" : "The index of the technique."

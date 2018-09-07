@@ -5,7 +5,7 @@
     "description" : "Instances of shading techniques with external shader programs along with their parameterized values.  Shading techniques describe data types and semantics for GLSL vertex and fragment shader programs.",
     "allOf" : [
         {
-            "$ref" : "glTFProperty.schema.json"
+            "$ref" : "../../glTFProperty.schema.json"
         }
     ],
     "properties" : {

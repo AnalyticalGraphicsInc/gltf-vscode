@@ -5,7 +5,7 @@
     "description" : "An attribute input to a technique and the corresponding semantic.",
     "allOf" : [
         {
-            "$ref" : "glTFProperty.schema.json"
+            "$ref" : "../../glTFProperty.schema.json"
         }
     ],
     "properties" : {

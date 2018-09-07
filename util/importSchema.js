@@ -33,6 +33,11 @@ function parseArguments(args) {
                 alias: 'e',
                 describe: 'Look for glTF extensions',
                 type: 'boolean'
+            },
+            'shared': {
+                alias: 's',
+                describe: 'shared=PATH, Shared glTF schemas come from this folder.',
+                type: 'string'
             }
         }).parse(args);
 
@@ -47,7 +52,8 @@ function parseArguments(args) {
     return {
         schemaPath: schemaPath,
         outputPath: outputPath,
-        shouldAddExtensions: argv.e
+        shouldAddExtensions: argv.e,
+        sharedFolder: argv.s
     };
 }
 
@@ -137,6 +143,24 @@ function upgradeDescriptions(data) {
     }
 }
 
+function transformSharedFolder(data, options) {
+    for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                transformSharedFolder(val, options);
+            }
+        }
+    }
+
+    // If we find a reference to a non-existent file, change it to reference
+    // the shared glTF schema folder.  Most extensions freely reference those files.
+    var ref = data['$ref'];
+    if (ref && !fs.existsSync(path.join(options.outputPath, ref))) {
+        data['$ref'] = options.sharedFolder + ref;
+    }
+}
+
 function addExtensions(schema, file, options) {
     var extensionFile =  'extensions/' + file.replace('.schema.json', '.extensions.schema.json');
 
@@ -163,6 +187,10 @@ function transformFile(file, options) {
 
     transformEnums(schema);
     upgradeDescriptions(schema);
+
+    if (options.sharedFolder) {
+        transformSharedFolder(schema, options);
+    }
 
     if (options.shouldAddExtensions) {
         addExtensions(schema, file, options);

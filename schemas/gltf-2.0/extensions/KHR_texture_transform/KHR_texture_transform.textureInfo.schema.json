@@ -5,7 +5,7 @@
     "description" : "glTF extension that enables shifting and scaling UV coordinates on a per-texture basis",
     "allOf" : [
         {
-            "$ref" : "glTFProperty.schema.json"
+            "$ref" : "../../glTFProperty.schema.json"
         }
     ],
     "properties" : {

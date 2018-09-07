@@ -27,7 +27,7 @@
             "minItems" : 1
         },
         {
-            "$ref" : "textureInfo.schema.json"
+            "$ref" : "../../textureInfo.schema.json"
         }
     ]
 }

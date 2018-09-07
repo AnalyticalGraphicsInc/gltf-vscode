@@ -5,14 +5,14 @@
     "description" : "A template for material appearances.",
     "allOf" : [
         {
-            "$ref" : "glTFChildOfRootProperty.schema.json"
+            "$ref" : "../../glTFChildOfRootProperty.schema.json"
         }
     ],
     "properties" : {
         "program" : {
             "allOf" : [
                 {
-                    "$ref" : "glTFid.schema.json"
+                    "$ref" : "../../glTFid.schema.json"
                 }
             ],
             "description" : "The index of the program."
