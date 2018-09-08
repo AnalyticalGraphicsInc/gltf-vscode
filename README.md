@@ -158,6 +158,18 @@ New samplers can be created as well simply use `-1` for the accessor references 
 
 * `glTF.Validation.severityOverrides` - This is a JSON object that maps issue codes (as keys) to severity codes (as values).  The issue codes are the same as for `glTF.Validation.ignoredIssues` above.  The severity codes are: 0 for `error`, 1 for `warning`, 2 for `information`, and 3 for `hint`.  For example, to reduce the severity of empty nodes to `hint`, one would specify: `{ "NODE_EMPTY" : 3 }`
 
+## Supported glTF extensions
+
+Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  This means that VSCode will provide hover tooltips, auto-complete (<kbd>CTRL</kbd> + <kbd>space</kbd>), and document problem indications for extension schema violations.  This is separate from (and in addition to) any validation being performed by the official glTF Validator.  The extension schemas shipping with this project currently are:
+
+* `KHR_draco_mesh_compression`
+* `KHR_materials_pbrSpecularGlossiness`
+* `KHR_materials_unlit`
+* `KHR_techniques_webgl`
+* `KHR_texture_transform`
+
+Support for additional extensions can be requested by filing an issue or pull request to [the GitHub repository](https://github.com/AnalyticalGraphicsInc/gltf-vscode).
+
 ## Source code
 
 on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIBUTING.md](CONTRIBUTING.md).
