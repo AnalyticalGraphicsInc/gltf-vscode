@@ -4,7 +4,7 @@
 echo "~~~ glTF 1.0 ~~~"
 ./importSchema.js -i ../../glTF/specification/1.0/schema -o ../schemas/gltf-1.0
 echo "~~~ glTF 2.0 ~~~"
-./importSchema.js -i ../../glTF/specification/2.0/schema -o ../schemas/gltf-2.0 --extensions
+./importSchema.js -i ../../glTF/specification/2.0/schema -o ../schemas/gltf-2.0 -e extensionMap2.0.json
 echo "~~~ KHR_draco_mesh_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_draco_mesh_compression/schema -o ../schemas/gltf-2.0/extensions/KHR_draco_mesh_compression -s ../../
 echo "~~~ KHR_materials_pbrSpecularGlossiness ~~~"

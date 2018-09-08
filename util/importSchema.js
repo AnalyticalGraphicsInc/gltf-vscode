@@ -31,8 +31,9 @@ function parseArguments(args) {
             },
             'extensions': {
                 alias: 'e',
-                describe: 'Look for glTF extensions',
-                type: 'boolean'
+                describe: 'extensions=PATH, Use a look-up table to add glTF Extensions.',
+                normalize: true,
+                type: 'string'
             },
             'shared': {
                 alias: 's',
@@ -43,6 +44,7 @@ function parseArguments(args) {
 
     var schemaPath = argv.i;
     var outputPath = argv.o;
+    var extensionsTable = argv.e ? JSON.parse(fs.readFileSync(argv.e)) : null;
 
     if ((!schemaPath) || (!outputPath)) {
         yargs.showHelp();
@@ -52,7 +54,7 @@ function parseArguments(args) {
     return {
         schemaPath: schemaPath,
         outputPath: outputPath,
-        shouldAddExtensions: argv.e,
+        extensionsTable: extensionsTable,
         sharedFolder: argv.s
     };
 }
@@ -162,21 +164,26 @@ function transformSharedFolder(data, options) {
 }
 
 function addExtensions(schema, file, options) {
-    var extensionFile =  'extensions/' + file.replace('.schema.json', '.extensions.schema.json');
+    var extensionMap = options.extensionsTable[file.replace('.schema.json', '')];
 
-    if (fs.existsSync(path.join(options.outputPath, extensionFile))) {
-        console.log('Adding extensions from: ' + extensionFile);
-        if (!(schema.properties && schema.properties.extensions)) {
-            console.log('ERROR: Can\'t find extensions property!');
-        } else {
-            schema.properties.extensions = {
-                'allOf': [
-                    {
-                        '$ref': extensionFile
-                    }
-                ]
-            };
+    if (extensionMap) {
+        extensionMap = extensionMap.extensions;
+        var properties = {};
+        for (var name in extensionMap) {
+            if (extensionMap.hasOwnProperty(name)) {
+                properties[name] = {
+                    'allOf' : [
+                        {
+                            '$ref' : 'extensions/' + name + '/' + extensionMap[name]
+                        }
+                    ]
+                };
+            }
         }
+
+        schema.properties.extensions = {
+            'properties': properties
+        };
     }
 }
 
@@ -192,7 +199,7 @@ function transformFile(file, options) {
         transformSharedFolder(schema, options);
     }
 
-    if (options.shouldAddExtensions) {
+    if (options.extensionsTable) {
         addExtensions(schema, file, options);
     }
 

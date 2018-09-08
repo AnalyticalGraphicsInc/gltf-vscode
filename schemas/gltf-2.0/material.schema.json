@@ -11,11 +11,22 @@
     "properties" : {
         "name" : {},
         "extensions" : {
-            "allOf" : [
-                {
-                    "$ref" : "extensions/material.extensions.schema.json"
+            "properties" : {
+                "KHR_materials_pbrSpecularGlossiness" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_pbrSpecularGlossiness/glTF.KHR_materials_pbrSpecularGlossiness.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_unlit" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_unlit/glTF.KHR_materials_unlit.schema.json"
+                        }
+                    ]
                 }
-            ]
+            }
         },
         "extras" : {},
         "pbrMetallicRoughness" : {

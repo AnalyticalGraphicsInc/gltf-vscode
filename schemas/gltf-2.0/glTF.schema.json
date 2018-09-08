@@ -157,11 +157,15 @@
             "minItems" : 1
         },
         "extensions" : {
-            "allOf" : [
-                {
-                    "$ref" : "extensions/glTF.extensions.schema.json"
+            "properties" : {
+                "KHR_techniques_webgl" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_techniques_webgl/glTF.KHR_techniques_webgl.schema.json"
+                        }
+                    ]
                 }
-            ]
+            }
         },
         "extras" : {}
     },

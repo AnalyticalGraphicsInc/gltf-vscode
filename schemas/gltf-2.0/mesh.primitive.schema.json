@@ -100,11 +100,15 @@
             "minItems" : 1
         },
         "extensions" : {
-            "allOf" : [
-                {
-                    "$ref" : "extensions/mesh.primitive.extensions.schema.json"
+            "properties" : {
+                "KHR_draco_mesh_compression" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_draco_mesh_compression/node.KHR_draco_mesh_compression.schema.json"
+                        }
+                    ]
                 }
-            ]
+            }
         },
         "extras" : {}
     },

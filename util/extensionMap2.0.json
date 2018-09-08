@@ -1,0 +1,27 @@
+{
+    "glTF": {
+        "title": "Root Extensions",
+        "extensions": {
+            "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json"
+        }
+    },
+    "material": {
+        "title": "Material Extensions",
+        "extensions": {
+            "KHR_materials_pbrSpecularGlossiness": "glTF.KHR_materials_pbrSpecularGlossiness.schema.json",
+            "KHR_materials_unlit": "glTF.KHR_materials_unlit.schema.json"
+        }
+    },
+    "mesh.primitive": {
+        "title": "Mesh Primitive Extensions",
+        "extensions": {
+            "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json"
+        }
+    },
+    "textureInfo": {
+        "title": "Texture Info Extensions",
+        "extensions": {
+            "KHR_texture_transform": "KHR_texture_transform.textureInfo.schema.json"
+        }
+    }
+}
