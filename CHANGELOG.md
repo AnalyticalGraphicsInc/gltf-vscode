@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.15 - UNRELEASED
+### 2.1.15 - 2018-09-10
 
 * Added support for JSON schema validation of various glTF 2.0 extensions. [#119](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/119)
 * Update Khronos glTF-Validator to 2.0.0-dev.2.5
