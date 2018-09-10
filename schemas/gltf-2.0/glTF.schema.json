@@ -156,7 +156,17 @@
             },
             "minItems" : 1
         },
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_techniques_webgl" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_techniques_webgl/glTF.KHR_techniques_webgl.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "dependencies" : {

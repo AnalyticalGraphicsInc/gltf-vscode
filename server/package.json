@@ -12,10 +12,10 @@
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
     "dependencies": {
-        "gltf-validator": "2.0.0-dev.2.4",
+        "gltf-validator": "2.0.0-dev.2.5",
         "json-source-map": "^0.4.0",
         "vscode-languageserver": "^3.5.1",
-        "vscode-uri": "^1.0.5"
+        "vscode-uri": "^1.0.6"
     },
     "scripts": {
         "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",

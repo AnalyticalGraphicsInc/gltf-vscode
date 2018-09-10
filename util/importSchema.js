@@ -28,11 +28,23 @@ function parseArguments(args) {
                 describe: 'output=PATH, Write transformed schema to this folder.',
                 normalize: true,
                 type: 'string'
+            },
+            'extensions': {
+                alias: 'e',
+                describe: 'extensions=PATH, Use a look-up table to add glTF Extensions.',
+                normalize: true,
+                type: 'string'
+            },
+            'shared': {
+                alias: 's',
+                describe: 'shared=PATH, Shared glTF schemas come from this folder.',
+                type: 'string'
             }
         }).parse(args);
 
     var schemaPath = argv.i;
     var outputPath = argv.o;
+    var extensionsTable = argv.e ? JSON.parse(fs.readFileSync(argv.e)) : null;
 
     if ((!schemaPath) || (!outputPath)) {
         yargs.showHelp();
@@ -41,7 +53,9 @@ function parseArguments(args) {
 
     return {
         schemaPath: schemaPath,
-        outputPath: outputPath
+        outputPath: outputPath,
+        extensionsTable: extensionsTable,
+        sharedFolder: argv.s
     };
 }
 
@@ -131,11 +145,63 @@ function upgradeDescriptions(data) {
     }
 }
 
-function transformFile(inputFile, outputFile) {
+function transformSharedFolder(data, options) {
+    for (var key in data) {
+        if (data.hasOwnProperty(key)) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                transformSharedFolder(val, options);
+            }
+        }
+    }
+
+    // If we find a reference to a non-existent file, change it to reference
+    // the shared glTF schema folder.  Most extensions freely reference those files.
+    var ref = data['$ref'];
+    if (ref && !fs.existsSync(path.join(options.outputPath, ref))) {
+        data['$ref'] = options.sharedFolder + ref;
+    }
+}
+
+function addExtensions(schema, file, options) {
+    var extensionMap = options.extensionsTable[file.replace('.schema.json', '')];
+
+    if (extensionMap) {
+        extensionMap = extensionMap.extensions;
+        var properties = {};
+        for (var name in extensionMap) {
+            if (extensionMap.hasOwnProperty(name)) {
+                properties[name] = {
+                    'allOf' : [
+                        {
+                            '$ref' : 'extensions/' + name + '/' + extensionMap[name]
+                        }
+                    ]
+                };
+            }
+        }
+
+        schema.properties.extensions = {
+            'properties': properties
+        };
+    }
+}
+
+function transformFile(file, options) {
+    var inputFile = path.join(options.schemaPath, file);
+    var outputFile = path.join(options.outputPath, file);
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
     upgradeDescriptions(schema);
+
+    if (options.sharedFolder) {
+        transformSharedFolder(schema, options);
+    }
+
+    if (options.extensionsTable) {
+        addExtensions(schema, file, options);
+    }
 
     fs.writeFileSync(outputFile, JSON.stringify(schema, null, '    ').replace(/\"\:/g, '" :') + '\n');
 }
@@ -149,14 +215,11 @@ function main() {
         return;
     }
 
-    var schemaPath = options.schemaPath;
-    var outputPath = options.outputPath;
-
-    var files = fs.readdirSync(schemaPath);
+    var files = fs.readdirSync(options.schemaPath);
     files.forEach(function(file) {
         if (file.endsWith('.schema.json')) {
             console.log(file);
-            transformFile(path.join(schemaPath, file), path.join(outputPath, file));
+            transformFile(file, options);
         }
     });
 

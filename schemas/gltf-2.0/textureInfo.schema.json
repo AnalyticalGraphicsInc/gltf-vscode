@@ -23,7 +23,17 @@
             "minimum" : 0,
             "short_description" : "The set index of texture's TEXCOORD attribute used for texture coordinate mapping."
         },
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_texture_transform" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_texture_transform/KHR_texture_transform.textureInfo.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "required" : [

@@ -1,5 +1,11 @@
 # Util folder
 
+## importAll.sh
+
+With the introduction of glTF extension support, running importSchema.js by hand became unwieldy.  This is a shell script that runs importSchema.js for each of the main schema folders, and then for each of the supported extensions.  It has a requirement that the main `glTF` repository and the `gltf-vscode` repository be side-by-side in some parent folder.
+
+To run it, first `cd` into the `util` folder, then run `./importAll.sh`.
+
 ## importSchema.js
 
 The official glTF 2.0 schema is published by Khronos in their [glTF repository](https://github.com/KhronosGroup/glTF).  However, the published schema by itself has some aspects that don't function optimally when read into VSCode's automated JSON validation.
@@ -15,3 +21,19 @@ This folder contains a NodeJS script `importSchema.js` that will read in the off
 * `textureInfo.description` - This particular description field is rather simplistic: `"Reference to a texture."`.  This schema object is referred to by several texture channels (`baseColorTexture`, `metallicRoughnessTexture`, `normalTexture`, `occlusionTexture`, `emissiveTexture`).  Each of these parents has its own detailed description with usage instructions, and VSCode was ignoring all that in favor of showing `Reference to a texture`.  So, `textureInfo.description` is deliberately removed from the schema, causing the more informative parent descriptions to be revealed.
 
 * Whitespace - The whitespace in the schema is changed as a side-effect of parsing and re-serializing the schema in this script.
+
+# Extensions
+
+To add a new extension schema here, once the extension's schema is merged into the main glTF repository, follow these steps:
+
+1. Create a new folder under `schemas/glTF-2.0/extensions` with the name of the extension being added.
+
+2. Edit `util/importAll.sh` to include a command to import the extension's schema into the new folder.  (Running it is optional at this point.)
+
+3. Edit `util/extensionMap2.0.json` to assign the new extension schema to one of the glTF core schema extension objects.
+
+4. Run (or re-run) `./importAll.sh` from the `util` folder, to pick up edits from both steps 2 and 3.
+
+5. Add the extension to the list of supported extension schemas in the main `README.md` file.
+
+Now, build and launch this VSCode extension, and it should offer autocomplete and tooltips for the newly added glTF extension.
