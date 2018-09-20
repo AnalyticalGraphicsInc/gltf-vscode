@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.16 - UNRELEASED
+
+* Add support for two `AGI_` vendor extension schemas.
+
 ### 2.1.15 - 2018-09-10
 
 * Added support for JSON schema validation of various glTF 2.0 extensions. [#119](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/119)

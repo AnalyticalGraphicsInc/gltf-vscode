@@ -167,6 +167,8 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 * `KHR_materials_unlit`
 * `KHR_techniques_webgl` (Draft)
 * `KHR_texture_transform`
+* `AGI_articulations`
+* `AGI_stk_metadata`
 
 Support for additional extensions can be requested by filing an issue or pull request to [the GitHub repository](https://github.com/AnalyticalGraphicsInc/gltf-vscode).
 
