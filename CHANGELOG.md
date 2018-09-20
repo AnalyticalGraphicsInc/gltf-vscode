@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.16 - UNRELEASED
+### 2.1.16 - 2018-09-20
 
 * Add support for two `AGI_` vendor extension schemas.
 
