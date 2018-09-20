@@ -2,7 +2,9 @@
     "glTF": {
         "title": "Root Extensions",
         "extensions": {
-            "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json"
+            "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json",
+            "AGI_articulations": "gltf.AGI_articulations.schema.json",
+            "AGI_stk_metadata": "gltf.AGI_stk_metadata.schema.json"
         }
     },
     "material": {
@@ -16,6 +18,13 @@
         "title": "Mesh Primitive Extensions",
         "extensions": {
             "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json"
+        }
+    },
+    "node": {
+        "title": "Node Extensions",
+        "extensions": {
+            "AGI_articulations": "node.AGI_articulations.schema.json",
+            "AGI_stk_metadata": "node.AGI_stk_metadata.schema.json"
         }
     },
     "textureInfo": {

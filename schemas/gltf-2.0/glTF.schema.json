@@ -164,6 +164,20 @@
                             "$ref" : "extensions/KHR_techniques_webgl/glTF.KHR_techniques_webgl.schema.json"
                         }
                     ]
+                },
+                "AGI_articulations" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/AGI_articulations/gltf.AGI_articulations.schema.json"
+                        }
+                    ]
+                },
+                "AGI_stk_metadata" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/AGI_stk_metadata/gltf.AGI_stk_metadata.schema.json"
+                        }
+                    ]
                 }
             }
         },
