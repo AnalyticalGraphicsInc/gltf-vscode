@@ -125,7 +125,24 @@
             }
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "AGI_articulations" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/AGI_articulations/node.AGI_articulations.schema.json"
+                        }
+                    ]
+                },
+                "AGI_stk_metadata" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/AGI_stk_metadata/node.AGI_stk_metadata.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "dependencies" : {
