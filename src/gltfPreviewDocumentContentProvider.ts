@@ -1,12 +1,10 @@
-'use strict';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
-export class GltfPreviewDocumentContentProvider implements TextDocumentContentProvider {
-    private _onDidChange = new EventEmitter<Uri>();
-    private _context: ExtensionContext;
+export class GltfPreviewDocumentContentProvider implements vscode.TextDocumentContentProvider {
+    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+    private _context: vscode.ExtensionContext;
     private _mainHtml: string;
     private _babylonHtml: string;
     private _cesiumHtml: string;
@@ -14,7 +12,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
     public UriPrefix = 'gltf-preview://';
 
-    constructor(context: ExtensionContext) {
+    constructor(context: vscode.ExtensionContext) {
         this._context = context;
         this._mainHtml = fs.readFileSync(this._context.asAbsolutePath('pages/previewModel.html'), 'UTF-8')
         this._babylonHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylonView.html'), 'UTF-8'));
@@ -49,7 +47,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
     //    click the pull-down and change "top" to "active-frame (webview.html)".
     //    Now you can debug the HTML preview in the sandboxed iframe.
 
-    public provideTextDocumentContent(uri: Uri): string {
+    public provideTextDocumentContent(uri: vscode.Uri): string {
         let filePath = decodeURIComponent(uri.authority);
         const document = vscode.workspace.textDocuments.find(e => e.fileName.toLowerCase() === filePath.toLowerCase());
         if (!document) {
@@ -60,7 +58,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
 
         const gltfContent = document.getText();
         const gltfFileName = path.basename(filePath);
-        let gltfRootPath : string = this.toUrl(path.dirname(filePath));
+        let gltfRootPath: string = this.toUrl(path.dirname(filePath));
         if (!gltfRootPath.endsWith("/")) {
             gltfRootPath += "/";
         }
@@ -73,7 +71,7 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
             }
         } catch (ex) { }
 
-        let extensionRootPath : string = this._context.asAbsolutePath('').replace(/\\/g, '/');
+        let extensionRootPath: string = this._context.asAbsolutePath('').replace(/\\/g, '/');
         if (!extensionRootPath.endsWith("/")) {
             extensionRootPath += "/";
         }
@@ -135,11 +133,11 @@ export class GltfPreviewDocumentContentProvider implements TextDocumentContentPr
         return content;
     }
 
-    get onDidChange(): Event<Uri> {
+    get onDidChange(): vscode.Event<vscode.Uri> {
         return this._onDidChange.event;
     }
 
-    public update(uri: Uri) {
+    public update(uri: vscode.Uri) {
         this._onDidChange.fire(uri);
     }
 }

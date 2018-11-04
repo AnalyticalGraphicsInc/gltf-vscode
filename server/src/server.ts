@@ -1,5 +1,3 @@
-'use strict';
-
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
     Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams, Hover, MarkedString,

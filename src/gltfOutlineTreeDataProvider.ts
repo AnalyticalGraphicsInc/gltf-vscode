@@ -1,14 +1,13 @@
-'use strict';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Url from 'url';
 import * as jsonMap from 'json-source-map';
-import * as assetInfo from './dataUriTextDocumentContentProvider';
 import { sprintf } from 'sprintf-js';
-import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn, Range } from 'vscode';
+import { GLTF2 } from './GLTF2';
+import { AccessorTypeToNumComponents, ComponentTypeToBytesPerElement } from './utilities';
 
-export declare type GltfNodeType = 'animation' | 'material' | 'mesh' |  'node' | 'scene' | 'skeleton' |'skin' | 'texture' | 'root';
+export declare type GltfNodeType = 'animation' | 'material' | 'mesh' | 'node' | 'scene' | 'skeleton' | 'skin' | 'texture' | 'root';
 
 interface GltfNode {
     parent?: GltfNode;
@@ -27,7 +26,7 @@ interface MeshInfo {
 export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<GltfNode> {
     private tree: GltfNode;
     private editor: vscode.TextEditor;
-    private gltf: any;
+    private gltf: GLTF2.GLTF;
     private pointers: any;
     private skinMap = new Map<string, Set<string>>(); // jointId (nodeId) to Set of skinIds
     private skeletonMap = new Map<string, Set<string>>(); // nodeId (skeleton) to Set of skinIds
@@ -53,8 +52,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             }
         }
         let treeItem: vscode.TreeItem = new vscode.TreeItem(name, treeState);
-        if (node.range !== undefined)
-        {
+        if (node.range !== undefined) {
             treeItem.command = {
                 command: 'gltf.openGltfSelection',
                 title: '',
@@ -326,8 +324,8 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
 
     private sizeOfAccessor(index: string): number {
         let accessor = this.gltf.accessors[index];
-        let numComponents = assetInfo.AccessorTypeToNumComponents[accessor.type];
-        let sizeOfComponent = assetInfo.ComponentTypeToBytesPerElement[accessor.componentType];
+        let numComponents = AccessorTypeToNumComponents[accessor.type];
+        let sizeOfComponent = ComponentTypeToBytesPerElement[accessor.componentType];
 
         return numComponents * sizeOfComponent * accessor.count;
     }
@@ -557,7 +555,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
 
     private createTexture(typeName: string, textureIndex: any, parent: GltfNode, assetReport: boolean = false): number | undefined {
         if (textureIndex === undefined) {
-            return;
+            return undefined;
         }
 
         let texture = this.gltf.textures[textureIndex.index];
@@ -626,7 +624,7 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         return ` (Skin${set.size == 1 ? '' : 's'} ${Array.from(set.values()).join(', ')})`;
     }
 
-     private getIcon(nodeType: GltfNodeType): any {
+    private getIcon(nodeType: GltfNodeType): any {
         if (nodeType === 'node' || nodeType === 'root') {
             return null;
         }
