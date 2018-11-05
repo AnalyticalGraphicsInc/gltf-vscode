@@ -1,15 +1,14 @@
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
-import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
+import { GltfPreview } from './gltfPreview';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
-import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
-import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents } from './utilities';
+import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 function checkValidEditor(): boolean {
@@ -35,7 +34,7 @@ function pointerContains(pointer: any, selection: vscode.Selection): boolean {
 
 function tryGetJsonMap() {
     try {
-        return jsonMap.parse(vscode.window.activeTextEditor.document.getText()) as { data: GLTF2.GLTF, pointers: Array<string> };
+        return parseJsonMap(vscode.window.activeTextEditor.document.getText());
     } catch (ex) {
         vscode.window.showErrorMessage('Error parsing this document.  Please make sure it is valid JSON.');
     }
@@ -354,32 +353,17 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    //
-    // Register a preview of the whole glTF file.
-    //
-    const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
-    const gltfPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-preview', gltfPreviewProvider);
-    context.subscriptions.push(gltfPreviewRegistration);
+    const gltfPreview = new GltfPreview(context);
 
+    //
+    // Preview a glTF model.
+    //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
         if (!checkValidEditor()) {
             return;
         }
 
-        const fileName = vscode.window.activeTextEditor.document.fileName;
-        const baseName = path.basename(fileName);
-        const gltfPreviewUri = vscode.Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
-
-        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, vscode.ViewColumn.Two, `glTF Preview [${baseName}]`)
-            .then((success) => { }, (reason) => { vscode.window.showErrorMessage(reason); });
-
-        // This can be used to debug the preview HTML.
-        //vscode.workspace.openTextDocument(gltfPreviewUri).then((doc: vscode.TextDocument) => {
-        //    vscode.window.showTextDocument(doc, ViewColumn.Three, false).then(e => {
-        //    });
-        //}, (reason) => { vscode.window.showErrorMessage(reason); });
-
-        gltfPreviewProvider.update(gltfPreviewUri);
+        gltfPreview.showPanel(vscode.window.activeTextEditor.document);
     }));
 
     //
@@ -704,11 +688,8 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Update all preview windows when the glTF file is saved.
     //
-    vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-        if (document === vscode.window.activeTextEditor.document) {
-            const gltfPreviewUri = vscode.Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
-            gltfPreviewProvider.update(gltfPreviewUri);
-        }
+    vscode.workspace.onDidSaveTextDocument((document) => {
+        gltfPreview.updatePanel(document);
     });
 }
 

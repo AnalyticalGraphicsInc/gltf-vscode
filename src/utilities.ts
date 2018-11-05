@@ -1,4 +1,5 @@
 import { GLTF2 } from "./glTF2";
+import * as jsonMap from 'json-source-map';
 
 export const ComponentTypeToBytesPerElement = {
     5120: Int8Array.BYTES_PER_ELEMENT,
@@ -124,3 +125,12 @@ export function guessMimeType(filename: string): string {
     }
     return 'application/octet-stream';
 }
+
+export function toResourceUrl(path: string): string {
+    return `vscode-resource:${path.replace(/\\/g, '/')}`;
+}
+
+export function parseJsonMap(content: string) {
+    return jsonMap.parse(content) as { data: GLTF2.GLTF, pointers: Array<string> };
+}
+
