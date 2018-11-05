@@ -520,7 +520,7 @@ export function activate(context: vscode.ExtensionContext) {
             let accessorValues = [];
             if (accessor != undefined) {
                 const bufferView = glTF.bufferViews[accessor.bufferView];
-                const buffer = getBuffer(glTF, bufferView.buffer.toString(), activeTextEditor.document.fileName);
+                const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
                 accessorValues = getAccessorData(accessor, bufferView, buffer);
             }
             animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(accessorValues);
@@ -601,7 +601,7 @@ export function activate(context: vscode.ExtensionContext) {
             bufferIndex = bufferView.buffer;
         }
         const bufferJson = glTF.buffers[bufferIndex];
-        const bufferData = getBuffer(glTF, bufferIndex.toString(), activeTextEditor.document.fileName);
+        const bufferData = getBuffer(glTF, bufferIndex, activeTextEditor.document.fileName);
         const alignedLength = (value: number) => {
             const alignValue = 4;
             if (value == 0) {

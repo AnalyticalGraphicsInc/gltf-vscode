@@ -54,8 +54,7 @@ export async function validate(sourceFilename: string) {
                     }
                     resolve(data);
                 });
-            }
-            ),
+            }),
     });
 
     const useSaveAs = !vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename');

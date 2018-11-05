@@ -105,7 +105,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
             } else if (jsonPointer.startsWith('/accessors/')) {
                 if (data.bufferView !== undefined) {
                     let bufferView = glTF.bufferViews[data.bufferView];
-                    let buffer = getBuffer(glTF, bufferView.buffer.toString(), fileName);
+                    let buffer = getBuffer(glTF, bufferView.buffer, fileName);
                     return formatAccessor(buffer, data, bufferView);
                 } else {
                     return 'Accessor does not contain a bufferView';
@@ -146,7 +146,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         }
 
         let bufferView = glTF.bufferViews[dracoExtension.bufferView];
-        let glTFBuffer = getBuffer(glTF, bufferView.buffer.toString(), fileName);
+        let glTFBuffer = getBuffer(glTF, bufferView.buffer, fileName);
         const bufferOffset: number = bufferView.byteOffset || 0;
         const bufferLength: number = bufferView.byteLength;
         const bufferViewBuf: Buffer = glTFBuffer.slice(bufferOffset, bufferOffset + bufferLength);
