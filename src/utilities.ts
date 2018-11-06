@@ -1,4 +1,4 @@
-import { GLTF2 } from "./glTF2";
+import { GLTF2 } from "./GLTF2";
 import * as jsonMap from 'json-source-map';
 
 export const ComponentTypeToBytesPerElement = {

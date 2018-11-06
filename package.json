@@ -10,7 +10,7 @@
     },
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.17.0"
+        "vscode": "^1.23.0"
     },
     "categories": [
         "Formatters",
@@ -54,12 +54,12 @@
                 },
                 "glTF.Babylon.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}/environments/babylon/countrySpecularHDR.dds",
+                    "default": "{extensionRootPath}environments/babylon/countrySpecularHDR.dds",
                     "description": "The path to a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image"
                 },
                 "glTF.Three.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}/environments/threejs/Park2/{face}.jpg",
+                    "default": "{extensionRootPath}environments/threejs/Park2/{face}.jpg",
                     "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
                 },
                 "glTF.showToolbar3D": {
