@@ -17,13 +17,15 @@
                     "enum" : [
                         9728
                     ],
-                    "description" : "NEAREST - Magnification filter."
+                    "description" : "NEAREST - Magnification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9729
                     ],
-                    "description" : "LINEAR - Magnification filter."
+                    "description" : "LINEAR - Magnification filter.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"
@@ -39,37 +41,43 @@
                     "enum" : [
                         9728
                     ],
-                    "description" : "NEAREST - Minification filter."
+                    "description" : "NEAREST - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9729
                     ],
-                    "description" : "LINEAR - Minification filter."
+                    "description" : "LINEAR - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9984
                     ],
-                    "description" : "NEAREST_MIPMAP_NEAREST - Minification filter."
+                    "description" : "NEAREST_MIPMAP_NEAREST - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9985
                     ],
-                    "description" : "LINEAR_MIPMAP_NEAREST - Minification filter."
+                    "description" : "LINEAR_MIPMAP_NEAREST - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9986
                     ],
-                    "description" : "NEAREST_MIPMAP_LINEAR - Minification filter."
+                    "description" : "NEAREST_MIPMAP_LINEAR - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         9987
                     ],
-                    "description" : "LINEAR_MIPMAP_LINEAR - Minification filter."
+                    "description" : "LINEAR_MIPMAP_LINEAR - Minification filter.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"
@@ -86,19 +94,22 @@
                     "enum" : [
                         33071
                     ],
-                    "description" : "CLAMP_TO_EDGE - s wrapping mode."
+                    "description" : "CLAMP_TO_EDGE - s wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         33648
                     ],
-                    "description" : "MIRRORED_REPEAT - s wrapping mode."
+                    "description" : "MIRRORED_REPEAT - s wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         10497
                     ],
-                    "description" : "REPEAT - s wrapping mode."
+                    "description" : "REPEAT - s wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"
@@ -115,19 +126,22 @@
                     "enum" : [
                         33071
                     ],
-                    "description" : "CLAMP_TO_EDGE - t wrapping mode."
+                    "description" : "CLAMP_TO_EDGE - t wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         33648
                     ],
-                    "description" : "MIRRORED_REPEAT - t wrapping mode."
+                    "description" : "MIRRORED_REPEAT - t wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         10497
                     ],
-                    "description" : "REPEAT - t wrapping mode."
+                    "description" : "REPEAT - t wrapping mode.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"
