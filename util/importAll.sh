@@ -15,6 +15,8 @@ echo "~~~ KHR_techniques_webgl ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
 echo "~~~ KHR_texture_transform ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_transform/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_transform -s ../../
+echo "~~~ EXT_lights_image_based ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
 echo "~~~ AGI_articulations ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/AGI_articulations/schema -o ../schemas/gltf-2.0/extensions/AGI_articulations -s ../../
 echo "~~~ AGI_stk_metadata ~~~"
