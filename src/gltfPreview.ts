@@ -4,13 +4,18 @@ import * as fs from 'fs';
 import { ContextBase } from './contextBase';
 import { toResourceUrl, parseJsonMap } from './utilities';
 
+interface GltfPreviewPanel extends vscode.WebviewPanel {
+    _defaultBabylonReflection: string;
+    _defaultThreeReflection: string;
+}
+
 export class GltfPreview extends ContextBase {
     private readonly _mainHtml: string;
     private readonly _babylonHtml: string;
     private readonly _cesiumHtml: string;
     private readonly _threeHtml: string;
 
-    private _panels: { [fileName: string]: vscode.WebviewPanel } = {};
+    private _panels: { [fileName: string]: GltfPreviewPanel } = {};
 
     constructor(context: vscode.ExtensionContext) {
         super(context);
@@ -41,18 +46,26 @@ export class GltfPreview extends ContextBase {
 
         let panel = this._panels[gltfFilePath];
         if (!panel) {
+            const localResourceRoots = [
+                vscode.Uri.file(this._context.extensionPath),
+                vscode.Uri.file(path.dirname(gltfFilePath)),
+            ];
+
+            const defaultBabylonReflection = this.getConfigResourceUrl('glTF.Babylon', 'environment', localResourceRoots);
+            const defaultThreeReflection = this.getConfigResourceUrl('glTF.Three', 'environment', localResourceRoots);
+
             panel = vscode.window.createWebviewPanel('gltf.preview', 'glTF Preview', vscode.ViewColumn.Two, {
                 enableScripts: true,
                 retainContextWhenHidden: true,
-                localResourceRoots: [
-                    vscode.Uri.file(this._context.extensionPath),
-                    vscode.Uri.file(path.dirname(gltfFilePath)),
-                ],
-            });
+                localResourceRoots: localResourceRoots,
+            }) as GltfPreviewPanel;
 
             panel.onDidDispose(() => {
                 delete this._panels[gltfFilePath];
             });
+
+            panel._defaultBabylonReflection = defaultBabylonReflection;
+            panel._defaultThreeReflection = defaultThreeReflection;
 
             this._panels[gltfFilePath] = panel;
         }
@@ -71,7 +84,7 @@ export class GltfPreview extends ContextBase {
         }
     }
 
-    private updatePanelInternal(panel: vscode.WebviewPanel, gltfFilePath: string, gltfContent: string): void {
+    private updatePanelInternal(panel: GltfPreviewPanel, gltfFilePath: string, gltfContent: string): void {
         const map = parseJsonMap(gltfContent);
 
         const gltfRootPath = toResourceUrl(`${path.dirname(gltfFilePath)}/`);
@@ -84,16 +97,18 @@ export class GltfPreview extends ContextBase {
         }
 
         panel.title = `glTF Preview [${gltfFileName}]`;
-        panel.webview.html = this.formatHtml(gltfMajorVersion, gltfContent, gltfRootPath, gltfFileName);
+        panel.webview.html = this.formatHtml(
+            gltfMajorVersion,
+            gltfContent,
+            gltfRootPath,
+            gltfFileName,
+            panel._defaultBabylonReflection,
+            panel._defaultThreeReflection);
     }
 
-    private formatHtml(gltfMajorVersion: number, gltfContent: string, gltfRootPath: string, gltfFileName: string): string {
+    private formatHtml(gltfMajorVersion: number, gltfContent: string, gltfRootPath: string, gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
-        const defaultBabylonReflection = String(vscode.workspace.getConfiguration('glTF.Babylon')
-            .get('environment')).replace('{extensionRootPath}', this.extensionRootPath);
-        const defaultThreeReflection = String(vscode.workspace.getConfiguration('glTF.Three')
-            .get('environment')).replace('{extensionRootPath}', this.extensionRootPath);
         const dracoLoaderPath = this.extensionRootPath + 'engines/Draco/draco_decoder.js';
 
         // These strings are available in JavaScript by looking up the ID.  They provide the extension's root
