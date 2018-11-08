@@ -1,25 +1,22 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { Uri, ViewColumn } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
-import { DataUriTextDocumentContentProvider, getFromJsonPointer, btoa, guessMimeType, guessFileExtension, getAccessorArrayBuffer, AccessorTypeToNumComponents } from './dataUriTextDocumentContentProvider';
-import { GltfPreviewDocumentContentProvider } from './gltfPreviewDocumentContentProvider';
+import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
+import { GltfPreview } from './gltfPreview';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
-import * as jsonMap from 'json-source-map';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
+import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap } from './utilities';
+import { GLTF2 } from './GLTF2';
 
-function checkValidEditor() : boolean {
+function checkValidEditor(): boolean {
     if (vscode.window.activeTextEditor === undefined) {
         vscode.window.showErrorMessage('Document too large (or no editor selected). ' +
             'Click \'More info\' for details via GitHub.', 'More info').then(choice => {
                 if (choice === 'More info') {
-                    let uri = Uri.parse('https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/README.md#compatibiliy-and-known-size-limitations');
+                    let uri = vscode.Uri.parse('https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/README.md#compatibiliy-and-known-size-limitations');
                     vscode.commands.executeCommand('vscode.open', uri);
                 }
             });
@@ -28,7 +25,7 @@ function checkValidEditor() : boolean {
     return true;
 }
 
-function pointerContains(pointer: any, selection: vscode.Selection) : boolean {
+function pointerContains(pointer: any, selection: vscode.Selection): boolean {
     const doc = vscode.window.activeTextEditor.document;
     const range = new vscode.Range(doc.positionAt(pointer.value.pos), doc.positionAt(pointer.valueEnd.pos));
 
@@ -37,7 +34,7 @@ function pointerContains(pointer: any, selection: vscode.Selection) : boolean {
 
 function tryGetJsonMap() {
     try {
-        return jsonMap.parse(vscode.window.activeTextEditor.document.getText());
+        return parseJsonMap(vscode.window.activeTextEditor.document.getText());
     } catch (ex) {
         vscode.window.showErrorMessage('Error parsing this document.  Please make sure it is valid JSON.');
     }
@@ -48,7 +45,7 @@ function tryGetCurrentJsonPointer(map) {
     const selection = vscode.window.activeTextEditor.selection;
     const pointers = map.pointers;
 
-    let bestKey : string, secondBestKey : string;
+    let bestKey: string, secondBestKey: string;
     for (let key of Object.keys(pointers)) {
         let pointer = pointers[key];
         if (pointerContains(pointer, selection)) {
@@ -85,14 +82,14 @@ export function activateServer(context: vscode.ExtensionContext) {
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     let serverOptions: ServerOptions = {
-        run : { module: serverModule, transport: TransportKind.ipc },
+        run: { module: serverModule, transport: TransportKind.ipc },
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
     }
 
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{scheme: 'file', language: 'json'}],
+        documentSelector: [{ scheme: 'file', language: 'json' }],
         synchronize: {
             // Synchronize the setting section 'glTF' to the server
             configurationSection: 'glTF',
@@ -168,17 +165,17 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         if (notDataUri && !isImage) {
-            let finalUri = Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
-            await vscode.commands.executeCommand('vscode.open', finalUri, ViewColumn.Two);
+            let finalUri = vscode.Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
+            await vscode.commands.executeCommand('vscode.open', finalUri, vscode.ViewColumn.Two);
         } else {
             // This is a data: type uri
             if (isShader) {
                 jsonPointer += '.glsl';
             }
 
-            const previewUri = Uri.parse(dataPreviewProvider.UriPrefix + jsonPointer + '?viewColumn=' + ViewColumn.Two + '#' +
+            const previewUri = vscode.Uri.parse(dataPreviewProvider.UriPrefix + jsonPointer + '?viewColumn=' + vscode.ViewColumn.Two + '#' +
                 encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
-            await vscode.commands.executeCommand('vscode.open', previewUri, ViewColumn.Two);
+            await vscode.commands.executeCommand('vscode.open', previewUri, vscode.ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
         }
     }));
@@ -203,7 +200,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const activeTextEditor = vscode.window.activeTextEditor;
         const data = getFromJsonPointer(map.data, bestKey);
-        let dataUri : string = data.uri;
+        let dataUri: string = data.uri;
         if (dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is already a dataURI.');
         } else {
@@ -229,7 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Export a Data URI to a file.
     //
-    function exportToFile(filename : string, pathFilename : string, pointer, dataUri : string) {
+    function exportToFile(filename: string, pathFilename: string, pointer, dataUri: string) {
         const pos = dataUri.indexOf(',');
         const fileContents = Buffer.from(dataUri.substring(pos + 1), 'base64');
 
@@ -264,7 +261,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const activeTextEditor = vscode.window.activeTextEditor;
         const data = getFromJsonPointer(map.data, bestKey);
-        let dataUri : string = data.uri;
+        let dataUri: string = data.uri;
         if (!dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is not a dataURI.');
         } else {
@@ -283,10 +280,9 @@ export function activate(context: vscode.ExtensionContext) {
             let pathGuessName = path.join(path.dirname(activeTextEditor.document.fileName), guessName);
 
             const pointer = map.pointers[bestKey + '/uri'];
-            if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename'))
-            {
+            if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
                 let options: vscode.SaveDialogOptions = {
-                    defaultUri: Uri.file(pathGuessName),
+                    defaultUri: vscode.Uri.file(pathGuessName),
                     filters: {
                         'All files': ['*']
                     }
@@ -316,7 +312,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         let gltfContent = te.document.getText();
-        let gltf;
+        let gltf: GLTF2.GLTF;
         try {
             gltf = JSON.parse(gltfContent);
         } catch (ex) {
@@ -332,7 +328,7 @@ export function activate(context: vscode.ExtensionContext) {
         let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
         if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
             const options: vscode.SaveDialogOptions = {
-                defaultUri: Uri.file(glbPath),
+                defaultUri: vscode.Uri.file(glbPath),
                 filters: {
                     'Binary glTF': ['glb'],
                     'All files': ['*']
@@ -357,32 +353,17 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    //
-    // Register a preview of the whole glTF file.
-    //
-    const gltfPreviewProvider = new GltfPreviewDocumentContentProvider(context);
-    const gltfPreviewRegistration = vscode.workspace.registerTextDocumentContentProvider('gltf-preview', gltfPreviewProvider);
-    context.subscriptions.push(gltfPreviewRegistration);
+    const gltfPreview = new GltfPreview(context);
 
+    //
+    // Preview a glTF model.
+    //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
         if (!checkValidEditor()) {
             return;
         }
 
-        const fileName = vscode.window.activeTextEditor.document.fileName;
-        const baseName = path.basename(fileName);
-        const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(fileName));
-
-        vscode.commands.executeCommand('vscode.previewHtml', gltfPreviewUri, ViewColumn.Two, `glTF Preview [${baseName}]`)
-        .then((success) => {}, (reason) => { vscode.window.showErrorMessage(reason); });
-
-        // This can be used to debug the preview HTML.
-        //vscode.workspace.openTextDocument(gltfPreviewUri).then((doc: vscode.TextDocument) => {
-        //    vscode.window.showTextDocument(doc, ViewColumn.Three, false).then(e => {
-        //    });
-        //}, (reason) => { vscode.window.showErrorMessage(reason); });
-
-        gltfPreviewProvider.update(gltfPreviewUri);
+        gltfPreview.showPanel(vscode.window.activeTextEditor.document);
     }));
 
     //
@@ -401,7 +382,7 @@ export function activate(context: vscode.ExtensionContext) {
             if ((vscode.window.activeTextEditor !== undefined) &&
                 (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))) {
                 fileUri = vscode.window.activeTextEditor.document.uri;
-             } else {
+            } else {
                 const options: vscode.OpenDialogOptions = {
                     canSelectMany: false,
                     openLabel: 'Import',
@@ -432,7 +413,7 @@ export function activate(context: vscode.ExtensionContext) {
                 let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
                 if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
                     const options: vscode.SaveDialogOptions = {
-                        defaultUri: Uri.file(targetFilename),
+                        defaultUri: vscode.Uri.file(targetFilename),
                         filters: {
                             'glTF': ['gltf'],
                             'All files': ['*']
@@ -449,7 +430,7 @@ export function activate(context: vscode.ExtensionContext) {
             let targetFilename = await ConvertGLBtoGltfLoadFirst(fileUri.fsPath, getTargetFilename);
 
             if (targetFilename != null) {
-                vscode.commands.executeCommand('vscode.open', Uri.file(targetFilename));
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.file(targetFilename));
             }
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
@@ -486,7 +467,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    function getAnimationFromJsonPointer(glTF, jsonPointer : string): { json: any, path: string } {
+    function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {
         let inAnimation = false;
         let inSampler = false;
         const jsonPointerSplit = jsonPointer.split('/');
@@ -540,7 +521,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (accessor != undefined) {
                 const bufferView = glTF.bufferViews[accessor.bufferView];
                 const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
-                accessorValues = getAccessorArrayBuffer(buffer, accessor, bufferView);
+                accessorValues = getAccessorData(accessor, bufferView, buffer);
             }
             animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(accessorValues);
             animationPointer.json.extras['vscode_gltf_type'] = accessor ? accessor.type : 'SCALAR';
@@ -620,7 +601,7 @@ export function activate(context: vscode.ExtensionContext) {
             bufferIndex = bufferView.buffer;
         }
         const bufferJson = glTF.buffers[bufferIndex];
-        const bufferData = getBuffer(glTF, bufferIndex.toString(), activeTextEditor.document.fileName);
+        const bufferData = getBuffer(glTF, bufferIndex, activeTextEditor.document.fileName);
         const alignedLength = (value: number) => {
             const alignValue = 4;
             if (value == 0) {
@@ -682,7 +663,7 @@ export function activate(context: vscode.ExtensionContext) {
                 throw new Error('Float32Array not 4 byte length');
             }
             bufferOffset += float32Values.byteLength;
-            outputBuffers.push(Buffer.from(float32Values.buffer));
+            outputBuffers.push(Buffer.from(float32Values.buffer as ArrayBuffer));
         }
 
         const finalBuffer = Buffer.concat(outputBuffers);
@@ -707,11 +688,8 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Update all preview windows when the glTF file is saved.
     //
-    vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-        if (document === vscode.window.activeTextEditor.document) {
-            const gltfPreviewUri = Uri.parse(gltfPreviewProvider.UriPrefix + encodeURIComponent(document.fileName));
-            gltfPreviewProvider.update(gltfPreviewUri);
-        }
+    vscode.workspace.onDidSaveTextDocument((document) => {
+        gltfPreview.updatePanel(document);
     });
 }
 

@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
+        "alwaysStrict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitAny": false,
         "noImplicitReturns": true,
-        "target": "es6",
+        "target": "es2017",
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceMap": true,
-        "lib" : [ "es2016" ],
+        "lib" : [ "es2017" ],
         "outDir": "."
     },
     "exclude": [

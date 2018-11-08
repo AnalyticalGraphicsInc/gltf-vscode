@@ -1,10 +1,7 @@
-'use strict';
 import * as vscode from 'vscode';
-import * as Url from 'url';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as gltfValidator from 'gltf-validator';
-import { resolve } from 'url';
 
 const SaveReportAs = 'Save Report As...';
 const OverwriteReport = 'Save report.json';
@@ -57,8 +54,7 @@ export async function validate(sourceFilename: string) {
                     }
                     resolve(data);
                 });
-            }
-        ),
+            }),
     });
 
     const useSaveAs = !vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename');
@@ -70,14 +66,14 @@ export async function validate(sourceFilename: string) {
     let userChoicePromise: Thenable<string>;
     if (result.issues.numErrors > 0 && result.issues.numWarnings > 0) {
         userChoicePromise = vscode.window.showErrorMessage('glTF Validator found ' +
-        messageLabel(result.issues.numErrors, 'errors') + ' and ' +
-        messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
+            messageLabel(result.issues.numErrors, 'errors') + ' and ' +
+            messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
     } else if (result.issues.numErrors > 0) {
         userChoicePromise = vscode.window.showErrorMessage('glTF Validator found ' +
-        messageLabel(result.issues.numErrors, 'errors.'), SaveReport);
+            messageLabel(result.issues.numErrors, 'errors.'), SaveReport);
     } else if (result.issues.numWarnings > 0) {
         userChoicePromise = vscode.window.showWarningMessage('glTF Validator found ' +
-        messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
+            messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
     } else if (result.issues.numInfos > 0) {
         userChoicePromise = vscode.window.showWarningMessage('glTF Validator added information to its report.', SaveReport);
     } else {

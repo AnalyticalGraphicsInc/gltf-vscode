@@ -1,79 +1,13 @@
-'use strict';
 import * as vscode from 'vscode';
 import * as Url from 'url';
-import * as path from 'path';
 import * as fs from 'fs';
-import * as os from 'os';
 import * as querystring from 'querystring';
 import * as draco3dgltf from 'draco3dgltf';
 import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
-import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
+import { getFromJsonPointer, btoa, atob, AccessorTypeToNumComponents, getAccessorData } from './utilities';
+import { GLTF2 } from './GLTF2';
 const decoderModule = draco3dgltf.createDecoderModule({});
-
-export function atob(str): string {
-    return Buffer.from(str, 'base64').toString('binary');
-}
-
-export function btoa(str): string {
-    return Buffer.from(str, 'binary').toString('base64');
-}
-
-export function getFromJsonPointer(glTF, jsonPointer : string) {
-    const jsonPointerSplit = jsonPointer.split('/');
-    const numPointerSegments = jsonPointerSplit.length;
-    let result = glTF;
-    const firstValidIndex = 1; // Because the path has a leading slash.
-    for (let i = firstValidIndex; i < numPointerSegments; ++i) {
-        result = result[jsonPointerSplit[i]];
-    }
-    return result;
-}
-
-const gltfMimeTypes = {
-    'image/png' : ['png'],
-    'image/jpeg' : ['jpg', 'jpeg'],
-    'image/vnd-ms.dds' : ['dds'],
-    'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
-};
-
-export enum ComponentType {
-    BYTE = 5120,
-    UNSIGNED_BYTE = 5121,
-    SHORT = 5122,
-    UNSIGNED_SHORT = 5123,
-    UNSIGNED_INT = 5125,
-    FLOAT = 5126
-};
-
-export const ComponentTypeToBytesPerElement = {
-    5120: Int8Array.BYTES_PER_ELEMENT,
-    5121: Uint8Array.BYTES_PER_ELEMENT,
-    5122: Int16Array.BYTES_PER_ELEMENT,
-    5123: Uint16Array.BYTES_PER_ELEMENT,
-    5125: Uint32Array.BYTES_PER_ELEMENT,
-    5126: Float32Array.BYTES_PER_ELEMENT
-};
-
-export enum AccessorType {
-    'SCALAR',
-    'VEC2',
-    'VEC3',
-    'VEC4',
-    'MAT2',
-    'MAT3',
-    'MAT4'
-};
-
-export const AccessorTypeToNumComponents = {
-    SCALAR: 1,
-    VEC2: 2,
-    VEC3: 3,
-    VEC4: 4,
-    MAT2: 4,
-    MAT3: 9,
-    MAT4: 16
-};
 
 const MatrixSquare = {
     MAT2: 2,
@@ -81,44 +15,25 @@ const MatrixSquare = {
     MAT4: 4
 }
 
-export function guessFileExtension(mimeType) {
-    if (gltfMimeTypes.hasOwnProperty(mimeType)) {
-        return '.' + gltfMimeTypes[mimeType][0];
-    }
-    return '.bin';
-}
-
-export function guessMimeType(filename : string): string {
-    for (const mimeType in gltfMimeTypes) {
-        for (const extensionIndex in gltfMimeTypes[mimeType]) {
-            const extension = gltfMimeTypes[mimeType][extensionIndex];
-            if (filename.toLowerCase().endsWith('.' + extension)) {
-                return mimeType;
-            }
-        }
-    }
-    return 'application/octet-stream';
-}
-
 interface QueryDataUri {
     viewColumn?: string,
     previewHtml?: string,
 }
 
-export class DataUriTextDocumentContentProvider implements TextDocumentContentProvider {
-    private _onDidChange = new EventEmitter<Uri>();
-    private _context: ExtensionContext;
+export class DataUriTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
+    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+    private _context: vscode.ExtensionContext;
 
     public UriPrefix = 'gltf-dataUri:';
 
-    constructor(context: ExtensionContext) {
+    constructor(context: vscode.ExtensionContext) {
         this._context = context;
     }
 
-    public uriIfNotDataUri(glTF, jsonPointer : string) : string {
+    public uriIfNotDataUri(glTF, jsonPointer: string): string {
         const data = getFromJsonPointer(glTF, jsonPointer);
         if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
-            const uri : string = data.uri;
+            const uri: string = data.uri;
             if (!uri.startsWith('data:')) {
                 return uri;
             }
@@ -126,22 +41,22 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         return null;
     }
 
-    public isImage(jsonPointer : string) : boolean {
+    public isImage(jsonPointer: string): boolean {
         return jsonPointer.startsWith('/images/');
     }
 
-    public isShader(jsonPointer: string) : boolean {
+    public isShader(jsonPointer: string): boolean {
         return jsonPointer.startsWith('/shaders/');
     }
 
-    public isAccessor(jsonPointer: string) : boolean {
+    public isAccessor(jsonPointer: string): boolean {
         return jsonPointer.startsWith('/accessors/');
     }
 
-    public async provideTextDocumentContent(uri: Uri): Promise<string> {
+    public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const fileName = decodeURIComponent(uri.fragment);
         const query = querystring.parse<QueryDataUri>(uri.query);
-        query.viewColumn = query.viewColumn || ViewColumn.Active.toString();
+        query.viewColumn = query.viewColumn || vscode.ViewColumn.Active.toString();
         let glTFContent: string;
         const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
         if (document) {
@@ -149,7 +64,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         } else {
             glTFContent = fs.readFileSync(fileName, 'UTF-8');
         }
-        const glTF = JSON.parse(glTFContent);
+        const glTF = JSON.parse(glTFContent) as GLTF2.GLTF;
         let jsonPointer = uri.path;
         if (this.isShader(jsonPointer) && jsonPointer.endsWith('.glsl')) {
             jsonPointer = jsonPointer.substring(0, jsonPointer.length - 5);
@@ -158,7 +73,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
 
         if (data && (typeof data === 'object')) {
             if (data.hasOwnProperty('uri')) {
-                let dataUri : string = data.uri;
+                let dataUri: string = data.uri;
                 if (!dataUri.startsWith('data:')) {
                     // Not a DataURI: Look up external reference.
                     const name = decodeURI(Url.resolve(fileName, dataUri));
@@ -172,10 +87,10 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                         // Go to Definition has a null activeTextEditor
                         // Inspect Data Uri has a document that matches current but we provide a non-default viewColumn
                         // In the last two cases we want to close the current (to be empty editor), for Peek we leave it open.
-                        if (vscode.window.activeTextEditor == null || vscode.window.activeTextEditor.document != document || query.viewColumn != ViewColumn.Active.toString()) {
+                        if (vscode.window.activeTextEditor == null || vscode.window.activeTextEditor.document != document || query.viewColumn != vscode.ViewColumn.Active.toString()) {
                             vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                         }
-                        const previewUri: Uri = Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
+                        const previewUri: vscode.Uri = vscode.Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
                         await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
                         return '';
                     } else {
@@ -203,7 +118,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         return 'Unknown:\n' + jsonPointer;
     }
 
-    private formatDraco(glTF: any, jsonPointer: string, fileName: string): string {
+    private formatDraco(glTF: GLTF2.GLTF, jsonPointer: string, fileName: string): string {
         const attrIndex = jsonPointer.lastIndexOf('/');
         if (attrIndex == -1) {
             return 'Invalid path:\n' + jsonPointer;
@@ -225,7 +140,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         const primitive = getFromJsonPointer(glTF, primitivePointer);
         const dracoExtension = primitive.extensions['KHR_draco_mesh_compression'];
 
-        let accessor;
+        let accessor: GLTF2.Accessor;
         if (attrName !== 'indices') {
             accessor = glTF.accessors[primitive.attributes[attrName]];
         }
@@ -234,7 +149,6 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         let glTFBuffer = getBuffer(glTF, bufferView.buffer, fileName);
         const bufferOffset: number = bufferView.byteOffset || 0;
         const bufferLength: number = bufferView.byteLength;
-        const bufferStride: number = bufferView.byteStride;
         const bufferViewBuf: Buffer = glTFBuffer.slice(bufferOffset, bufferOffset + bufferLength);
 
         const decoder = new decoderModule.Decoder();
@@ -253,7 +167,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                     dracoGeometry = new decoderModule.Mesh();
                     status = decoder.DecodeBufferToMesh(dracoBuffer, dracoGeometry);
                     break;
-                    case decoderModule.POINT_CLOUD:
+                case decoderModule.POINT_CLOUD:
                     if (attrName === 'indices') {
                         return "Indices only valid for TRIANGULAR_MESH geometry.";
                     }
@@ -287,7 +201,7 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
                     if (i % numComponents == 0 && i !== 0) {
                         result += '\n';
                     }
-                    if (accessor.componentType === ComponentType.FLOAT) {
+                    if (accessor.componentType === GLTF2.AccessorComponentType.FLOAT) {
                         result += sprintf('%11.5f', value) + ' ';
                     } else {
                         result += sprintf('%5d', value) + ' ';
@@ -310,43 +224,17 @@ export class DataUriTextDocumentContentProvider implements TextDocumentContentPr
         }
     }
 
-    get onDidChange(): Event<Uri> {
+    get onDidChange(): vscode.Event<vscode.Uri> {
         return this._onDidChange.event;
     }
 
-    public update(uri: Uri) {
+    public update(uri: vscode.Uri) {
         this._onDidChange.fire(uri);
     }
 }
 
-function buildArrayBuffer(arrayType: any, data: Buffer, byteOffset: number, count: number, numComponents: number, byteStride?: number): any {
-    byteOffset += data.byteOffset;
-    const targetLength = count * numComponents;
-
-    if (byteStride == null || byteStride === numComponents * arrayType.BYTES_PER_ELEMENT) {
-        return new arrayType(data.buffer, byteOffset, targetLength);
-    }
-
-    const elementStride = byteStride / arrayType.BYTES_PER_ELEMENT;
-    const sourceBuffer = new arrayType(data.buffer, byteOffset, elementStride * count);
-    const targetBuffer = new arrayType(targetLength);
-    let sourceIndex = 0;
-    let targetIndex = 0;
-
-    while (targetIndex < targetLength) {
-        for (let componentIndex = 0; componentIndex < numComponents; componentIndex++) {
-            targetBuffer[targetIndex] = sourceBuffer[sourceIndex + componentIndex];
-            targetIndex++;
-        }
-
-        sourceIndex += elementStride;
-    }
-
-    return targetBuffer;
-}
-
-function formatAccessor(buffer: Buffer, accessor: any, bufferView: any, normalizeOverride?: boolean): string {
-    let normalize: boolean = accessor.normalized === undefined ? (normalizeOverride == undefined ? (parseInt(accessor.componentType) == ComponentType.FLOAT) : normalizeOverride) : accessor.normalized;
+function formatAccessor(buffer: Buffer, accessor: GLTF2.Accessor, bufferView: GLTF2.BufferView, normalizeOverride?: boolean): string {
+    let normalize: boolean = accessor.normalized === undefined ? (normalizeOverride == undefined ? (accessor.componentType == GLTF2.AccessorComponentType.FLOAT) : normalizeOverride) : accessor.normalized;
 
     let result: string = '';
     function formatNumber(value: number, index: number, array: any) {
@@ -358,19 +246,19 @@ function formatAccessor(buffer: Buffer, accessor: any, bufferView: any, normaliz
         }
 
         if (normalize) {
-            switch (parseInt(accessor.componentType)) {
-                case ComponentType.BYTE:
-                value = Math.max(value / 127.0, -1.0);
-                break;
-                case ComponentType.UNSIGNED_BYTE:
-                value = value / 255.0;
-                break;
-                case ComponentType.SHORT:
-                value = Math.max(value / 32767.0, -1.0);
-                break;
-                case ComponentType.UNSIGNED_SHORT:
-                value = value / 65535.0;
-                break;
+            switch (accessor.componentType) {
+                case GLTF2.AccessorComponentType.BYTE:
+                    value = Math.max(value / 127.0, -1.0);
+                    break;
+                case GLTF2.AccessorComponentType.UNSIGNED_BYTE:
+                    value = value / 255.0;
+                    break;
+                case GLTF2.AccessorComponentType.SHORT:
+                    value = Math.max(value / 32767.0, -1.0);
+                    break;
+                case GLTF2.AccessorComponentType.UNSIGNED_SHORT:
+                    value = value / 65535.0;
+                    break;
             }
             result += sprintf('%11.5f', value) + ' ';
         } else {
@@ -378,36 +266,8 @@ function formatAccessor(buffer: Buffer, accessor: any, bufferView: any, normaliz
         }
     }
 
-    const arrayBuffer = getAccessorArrayBuffer(buffer, accessor, bufferView);
-    arrayBuffer.forEach(formatNumber);
+    const data = getAccessorData(accessor, bufferView, buffer);
+    data.forEach(formatNumber);
 
     return result;
-}
-
-export function getAccessorArrayBuffer(buffer: Buffer, accessor: any, bufferView: any): any {
-    const bufferOffset: number = bufferView.byteOffset || 0;
-    const bufferLength: number = bufferView.byteLength;
-    const bufferStride: number = bufferView.byteStride;
-    const bufferViewBuf: Buffer = buffer.slice(bufferOffset, bufferOffset + bufferLength);
-    const accessorByteOffset: number = accessor.byteOffset || 0;
-
-    switch (parseInt(accessor.componentType)) {
-        case ComponentType.BYTE:
-            return buildArrayBuffer(Int8Array, bufferViewBuf, bufferOffset + accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-
-        case ComponentType.UNSIGNED_BYTE:
-            return buildArrayBuffer(Uint8Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-
-        case ComponentType.SHORT:
-            return buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-
-        case ComponentType.UNSIGNED_SHORT:
-            return buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-
-        case ComponentType.UNSIGNED_INT:
-            return buildArrayBuffer(Uint32Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-
-        case ComponentType.FLOAT:
-            return buildArrayBuffer(Float32Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
-    }
 }
