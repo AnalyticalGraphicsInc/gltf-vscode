@@ -57,7 +57,7 @@ window.CesiumView = function() {
     }
 
     function updateAnimations(model) {
-        var gltfAnimations = model.gltf.animations;
+        var gltfAnimations = model.gltf.animations || [];
         var animations = [];
 
         for (var i = 0; i < gltfAnimations.length; i++) {

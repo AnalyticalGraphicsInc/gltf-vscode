@@ -5,6 +5,7 @@
 * Upgraded glTF preview window to new VSCode webview, allowing the page to persist when the user swaps to a different tab. [#123](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/123)
 * Update Khronos glTF-Validator to 2.0.0-dev.2.6
 * Update Babylon to 3.3.0.
+* Update Cesium to 1.51.
 
 ### 2.1.16 - 2018-09-20
 
