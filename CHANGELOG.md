@@ -4,6 +4,7 @@
 
 * Upgraded glTF preview window to new VSCode webview, allowing the page to persist when the user swaps to a different tab. [#123](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/123)
 * Add JSON schema validation for `EXT_lights_image_based`.
+* Update gltf-import-export to 1.0.14, fixing an issue with import of certain GLBs from Blender. [gltf-import-export#7](https://github.com/najadojo/gltf-import-export/issues/7).
 * Update Khronos glTF-Validator to 2.0.0-dev.2.6
 * Update Babylon to 3.3.0.
 * Update Cesium to 1.51.
