@@ -3,6 +3,7 @@
         "title": "Root Extensions",
         "extensions": {
             "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json",
+            "EXT_lights_image_based": "glTF.EXT_lights_image_based.schema.json",
             "AGI_articulations": "gltf.AGI_articulations.schema.json",
             "AGI_stk_metadata": "gltf.AGI_stk_metadata.schema.json"
         }
@@ -25,6 +26,12 @@
         "extensions": {
             "AGI_articulations": "node.AGI_articulations.schema.json",
             "AGI_stk_metadata": "node.AGI_stk_metadata.schema.json"
+        }
+    },
+    "scene": {
+        "title": "Scene Extensions",
+        "extensions": {
+            "EXT_lights_image_based": "scene.EXT_lights_image_based.schema.json"
         }
     },
     "textureInfo": {

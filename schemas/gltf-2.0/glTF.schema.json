@@ -165,6 +165,13 @@
                         }
                     ]
                 },
+                "EXT_lights_image_based" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_lights_image_based/glTF.EXT_lights_image_based.schema.json"
+                        }
+                    ]
+                },
                 "AGI_articulations" : {
                     "allOf" : [
                         {

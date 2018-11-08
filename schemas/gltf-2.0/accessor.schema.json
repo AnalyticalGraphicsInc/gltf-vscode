@@ -34,37 +34,43 @@
                     "enum" : [
                         5120
                     ],
-                    "description" : "BYTE - The datatype of components in the attribute."
+                    "description" : "BYTE - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5121
                     ],
-                    "description" : "UNSIGNED_BYTE - The datatype of components in the attribute."
+                    "description" : "UNSIGNED_BYTE - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5122
                     ],
-                    "description" : "SHORT - The datatype of components in the attribute."
+                    "description" : "SHORT - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5123
                     ],
-                    "description" : "UNSIGNED_SHORT - The datatype of components in the attribute."
+                    "description" : "UNSIGNED_SHORT - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5125
                     ],
-                    "description" : "UNSIGNED_INT - The datatype of components in the attribute."
+                    "description" : "UNSIGNED_INT - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5126
                     ],
-                    "description" : "FLOAT - The datatype of components in the attribute."
+                    "description" : "FLOAT - The datatype of components in the attribute.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"

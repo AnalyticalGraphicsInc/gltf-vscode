@@ -19,7 +19,17 @@
             "minItems" : 1
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "EXT_lights_image_based" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_lights_image_based/scene.EXT_lights_image_based.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     }
 }

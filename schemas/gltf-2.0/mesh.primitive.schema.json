@@ -42,43 +42,50 @@
                     "enum" : [
                         0
                     ],
-                    "description" : "POINTS - The type of primitives to render."
+                    "description" : "POINTS - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         1
                     ],
-                    "description" : "LINES - The type of primitives to render."
+                    "description" : "LINES - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         2
                     ],
-                    "description" : "LINE_LOOP - The type of primitives to render."
+                    "description" : "LINE_LOOP - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         3
                     ],
-                    "description" : "LINE_STRIP - The type of primitives to render."
+                    "description" : "LINE_STRIP - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         4
                     ],
-                    "description" : "TRIANGLES - The type of primitives to render."
+                    "description" : "TRIANGLES - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         5
                     ],
-                    "description" : "TRIANGLE_STRIP - The type of primitives to render."
+                    "description" : "TRIANGLE_STRIP - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "enum" : [
                         6
                     ],
-                    "description" : "TRIANGLE_FAN - The type of primitives to render."
+                    "description" : "TRIANGLE_FAN - The type of primitives to render.",
+                    "type" : "integer"
                 },
                 {
                     "type" : "integer"
