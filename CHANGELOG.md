@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.1.17 - UNRELEASED
+### 2.1.17 - 2018-11-08
 
 * Upgraded glTF preview window to new VSCode webview, allowing the page to persist when the user swaps to a different tab. [#123](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/123)
 * Add JSON schema validation for `EXT_lights_image_based`.
