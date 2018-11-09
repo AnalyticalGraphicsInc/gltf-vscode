@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.1.18 - UNRELEASED
+
+* Fixed schema bug in `EXT_lights_image_based`.  [KhronosGroup/glTF#1482](https://github.com/KhronosGroup/glTF/issues/1482)
+
 ### 2.1.17 - 2018-11-08
 
 * Upgraded glTF preview window to new VSCode webview, allowing the page to persist when the user swaps to a different tab. [#123](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/123)
