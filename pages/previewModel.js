@@ -125,6 +125,9 @@ function initPreview()
         if (error && error.message) {
             message = error.message;
         }
+        if (mainViewModel.errorText()) {
+            message = mainViewModel.errorText() + '\n\n' + message;
+        }
         mainViewModel.errorText(message);
     });
 
