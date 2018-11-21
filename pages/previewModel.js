@@ -128,6 +128,28 @@ function initPreview()
         mainViewModel.errorText(message);
     });
 
+    var debugMode = false;
+    window.addEventListener('message', function(event) {
+        if (event.data.command === 'toggleDebugMode') {
+            if (mainViewModel.selectedEngine().name !== 'Babylon.js') {
+                mainViewModel.errorText('Only Babylon.js engine supports debug mode');
+                return;
+            }
+
+            debugMode = !debugMode;
+
+            const mainUI = document.getElementById('mainUI');
+            if (debugMode) {
+                mainUI.style.display = 'none';
+                activeView.enableDebugMode();
+            }
+            else {
+                activeView.disableDebugMode();
+                mainUI.style.display = 'block';
+            }
+        }
+    });
+
     updatePreview();
 }
 
