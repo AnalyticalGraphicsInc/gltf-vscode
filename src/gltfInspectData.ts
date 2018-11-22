@@ -590,23 +590,15 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
     private onDidSelectionChange(e: vscode.TreeViewSelectionChangeEvent<Node>): void {
         const panel = this.gltfWindow.getPreviewPanel(this._fileName);
         if (e.selection.length === 0) {
-            panel.webview.postMessage({ command: 'clear' });
+            panel.webview.postMessage({ command: 'clearSelection' });
         }
         else {
             const vertices = e.selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
-            if (vertices.length > 10) {
-                vscode.window.showWarningMessage('Too many vertices selected. Only first 10 are shown.');
-                vertices.length = 10;
-            }
 
             const triangles = e.selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => node.indices);
             const lines = e.selection.filter(node => node.type === NodeType.Line).map((node: LineNode) => node.indices);
             const points = e.selection.filter(node => node.type === NodeType.Point).map((node: PointNode) => [node.index]);
             const trianglesLinesPoints = [...triangles, ...lines, ...points];
-            if (trianglesLinesPoints.length > 10) {
-                vscode.window.showWarningMessage('Too many triangles, lines, or points selected. Only first 10 are shown.');
-                trianglesLinesPoints.length = 10;
-            }
 
             if (vertices.length !== 0 || trianglesLinesPoints.length !== 0) {
                 panel.webview.postMessage({ command: 'select', jsonPointer: this._jsonPointer, vertices: vertices, trianglesLinesPoints: trianglesLinesPoints });

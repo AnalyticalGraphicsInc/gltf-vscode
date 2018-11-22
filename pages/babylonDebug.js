@@ -1,27 +1,57 @@
 /// <reference path="../node_modules/babylonjs/babylon.d.ts" />
 /// <reference path="../node_modules/babylonjs-inspector/babylon.inspector.module.d.ts" />
 
-/*global BABYLON,acquireVsCodeApi*/
+/*global BABYLON*/
 (function () {
     'use strict';
 
-    const vscode = acquireVsCodeApi();
-
-    window.BabylonDebug = function () {
-        let scene = null;
+    window.BabylonDebug = function (scene) {
         let mesh = null;
-        let utilityLayerRenderer = null;
-        let utilityLayerScene = null;
+        let onBeforeRenderObserver = null;
+        let onSelectionChangedObserver = null;
         let widgetsContainer = null;
         let scaledWidgetsContainer = null;
-        let onSelectionChangedObserver = null;
-        let onBeforeRenderObserver = null;
 
-        this.start = function (babylonScene) {
-            scene = babylonScene;
+        window.addEventListener('message', onMessage);
 
-            window.addEventListener('message', onMessage);
+        // Set up the utility layer.
+        const utilityLayerRenderer = new BABYLON.UtilityLayerRenderer(scene, false);
+        const utilityLayerScene = utilityLayerRenderer.utilityLayerScene;
+        utilityLayerScene.autoClearDepthAndStencil = false;
 
+        // Create the dot widget mesh.
+        const dotMesh = new BABYLON.Mesh.CreateSphere('dot', 16, 0.02, utilityLayerScene);
+        dotMesh.material = new BABYLON.StandardMaterial('dot', utilityLayerScene);
+        dotMesh.material.disableLighting = true;
+        dotMesh.material.emissiveColor = BABYLON.Color3.White();
+        dotMesh.material.alpha = 0.5;
+        dotMesh.setEnabled(false);
+
+        // Create the axes widget meshes.
+        const axesViewer = new BABYLON.Debug.AxesViewer(utilityLayerScene);
+        axesViewer.xAxis.setEnabled(false);
+        axesViewer.yAxis.setEnabled(false);
+        axesViewer.zAxis.setEnabled(false);
+
+        /**
+         * Dispose resources.
+         */
+        this.dispose = function () {
+            clearSelection();
+            this.hideInspector();
+
+            // Clean up the utility layer.
+            axesViewer.dispose();
+            dotMesh.dispose(false, true);
+            utilityLayerRenderer.dispose();
+
+            window.removeEventListener('message', onMessage);
+        };
+
+        /**
+         * Show the inspector.
+         */
+        this.showInspector = function () {
             BABYLON.Inspector.Show(scene, {
                 embedMode: true,
                 enablePopup: false,
@@ -32,7 +62,7 @@
                 const predicate = entity instanceof BABYLON.Node ? p => p.startsWith('/nodes/') : undefined;
                 const jsonPointer = getJsonPointer(entity, predicate);
                 if (jsonPointer) {
-                    vscode.postMessage({
+                    window.vscode.postMessage({
                         command: 'select',
                         jsonPointer: jsonPointer
                     });
@@ -40,19 +70,16 @@
             });
         };
 
-        this.stop = function () {
-            clear();
-
+        /**
+         * Hide the inspector.
+         */
+        this.hideInspector = function () {
             if (onSelectionChangedObserver) {
                 BABYLON.Inspector.OnSelectionChangeObservable.remove(onSelectionChangedObserver);
                 onSelectionChangedObserver = null;
             }
 
             BABYLON.Inspector.Hide();
-
-            window.removeEventListener('message', onMessage);
-
-            scene = null;
         };
 
         function getJsonPointer(node, predicate) {
@@ -78,15 +105,6 @@
             return null;
         }
 
-        function createDot() {
-            const dot = new BABYLON.Mesh.CreateSphere('dot', 16, 0.02, utilityLayerScene);
-            dot.material = new BABYLON.StandardMaterial('dot', utilityLayerScene);
-            dot.material.disableLighting = true;
-            dot.material.emissiveColor = BABYLON.Color3.White();
-            dot.material.alpha = 0.5;
-            return dot;
-        }
-
         // TODO: support skinning and morphing?
         function selectVertices(vertices) {
             const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
@@ -94,11 +112,11 @@
             const tangents = mesh.getVerticesData(BABYLON.VertexBuffer.TangentKind);
 
             vertices.forEach(vertex => {
-                const dot = createDot();
+                const dot = dotMesh.createInstance('dot');
                 dot.parent = scaledWidgetsContainer;
                 BABYLON.Vector3.FromArrayToRef(positions, vertex * 3, dot.position);
 
-                const axes = new BABYLON.Debug.AxesViewer(utilityLayerScene);
+                const axes = axesViewer.createInstance();
 
                 const normal = new BABYLON.Vector3();
                 if (normals) {
@@ -106,7 +124,7 @@
                     normal.normalize();
                 }
                 else {
-                    axes.zAxisMesh.setEnabled(false);
+                    axes.zAxis.setEnabled(false);
                 }
 
                 const tangent = new BABYLON.Vector3();
@@ -118,13 +136,13 @@
                     bitangent.scaleInPlace(tangents[vertex * 4 + 3]);
                 }
                 else {
-                    axes.xAxisMesh.setEnabled(false);
-                    axes.yAxisMesh.setEnabled(false);
+                    axes.xAxis.setEnabled(false);
+                    axes.yAxis.setEnabled(false);
                 }
 
-                axes.xAxisMesh.parent = scaledWidgetsContainer;
-                axes.yAxisMesh.parent = scaledWidgetsContainer;
-                axes.zAxisMesh.parent = scaledWidgetsContainer;
+                axes.xAxis.parent = scaledWidgetsContainer;
+                axes.yAxis.parent = scaledWidgetsContainer;
+                axes.zAxis.parent = scaledWidgetsContainer;
                 axes.update(dot.position, tangent, bitangent, normal);
             });
         }
@@ -136,7 +154,7 @@
             trianglesLinesPoints.forEach(triangleLinePoint => {
                 const points = triangleLinePoint.map(vertex => BABYLON.Vector3.FromArray(positions, vertex * 3));
                 points.forEach(point => {
-                    const dot = createDot();
+                    const dot = dotMesh.createInstance('dot');
                     dot.parent = scaledWidgetsContainer;
                     dot.position.copyFrom(point);
                 });
@@ -152,16 +170,14 @@
             });
         }
 
+        // TODO: optimize with incremental update.
         function select(jsonPointer, vertices, trianglesLinesPoints) {
-            clear();
+            clearSelection();
 
             mesh = findMeshByJsonPointer(jsonPointer);
             if (!mesh) {
                 return;
             }
-
-            utilityLayerRenderer = new BABYLON.UtilityLayerRenderer(scene, false);
-            utilityLayerScene = utilityLayerRenderer.utilityLayerScene;
 
             widgetsContainer = new BABYLON.TransformNode('widgetsContainer', utilityLayerScene);
             scaledWidgetsContainer = new BABYLON.TransformNode('scaledWidgetsContainer', utilityLayerScene);
@@ -171,6 +187,9 @@
                 widgetsContainer.position = mesh.absolutePosition;
                 widgetsContainer.rotationQuaternion = mesh.rotationQuaternion;
 
+                scaledWidgetsContainer.position = mesh.absolutePosition;
+                scaledWidgetsContainer.rotationQuaterion = mesh.rotationQuaternion;
+
                 const scale = mesh.getDistanceToCamera() * 0.3;
                 scaledWidgetsContainer.getChildren().forEach(node => node.scaling.setAll(scale));
             });
@@ -179,19 +198,16 @@
             selectTrianglesLinesPoints(trianglesLinesPoints);
         }
 
-        function clear() {
+        function clearSelection() {
             if (onBeforeRenderObserver) {
                 scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
                 onBeforeRenderObserver = null;
             }
 
-            scaledWidgetsContainer = null;
-            widgetsContainer = null;
-
-            utilityLayerScene = null;
-            if (utilityLayerRenderer) {
-                utilityLayerRenderer.dispose();
-                utilityLayerRenderer = null;
+            if (widgetsContainer) {
+                scaledWidgetsContainer = null;
+                widgetsContainer.dispose();
+                widgetsContainer = null;
             }
 
             mesh = null;
@@ -204,8 +220,8 @@
                     select(message.jsonPointer, message.vertices, message.trianglesLinesPoints);
                     break;
                 }
-                case 'clear': {
-                    clear();
+                case 'clearSelection': {
+                    clearSelection();
                 }
             }
         }

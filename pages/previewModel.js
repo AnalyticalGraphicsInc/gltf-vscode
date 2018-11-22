@@ -1,6 +1,8 @@
-/*global Cesium,ko,CesiumView,ThreeView,BabylonView*/
+/*global Cesium,ko,CesiumView,ThreeView,BabylonView,acquireVsCodeApi*/
 (function() {
     'use strict';
+
+window.vscode = acquireVsCodeApi();
 
 // Defines the 3D engines that the menu allows the users to choose from.
 var engineInfo = [{

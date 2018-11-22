@@ -14,7 +14,7 @@
         var scene = null;
         var skybox = null;
         var skyboxBlur = 0.0;
-        var backgroundSubscription;
+        var backgroundSubscription = null;
         var debug = null;
 
         /**
@@ -24,16 +24,23 @@
          */
         this.cleanup = function () {
             if (debug) {
-                debug.stop();
+                debug.dispose();
+                debug = null;
             }
+
             if (backgroundSubscription) {
                 backgroundSubscription.dispose();
-                backgroundSubscription = undefined;
+                backgroundSubscription = null;
             }
+
             mainViewModel.animations([]);
             enabled = false;
             window.removeEventListener('resize', onWindowResize);
-            engine.dispose();
+
+            if (engine) {
+                engine.dispose();
+                engine = null;
+            }
         };
 
         function render() {
@@ -69,7 +76,8 @@
             engine = new BABYLON.Engine(canvas, true);
             engine.enableOfflineSupport = false;
             scene = new BABYLON.Scene(engine);
-            scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
+            scene.useRightHandedSystem = true;
+            debug = new window.BabylonDebug(scene);
 
             BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
                 plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
@@ -123,7 +131,6 @@
                 backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
                 engine.runRenderLoop(render);
-
             }, function (error) {
                 mainViewModel.errorText(error.message);
             });
@@ -132,15 +139,11 @@
         };
 
         this.enableDebugMode = function () {
-            debug = new window.BabylonDebug();
-            debug.start(scene);
+            debug.showInspector();
         };
 
         this.disableDebugMode = function () {
-            if (debug) {
-                debug.stop();
-                debug = null;
-            }
+            debug.hideInspector();
         };
     };
 })();
