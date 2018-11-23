@@ -132,7 +132,7 @@
 
                 engine.runRenderLoop(render);
             }, function (error) {
-                mainViewModel.errorText(error.message);
+                mainViewModel.showErrorMessage(error.message);
             });
 
             window.addEventListener('resize', onWindowResize);

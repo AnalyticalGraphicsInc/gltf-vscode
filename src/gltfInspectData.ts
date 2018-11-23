@@ -390,8 +390,15 @@ function getIndicesNode(fileName: string, gltf: GLTF2.GLTF, numVertices: number,
     }
 }
 
+function getIconPath(context: vscode.ExtensionContext, name: string): { light: string, dark: string} {
+    return {
+        light: context.asAbsolutePath(path.join('resources', 'light', `${name}.svg`)),
+        dark: context.asAbsolutePath(path.join('resources', 'dark', `${name}.svg`))
+    }
+}
+
 export class GltfInspectData implements vscode.TreeDataProvider<Node> {
-    private readonly dataIcon: { light: string, dark: string };
+    private readonly iconPaths: { [nodeType: number]: { light: string, dark: string } } = {};
     private _treeView: vscode.TreeView<Node>;
     private _fileName: string;
     private _jsonPointer: string;
@@ -399,11 +406,8 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<Node | null> = new vscode.EventEmitter<Node | null>();
 
-    constructor(private context: vscode.ExtensionContext, private gltfWindow: GltfWindow) {
-        this.dataIcon = {
-            light: this.context.asAbsolutePath(path.join('resources', 'light', 'data.svg')),
-            dark: this.context.asAbsolutePath(path.join('resources', 'dark', 'data.svg'))
-        };
+    constructor(context: vscode.ExtensionContext, private gltfWindow: GltfWindow) {
+        this.iconPaths[NodeType.Header] = getIconPath(context, 'inspect');
 
         this.gltfWindow.onDidChangeActiveTextEditor(() => {
             this.reset();
@@ -417,7 +421,6 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         switch (node.type) {
             case NodeType.Header: {
                 treeItem = new vscode.TreeItem(this._jsonPointer, vscode.TreeItemCollapsibleState.None);
-                treeItem.iconPath = this.dataIcon;
                 break;
             }
             case NodeType.DataGroup: {
@@ -506,6 +509,11 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
                 throw new Error('Invalid data node type');
             }
         }
+
+        if (this.iconPaths[node.type]) {
+            treeItem.iconPath = this.iconPaths[node.type];
+        }
+
         return treeItem;
     }
 

@@ -226,7 +226,7 @@ window.ThreeView = function() {
             onWindowResize();
         }, undefined, function(error) {
             console.error(error);
-            mainViewModel.errorText(error.stack);
+            mainViewModel.showErrorMessage(error.stack);
         });
 
         orbitControls = new THREE.OrbitControls(camera, renderer.domElement);

@@ -71,7 +71,7 @@ function configurationChanged() {
     const config = vscode.workspace.getConfiguration('glTF');
     const showToolbar3D = config.get('showToolbar3D');
 
-    vscode.commands.executeCommand('setContext', 'glTF_showToolbar3D', showToolbar3D);
+    vscode.commands.executeCommand('setContext', 'gltfShowToolbar3D', showToolbar3D);
 }
 
 // This method activates the language server, to run the glTF Validator.
@@ -384,12 +384,21 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     //
-    // Toggle glTF debug mode.
+    // Enable/Disable glTF debug mode.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.toggleDebugMode', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.enableDebugMode', () => {
+        vscode.commands.executeCommand('setContext', 'gltfDebugActive', true);
         if (gltfPreview.activePanel) {
             gltfPreview.activePanel.webview.postMessage({
-                command: 'toggleDebugMode'
+                command: 'enableDebugMode'
+            });
+        }
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.disableDebugMode', () => {
+        vscode.commands.executeCommand('setContext', 'gltfDebugActive', false);
+        if (gltfPreview.activePanel) {
+            gltfPreview.activePanel.webview.postMessage({
+                command: 'disableDebugMode'
             });
         }
     }));

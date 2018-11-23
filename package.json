@@ -131,8 +131,20 @@
                 }
             },
             {
-                "command": "gltf.toggleDebugMode",
-                "title": "glTF: Toggle Debug Mode"
+                "command": "gltf.enableDebugMode",
+                "title": "glTF: Enable Debug Mode",
+                "icon": {
+                    "dark": "./resources/dark/debug-disabled.svg",
+                    "light": "./resources/light/debug-disabled.svg"
+                }
+            },
+            {
+                "command": "gltf.disableDebugMode",
+                "title": "glTF: Disable Debug Mode",
+                "icon": {
+                    "dark": "./resources/dark/debug-enabled.svg",
+                    "light": "./resources/light/debug-enabled.svg"
+                }
             },
             {
                 "command": "gltf.validateFile",
@@ -213,13 +225,18 @@
             "editor/title": [
                 {
                     "command": "gltf.previewModel",
-                    "when": "editorFocus && gltfFileActive && glTF_showToolbar3D",
+                    "when": "gltfFileActive && gltfShowToolbar3D",
                     "group": "navigation"
                 },
                 {
-                    "command": "gltf.toggleDebugMode",
-                    "when": "gltfPreviewActive",
-                    "group": "glTF"
+                    "command": "gltf.enableDebugMode",
+                    "when": "gltfPreviewActive && !gltfDebugActive",
+                    "group": "navigation"
+                },
+                {
+                    "command": "gltf.disableDebugMode",
+                    "when": "gltfPreviewActive && gltfDebugActive",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
@@ -277,7 +294,7 @@
                 {
                     "id": "gltf",
                     "title": "glTF",
-                    "icon": "resources/gltf.svg"
+                    "icon": "resources/dark/gltf.svg"
                 }
             ]
         },
