@@ -75,7 +75,8 @@ interface TrianglesNode extends Node {
 }
 
 interface TriangleNode extends Node {
-    indices: [number, number, number];
+    index: number;
+    vertices: [number, number, number];
 }
 
 interface LinesNode extends Node {
@@ -83,7 +84,8 @@ interface LinesNode extends Node {
 }
 
 interface LineNode extends Node {
-    indices: [number, number];
+    index: number;
+    vertices: [number, number];
 }
 
 interface PointsNode extends Node {
@@ -92,6 +94,7 @@ interface PointsNode extends Node {
 
 interface PointNode extends Node {
     index: number;
+    vertex: number;
 }
 
 function formatScalar(value: number, float: boolean): string {
@@ -248,13 +251,14 @@ function getTriangleNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, da
     switch (mode) {
         case GLTF2.MeshPrimitiveMode.TRIANGLES: {
             nodes = new Array(length / 3);
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i] = {
+            for (let index = 0; index < nodes.length; index++) {
+                nodes[index] = {
                     type: NodeType.Triangle,
-                    indices: [
-                        get(i * 3),
-                        get(i * 3 + 1),
-                        get(i * 3 + 2)
+                    index: index,
+                    vertices: [
+                        get(index * 3),
+                        get(index * 3 + 1),
+                        get(index * 3 + 2)
                     ]
                 };
             }
@@ -262,13 +266,14 @@ function getTriangleNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, da
         }
         case GLTF2.MeshPrimitiveMode.TRIANGLE_FAN: {
             nodes = new Array(length - 2);
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i] = {
+            for (let index = 0; index < nodes.length; index++) {
+                nodes[index] = {
                     type: NodeType.Triangle,
-                    indices: [
+                    index: index,
+                    vertices: [
                         get(0),
-                        get(i + 1),
-                        get(i + 2)
+                        get(index + 1),
+                        get(index + 2)
                     ]
                 };
             }
@@ -276,14 +281,15 @@ function getTriangleNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, da
         }
         case GLTF2.MeshPrimitiveMode.TRIANGLE_STRIP: {
             nodes = new Array(length - 2);
-            for (let i = 0; i < nodes.length; i++) {
-                const flip = (i & 1) === 1;
-                nodes[i] = {
+            for (let index = 0; index < nodes.length; index++) {
+                const flip = (index & 1) === 1;
+                nodes[index] = {
                     type: NodeType.Triangle,
-                    indices: [
-                        get(flip ? i + 2 : i),
-                        get(i + 1),
-                        get(flip ? i : i + 2)
+                    index: index,
+                    vertices: [
+                        get(flip ? index + 2 : index),
+                        get(index + 1),
+                        get(flip ? index : index + 2)
                     ]
                 };
             }
@@ -302,12 +308,13 @@ function getLineNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, data: 
     switch (mode) {
         case GLTF2.MeshPrimitiveMode.LINES: {
             nodes = new Array(length / 2);
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i] = {
+            for (let index = 0; index < nodes.length; index++) {
+                nodes[index] = {
                     type: NodeType.Line,
-                    indices: [
-                        get(i * 2),
-                        get(i * 2 + 1)
+                    index: index,
+                    vertices: [
+                        get(index * 2),
+                        get(index * 2 + 1)
                     ]
                 };
             }
@@ -316,12 +323,13 @@ function getLineNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, data: 
         case GLTF2.MeshPrimitiveMode.LINE_LOOP:
         case GLTF2.MeshPrimitiveMode.LINE_STRIP: {
             nodes = new Array(mode === GLTF2.MeshPrimitiveMode.LINE_LOOP ? length : length - 1);
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i] = {
+            for (let index = 0; index < nodes.length; index++) {
+                nodes[index] = {
                     type: NodeType.Line,
-                    indices: [
-                        get(i),
-                        get((i + 1) % length)
+                    index: index,
+                    vertices: [
+                        get(index),
+                        get((index + 1) % length)
                     ]
                 };
             }
@@ -335,10 +343,11 @@ function getLineNodes(numVertices: number, mode: GLTF2.MeshPrimitiveMode, data: 
 function getPointNodes(numVertices: number, data: ArrayLike<number> | undefined): DataGroupNode<PointNode>[] | PointNode[] {
     const get = data ? i => data[i] : i => i;
     const nodes = new Array<PointNode>(data ? data.length : numVertices);
-    for (let i = 0; i < nodes.length; i++) {
-        nodes[i] = {
+    for (let index = 0; index < nodes.length; index++) {
+        nodes[index] = {
             type: NodeType.Point,
-            index: get(i)
+            index: index,
+            vertex: get(index)
         }
     }
 
@@ -469,7 +478,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
             }
             case NodeType.Triangle: {
                 const triangleNode = node as TriangleNode;
-                const label = `${formatVector(triangleNode.indices, false)}`;
+                const label = `${formatVector(triangleNode.vertices, false)}`;
                 treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
                 break;
             }
@@ -479,7 +488,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
             }
             case NodeType.Line: {
                 const lineNode = node as LineNode;
-                const label = `${formatVector(lineNode.indices, false)}`;
+                const label = `${formatVector(lineNode.vertices, false)}`;
                 treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
                 break;
             }
@@ -589,20 +598,14 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
 
     private onDidSelectionChange(e: vscode.TreeViewSelectionChangeEvent<Node>): void {
         const panel = this.gltfWindow.getPreviewPanel(this._fileName);
-        if (e.selection.length === 0) {
-            panel.webview.postMessage({ command: 'clearSelection' });
-        }
-        else {
-            const vertices = e.selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
 
-            const triangles = e.selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => node.indices);
-            const lines = e.selection.filter(node => node.type === NodeType.Line).map((node: LineNode) => node.indices);
-            const points = e.selection.filter(node => node.type === NodeType.Point).map((node: PointNode) => [node.index]);
-            const trianglesLinesPoints = [...triangles, ...lines, ...points];
+        const vertices = e.selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
 
-            if (vertices.length !== 0 || trianglesLinesPoints.length !== 0) {
-                panel.webview.postMessage({ command: 'select', jsonPointer: this._jsonPointer, vertices: vertices, trianglesLinesPoints: trianglesLinesPoints });
-            }
-        }
+        const triangles = e.selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => ({ index: node.index, vertices: node.vertices }));
+        const lines = e.selection.filter(node => node.type === NodeType.Line).map((node: LineNode) => ({ index: node.index, vertices: node.vertices }));
+        const points = e.selection.filter(node => node.type === NodeType.Point).map((node: PointNode) => ({ index: node.index, vertices: [node.index] }));
+        const trianglesLinesPoints = [...triangles, ...lines, ...points];
+
+        panel.webview.postMessage({ command: 'select', jsonPointer: this._jsonPointer, vertices: vertices, trianglesLinesPoints: trianglesLinesPoints });
     }
 }
