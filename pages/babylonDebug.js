@@ -85,6 +85,13 @@ window.BabylonDebug = function (scene) {
         BABYLON.Inspector.Hide();
     };
 
+    /**
+     * Returns whether the inspector is visible.
+     */
+    this.isInspectorVisible = function () {
+        return BABYLON.Inspector.IsVisible;
+    };
+
     function getJsonPointer(node, predicate) {
         const jsonPointers = node.metadata && node.metadata.gltf && node.metadata.gltf.pointers;
         if (jsonPointers) {

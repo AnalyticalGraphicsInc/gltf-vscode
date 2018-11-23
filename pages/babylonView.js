@@ -145,5 +145,9 @@
         this.disableDebugMode = function () {
             debug.hideInspector();
         };
+
+        this.isDebugModeEnabled = function () {
+            return debug.isInspectorVisible();
+        };
     };
 })();

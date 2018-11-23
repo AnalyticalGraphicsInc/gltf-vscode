@@ -387,19 +387,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Enable/Disable glTF debug mode.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.enableDebugMode', () => {
-        vscode.commands.executeCommand('setContext', 'gltfDebugActive', true);
         if (gltfPreview.activePanel) {
-            gltfPreview.activePanel.webview.postMessage({
-                command: 'enableDebugMode'
-            });
+            gltfPreview.activePanel.webview.postMessage({ command: 'enableDebugMode' });
         }
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gltf.disableDebugMode', () => {
-        vscode.commands.executeCommand('setContext', 'gltfDebugActive', false);
         if (gltfPreview.activePanel) {
-            gltfPreview.activePanel.webview.postMessage({
-                command: 'disableDebugMode'
-            });
+            gltfPreview.activePanel.webview.postMessage({ command: 'disableDebugMode' });
         }
     }));
 

@@ -112,10 +112,17 @@ export class GltfPreview extends ContextBase {
         return this._panels[fileName];
     }
 
-    private setActivePanel(activePanel: GltfPreviewPanel): void {
+    private setActivePanel(activePanel: GltfPreviewPanel | undefined): void {
         if (this._activePanel !== activePanel) {
             this._activePanel = activePanel;
             this._onDidChangeActivePanel.fire(activePanel);
+
+            if (activePanel) {
+                activePanel.webview.postMessage({ command: 'updateDebugMode' });
+            }
+            else {
+                vscode.commands.executeCommand('setContext', 'gltfDebugActive', false);
+            }
         }
     }
 
@@ -160,8 +167,8 @@ export class GltfPreview extends ContextBase {
                 vscode.commands.executeCommand('gltf.openGltfSelection', range);
                 break;
             }
-            case 'disableDebugMode': {
-                vscode.commands.executeCommand('setContext', 'gltfDebugActive', false);
+            case 'setDebugActive': {
+                vscode.commands.executeCommand('setContext', 'gltfDebugActive', message.state);
                 break;
             }
             case 'showErrorMessage': {
