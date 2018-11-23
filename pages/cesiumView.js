@@ -114,6 +114,7 @@ window.CesiumView = function() {
         var model = scene.primitives.add(new Cesium.Model({
             gltf: gltfContent,
             basePath: gltfRootPath,
+            forwardAxis: Cesium.Axis.X,
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
         }));
 
@@ -126,6 +127,7 @@ window.CesiumView = function() {
         var model = scene.primitives.add(Cesium.Model.fromGltf({
             url: gltfRootPath + gltfFileName,
             basePath: gltfRootPath,
+            forwardAxis: Cesium.Axis.X,
             scale: 100
         }));
 
