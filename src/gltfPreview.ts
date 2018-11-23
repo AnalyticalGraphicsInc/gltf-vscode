@@ -198,8 +198,8 @@ export class GltfPreview extends ContextBase {
 
         const scripts = [
             'engines/Cesium/Cesium.js',
-            'node_modules/babylonjs/babylon.max.js',
-            'node_modules/babylonjs-loaders/babylonjs.loaders.js',
+            'node_modules/babylonjs/babylon.js',
+            'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
             'node_modules/babylonjs-inspector/babylon.inspector.bundle.js',
             'engines/Three/three.min.js',
             'engines/Three/DDSLoader.js',
