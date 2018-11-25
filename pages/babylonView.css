@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-family: sans-serif;
+    touch-action: none;
 }
 
 #babylonLogo {
@@ -12,7 +12,4 @@
     width: 100px;
     bottom: 0px;
     left: 0px;
-    padding: 10px;
-    background-color: white;
-    opacity: 0.8;
 }

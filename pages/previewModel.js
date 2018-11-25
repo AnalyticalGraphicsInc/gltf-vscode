@@ -54,7 +54,8 @@ var mainViewModel = window.mainViewModel = {
         }
     },
     showErrorMessage: (message) => window.vscode.postMessage({ command: 'showErrorMessage', message: message }),
-    showWarningMessage: (message) => window.vscode.postMessage({ command: 'showWarningMessage', message: message })
+    showWarningMessage: (message) => window.vscode.postMessage({ command: 'showWarningMessage', message: message }),
+    setContext: (name, value) => window.vscode.postMessage({ command: 'setContext', name: name, value: value })
 };
 
 /**
@@ -137,16 +138,16 @@ function initPreview()
                         activeView.disableDebugMode();
                         mainUI.style.display = 'block';
                     }
-                    window.vscode.postMessage({ command: 'setDebugActive', state: activeView.isDebugModeEnabled() });
+                    mainViewModel.setContext('gltfDebugActive', activeView.isDebugModeEnabled());
                 }
                 else {
-                    mainViewModel.showWarningMessage('Only Babylon.js engine supports debug mode');
+                    mainViewModel.showWarningMessage('Only Babylon.js supports debug mode');
                 }
                 break;
             }
             case 'updateDebugMode': {
                 if (mainViewModel.selectedEngine().name === 'Babylon.js') {
-                    window.vscode.postMessage({ command: 'setDebugActive', state: activeView.isDebugModeEnabled() });
+                    mainViewModel.setContext('gltfDebugActive', activeView.isDebugModeEnabled());
                 }
                 break;
             }
