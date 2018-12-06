@@ -1,8 +1,8 @@
 {
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
-    "description": "Tools for editing and previewing glTF files",
-    "version": "2.1.17",
+    "description": "Tools for glTF and GLB 3D model files",
+    "version": "2.1.19",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -323,6 +323,7 @@
         "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
     },
     "devDependencies": {
+        "ajv": "^5.5.2",
         "@types/mocha": "^2.2.48",
         "@types/node": "^8.10.12",
         "eslint": "^4.19.1",

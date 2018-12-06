@@ -1,6 +1,10 @@
 # Change Log
 
-### 2.1.18 - UNRELEASED
+### 2.1.19 - 2018-11-27
+
+* Update npm packages to remove event-stream 3.3.6, which was flagged as malicious (but the payload was inert in this extension).
+
+### 2.1.18 - 2018-11-27
 
 * Fixed schema bug in `EXT_lights_image_based`.  [KhronosGroup/glTF#1482](https://github.com/KhronosGroup/glTF/issues/1482)
 * Fixed an issue with model orientation in the Cesium preview. [#126](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/126)
