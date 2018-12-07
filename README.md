@@ -38,7 +38,7 @@ The user is given a "Save As..." dialog for the base `.gltf` output filename onl
 
 ![Inspect Data](images/InspectData.png)
 
-Command name: `glTF: Inspect Data`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>\
+Command name: `glTF: Inspect Data`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>
 
 Above, the user is inspecting the first accessor that is part of the `BoomBox.gltf` model from the official sample model repository.  Place the document cursor on shaders, images, accessors, or mesh primitives then select the `glTF: Inspect Data` command to inspect the data.  The command works for files or data-URIs.
 
@@ -78,7 +78,7 @@ Here is an example of selecting triangles.
 
 ![Select Triangles](images/SelectTriangles.png)
 
-
+_Note that this feature is currently only supported when Babylon.js is the rendering engine._
 
 ## Other Features
 
