@@ -55,7 +55,8 @@ var mainViewModel = window.mainViewModel = {
     },
     showErrorMessage: (message) => window.vscode.postMessage({ command: 'showErrorMessage', message: message }),
     showWarningMessage: (message) => window.vscode.postMessage({ command: 'showWarningMessage', message: message }),
-    setContext: (name, value) => window.vscode.postMessage({ command: 'setContext', name: name, value: value })
+    setContext: (name, value) => window.vscode.postMessage({ command: 'setContext', name: name, value: value }),
+    onReady: () => window.vscode.postMessage({ command: 'onReady' })
 };
 
 /**

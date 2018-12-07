@@ -4,6 +4,7 @@ import { GltfWindow } from './gltfWindow';
 import { GLTF2 } from './GLTF2';
 import { getFromJsonPointer, getAccessorData, getAccessorElement, AccessorTypeToNumComponents } from './utilities';
 import { sprintf } from 'sprintf-js';
+import { GltfPreviewPanel } from './gltfPreview';
 
 enum NodeType {
     Header,
@@ -398,19 +399,31 @@ function getIconPath(context: vscode.ExtensionContext, name: string): { light: s
 }
 
 export class GltfInspectData implements vscode.TreeDataProvider<Node> {
-    private readonly iconPaths: { [nodeType: number]: { light: string, dark: string } } = {};
+    private readonly _iconPaths: { [nodeType: number]: { light: string, dark: string } } = {};
+    private _gltfWindow: GltfWindow;
     private _treeView: vscode.TreeView<Node>;
     private _fileName: string;
     private _jsonPointer: string;
     private _roots: Node[];
-
     private _onDidChangeTreeData: vscode.EventEmitter<Node | null> = new vscode.EventEmitter<Node | null>();
 
-    constructor(context: vscode.ExtensionContext, private gltfWindow: GltfWindow) {
-        this.iconPaths[NodeType.Header] = getIconPath(context, 'inspect');
+    constructor(context: vscode.ExtensionContext, gltfWindow: GltfWindow) {
+        this._iconPaths[NodeType.Header] = getIconPath(context, 'inspect');
 
-        this.gltfWindow.onDidChangeActiveTextEditor(() => {
+        this._gltfWindow = gltfWindow;
+
+        this._gltfWindow.onDidChangeActiveTextEditor(() => {
             this.reset();
+        });
+
+        this._gltfWindow.preview.onDidChangeActivePanel(panel => {
+            if (panel) {
+                this.updateSelection(panel, this._treeView.selection);
+            }
+        });
+
+        this._gltfWindow.preview.onReady(panel => {
+            this.updateSelection(panel, this._treeView.selection);
         });
     }
 
@@ -510,8 +523,8 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
             }
         }
 
-        if (this.iconPaths[node.type]) {
-            treeItem.iconPath = this.iconPaths[node.type];
+        if (this._iconPaths[node.type]) {
+            treeItem.iconPath = this._iconPaths[node.type];
         }
 
         return treeItem;
@@ -566,6 +579,8 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
     }
 
     public showAccessor(fileName: string, gltf: GLTF2.GLTF, jsonPointer: string): void {
+        this.reset();
+
         this._fileName = fileName;
         this._jsonPointer = jsonPointer;
 
@@ -581,6 +596,8 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
     }
 
     public showMeshPrimitive(fileName: string, gltf: GLTF2.GLTF, jsonPointer: string): void {
+        this.reset();
+
         this._fileName = fileName;
         this._jsonPointer = jsonPointer;
 
@@ -604,16 +621,21 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         this._onDidChangeTreeData.fire();
     }
 
-    private onDidSelectionChange(e: vscode.TreeViewSelectionChangeEvent<Node>): void {
-        const panel = this.gltfWindow.getPreviewPanel(this._fileName);
+    private updateSelection(panel: GltfPreviewPanel, selection: Node[]): void {
+        const vertices = selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
 
-        const vertices = e.selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
-
-        const triangles = e.selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => ({ index: node.index, vertices: node.vertices }));
-        const lines = e.selection.filter(node => node.type === NodeType.Line).map((node: LineNode) => ({ index: node.index, vertices: node.vertices }));
-        const points = e.selection.filter(node => node.type === NodeType.Point).map((node: PointNode) => ({ index: node.index, vertices: [node.index] }));
+        const triangles = selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => ({ index: node.index, vertices: node.vertices }));
+        const lines = selection.filter(node => node.type === NodeType.Line).map((node: LineNode) => ({ index: node.index, vertices: node.vertices }));
+        const points = selection.filter(node => node.type === NodeType.Point).map((node: PointNode) => ({ index: node.index, vertices: [node.index] }));
         const trianglesLinesPoints = [...triangles, ...lines, ...points];
 
         panel.webview.postMessage({ command: 'select', jsonPointer: this._jsonPointer, vertices: vertices, trianglesLinesPoints: trianglesLinesPoints });
+    }
+
+    private onDidSelectionChange(e: vscode.TreeViewSelectionChangeEvent<Node>): void {
+        const panel = this._gltfWindow.preview.getPanel(this._fileName);
+        if (panel) {
+            this.updateSelection(panel, e.selection);
+        }
     }
 }

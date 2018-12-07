@@ -26,6 +26,8 @@ export class GltfPreview extends ContextBase {
     private _activePanel: GltfPreviewPanel;
     private _onDidChangeActivePanel: vscode.EventEmitter<GltfPreviewPanel | undefined> = new vscode.EventEmitter<GltfPreviewPanel | undefined>();
 
+    private _onReady: vscode.EventEmitter<GltfPreviewPanel> = new vscode.EventEmitter<GltfPreviewPanel>();
+
     constructor(context: vscode.ExtensionContext) {
         super(context);
 
@@ -112,6 +114,8 @@ export class GltfPreview extends ContextBase {
         return this._panels[fileName];
     }
 
+    public readonly onReady = this._onReady.event;
+
     private setActivePanel(activePanel: GltfPreviewPanel | undefined): void {
         if (this._activePanel !== activePanel) {
             this._activePanel = activePanel;
@@ -177,6 +181,10 @@ export class GltfPreview extends ContextBase {
             }
             case 'showWarningMessage': {
                 vscode.window.showWarningMessage(message.message);
+                break;
+            }
+            case 'onReady': {
+                this._onReady.fire(panel);
                 break;
             }
             default: {

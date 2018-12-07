@@ -44,7 +44,8 @@ window.BabylonDebug = function (scene) {
     this.dispose = function () {
         this.hideInspector();
 
-        select(null, null, null);
+        // Clear the selection.
+        select();
 
         utilityLayerRenderer.dispose();
 
@@ -154,20 +155,22 @@ window.BabylonDebug = function (scene) {
 
     // TODO: support skinning and morphing?
     function selectVertices(mesh, vertices) {
-        const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-        const normals = mesh.getVerticesData(BABYLON.VertexBuffer.NormalKind);
-        const tangents = mesh.getVerticesData(BABYLON.VertexBuffer.TangentKind);
-
         const newWidgets = {};
 
-        for (const vertex of vertices) {
-            const widget = vertexWidgets[vertex];
-            if (widget) {
-                delete vertexWidgets[vertex];
-                newWidgets[vertex] = widget;
-            }
-            else {
-                newWidgets[vertex] = createVertexWidget(positions, normals, tangents, vertex);
+        if (mesh && vertices) {
+            const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+            const normals = mesh.getVerticesData(BABYLON.VertexBuffer.NormalKind);
+            const tangents = mesh.getVerticesData(BABYLON.VertexBuffer.TangentKind);
+
+            for (const vertex of vertices) {
+                const widget = vertexWidgets[vertex];
+                if (widget) {
+                    delete vertexWidgets[vertex];
+                    newWidgets[vertex] = widget;
+                }
+                else {
+                    newWidgets[vertex] = createVertexWidget(positions, normals, tangents, vertex);
+                }
             }
         }
 
@@ -204,18 +207,20 @@ window.BabylonDebug = function (scene) {
 
     // TODO: support skinning and morphing?
     function selectTrianglesLinesPoints(mesh, trianglesLinesPoints) {
-        const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-
         const newWidgets = {};
 
-        for (const triangleLinePoint of trianglesLinesPoints) {
-            const widget = triangleLinePointWidgets[triangleLinePoint.index];
-            if (widget) {
-                delete triangleLinePointWidgets[triangleLinePoint.index];
-                newWidgets[triangleLinePoint.index] = widget;
-            }
-            else {
-                newWidgets[triangleLinePoint.index] = createTriangleLinePointWidget(positions, triangleLinePoint.vertices);
+        if (mesh && trianglesLinesPoints) {
+            const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+
+            for (const triangleLinePoint of trianglesLinesPoints) {
+                const widget = triangleLinePointWidgets[triangleLinePoint.index];
+                if (widget) {
+                    delete triangleLinePointWidgets[triangleLinePoint.index];
+                    newWidgets[triangleLinePoint.index] = widget;
+                }
+                else {
+                    newWidgets[triangleLinePoint.index] = createTriangleLinePointWidget(positions, triangleLinePoint.vertices);
+                }
             }
         }
 
@@ -257,14 +262,13 @@ window.BabylonDebug = function (scene) {
         }
 
         const mesh = findMeshByJsonPointer(jsonPointer);
-        if (!mesh) {
-            return;
-        }
 
-        beforeRenderObserver = utilityLayerScene.onBeforeRenderObservable.add(() => {
-            synchronizeWidgetsWithMesh(mesh);
-            updateScaledWidgetsContainer(mesh);
-        });
+        if (mesh) {
+            beforeRenderObserver = utilityLayerScene.onBeforeRenderObservable.add(() => {
+                synchronizeWidgetsWithMesh(mesh);
+                updateScaledWidgetsContainer(mesh);
+            });
+        }
 
         selectVertices(mesh, vertices);
         selectTrianglesLinesPoints(mesh, trianglesLinesPoints);

@@ -131,6 +131,8 @@
                 backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
                 engine.runRenderLoop(render);
+
+                mainViewModel.onReady();
             }, function (error) {
                 mainViewModel.showErrorMessage(error.message);
             });

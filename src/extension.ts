@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
-import { GltfOutline } from './gltfOutline';
-import { GltfPreview } from './gltfPreview';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as path from 'path';
@@ -11,7 +9,6 @@ import * as fs from 'fs';
 import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer } from './utilities';
 import { GLTF2 } from './GLTF2';
 import { GltfWindow } from './gltfWindow';
-import { GltfInspectData } from './gltfInspectData';
 
 function checkValidEditor(): boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -119,16 +116,8 @@ export function activate(context: vscode.ExtensionContext) {
     // Activate the validation server.
     activateServer(context);
 
-    const gltfPreview = new GltfPreview(context);
-    const gltfWindow = new GltfWindow(gltfPreview);
-
-    // Register the outline provider.
-    const gltfOutline = new GltfOutline(context, gltfWindow);
-    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutline);
-
-    // Register the inspect data provider.
-    const gltfInspectData = new GltfInspectData(context, gltfWindow);
-    gltfInspectData.setTreeView(vscode.window.createTreeView('gltfInspectData', { treeDataProvider: gltfInspectData }));
+    // Create the window object that manages the various views.
+    const gltfWindow = new GltfWindow(context);
 
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
@@ -171,13 +160,13 @@ export function activate(context: vscode.ExtensionContext) {
 
         if (isAccessor) {
             jsonPointer = truncateJsonPointer(jsonPointer, 2);
-            gltfInspectData.showAccessor(fileName, map.data, jsonPointer);
+            gltfWindow.inspectData.showAccessor(fileName, map.data, jsonPointer);
             return;
         }
 
         if (isMeshPrimitive) {
             jsonPointer = truncateJsonPointer(jsonPointer, 4);
-            gltfInspectData.showMeshPrimitive(fileName, map.data, jsonPointer);
+            gltfWindow.inspectData.showMeshPrimitive(fileName, map.data, jsonPointer);
             return;
         }
 
@@ -380,20 +369,20 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        gltfPreview.openPanel(vscode.window.activeTextEditor);
+        gltfWindow.preview.openPanel(vscode.window.activeTextEditor);
     }));
 
     //
     // Enable/Disable glTF debug mode.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.enableDebugMode', () => {
-        if (gltfPreview.activePanel) {
-            gltfPreview.activePanel.webview.postMessage({ command: 'enableDebugMode' });
+        if (gltfWindow.preview.activePanel) {
+            gltfWindow.preview.activePanel.webview.postMessage({ command: 'enableDebugMode' });
         }
     }));
     context.subscriptions.push(vscode.commands.registerCommand('gltf.disableDebugMode', () => {
-        if (gltfPreview.activePanel) {
-            gltfPreview.activePanel.webview.postMessage({ command: 'disableDebugMode' });
+        if (gltfWindow.preview.activePanel) {
+            gltfWindow.preview.activePanel.webview.postMessage({ command: 'disableDebugMode' });
         }
     }));
 
@@ -401,7 +390,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Register glTF Tree View
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.openGltfSelection', range => {
-        gltfOutline.select(range);
+        gltfWindow.outline.select(range);
     }));
 
     //
@@ -718,7 +707,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Update all preview windows when the glTF file is saved.
     //
     vscode.workspace.onDidSaveTextDocument((document) => {
-        gltfPreview.updatePanel(document);
+        gltfWindow.preview.updatePanel(document);
     });
 }
 

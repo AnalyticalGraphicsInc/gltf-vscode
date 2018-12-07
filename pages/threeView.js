@@ -224,6 +224,8 @@ window.ThreeView = function() {
 
             scene.add(object);
             onWindowResize();
+
+            mainViewModel.onReady();
         }, undefined, function(error) {
             console.error(error);
             mainViewModel.showErrorMessage(error.stack);
