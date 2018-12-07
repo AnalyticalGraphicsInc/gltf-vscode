@@ -417,12 +417,12 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         });
 
         this._gltfWindow.preview.onDidChangeActivePanel(panel => {
-            if (panel) {
+            if (panel && panel.ready) {
                 this.updateSelection(panel, this._treeView.selection);
             }
         });
 
-        this._gltfWindow.preview.onReady(panel => {
+        this._gltfWindow.preview.onDidChangeReadyState(panel => {
             this.updateSelection(panel, this._treeView.selection);
         });
     }

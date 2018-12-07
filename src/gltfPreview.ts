@@ -6,10 +6,14 @@ import { toResourceUrl, parseJsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 export interface GltfPreviewPanel extends vscode.WebviewPanel {
-    textEditor: vscode.TextEditor;
+    readonly textEditor: vscode.TextEditor;
+    readonly ready: boolean;
 }
 
 interface GltfPreviewPanelInfo extends GltfPreviewPanel {
+    textEditor: vscode.TextEditor;
+    ready: boolean;
+
     _jsonMap: { data: GLTF2.GLTF, pointers: any };
     _defaultBabylonReflection: string;
     _defaultThreeReflection: string;
@@ -25,8 +29,7 @@ export class GltfPreview extends ContextBase {
 
     private _activePanel: GltfPreviewPanel;
     private _onDidChangeActivePanel: vscode.EventEmitter<GltfPreviewPanel | undefined> = new vscode.EventEmitter<GltfPreviewPanel | undefined>();
-
-    private _onReady: vscode.EventEmitter<GltfPreviewPanel> = new vscode.EventEmitter<GltfPreviewPanel>();
+    private _onDidChangePanelReady: vscode.EventEmitter<GltfPreviewPanel> = new vscode.EventEmitter<GltfPreviewPanel>();
 
     constructor(context: vscode.ExtensionContext) {
         super(context);
@@ -114,7 +117,7 @@ export class GltfPreview extends ContextBase {
         return this._panels[fileName];
     }
 
-    public readonly onReady = this._onReady.event;
+    public readonly onDidChangeReadyState = this._onDidChangePanelReady.event;
 
     private setActivePanel(activePanel: GltfPreviewPanel | undefined): void {
         if (this._activePanel !== activePanel) {
@@ -184,7 +187,8 @@ export class GltfPreview extends ContextBase {
                 break;
             }
             case 'onReady': {
-                this._onReady.fire(panel);
+                panel.ready = true;
+                this._onDidChangePanelReady.fire(panel);
                 break;
             }
             default: {
