@@ -5,7 +5,7 @@ import * as querystring from 'querystring';
 import * as draco3dgltf from 'draco3dgltf';
 import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
-import { getFromJsonPointer, btoa, atob } from './utilities';
+import { getFromJsonPointer, btoa, atob, getAccessorData, AccessorTypeToNumComponents, getAccessorElement } from './utilities';
 import { GLTF2 } from './GLTF2';
 const decoderModule = draco3dgltf.createDecoderModule({});
 
@@ -100,13 +100,41 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                     const body = dataUri.substring(posBase + 7);
                     return atob(body);
                 }
+            } else if (this.isAccessor(jsonPointer)) {
+                return this.formatAccessor(fileName, glTF, data);
             }
-        }
-        else if (jsonPointer.includes('KHR_draco_mesh_compression')) {
+        } else if (jsonPointer.includes('KHR_draco_mesh_compression')) {
             return this.formatDraco(glTF, jsonPointer, fileName);
         }
 
         return 'Unknown:\n' + jsonPointer;
+    }
+
+    private formatAccessor(fileName: string, glTF: GLTF2.GLTF, accessor: GLTF2.Accessor): string {
+        const data = getAccessorData(fileName, glTF, accessor);
+        if (!data) {
+            return 'Accessor does not contain a bufferView';
+        }
+
+        let result = '';
+        const numComponents = AccessorTypeToNumComponents[accessor.type];
+        for (let index = 0; index < accessor.count; index++) {
+            const values = getAccessorElement(data, index, numComponents, accessor.componentType, accessor.normalized);
+            const format = (accessor.componentType === GLTF2.AccessorComponentType.FLOAT || accessor.normalized) ? '%11.5f' : '%5d'
+            if (accessor.type.startsWith('MAT')) {
+                const size = Math.sqrt(numComponents);
+                for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+                    const start = rowIndex * size;
+                    const end = start + size;
+                    result += values.slice(start, end).map(value => sprintf(format, value)).join('') + '\n';
+                }
+                result += '\n';
+            } else {
+                result += values.map(value => sprintf(format, value)).join('') + '\n';
+            }
+        }
+
+        return result;
     }
 
     private formatDraco(glTF: GLTF2.GLTF, jsonPointer: string, fileName: string): string {
