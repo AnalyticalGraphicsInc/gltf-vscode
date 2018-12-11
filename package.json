@@ -8,14 +8,22 @@
     "repository": {
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
+    "keywords": [
+        "glTF", "glb", "Khronos", "3D", "model"
+    ],
     "icon": "images/gltf.png",
     "engines": {
         "vscode": "^1.25.0"
     },
     "categories": [
         "Formatters",
-        "Linters"
+        "Linters",
+        "Debuggers"
     ],
+    "galleryBanner": {
+        "color": "#86c540",
+        "theme": "dark"
+    },
     "activationEvents": [
         "onView:gltfOutline",
         "onLanguage:json",
