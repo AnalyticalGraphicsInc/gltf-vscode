@@ -1,135 +1,155 @@
+/// <reference path="../node_modules/babylonjs/babylon.d.ts" />
+/// <reference path="../node_modules/babylonjs-loaders/babylonjs.loaders.module.d.ts" />
+
 /*global BABYLON,mainViewModel,ko*/
-(function() {
+(function () {
     'use strict';
 
-window.BabylonView = function() {
-    // Tracks if this engine is currently the active engine.
-    var enabled = false;
+    window.BabylonView = function () {
+        // Tracks if this engine is currently the active engine.
+        var enabled = false;
 
-    var canvas = null;
-    var engine = null;
-    var scene = null;
-    var skybox = null;
-    var skyboxBlur = 0.0;
-    var backgroundSubscription;
+        var canvas = null;
+        var engine = null;
+        var scene = null;
+        var skybox = null;
+        var skyboxBlur = 0.0;
+        var backgroundSubscription = null;
+        var debug = null;
 
-    /**
-    * @function cleanup
-    * Perform any cleanup that needs to happen to stop rendering the current model.
-    * This is called right before the active engine for the preview window is switched.
-    */
-    this.cleanup = function() {
-        if (backgroundSubscription) {
-            backgroundSubscription.dispose();
-            backgroundSubscription = undefined;
+        /**
+         * @function cleanup
+         * Perform any cleanup that needs to happen to stop rendering the current model.
+         * This is called right before the active engine for the preview window is switched.
+         */
+        this.cleanup = function () {
+            if (debug) {
+                debug.dispose();
+                debug = null;
+            }
+
+            if (backgroundSubscription) {
+                backgroundSubscription.dispose();
+                backgroundSubscription = null;
+            }
+
+            mainViewModel.animations([]);
+            enabled = false;
+            window.removeEventListener('resize', onWindowResize);
+
+            if (engine) {
+                engine.dispose();
+                engine = null;
+            }
+        };
+
+        function render() {
+            scene.render();
         }
-        mainViewModel.animations([]);
-        enabled = false;
-        window.removeEventListener('resize', onWindowResize);
-        engine.stopRenderLoop(render);
-    };
 
-    function render() {
-        scene.render();
-    }
+        function onWindowResize() {
+            if (!enabled) {
+                return;
+            }
 
-    function onWindowResize() {
-        if (!enabled) {
-            return;
+            engine.resize();
         }
 
-        engine.resize();
-    }
-
-    function subscribeToAnimUI(anim) {
-        anim.active.subscribe(function(newValue) {
-            mainViewModel.anyAnimChanged();
-            var animGroup = anim.animationGroup;
-            if (!newValue) {
-                animGroup.reset();
-                animGroup.stop();
-            } else {
-                animGroup.start(true);
-            }
-        });
-    }
-
-    this.startPreview = function() {
-        enabled = true;
-        BABYLON.DracoCompression.DecoderUrl = document.getElementById('dracoLoaderPath').textContent;
-        BABYLON.SceneLoader.ShowLoadingScreen = false;
-        canvas = document.getElementById('babylonRenderCanvas');
-        engine = new BABYLON.Engine(canvas, true);
-        engine.enableOfflineSupport = false;
-        scene = new BABYLON.Scene(engine);
-        scene.useRightHandedSystem = true; // This is needed for correct glTF normal maps.
-
-        BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
-            plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
-        }, undefined, undefined, undefined, true);
-
-        var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
-        var rootPath = document.getElementById('gltfRootPath').textContent;
-        var gltfContent = document.getElementById('gltf').textContent;
-
-        BABYLON.GLTFFileLoader.IncrementalLoading = false;
-        BABYLON.SceneLoader.Append(rootPath, 'data:' + gltfContent, scene, function() {
-            scene.createDefaultCameraOrLight(true);
-            scene.activeCamera.attachControl(canvas);
-            scene.activeCamera.wheelDeltaPercentage = 0.005;
-
-            // Hook up animations to the UI.
-            let numAnimations = scene.animationGroups.length;
-            let koAnimations = [];
-            for (let i = 0; i < numAnimations; ++i) {
-                let animGroup = scene.animationGroups[i];
-                let anim = {
-                    index: i,
-                    name: animGroup.name || i,
-                    active: ko.observable(false),
-                    animationGroup: animGroup
-                };
-                subscribeToAnimUI(anim);
-                koAnimations.push(anim);
-            }
-            mainViewModel.animations(koAnimations);
-            mainViewModel.anyAnimChanged();
-
-            // glTF assets use a +Z forward convention while the default camera faces +Z.
-            // Rotate the camera to look at the front of the asset.
-            scene.activeCamera.alpha += Math.PI;
-            scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-                defaultBabylonReflection, scene);
-
-            mainViewModel.hasBackground(true);
-            function applyBackground(showBackground) {
-                if (showBackground) {
-                    skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true,
-                        (scene.activeCamera.maxZ - scene.activeCamera.minZ) / 2, skyboxBlur);
-                } else if (skybox) {
-                    skybox.material.reflectionTexture.dispose();
-                    skybox.dispose();
-                    skybox = null;
+        function subscribeToAnimUI(anim) {
+            anim.active.subscribe(function(newValue) {
+                mainViewModel.anyAnimChanged();
+                var animGroup = anim.animationGroup;
+                if (!newValue) {
+                    animGroup.reset();
+                    animGroup.stop();
+                } else {
+                    animGroup.start(true);
                 }
-            }
-            applyBackground(mainViewModel.showBackground());
-            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
+            });
+        }
 
-            engine.runRenderLoop(render);
-        }, null, function(error, longMessage) {
-            if (longMessage && typeof longMessage === 'string') {
-                var lines = longMessage.split('\n');
-                var lastLine = lines.pop();
-                var pos = lastLine.indexOf(': ');
-                if (pos >= 0) {
-                    lastLine = lastLine.substring(pos + 2);
+        this.startPreview = function () {
+            enabled = true;
+            BABYLON.DracoCompression.DecoderUrl = document.getElementById('dracoLoaderPath').textContent;
+            BABYLON.SceneLoader.ShowLoadingScreen = false;
+            canvas = document.getElementById('babylonRenderCanvas');
+            engine = new BABYLON.Engine(canvas, true);
+            engine.enableOfflineSupport = false;
+            scene = new BABYLON.Scene(engine);
+            scene.useRightHandedSystem = true;
+            debug = new window.BabylonDebug(scene);
+
+            BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
+                plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+            }, undefined, undefined, undefined, true);
+
+            var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
+            var rootPath = document.getElementById('gltfRootPath').textContent;
+            var gltfContent = document.getElementById('gltf').textContent;
+
+            BABYLON.GLTFFileLoader.IncrementalLoading = false;
+            BABYLON.SceneLoader.AppendAsync(rootPath, 'data:' + gltfContent, scene, undefined, '.gltf').then(function () {
+                scene.createDefaultCameraOrLight(true);
+                scene.activeCamera.attachControl(canvas);
+                scene.activeCamera.wheelDeltaPercentage = 0.005;
+
+                // Hook up animations to the UI.
+                let numAnimations = scene.animationGroups.length;
+                let koAnimations = [];
+                for (let i = 0; i < numAnimations; ++i) {
+                    let animGroup = scene.animationGroups[i];
+                    let anim = {
+                        index: i,
+                        name: animGroup.name || i,
+                        active: ko.observable(false),
+                        animationGroup: animGroup
+                    };
+                    subscribeToAnimUI(anim);
+                    koAnimations.push(anim);
                 }
-                error = lastLine;
-            }
-            mainViewModel.errorText(error.toString());
-        });
+                mainViewModel.animations(koAnimations);
+                mainViewModel.anyAnimChanged();
 
-        window.addEventListener('resize', onWindowResize);
+                // glTF assets use a +Z forward convention while the default camera faces +Z.
+                // Rotate the camera to look at the front of the asset.
+                scene.activeCamera.alpha += Math.PI;
+                scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+                    defaultBabylonReflection, scene);
+
+                mainViewModel.hasBackground(true);
+                function applyBackground(showBackground) {
+                    if (showBackground) {
+                        skybox = scene.createDefaultSkybox(scene.environmentTexture.clone(), true,
+                            (scene.activeCamera.maxZ - scene.activeCamera.minZ) / 2, skyboxBlur);
+                    } else if (skybox) {
+                        skybox.material.reflectionTexture.dispose();
+                        skybox.dispose();
+                        skybox = null;
+                    }
+                }
+                applyBackground(mainViewModel.showBackground());
+                backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
+
+                engine.runRenderLoop(render);
+
+                mainViewModel.onReady();
+            }, function (error) {
+                mainViewModel.showErrorMessage(error.message);
+            });
+
+            window.addEventListener('resize', onWindowResize);
+        };
+
+        this.enableDebugMode = function () {
+            debug.showInspector();
+        };
+
+        this.disableDebugMode = function () {
+            debug.hideInspector();
+        };
+
+        this.isDebugModeEnabled = function () {
+            return debug.isInspectorVisible();
+        };
     };
-};
 })();

@@ -145,8 +145,10 @@ window.CesiumView = function() {
             }
 
             updateAnimations(model);
+
+            mainViewModel.onReady();
         }).otherwise(function(e) {
-            mainViewModel.errorText('Error: ' + e);
+            mainViewModel.showErrorMessage(e);
         });
     }
 

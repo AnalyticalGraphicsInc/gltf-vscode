@@ -5,15 +5,9 @@ import * as querystring from 'querystring';
 import * as draco3dgltf from 'draco3dgltf';
 import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
-import { getFromJsonPointer, btoa, atob, AccessorTypeToNumComponents, getAccessorData } from './utilities';
+import { getFromJsonPointer, btoa, atob, getAccessorData, AccessorTypeToNumComponents, getAccessorElement } from './utilities';
 import { GLTF2 } from './GLTF2';
 const decoderModule = draco3dgltf.createDecoderModule({});
-
-const MatrixSquare = {
-    MAT2: 2,
-    MAT3: 3,
-    MAT4: 4
-}
 
 interface QueryDataUri {
     viewColumn?: string,
@@ -53,6 +47,10 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         return jsonPointer.startsWith('/accessors/');
     }
 
+    public isMeshPrimitive(jsonPointer: string): boolean {
+        return !!jsonPointer.match(/^\/meshes\/\d+\/primitives\//);
+    }
+
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const fileName = decodeURIComponent(uri.fragment);
         const query = querystring.parse<QueryDataUri>(uri.query);
@@ -81,7 +79,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                     dataUri = 'data:image;base64,' + btoa(contents);
                 }
 
-                if (jsonPointer.startsWith('/images/')) {
+                if (this.isImage(jsonPointer)) {
                     if (!query.previewHtml || query.previewHtml !== 'true') {
                         // Peek Definition requests have a document that matches the current document
                         // Go to Definition has a null activeTextEditor
@@ -102,20 +100,41 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                     const body = dataUri.substring(posBase + 7);
                     return atob(body);
                 }
-            } else if (jsonPointer.startsWith('/accessors/')) {
-                if (data.bufferView !== undefined) {
-                    let bufferView = glTF.bufferViews[data.bufferView];
-                    let buffer = getBuffer(glTF, bufferView.buffer, fileName);
-                    return formatAccessor(buffer, data, bufferView);
-                } else {
-                    return 'Accessor does not contain a bufferView';
-                }
+            } else if (this.isAccessor(jsonPointer)) {
+                return this.formatAccessor(fileName, glTF, data);
             }
         } else if (jsonPointer.includes('KHR_draco_mesh_compression')) {
             return this.formatDraco(glTF, jsonPointer, fileName);
         }
 
         return 'Unknown:\n' + jsonPointer;
+    }
+
+    private formatAccessor(fileName: string, glTF: GLTF2.GLTF, accessor: GLTF2.Accessor): string {
+        const data = getAccessorData(fileName, glTF, accessor);
+        if (!data) {
+            return 'Accessor does not contain a bufferView';
+        }
+
+        let result = '';
+        const numComponents = AccessorTypeToNumComponents[accessor.type];
+        for (let index = 0; index < accessor.count; index++) {
+            const values = getAccessorElement(data, index, numComponents, accessor.componentType, accessor.normalized);
+            const format = (accessor.componentType === GLTF2.AccessorComponentType.FLOAT || accessor.normalized) ? '%11.5f' : '%5d'
+            if (accessor.type.startsWith('MAT')) {
+                const size = Math.sqrt(numComponents);
+                for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+                    const start = rowIndex * size;
+                    const end = start + size;
+                    result += values.slice(start, end).map(value => sprintf(format, value)).join('') + '\n';
+                }
+                result += '\n';
+            } else {
+                result += values.map(value => sprintf(format, value)).join('') + '\n';
+            }
+        }
+
+        return result;
     }
 
     private formatDraco(glTF: GLTF2.GLTF, jsonPointer: string, fileName: string): string {
@@ -231,43 +250,4 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
     public update(uri: vscode.Uri) {
         this._onDidChange.fire(uri);
     }
-}
-
-function formatAccessor(buffer: Buffer, accessor: GLTF2.Accessor, bufferView: GLTF2.BufferView, normalizeOverride?: boolean): string {
-    let normalize: boolean = accessor.normalized === undefined ? (normalizeOverride == undefined ? (accessor.componentType == GLTF2.AccessorComponentType.FLOAT) : normalizeOverride) : accessor.normalized;
-
-    let result: string = '';
-    function formatNumber(value: number, index: number, array: any) {
-        if (index % AccessorTypeToNumComponents[accessor.type] == 0 && index !== 0) {
-            result += '\n';
-        }
-        if (accessor.type.startsWith('MAT') && index !== 0 && index % MatrixSquare[accessor.type] == 0) {
-            result += '\n';
-        }
-
-        if (normalize) {
-            switch (accessor.componentType) {
-                case GLTF2.AccessorComponentType.BYTE:
-                    value = Math.max(value / 127.0, -1.0);
-                    break;
-                case GLTF2.AccessorComponentType.UNSIGNED_BYTE:
-                    value = value / 255.0;
-                    break;
-                case GLTF2.AccessorComponentType.SHORT:
-                    value = Math.max(value / 32767.0, -1.0);
-                    break;
-                case GLTF2.AccessorComponentType.UNSIGNED_SHORT:
-                    value = value / 65535.0;
-                    break;
-            }
-            result += sprintf('%11.5f', value) + ' ';
-        } else {
-            result += sprintf('%5d', value) + ' ';
-        }
-    }
-
-    const data = getAccessorData(accessor, bufferView, buffer);
-    data.forEach(formatNumber);
-
-    return result;
 }

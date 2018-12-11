@@ -1,15 +1,14 @@
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
-import { GltfOutlineTreeDataProvider } from './gltfOutlineTreeDataProvider';
-import { GltfPreview } from './gltfPreview';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import * as GltfValidate from './validationProvider';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
-import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap } from './utilities';
+import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer } from './utilities';
 import { GLTF2 } from './GLTF2';
+import { GltfWindow } from './gltfWindow';
 
 function checkValidEditor(): boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -69,7 +68,7 @@ function configurationChanged() {
     const config = vscode.workspace.getConfiguration('glTF');
     const showToolbar3D = config.get('showToolbar3D');
 
-    vscode.commands.executeCommand('setContext', 'glTF_showToolbar3D', showToolbar3D);
+    vscode.commands.executeCommand('setContext', 'gltfShowToolbar3D', showToolbar3D);
 }
 
 // This method activates the language server, to run the glTF Validator.
@@ -117,9 +116,8 @@ export function activate(context: vscode.ExtensionContext) {
     // Activate the validation server.
     activateServer(context);
 
-    // Register the outline provider.
-    const gltfOutlineTreeDataProvider = new GltfOutlineTreeDataProvider(context);
-    vscode.window.registerTreeDataProvider('gltfOutline', gltfOutlineTreeDataProvider);
+    // Create the window object that manages the various views.
+    const gltfWindow = new GltfWindow(context);
 
     // Register a preview for dataURIs in the glTF file.
     const dataPreviewProvider = new DataUriTextDocumentContentProvider(context);
@@ -129,9 +127,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Commands are registered in 2 to 3 places in the package.json file:
     // activationEvents, contributes.commands, and optionally contributes.keybindings.
     //
-    // Inspect the contents of a uri or dataURI.
+    // Inspect the contents of the current json pointer in the glTF.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectDataUri', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectData', async () => {
         if (!checkValidEditor()) {
             return;
         }
@@ -150,22 +148,30 @@ export function activate(context: vscode.ExtensionContext) {
         const isShader = dataPreviewProvider.isShader(jsonPointer);
         const isImage = dataPreviewProvider.isImage(jsonPointer);
         const isAccessor = dataPreviewProvider.isAccessor(jsonPointer);
+        const isMeshPrimitive = dataPreviewProvider.isMeshPrimitive(jsonPointer);
 
-        if (!isImage && !isShader && !isAccessor) {
-            vscode.window.showErrorMessage('This feature currently works only with accessors, images, and shaders.');
+        if (!isImage && !isShader && !isAccessor && !isMeshPrimitive) {
+            vscode.window.showErrorMessage('This feature currently works only with accessors, images, shaders, and mesh primitives.');
             console.log('gltf-vscode: No preview for: ' + jsonPointer);
             return;
         }
 
+        const fileName = vscode.window.activeTextEditor.document.fileName;
+
         if (isAccessor) {
-            // Truncate the jsonPointer at the accessor index level, so data can be previewed.
-            let components = jsonPointer.split('/');
-            components.splice(3);
-            jsonPointer = components.join('/');
+            jsonPointer = truncateJsonPointer(jsonPointer, 2);
+            gltfWindow.inspectData.showAccessor(fileName, map.data, jsonPointer);
+            return;
+        }
+
+        if (isMeshPrimitive) {
+            jsonPointer = truncateJsonPointer(jsonPointer, 4);
+            gltfWindow.inspectData.showMeshPrimitive(fileName, map.data, jsonPointer);
+            return;
         }
 
         if (notDataUri && !isImage) {
-            let finalUri = vscode.Uri.file(Url.resolve(vscode.window.activeTextEditor.document.fileName, notDataUri));
+            let finalUri = vscode.Uri.file(Url.resolve(fileName, notDataUri));
             await vscode.commands.executeCommand('vscode.open', finalUri, vscode.ViewColumn.Two);
         } else {
             // This is a data: type uri
@@ -173,12 +179,14 @@ export function activate(context: vscode.ExtensionContext) {
                 jsonPointer += '.glsl';
             }
 
-            const previewUri = vscode.Uri.parse(dataPreviewProvider.UriPrefix + jsonPointer + '?viewColumn=' + vscode.ViewColumn.Two + '#' +
-                encodeURIComponent(vscode.window.activeTextEditor.document.fileName));
+            const previewUri = vscode.Uri.parse(`${dataPreviewProvider.UriPrefix}${jsonPointer}?viewColumn=${vscode.ViewColumn.Two}#${encodeURIComponent(fileName)}`);
             await vscode.commands.executeCommand('vscode.open', previewUri, vscode.ViewColumn.Two);
             dataPreviewProvider.update(previewUri);
         }
     }));
+
+    // Used by a TreeItem to change the behavior of expand and collapse.
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.noop', () => { }));
 
     //
     // Import a filename URI into a dataURI.
@@ -353,8 +361,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    const gltfPreview = new GltfPreview(context);
-
     //
     // Preview a glTF model.
     //
@@ -363,14 +369,28 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        gltfPreview.showPanel(vscode.window.activeTextEditor.document);
+        gltfWindow.preview.openPanel(vscode.window.activeTextEditor);
+    }));
+
+    //
+    // Enable/Disable glTF debug mode.
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.enableDebugMode', () => {
+        if (gltfWindow.preview.activePanel) {
+            gltfWindow.preview.activePanel.webview.postMessage({ command: 'enableDebugMode' });
+        }
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.disableDebugMode', () => {
+        if (gltfWindow.preview.activePanel) {
+            gltfWindow.preview.activePanel.webview.postMessage({ command: 'disableDebugMode' });
+        }
     }));
 
     //
     // Register glTF Tree View
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.openGltfSelection', range => {
-        gltfOutlineTreeDataProvider.select(range);
+        gltfWindow.outline.select(range);
     }));
 
     //
@@ -517,13 +537,11 @@ export function activate(context: vscode.ExtensionContext) {
         for (const key of ['input', 'output']) {
             const accessorId = animationPointer.json[key];
             const accessor = glTF.accessors[accessorId];
-            let accessorValues = [];
+            let data: ArrayLike<number> = [];
             if (accessor != undefined) {
-                const bufferView = glTF.bufferViews[accessor.bufferView];
-                const buffer = getBuffer(glTF, bufferView.buffer, activeTextEditor.document.fileName);
-                accessorValues = getAccessorData(accessor, bufferView, buffer);
+                data = getAccessorData(activeTextEditor.document.fileName, glTF, accessor);
             }
-            animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(accessorValues);
+            animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(data);
             animationPointer.json.extras['vscode_gltf_type'] = accessor ? accessor.type : 'SCALAR';
         }
 
@@ -689,7 +707,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Update all preview windows when the glTF file is saved.
     //
     vscode.workspace.onDidSaveTextDocument((document) => {
-        gltfPreview.updatePanel(document);
+        gltfWindow.preview.updatePanel(document);
     });
 }
 

@@ -3,8 +3,18 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ContextBase } from './contextBase';
 import { toResourceUrl, parseJsonMap } from './utilities';
+import { GLTF2 } from './GLTF2';
 
-interface GltfPreviewPanel extends vscode.WebviewPanel {
+export interface GltfPreviewPanel extends vscode.WebviewPanel {
+    readonly textEditor: vscode.TextEditor;
+    readonly ready: boolean;
+}
+
+interface GltfPreviewPanelInfo extends GltfPreviewPanel {
+    textEditor: vscode.TextEditor;
+    ready: boolean;
+
+    _jsonMap: { data: GLTF2.GLTF, pointers: any };
     _defaultBabylonReflection: string;
     _defaultThreeReflection: string;
 }
@@ -15,7 +25,11 @@ export class GltfPreview extends ContextBase {
     private readonly _cesiumHtml: string;
     private readonly _threeHtml: string;
 
-    private _panels: { [fileName: string]: GltfPreviewPanel } = {};
+    private _panels: { [fileName: string]: GltfPreviewPanelInfo } = {};
+
+    private _activePanel: GltfPreviewPanel;
+    private _onDidChangeActivePanel: vscode.EventEmitter<GltfPreviewPanel | undefined> = new vscode.EventEmitter<GltfPreviewPanel | undefined>();
+    private _onDidChangePanelReady: vscode.EventEmitter<GltfPreviewPanel> = new vscode.EventEmitter<GltfPreviewPanel>();
 
     constructor(context: vscode.ExtensionContext) {
         super(context);
@@ -41,8 +55,8 @@ export class GltfPreview extends ContextBase {
     //    click the pull-down and change "top" to "active-frame (webview.html)".
     //    Now you can debug the HTML preview in the sandboxed iframe.
 
-    public showPanel(gltfDocument: vscode.TextDocument): void {
-        const gltfFilePath = gltfDocument.fileName;
+    public openPanel(gltfEditor: vscode.TextEditor): void {
+        const gltfFilePath = gltfEditor.document.fileName;
 
         let panel = this._panels[gltfFilePath];
         if (!panel) {
@@ -58,21 +72,30 @@ export class GltfPreview extends ContextBase {
                 enableScripts: true,
                 retainContextWhenHidden: true,
                 localResourceRoots: localResourceRoots,
-            }) as GltfPreviewPanel;
-
-            panel.onDidDispose(() => {
-                delete this._panels[gltfFilePath];
-            });
+            }) as GltfPreviewPanelInfo;
 
             panel._defaultBabylonReflection = defaultBabylonReflection;
             panel._defaultThreeReflection = defaultThreeReflection;
 
+            panel.textEditor = gltfEditor;
+
+            panel.onDidDispose(() => {
+                delete this._panels[gltfFilePath];
+                this.updateActivePanel();
+            });
+
+            panel.onDidChangeViewState(() => {
+                this.updateActivePanel();
+            });
+
             this._panels[gltfFilePath] = panel;
         }
 
-        const gltfContent = gltfDocument.getText();
+        const gltfContent = gltfEditor.document.getText();
         this.updatePanelInternal(panel, gltfFilePath, gltfContent);
         panel.reveal(vscode.ViewColumn.Two);
+
+        this.setActivePanel(panel);
     }
 
     public updatePanel(gltfDocument: vscode.TextDocument): void {
@@ -84,8 +107,40 @@ export class GltfPreview extends ContextBase {
         }
     }
 
-    private updatePanelInternal(panel: GltfPreviewPanel, gltfFilePath: string, gltfContent: string): void {
+    public get activePanel(): GltfPreviewPanel | undefined {
+        return this._activePanel;
+    }
+
+    public readonly onDidChangeActivePanel = this._onDidChangeActivePanel.event;
+
+    public getPanel(fileName: string): GltfPreviewPanel | undefined {
+        return this._panels[fileName];
+    }
+
+    public readonly onDidChangeReadyState = this._onDidChangePanelReady.event;
+
+    private setActivePanel(activePanel: GltfPreviewPanel | undefined): void {
+        if (this._activePanel !== activePanel) {
+            this._activePanel = activePanel;
+            this._onDidChangeActivePanel.fire(activePanel);
+
+            if (activePanel) {
+                activePanel.webview.postMessage({ command: 'updateDebugMode' });
+            }
+            else {
+                vscode.commands.executeCommand('setContext', 'gltfDebugActive', false);
+            }
+        }
+    }
+
+    private updateActivePanel(): void {
+        const activePanel = Object.values(this._panels).find(panel => panel.active);
+        this.setActivePanel(activePanel);
+    }
+
+    private updatePanelInternal(panel: GltfPreviewPanelInfo, gltfFilePath: string, gltfContent: string): void {
         const map = parseJsonMap(gltfContent);
+        panel._jsonMap = map;
 
         const gltfRootPath = toResourceUrl(`${path.dirname(gltfFilePath)}/`);
         const gltfFileName = path.basename(gltfFilePath);
@@ -104,6 +159,42 @@ export class GltfPreview extends ContextBase {
             gltfFileName,
             panel._defaultBabylonReflection,
             panel._defaultThreeReflection);
+
+        panel.webview.onDidReceiveMessage(message => {
+            this.onDidReceiveMessage(panel, message);
+        });
+    }
+
+    private onDidReceiveMessage(panel: GltfPreviewPanelInfo, message: any): void {
+        switch (message.command) {
+            case 'select': {
+                const pointer = panel._jsonMap.pointers[message.jsonPointer];
+                const document = panel.textEditor.document;
+                const range = new vscode.Range(document.positionAt(pointer.value.pos), document.positionAt(pointer.valueEnd.pos));
+                vscode.commands.executeCommand('gltf.openGltfSelection', range);
+                break;
+            }
+            case 'setContext': {
+                vscode.commands.executeCommand('setContext', message.name, message.value);
+                break;
+            }
+            case 'showErrorMessage': {
+                vscode.window.showErrorMessage(message.message);
+                break;
+            }
+            case 'showWarningMessage': {
+                vscode.window.showWarningMessage(message.message);
+                break;
+            }
+            case 'onReady': {
+                panel.ready = true;
+                this._onDidChangePanelReady.fire(panel);
+                break;
+            }
+            default: {
+                throw new Error(`Unknown command: ${message.command}`);
+            }
+        }
     }
 
     private formatHtml(gltfMajorVersion: number, gltfContent: string, gltfRootPath: string, gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
@@ -138,15 +229,16 @@ export class GltfPreview extends ContextBase {
 
         const scripts = [
             'engines/Cesium/Cesium.js',
-            'node_modules/babylonjs/babylon.max.js',
-            'node_modules/babylonjs/babylon.inspector.min.js',
-            'node_modules/babylonjs-loaders/babylonjs.loaders.js',
+            'node_modules/babylonjs/babylon.js',
+            'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
+            'node_modules/babylonjs-inspector/babylon.inspector.bundle.js',
             'engines/Three/three.min.js',
             'engines/Three/DDSLoader.js',
             'engines/Three/DRACOLoader.js',
             'engines/Three/GLTFLoader.js',
             'engines/Three/OrbitControls.js',
             'pages/babylonView.js',
+            'pages/babylonDebug.js',
             'pages/cesiumView.js',
             'pages/threeView.js',
             'pages/previewModel.js'

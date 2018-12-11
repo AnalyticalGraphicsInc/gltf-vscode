@@ -224,9 +224,11 @@ window.ThreeView = function() {
 
             scene.add(object);
             onWindowResize();
+
+            mainViewModel.onReady();
         }, undefined, function(error) {
             console.error(error);
-            mainViewModel.errorText(error.stack);
+            mainViewModel.showErrorMessage(error.stack);
         });
 
         orbitControls = new THREE.OrbitControls(camera, renderer.domElement);

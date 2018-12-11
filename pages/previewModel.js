@@ -1,6 +1,8 @@
-/*global Cesium,ko,CesiumView,ThreeView,BabylonView*/
+/*global Cesium,ko,CesiumView,ThreeView,BabylonView,acquireVsCodeApi*/
 (function() {
     'use strict';
+
+window.vscode = acquireVsCodeApi();
 
 // Defines the 3D engines that the menu allows the users to choose from.
 var engineInfo = [{
@@ -33,8 +35,6 @@ var mainViewModel = window.mainViewModel = {
     showControls: ko.observable(true),
     hasBackground: ko.observable(false),
     showBackground: ko.observable(false),
-    errorText: ko.observable(),
-    hasErrorText: () => !!mainViewModel.errorText(),
     toggleControls: () => mainViewModel.showControls(!mainViewModel.showControls()),
     controlText: () => (mainViewModel.showControls() ? 'Close Controls' : 'Open Controls'),
     animations: ko.observableArray([]),
@@ -52,7 +52,11 @@ var mainViewModel = window.mainViewModel = {
         } else {
             mainViewModel.animPlayAllNone(undefined);
         }
-    }
+    },
+    showErrorMessage: (message) => window.vscode.postMessage({ command: 'showErrorMessage', message: message }),
+    showWarningMessage: (message) => window.vscode.postMessage({ command: 'showWarningMessage', message: message }),
+    setContext: (name, value) => window.vscode.postMessage({ command: 'setContext', name: name, value: value }),
+    onReady: () => window.vscode.postMessage({ command: 'onReady' })
 };
 
 /**
@@ -85,9 +89,6 @@ function updatePreview() {
         activeView = undefined;
     }
 
-    // Clear errors/warnings.
-    mainViewModel.errorText(undefined);
-
     var content = document.getElementById('content');
 
     // Update the DOM's "content" div with the HTML content for the currently selected
@@ -111,10 +112,6 @@ function initPreview()
     var mainUI = document.getElementById('mainUI');
     ko.applyBindings(mainViewModel, mainUI);
 
-    // Bind the viewModel to the warning UI
-    var warningContainer = document.getElementById('warningContainer');
-    ko.applyBindings(mainViewModel, warningContainer);
-
     // Subscribe to changes in the viewModel
     mainViewModel.selectedEngine.subscribe(updatePreview);
     mainViewModel.animPlayAllNone.subscribe(playAllOrNoAnimations);
@@ -125,10 +122,37 @@ function initPreview()
         if (error && error.message) {
             message = error.message;
         }
-        if (mainViewModel.errorText()) {
-            message = mainViewModel.errorText() + '\n\n' + message;
+        mainViewModel.showErrorMessage(message);
+    });
+
+    window.addEventListener('message', function(event) {
+        switch (event.data.command) {
+            case 'enableDebugMode':
+            case 'disableDebugMode': {
+                if (mainViewModel.selectedEngine().name === 'Babylon.js') {
+                    const mainUI = document.getElementById('mainUI');
+                    if (event.data.command === 'enableDebugMode') {
+                        mainUI.style.display = 'none';
+                        activeView.enableDebugMode();
+                    }
+                    else {
+                        activeView.disableDebugMode();
+                        mainUI.style.display = 'block';
+                    }
+                    mainViewModel.setContext('gltfDebugActive', activeView.isDebugModeEnabled());
+                }
+                else {
+                    mainViewModel.showWarningMessage('Only Babylon.js supports debug mode');
+                }
+                break;
+            }
+            case 'updateDebugMode': {
+                if (mainViewModel.selectedEngine().name === 'Babylon.js') {
+                    mainViewModel.setContext('gltfDebugActive', activeView.isDebugModeEnabled());
+                }
+                break;
+            }
         }
-        mainViewModel.errorText(message);
     });
 
     updatePreview();

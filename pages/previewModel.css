@@ -1,4 +1,4 @@
-html, body, #content {
+html, body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -7,17 +7,13 @@ html, body, #content {
     font-family: sans-serif;
 }
 
-#warningContainer {
-    position: absolute;
-    top: 30%;
+#content {
     width: 100%;
-    box-sizing: border-box;
-    font-weight: bold;
-    color: #ff9840;
-    background: rgba(42, 42, 42, 0.9);
-    padding: 5px;
-    white-space: pre-wrap;
-    font-family: monospace;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0
 }
 
 #mainUI {

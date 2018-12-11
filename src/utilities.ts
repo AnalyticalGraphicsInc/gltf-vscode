@@ -1,5 +1,6 @@
-import { GLTF2 } from "./GLTF2";
 import * as jsonMap from 'json-source-map';
+import { GLTF2 } from "./GLTF2";
+import { getBuffer } from 'gltf-import-export';
 
 export const ComponentTypeToBytesPerElement = {
     5120: Int8Array.BYTES_PER_ELEMENT,
@@ -20,7 +21,7 @@ export const AccessorTypeToNumComponents = {
     MAT4: 16
 };
 
-export function getFromJsonPointer(glTF, jsonPointer: string) {
+export function getFromJsonPointer(glTF: GLTF2.GLTF, jsonPointer: string): any {
     const jsonPointerSplit = jsonPointer.split('/');
     const numPointerSegments = jsonPointerSplit.length;
     let result = glTF;
@@ -45,7 +46,7 @@ export function btoa(str): string {
     return Buffer.from(str, 'binary').toString('base64');
 }
 
-function buildArrayBuffer<T>(typedArray: any, data: ArrayBufferView, byteOffset: number, count: number, numComponents: number, byteStride?: number): T {
+function buildArrayBuffer<T extends ArrayLike<number>>(typedArray: any, data: ArrayBufferView, byteOffset: number, count: number, numComponents: number, byteStride?: number): T {
     byteOffset += data.byteOffset;
 
     const targetLength = count * numComponents;
@@ -72,12 +73,22 @@ function buildArrayBuffer<T>(typedArray: any, data: ArrayBufferView, byteOffset:
     return targetBuffer;
 }
 
-export function getAccessorData(accessor: GLTF2.Accessor, bufferView: GLTF2.BufferView, buffer: Buffer): any {
-    const bufferOffset: number = bufferView.byteOffset || 0;
-    const bufferLength: number = bufferView.byteLength;
-    const bufferStride: number = bufferView.byteStride;
-    const bufferViewBuf: ArrayBufferView = buffer.subarray(bufferOffset, bufferOffset + bufferLength);
-    const accessorByteOffset: number = accessor.byteOffset || 0;
+export function getAccessorData(fileName: string, gltf: GLTF2.GLTF, accessor: GLTF2.Accessor): ArrayLike<number> | undefined {
+    if (accessor.bufferView == undefined) {
+        return undefined;
+    }
+
+    const bufferView = gltf.bufferViews[accessor.bufferView];
+    if (!bufferView) {
+        return undefined;
+    }
+
+    const buffer = getBuffer(gltf, bufferView.buffer, fileName);
+    const bufferOffset = bufferView.byteOffset || 0;
+    const bufferLength = bufferView.byteLength;
+    const bufferStride = bufferView.byteStride;
+    const bufferViewBuf = buffer.subarray(bufferOffset, bufferOffset + bufferLength);
+    const accessorByteOffset = accessor.byteOffset || 0;
 
     switch (accessor.componentType) {
         case GLTF2.AccessorComponentType.BYTE:
@@ -100,11 +111,33 @@ export function getAccessorData(accessor: GLTF2.Accessor, bufferView: GLTF2.Buff
     }
 }
 
+export function getAccessorElement(data: ArrayLike<number>, elementIndex: number, numComponents: number, componentType: GLTF2.AccessorComponentType, normalized: boolean): Array<number> {
+    const normalize = (value: number): number => {
+        switch (componentType) {
+            case GLTF2.AccessorComponentType.BYTE: return Math.max(value / 127.0, -1.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_BYTE: return value / 255.0;
+            case GLTF2.AccessorComponentType.SHORT: return Math.max(value / 32767.0, -1.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_SHORT: return value / 65535.0;
+        }
+
+        return value;
+    };
+
+    const values = new Array<number>(numComponents);
+    const startIndex = elementIndex * numComponents;
+    for (let index = 0; index < numComponents; index++) {
+        const value = data[startIndex + index];
+        values[index] = normalized ? normalize(value) : value;
+    }
+
+    return values;
+}
+
 const gltfMimeTypes = {
-    'image/png': ['png'],
-    'image/jpeg': ['jpg', 'jpeg'],
-    'image/vnd-ms.dds': ['dds'],
-    'text/plain': ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
+    'image/png' : ['png'],
+    'image/jpeg' : ['jpg', 'jpeg'],
+    'image/vnd-ms.dds' : ['dds'],
+    'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
 };
 
 export function guessFileExtension(mimeType) {
@@ -130,7 +163,22 @@ export function toResourceUrl(path: string): string {
     return `vscode-resource:${path.replace(/\\/g, '/')}`;
 }
 
-export function parseJsonMap(content: string) {
-    return jsonMap.parse(content) as { data: GLTF2.GLTF, pointers: Array<string> };
+interface JsonMapPointerValue {
+    column: number;
+    line: number;
+    pos: number;
 }
 
+export interface JsonMap<T> {
+    data: T;
+    pointers: {
+        [pointer: string]: {
+            value: JsonMapPointerValue,
+            valueEnd: JsonMapPointerValue
+        }
+    };
+}
+
+export function parseJsonMap(content: string): JsonMap<GLTF2.GLTF> {
+    return jsonMap.parse(content);
+}

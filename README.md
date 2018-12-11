@@ -34,14 +34,13 @@ The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `
 
 The user is given a "Save As..." dialog for the base `.gltf` output filename only.  The other files are saved to the same folder with names calculated by appending to the user's selected base name, and any pre-existing files with the same name will be overwritten.
 
-## Preview shaders, image files, binary data from files or data-URIs directly in the glTF document
+## Inspect data from files or data-URIs
 
-![Sample image preview of normal map](images/SampleImagePreview.png)
+![Inspect Data](images/InspectData.png)
 
-Command name: `glTF: Inspect Data URI`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>\
-Command name: `Go to Definition`, default keybinding: <kbd>F12</kbd>
+Command name: `glTF: Inspect Data`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>
 
-Above, the user is previewing Accessor 0 and a normal map that is part of the `BoomBox.gltf` model from the official sample model repository.  The preview works even if the filename is replaced by a `data: ...` formatted URI.  Place the document cursor on a dataURI, or on a block that has been folded closed with a dataURI in its `uri` field, then press <kbd>F12</kbd> or look for the command `glTF: Inspect Data URI` in VSCode's list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>) and use that.
+Above, the user is inspecting the first accessor that is part of the `BoomBox.gltf` model from the official sample model repository.  Place the document cursor on shaders, images, accessors, or mesh primitives then select the `glTF: Inspect Data` command to inspect the data.  The command works for files or data-URIs.
 
 If you plan to preview GLSL shader code, consider installing a 3rd-party syntax highlighter with support for the `*.glsl` extension, for example [Shader Language Support for VSCode by slevesque](https://marketplace.visualstudio.com/items?itemName=slevesque.shader), to enable syntax highlighting in shader previews.
 
@@ -66,6 +65,20 @@ Files can be validated three different ways:
 * The same glTF Validator can also run as a manual process, by issuing the command `glTF: Validate a GLB or GLTF file`.  This can be done by right-clicking a file in the VSCode File Explorer sidebar, or just running the command stand-alone to open a file dialog.  This is the only method in this extension to validate GLB files directly, without conversion.  A summary of the validation report appears at the top, along with an option to save the JSON report.
 
 * The glTF JSON schema is registered with VSCode for `*.gltf` files, and VSCode will find schema violations using its own JSON schema validation, without help from the glTF Validator.  This produces messages in the "Problems" window that *are not* marked `[glTF Validator]`.  This is less thorough than full glTF validation, but is the only method available to glTF 1.0 files.
+
+# glTF Debugging
+
+Debugging mesh primitive data can be achieved by opening the preview window at the same time as inspecting the mesh primitive data.
+
+For example, selecting a vertex will show the axes for that vertex. If multiple vertices are selected, each vertex will show an axes.
+
+![Select Vertex](images/SelectVertex.png)
+
+Here is an example of selecting triangles.
+
+![Select Triangles](images/SelectTriangles.png)
+
+_Note that this feature is currently only supported when Babylon.js is the rendering engine._
 
 ## Other Features
 

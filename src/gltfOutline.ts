@@ -6,6 +6,7 @@ import * as jsonMap from 'json-source-map';
 import { sprintf } from 'sprintf-js';
 import { GLTF2 } from './GLTF2';
 import { AccessorTypeToNumComponents, ComponentTypeToBytesPerElement } from './utilities';
+import { GltfWindow } from './gltfWindow';
 
 export declare type GltfNodeType = 'animation' | 'material' | 'mesh' | 'node' | 'scene' | 'skeleton' | 'skin' | 'texture' | 'root';
 
@@ -23,7 +24,7 @@ interface MeshInfo {
     vertices: number;
 };
 
-export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<GltfNode> {
+export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
     private tree: GltfNode;
     private editor: vscode.TextEditor;
     private gltf: GLTF2.GLTF;
@@ -64,28 +65,28 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         return treeItem;
     }
 
-    getChildren(node?: GltfNode): Thenable<GltfNode[]> {
+    getChildren(node?: GltfNode): GltfNode[] {
         if (node) {
-            return Promise.resolve(node.children);
+            return node.children;
         } else {
-            return Promise.resolve(this.tree ? this.tree.children : []);
+            return this.tree ? this.tree.children : [];
         }
     }
 
     private pauseUpdate: boolean = false;
 
-    constructor(private context: vscode.ExtensionContext) {
-        vscode.window.onDidChangeActiveTextEditor(editor => {
+    constructor(private context: vscode.ExtensionContext, private gltfWindow: GltfWindow) {
+        this.gltfWindow.onDidChangeActiveTextEditor(() => {
             this.tryParseTreeAndNotify();
         });
-        vscode.window.onDidChangeTextEditorSelection(e => {
+        vscode.window.onDidChangeTextEditorSelection(() => {
             this.fillSelectedList();
             if (!this.pauseUpdate && vscode.workspace.getConfiguration('glTF').get('expandOutlineWithSelection')) {
                 this._onDidChangeTreeData.fire();
             }
             this.pauseUpdate = false;
         });
-        vscode.workspace.onDidChangeTextDocument(e => {
+        vscode.workspace.onDidChangeTextDocument(() => {
             this.tryParseTreeAndNotify();
         });
 
@@ -125,15 +126,13 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
         this.tree = null;
         this.gltf = null;
         this.pointers = null;
-        vscode.commands.executeCommand('setContext', 'gltfFileActive', false);
 
-        this.editor = vscode.window.activeTextEditor;
-        if (this.editor && this.editor.document && this.editor.document.languageId === 'json') {
+        this.editor = this.gltfWindow.activeTextEditor;
+        if (this.editor) {
             let mapResult = jsonMap.parse(this.editor.document.getText());
             this.gltf = mapResult.data;
             this.pointers = mapResult.pointers;
             if (this.gltf && this.gltf.asset && this.gltf.asset.version) {
-                vscode.commands.executeCommand('setContext', 'gltfFileActive', true);
                 if (this.gltf.asset.version[0] !== '2') {
                     this.gltf = null;
                 }
@@ -476,7 +475,9 @@ export class GltfOutlineTreeDataProvider implements vscode.TreeDataProvider<Gltf
             this.createMaterial(primitive.material, primitiveObj);
             return undefined;
         } else {
-            primitiveInfo.size += this.sizeOfAccessor(primitive.indices);
+            if (primitive.indices) {
+                primitiveInfo.size += this.sizeOfAccessor(primitive.indices);
+            }
             for (let attribute in primitive.attributes) {
                 if (primitive.attributes.hasOwnProperty(attribute)) {
                     primitiveInfo.size += this.sizeOfAccessor(primitive.attributes[attribute]);
