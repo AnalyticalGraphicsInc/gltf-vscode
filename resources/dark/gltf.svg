@@ -13,9 +13,9 @@
    id="glTF"
    x="0px"
    y="0px"
-   width="20"
-   height="20"
-   viewBox="0 0 20 20"
+   width="50"
+   height="50"
+   viewBox="0 0 50 50"
    enable-background="new 0 0 1000 500"
    xml:space="preserve"
    sodipodi:docname="gltf.svg"
@@ -32,20 +32,20 @@
    guidetolerance="10"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:window-width="3000"
-   inkscape:window-height="1875"
+   inkscape:window-width="1920"
+   inkscape:window-height="1017"
    id="namedview29"
    showgrid="false"
-   inkscape:zoom="76.8"
-   inkscape:cx="10"
-   inkscape:cy="10"
-   inkscape:window-x="-13"
-   inkscape:window-y="-13"
+   inkscape:zoom="14.569526"
+   inkscape:cx="29.746597"
+   inkscape:cy="27.090612"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
    inkscape:window-maximized="1"
    inkscape:current-layer="glTF" />
 <g
    id="g20"
-   transform="matrix(0.02532366,0,0,0.04436305,-1.8432032,-1.0907403)">
+   transform="matrix(0.04455776,0,0,0.04455776,4.953482,13.802453)">
 	<g
    id="g6">
 		<path
@@ -84,5 +84,16 @@
    inkscape:connector-curvature="0"
    style="fill:#86c540" />
 </g>
-
+<g
+   id="g26"
+   transform="matrix(0.04455776,0,0,0.04455776,4.953482,13.802453)">
+	<polygon
+   points="902.783,155.289 895.435,155.289 895.435,174.4 889.017,174.4 889.017,155.289 881.67,155.289 881.67,149.769 902.782,149.769 902.782,155.289 "
+   id="polygon22"
+   style="fill:#86c540" />
+	<polygon
+   points="919.342,166.19 919.411,166.19 923.654,149.769 933.107,149.769 933.107,174.4 927.069,174.4 927.069,155.703 927.001,155.703 921.826,174.4 916.929,174.4 911.752,155.703 911.683,155.703 911.683,174.4 905.647,174.4 905.647,149.769 915.1,149.769 "
+   id="polygon24"
+   style="fill:#86c540" />
+</g>
 </svg>
