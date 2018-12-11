@@ -5,7 +5,7 @@
 * Update `package.json`, specifically the `version` field.
 * If the glTF Language Server changed at all, bump its own `version` number in `server/package.json`.
 * In PowerShell, run `vsce publish` to actually publish to the marketplace.
-* Add a git tag for the release.  For example: `git tag -a 2.1.0 -m "Release version 2.1.0"`
+* Add a git tag for the release.  For example: `git tag -a 2.2.0 -m "Release version 2.2.0"`
 * Push the branch & tag. `git push --tags`
 
 **NOTE:** It is best to run `vsce` in PowerShell, not Git Bash, due to TTY differences.

@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.2.0 - UNRELEASED
+
+* Added BabylonJS Inspector for visual glTF debugging. [#129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/129)
+* Moved glTF Outline view to new glTF sidebar.
+
 ### 2.1.19 - 2018-11-27
 
 * Update npm packages to remove event-stream 3.3.6, which was flagged as malicious (but the payload was inert in this extension).
