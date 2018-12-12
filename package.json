@@ -9,7 +9,11 @@
         "url": "https://github.com/AnalyticalGraphicsInc/gltf-vscode"
     },
     "keywords": [
-        "glTF", "glb", "Khronos", "3D", "model"
+        "glTF",
+        "glb",
+        "Khronos",
+        "3D",
+        "model"
     ],
     "icon": "images/gltf.png",
     "engines": {
