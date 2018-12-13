@@ -47,6 +47,5 @@
         },
         "extensions" : {},
         "extras" : {}
-    },
-    "additionalProperties" : false
+    }
 }

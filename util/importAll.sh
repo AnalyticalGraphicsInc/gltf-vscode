@@ -7,6 +7,8 @@ echo "~~~ glTF 2.0 ~~~"
 ./importSchema.js -i ../../glTF/specification/2.0/schema -o ../schemas/gltf-2.0 -e extensionMap2.0.json
 echo "~~~ KHR_draco_mesh_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_draco_mesh_compression/schema -o ../schemas/gltf-2.0/extensions/KHR_draco_mesh_compression -s ../../
+echo "~~~ KHR_lights_punctual ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
 echo "~~~ KHR_materials_pbrSpecularGlossiness ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
 echo "~~~ KHR_materials_unlit ~~~"

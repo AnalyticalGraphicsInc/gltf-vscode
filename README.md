@@ -201,6 +201,7 @@ New samplers can be created as well simply use `-1` for the accessor references 
 Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  This means that VSCode will provide hover tooltips, auto-complete (<kbd>CTRL</kbd> + <kbd>space</kbd>), and document problem indications for extension schema violations.  This is separate from (and in addition to) any validation being performed by the official glTF Validator.  The extension schemas shipping with this project currently are:
 
 * `KHR_draco_mesh_compression`
+* `KHR_lights_punctual`
 * `KHR_materials_pbrSpecularGlossiness`
 * `KHR_materials_unlit`
 * `KHR_techniques_webgl` (Draft)

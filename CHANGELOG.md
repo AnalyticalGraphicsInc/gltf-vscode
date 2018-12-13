@@ -4,6 +4,9 @@
 
 * Added BabylonJS Inspector for visual glTF debugging. [#129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/129)
 * Moved glTF Outline view to new glTF sidebar.
+* Update Babylon to 4.0.0-alpha.11
+* Update JSON schemas for KHR_* extensions.
+* Add JSON schema for KHR_lights_punctual.
 
 ### 2.1.19 - 2018-11-27
 

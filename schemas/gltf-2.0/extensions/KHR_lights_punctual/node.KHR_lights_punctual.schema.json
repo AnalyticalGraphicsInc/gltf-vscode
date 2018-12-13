@@ -1,6 +1,6 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "EXT_lights_image_based glTF extension",
+    "title" : "KHR_lights_punctual node extension",
     "type" : "object",
     "allOf" : [
         {
@@ -8,18 +8,18 @@
         }
     ],
     "properties" : {
-        "lights" : {
-            "type" : "array",
-            "items" : {
-                "type" : "object",
-                "$ref" : "light.schema.json"
-            },
-            "minItems" : 1
+        "light" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../glTFid.schema.json"
+                }
+            ],
+            "description" : "The id of the light referenced by this node."
         },
         "extensions" : {},
         "extras" : {}
     },
     "required" : [
-        "lights"
+        "light"
     ]
 }
