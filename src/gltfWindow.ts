@@ -17,8 +17,8 @@ export class GltfWindow {
     constructor(context: vscode.ExtensionContext) {
         this._gltfPreview = new GltfPreview(context);
 
-        const gltfOutline = new GltfOutline(context, this);
-        vscode.window.registerTreeDataProvider('gltfOutline', gltfOutline);
+        this._gltfOutline = new GltfOutline(context, this);
+        vscode.window.registerTreeDataProvider('gltfOutline', this._gltfOutline);
 
         this._gltfInspectData = new GltfInspectData(context, this);
         this._gltfInspectData.setTreeView(vscode.window.createTreeView('gltfInspectData', { treeDataProvider: this._gltfInspectData }));
