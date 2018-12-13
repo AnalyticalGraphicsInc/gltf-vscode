@@ -93,11 +93,19 @@ See the [Babylon Inspector Documentation](https://doc.babylonjs.com/features/pla
 
 Files can be validated three different ways:
 
-* The official [Khronos glTF Validator](https://github.com/KhronosGroup/glTF-Validator) runs automatically on glTF 2.0 files, and reports any issues it finds to the document's "Problems" window.  All such messages are marked with a `[glTF Validator]` prefix.  Check the bottom status bar for a small `x` in a circle next to a small `!` in a triangle, these show numbers of errors and warnings, respectively.  This goes far beyond simple JSON validation, as it reads in external data and image files, and looks at mesh data itself for structural errors.
+* The official [Khronos glTF Validator](https://github.com/KhronosGroup/glTF-Validator) runs automatically on glTF 2.0 files, and reports any issues it finds to the document's "Problems" window.  All such messages are marked with a `[glTF Validator]` prefix.  This goes far beyond simple JSON validation, as it reads in external data and image files, and looks at mesh data itself for errors such as non-normalized normal vectors and inaccurate bounding volumes.
 
-* The same glTF Validator can also run as a manual process, by issuing the command `glTF: Validate a GLB or GLTF file`.  This can be done by right-clicking a file in the VSCode File Explorer sidebar, or just running the command stand-alone to open a file dialog.  This is the only method in this extension to validate GLB files directly, without conversion.  A summary of the validation report appears at the top, along with an option to save the JSON report.
+* The same glTF Validator can also run as a manual process, by issuing the command `glTF: Validate a GLB or GLTF file`.  This can be done by right-clicking a file in the VSCode File Explorer sidebar, or just running the command stand-alone to open a file dialog.  This is the only method in this extension to validate GLB files directly, without conversion.  A summary of the validation report appears in a popup, along with an option to save the JSON report.
 
 * The glTF JSON schema is registered with VSCode for `*.gltf` files, and VSCode will find schema violations using its own JSON schema validation, without help from the glTF Validator.  This produces messages in the "Problems" window that *are not* marked `[glTF Validator]`.  This is less thorough than full glTF validation, but is the only method available to glTF 1.0 files.
+
+In the screenshot below, the Khronos glTF Validator is displaying one `error`, one `warning`, and one `info`.  If you see these in your own files, you can click a line in the bottom window to scroll to the source of the message.  In case of errors in binary data, the editor will scroll to the glTF accessor that references that data.
+
+![Sample validation problems](images/SampleValidationErrors.png)
+
+Even if the `PROBLEMS` window is not visible, some icons down in the bottom footer show a summary of the validation messages.  Click these icons to reveal the `PROBLEMS` window.
+
+![Sample validation icons](images/SampleValidationIcons.png)
 
 ## Convert files to and from Data URIs
 
