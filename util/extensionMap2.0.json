@@ -2,6 +2,7 @@
     "glTF": {
         "title": "Root Extensions",
         "extensions": {
+            "KHR_lights_punctual": "glTF.KHR_lights_punctual.schema.json",
             "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json",
             "EXT_lights_image_based": "glTF.EXT_lights_image_based.schema.json",
             "AGI_articulations": "gltf.AGI_articulations.schema.json",
@@ -24,6 +25,7 @@
     "node": {
         "title": "Node Extensions",
         "extensions": {
+            "KHR_lights_punctual": "node.KHR_lights_punctual.schema.json",
             "AGI_articulations": "node.AGI_articulations.schema.json",
             "AGI_stk_metadata": "node.AGI_stk_metadata.schema.json"
         }
