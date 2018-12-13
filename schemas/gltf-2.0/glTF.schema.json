@@ -158,6 +158,13 @@
         },
         "extensions" : {
             "properties" : {
+                "KHR_lights_punctual" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_lights_punctual/glTF.KHR_lights_punctual.schema.json"
+                        }
+                    ]
+                },
                 "KHR_techniques_webgl" : {
                     "allOf" : [
                         {

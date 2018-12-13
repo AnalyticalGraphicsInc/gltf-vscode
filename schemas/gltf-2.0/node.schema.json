@@ -127,6 +127,13 @@
         "name" : {},
         "extensions" : {
             "properties" : {
+                "KHR_lights_punctual" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_lights_punctual/node.KHR_lights_punctual.schema.json"
+                        }
+                    ]
+                },
                 "AGI_articulations" : {
                     "allOf" : [
                         {
