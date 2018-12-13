@@ -1,10 +1,10 @@
-# glTF Extension for Visual Studio Code
+# glTF Tools Extension for Visual Studio Code
 
 [![GitHub issues](https://img.shields.io/github/issues/AnalyticalGraphicsInc/gltf-vscode.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues) [![Gitter chat](https://img.shields.io/gitter/room/AnalyticalGraphicsInc/gltf-vscode.svg)](https://gitter.im/gltf-vscode/Lobby) [![GitHub license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/LICENSE.md) [![VS Code marketplace](https://vsmarketplacebadge.apphb.com/installs/cesium.gltf-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode)
 
-## Preview glTF 3D models directly in the editor
+## Preview and debug glTF 3D models directly in the editor
 
-![Damaged Helmet by theblueturtle_](images/DamagedHelmetPan.gif)
+![Damaged Helmet by theblueturtle_](images/DamagedHelmet.png)
 
 Command name: `glTF: Preview 3D Model`, default keybinding: <kbd>ALT</kbd> + <kbd>G</kbd>
 
@@ -12,16 +12,31 @@ The above model, other sample models, and associated licenses can be obtained fr
 
 You can preview glTF files in a number of different rendering engines: BabylonJS, Cesium, and ThreeJS.  The ThreeJS engine will preview the saved model as opposed to the current content in your open VS Code tab.  The Babylon and Cesium engines will first try to preview what is currently in your tab, and only if that fails will it fall back on displaying the version of the model saved on disk.
 
-## Import a binary `.glb` file as text-based `.gltf` and export text-based `.gltf` file to binary `.glb` file.
+## Installing the glTF Tools Extension
+
+Once you have [Visual Studio Code](https://code.visualstudio.com/) installed, the next steps are simple:
+
+![Install within VSCode](images/HowToInstall.png)
+
+If you wish to build this from source code, see [Developer Environment](CONTRIBUTING.md#developer-environment).
+
+## Export text-based `.gltf` file and all its resources to binary `.glb` file.
 
 ![GLB conversion](images/GlbConversion.png)
 
-Command name: `glTF: Export to GLB (Binary file)`\
-Command name: `glTF: Import from GLB`
+Command name: `glTF: Export to GLB (Binary file)`
 
 The glTF 3D model format comes in two varieties: `*.gltf` is a JSON-based text file, easily editable with this VS Code extension, often with references to external files such as texturemaps and binary mesh data.  `*.glb` is a binary version, typically smaller and self-contained, but not easily editable.
 
 The `glTF: Export to GLB (Binary file)` command will export your text-based glTF from the editor to a binary `.glb` file.  In the exported version, whitespace in the JSON is stripped out, external file references are read in and converted to GLB binary bufferViews, and the resulting file becomes a self-contained transportable file that can be easily shared.
+
+## Import a binary `.glb` file as text-based `.gltf`
+
+Command name: `glTF: Import from GLB`
+
+![GLB export part 1](images/ImportGlbPart1.png)
+
+![GLB export part 2](images/ImportGlbPart2.png)
 
 The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating a separate file for the binary and additional files for each of the included images.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
 
@@ -44,17 +59,35 @@ Above, the user is inspecting the first accessor that is part of the `BoomBox.gl
 
 If you plan to preview GLSL shader code, consider installing a 3rd-party syntax highlighter with support for the `*.glsl` extension, for example [Shader Language Support for VSCode by slevesque](https://marketplace.visualstudio.com/items?itemName=slevesque.shader), to enable syntax highlighting in shader previews.
 
-## Convert files to and from Data URIs
-
-![Sample conversion](images/Conversion.png)
-
-In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), there are two commands named `glTF: Import file as Data URI` and `glTF: Export a Data URI to a file`.  To use these, place the document cursor on a block that contains a `"uri"` field.  If the value of this field is a valid filename, `Import` will load that file, encode it to base64, and replace the filename with the dataURI in your document.  `Export` is the reverse of this process, but first it will ask you for a filename to save to.  It will save the file in the same folder as the glTF file, so it does not need a path, just a name.  It will try to select an appropriate file extension based on the MIME type of the dataURI.  It will also warn you if you are about to overwrite an existing file.  If the save is successful, the dataURI will be replaced by the name of the newly created file.
-
 ## Tree View of Scene Nodes
 
-This displays an Explorer outline revealing the node structure of the glTF file. This allows easier navigation of the scene structure.
+When editing a glTF file, an icon with the glTF logo is visible in the left bar.  This outline view reveals the structure of the glTF file and its internal references.  This is a different structure than the plain JSON outline that keeps objects grouped by type.
 
-![Gltf Outline](images/GltfOutline.png)
+You can also inspect the vertex and triangle data from a selected mesh primitive.
+
+![Inspect Mesh Primitive](images/InspectMeshPrimitive.png)
+
+# glTF Debugging
+
+Debugging mesh primitive data can be achieved by opening the preview window at the same time as inspecting the mesh primitive data.
+
+_Note that this feature is currently only supported when Babylon.js is the rendering engine._
+
+For example, selecting a vertex will show the axes for that vertex. If multiple vertices are selected, each vertex will show an axes.
+
+![Select Vertex](images/SelectVertex.png)
+
+Here is an example of selecting triangles.  Multi-select is available by holding down <kbd>SHIFT</kbd> and using the arrow keys.
+
+![Select Triangles](images/SelectTriangles.png)
+
+## BabylonJS Inspector integration
+
+When previewing a model with the BabylonJS engine, click the little debug icon at the top to activate the Inspector.  This inspector has been recently added, and not all of its tools are working inside of VSCode at this time.  But, it can show model wireframes, point clouds, normal vectors, individual texture channels, and even allow temporary re-positioning of model nodes (although position changes are not copied back to the glTF document in this version).
+
+See the [Babylon Inspector Documentation](https://doc.babylonjs.com/features/playground_debuglayer) for more information about this tool.
+
+![BabylonJS Inspector](images/BabylonInspector.png)
 
 ## glTF Validation
 
@@ -66,19 +99,11 @@ Files can be validated three different ways:
 
 * The glTF JSON schema is registered with VSCode for `*.gltf` files, and VSCode will find schema violations using its own JSON schema validation, without help from the glTF Validator.  This produces messages in the "Problems" window that *are not* marked `[glTF Validator]`.  This is less thorough than full glTF validation, but is the only method available to glTF 1.0 files.
 
-# glTF Debugging
+## Convert files to and from Data URIs
 
-Debugging mesh primitive data can be achieved by opening the preview window at the same time as inspecting the mesh primitive data.
+![Sample conversion](images/Conversion.png)
 
-For example, selecting a vertex will show the axes for that vertex. If multiple vertices are selected, each vertex will show an axes.
-
-![Select Vertex](images/SelectVertex.png)
-
-Here is an example of selecting triangles.
-
-![Select Triangles](images/SelectTriangles.png)
-
-_Note that this feature is currently only supported when Babylon.js is the rendering engine._
+In the list of commands (<kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>P</kbd>), there are two commands named `glTF: Import file as Data URI` and `glTF: Export a Data URI to a file`.  To use these, place the document cursor on a block that contains a `"uri"` field.  If the value of this field is a valid filename, `Import` will load that file, encode it to base64, and replace the filename with the dataURI in your document.  `Export` is the reverse of this process, but first it will ask you for a filename to save to.  It will save the file in the same folder as the glTF file, so it does not need a path, just a name.  It will try to select an appropriate file extension based on the MIME type of the dataURI.  It will also warn you if you are about to overwrite an existing file.  If the save is successful, the dataURI will be replaced by the name of the newly created file.
 
 ## Other Features
 
