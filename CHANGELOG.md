@@ -6,7 +6,8 @@
 * Moved glTF Outline view to new glTF sidebar.
 * Update Babylon to 4.0.0-alpha.11
 * Update JSON schemas for KHR_* extensions.
-* Add JSON schema for KHR_lights_punctual.
+* Add JSON schema for KHR_lights_punctual. [#135](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/135)
+* Update main README with more detailed instructions on how to activate various tools and features of this extension. [#134](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/134)
 * Update Khronos glTF-Validator to 2.0.0-dev.2.7
 
 ### 2.1.19 - 2018-11-27
