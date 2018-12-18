@@ -108,10 +108,10 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
 
     private fillSelectedList(): void {
         this.selectedList.clear();
-        if (vscode.workspace.getConfiguration('glTF').get('expandOutlineWithSelection')) {
+        if (this.tree && vscode.workspace.getConfiguration('glTF').get('expandOutlineWithSelection')) {
             for (let selection of this.editor.selections) {
                 this.walkTree(this.tree, (node: GltfNode) => {
-                    if (node.range.contains(selection)) {
+                    if (node.range && node.range.contains(selection)) {
                         do {
                             this.selectedList.add(node);
                             node = node.parent;
