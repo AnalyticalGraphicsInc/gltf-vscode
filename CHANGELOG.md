@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.0 - UNRELEASED
+### 2.2.0 - 2018-12-18
 
 * Added BabylonJS Inspector for visual glTF debugging. [#129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/129)
 * Moved glTF Outline view to new glTF sidebar.
