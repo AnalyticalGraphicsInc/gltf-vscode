@@ -7,6 +7,7 @@
 * Update Babylon to 4.0.0-alpha.11
 * Update JSON schemas for KHR_* extensions.
 * Add JSON schema for KHR_lights_punctual.
+* Update Khronos glTF-Validator to 2.0.0-dev.2.7
 
 ### 2.1.19 - 2018-11-27
 
