@@ -1,8 +1,8 @@
 {
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
-    "description": "Tools for glTF and GLB 3D model files",
-    "version": "2.2.0",
+    "description": "Tools for glTF and GLB 3D models",
+    "version": "2.2.1",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -25,7 +25,7 @@
         "Debuggers"
     ],
     "galleryBanner": {
-        "color": "#86c540",
+        "color": "#383838",
         "theme": "dark"
     },
     "activationEvents": [
