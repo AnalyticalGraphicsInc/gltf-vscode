@@ -38,14 +38,14 @@ Command name: `glTF: Import from GLB`
 
 ![GLB export part 2](images/ImportGlbPart2.png)
 
-The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating a separate file for the binary and additional files for each of the included images.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, converting a sample file `Lantern.glb` to `.gltf` may create the following files:
+The `glTF: Import from GLB` command will convert a binary `.glb` to JSON-based `.gltf` for editing, creating a separate file for the binary and additional files for each of the included images.  Note that during import, some filenames are calculated based on the target filename of the output `.gltf`.  For example, importing a sample file `BoomBox.glb` to `.gltf` may create the following files:
 
-* `Lantern.gltf` - The JSON structure.
-* `Lantern_data.bin` - The binary mesh data
-* `Lantern_img0.png` - Image file(s) extracted from the GLB
-* `Lantern_img1.png`
-* `Lantern_img2.png`
-* `Lantern_img3.png`
+* `BoomBox.gltf` - The JSON structure.
+* `BoomBox_data.bin` - The binary mesh data
+* `BoomBox_img0.png` - Image file(s) extracted from the GLB
+* `BoomBox_img1.png`
+* `BoomBox_img2.png`
+* `BoomBox_img3.png`
 
 The user is given a "Save As..." dialog for the base `.gltf` output filename only.  The other files are saved to the same folder with names calculated by appending to the user's selected base name, and any pre-existing files with the same name will be overwritten.
 
