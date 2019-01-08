@@ -131,7 +131,8 @@ window.ThreeView = function() {
             ]);
             envMap.format = THREE.RGBFormat;
             object.traverse(function(node) {
-                if (node.material && 'envMap' in node.material) {
+                // The last part of this guard uses MeshBasicMaterial to look for KHR_materials_unlit.
+                if (node.material && 'envMap' in node.material && node.material.type !== 'MeshBasicMaterial') {
                     node.material.envMap = envMap;
                     node.material.needsUpdate = true;
                 }
