@@ -69,6 +69,7 @@ interface VertexNode extends Node {
 interface VertexAttributeNode extends Node {
     name: string;
     values: number[];
+    float: boolean;
 }
 
 interface TrianglesNode extends Node {
@@ -227,7 +228,8 @@ function getVerticesNode(fileName: string, gltf: GLTF2.GLTF, attributes: { [name
             attributeNodes.push({
                 type: NodeType.VertexAttribute,
                 name: attribute,
-                values: getAccessorElement(info.data, index, info.numComponents, info.accessor.componentType, info.accessor.normalized)
+                values: getAccessorElement(info.data, index, info.numComponents, info.accessor.componentType, info.accessor.normalized),
+                float: info.accessor.componentType === GLTF2.AccessorComponentType.FLOAT || info.accessor.normalized,
             });
         }
         return {
@@ -484,7 +486,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
             }
             case NodeType.VertexAttribute: {
                 const vertexAttributeNode = node as VertexAttributeNode;
-                const label = `${vertexAttributeNode.name}: ${formatVector(vertexAttributeNode.values, true)}`;
+                const label = `${vertexAttributeNode.name}: ${formatVector(vertexAttributeNode.values, vertexAttributeNode.float)}`;
                 treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
                 break;
             }
