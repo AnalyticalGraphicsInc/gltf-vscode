@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.2 - UNRELEASED
+
+* Fixed a bug with `KHR_materials_unlit` being displayed with a reflection map in the ThreeJS preview window. [#143](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/143)
+
 ### 2.2.0 and 2.2.1 - 2018-12-18
 
 * Added BabylonJS Inspector for visual glTF debugging. [#129](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/129)
