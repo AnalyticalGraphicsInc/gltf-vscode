@@ -131,10 +131,15 @@ window.ThreeView = function() {
             ]);
             envMap.format = THREE.RGBFormat;
             object.traverse(function(node) {
-                // The last part of this guard uses MeshBasicMaterial to look for KHR_materials_unlit.
-                if (node.material && 'envMap' in node.material && node.material.type !== 'MeshBasicMaterial') {
-                    node.material.envMap = envMap;
-                    node.material.needsUpdate = true;
+                if (node.isMesh) {
+                    const materials = Array.isArray(node.material) ? node.material : [node.material];
+                    materials.forEach((material) => {
+                        // MeshBasicMaterial means that KHR_materials_unlit is set, so reflections are not needed.
+                        if ('envMap' in material && !material.isMeshBasicMaterial) {
+                            material.envMap = envMap;
+                            material.needsUpdate = true;
+                        }
+                    });
                 }
             });
 
