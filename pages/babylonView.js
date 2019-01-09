@@ -79,9 +79,9 @@
             scene.useRightHandedSystem = true;
             debug = new window.BabylonDebug(scene);
 
-            BABYLON.SceneLoader.OnPluginActivatedObservable.add(function (plugin) {
+            BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
                 plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
-            }, undefined, undefined, undefined, true);
+            });
 
             var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
             var rootPath = document.getElementById('gltfRootPath').textContent;
