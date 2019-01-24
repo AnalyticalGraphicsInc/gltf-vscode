@@ -3,6 +3,9 @@
 ### 2.2.2 - UNRELEASED
 
 * Fixed a bug with `KHR_materials_unlit` being displayed with a reflection map in the ThreeJS preview window. [#143](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/143)
+* Added options to copy from the glTF tree inspector. [#147](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/147)
+* Allowed IBL extension to override environment in Babylon. [#149](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/149)
+* Fixed an issue with offline use of Babylon's Draco decompression. [#150](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/150)
 
 ### 2.2.0 and 2.2.1 - 2018-12-18
 
