@@ -113,8 +113,11 @@
                 // glTF assets use a +Z forward convention while the default camera faces +Z.
                 // Rotate the camera to look at the front of the asset.
                 scene.activeCamera.alpha += Math.PI;
-                scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-                    defaultBabylonReflection, scene);
+
+                if (!scene.environmentTexture) {
+                    scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+                        defaultBabylonReflection, scene);
+                }
 
                 mainViewModel.hasBackground(true);
                 function applyBackground(showBackground) {
