@@ -70,7 +70,14 @@
 
         this.startPreview = function () {
             enabled = true;
-            BABYLON.DracoCompression.DecoderUrl = document.getElementById('dracoLoaderPath').textContent;
+
+            BABYLON.DracoCompression.Configuration = {
+                decoder: {
+                    wasmUrl: document.getElementById('dracoLoaderPath').textContent,
+                    wasmBinaryUrl: document.getElementById('dracoLoaderWasmPath').textContent
+                }
+            };
+
             BABYLON.SceneLoader.ShowLoadingScreen = false;
             canvas = document.getElementById('babylonRenderCanvas');
             engine = new BABYLON.Engine(canvas, true);

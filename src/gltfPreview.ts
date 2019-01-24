@@ -201,6 +201,7 @@ export class GltfPreview extends ContextBase {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
         const dracoLoaderPath = this.extensionRootPath + 'engines/Draco/draco_decoder.js';
+        const dracoLoaderWasmPath = this.extensionRootPath + 'engines/Draco/draco_decoder.wasm';
 
         // These strings are available in JavaScript by looking up the ID.  They provide the extension's root
         // path (needed for locating additional assets), various settings, and the glTF name and contents.
@@ -212,6 +213,7 @@ export class GltfPreview extends ContextBase {
             { id: 'defaultBabylonReflection', text: defaultBabylonReflection },
             { id: 'defaultThreeReflection', text: defaultThreeReflection },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
+            { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
             { id: 'babylonHtml', text: this._babylonHtml },
             { id: 'cesiumHtml', text: this._cesiumHtml },
             { id: 'threeHtml', text: this._threeHtml },
