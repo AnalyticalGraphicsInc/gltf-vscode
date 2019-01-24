@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.25.0"
+        "vscode": "^1.30.0"
     },
     "categories": [
         "Formatters",
@@ -177,6 +177,14 @@
             {
                 "command": "gltf.exportAnimation",
                 "title": "glTF: Export animation"
+            },
+            {
+                "command": "gltfInspectData.copyAll",
+                "title": "Copy All"
+            },
+            {
+                "command": "gltfInspectData.copy",
+                "title": "Copy"
             }
         ],
         "keybindings": [
@@ -284,6 +292,18 @@
                 {
                     "command": "gltf.validateFile",
                     "group": "glTF"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "gltfInspectData.copyAll",
+                    "when": "view == gltfInspectData"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "gltfInspectData.copy",
+                    "when": "view == gltfInspectData"
                 }
             ]
         },
