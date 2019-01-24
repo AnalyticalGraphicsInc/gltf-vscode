@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.2 - UNRELEASED
+### 2.2.2 - 2019-01-24
 
 * Fixed a bug with `KHR_materials_unlit` being displayed with a reflection map in the ThreeJS preview window. [#143](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/143)
 * Added options to copy from the glTF tree inspector. [#147](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/147)
