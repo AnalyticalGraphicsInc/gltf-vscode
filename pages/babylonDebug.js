@@ -1,4 +1,4 @@
-/// <reference path="../node_modules/babylonjs/babylon.d.ts" />
+/// <reference path="../node_modules/babylonjs/babylon.module.d.ts" />
 /// <reference path="../node_modules/babylonjs-inspector/babylon.inspector.module.d.ts" />
 
 /*global BABYLON*/
