@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.2.3 - UNRELEASED
+
+* Fix an error with the BabylonJS preview window caused by an Electron upgrade in VSCode 1.31. [#152](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/152)
+* Updated script handling for better error reporting. [#154](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/154)
+
 ### 2.2.2 - 2019-01-24
 
 * Fixed a bug with `KHR_materials_unlit` being displayed with a reflection map in the ThreeJS preview window. [#143](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/143)

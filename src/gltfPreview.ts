@@ -250,6 +250,6 @@ export class GltfPreview extends ContextBase {
         return this._mainHtml.replace('{assets}',
             styles.map(s => `<link rel="stylesheet" href="${this.extensionRootPath + s}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
-            scripts.map(s => `<script type="text/javascript" charset="UTF-8" src="${this.extensionRootPath + s}"></script>\n`).join(''));
+            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${this.extensionRootPath + s}"></script>\n`).join(''));
     }
 }
