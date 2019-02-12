@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.3 - UNRELEASED
+### 2.2.3 - 2019-02-12
 
 * Fix an error with the BabylonJS preview window caused by an Electron upgrade in VSCode 1.31. [#152](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/152)
 * Updated script handling for better error reporting. [#154](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/154)
