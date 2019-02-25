@@ -80,7 +80,7 @@
 
             BABYLON.SceneLoader.ShowLoadingScreen = false;
             canvas = document.getElementById('babylonRenderCanvas');
-            engine = new BABYLON.Engine(canvas, true);
+            engine = new BABYLON.Engine(canvas, true, { limitDeviceRatio: false });
             engine.enableOfflineSupport = false;
             scene = new BABYLON.Scene(engine);
             scene.useRightHandedSystem = true;
