@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.4 - UNRELEASED
+
+* Update BabylonJS preview window to use high-DPI scaling when available. [#156](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/156)
+
 ### 2.2.3 - 2019-02-12
 
 * Fix an error with the BabylonJS preview window caused by an Electron upgrade in VSCode 1.31. [#152](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/152)
