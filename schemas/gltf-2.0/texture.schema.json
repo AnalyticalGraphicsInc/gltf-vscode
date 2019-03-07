@@ -23,10 +23,20 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of the image used by this texture."
+            "description" : "The index of the image used by this texture. When undefined, it is expected that an extension or other mechanism will supply an alternate texture source, otherwise behavior is undefined."
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "EXT_texture_webp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_texture_webp/glTF.EXT_texture_webp.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "gltf_webgl" : "`createTexture()`, `deleteTexture()`, `bindTexture()`, `texImage2D()`, and `texParameterf()`"
