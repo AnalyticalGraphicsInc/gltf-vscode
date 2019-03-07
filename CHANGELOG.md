@@ -1,9 +1,9 @@
 # Change Log
 
-### 2.2.4 - UNRELEASED
+### 2.2.4 - 2019-03-07
 
 * Update BabylonJS preview window to use high-DPI scaling when available. [#156](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/156)
-* Update glTF schema with webp extension and recent spec clarifications. [#157](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/157)
+* Update glTF schema with `EXT_texture_webp` extension and recent spec clarifications. [#157](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/157)
 
 ### 2.2.3 - 2019-02-12
 
