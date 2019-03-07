@@ -36,6 +36,12 @@
             "EXT_lights_image_based": "scene.EXT_lights_image_based.schema.json"
         }
     },
+    "texture": {
+        "title": "Texture Extensions",
+        "extensions": {
+            "EXT_texture_webp": "glTF.EXT_texture_webp.schema.json"
+        }
+    },
     "textureInfo": {
         "title": "Texture Info Extensions",
         "extensions": {
