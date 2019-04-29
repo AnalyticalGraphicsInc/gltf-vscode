@@ -187,16 +187,17 @@ function getAccessorElementNode(accessor: GLTF2.Accessor, data: ArrayLike<number
             const size = Math.sqrt(numComponents);
             const rows: AccessorMatrixRowNode[] = [];
             for (let rowIndex = 0; rowIndex < size; rowIndex++) {
-                const rowLabel = formatVector(values, float);
-                const rowTooltip = `${rowIndex}: ${rowLabel}`;
                 const start = rowIndex * size;
                 const end = start + size;
+                const rowValues = values.slice(start, end);
+                const rowLabel = formatVector(rowValues, float);
+                const rowTooltip = `${rowIndex}: ${rowLabel}`;
                 rows.push({
                     type: NodeType.AccessorMatrixRow,
                     label: rowLabel,
                     tooltip: rowTooltip,
                     index: rowIndex,
-                    values: values.slice(start, end)
+                    values: rowValues
                 });
             }
             const label = formatMatrix(rows, float);
