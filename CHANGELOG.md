@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.5 - UNRELEASED
+
+* Fixed an issue decoding `MAT2`, `MAT3`, and `MAT4` matrix accessors. [#160](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/160)
+
 ### 2.2.4 - 2019-03-07
 
 * Update BabylonJS preview window to use high-DPI scaling when available. [#156](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/156)
