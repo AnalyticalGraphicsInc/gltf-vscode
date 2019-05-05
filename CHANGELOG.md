@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.5 - UNRELEASED
+### 2.2.5 - 2019-05-05
 
 * Update BabylonJS to 4.0.3
 * Fixed an issue decoding `MAT2`, `MAT3`, and `MAT4` matrix accessors. [#160](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/160)
