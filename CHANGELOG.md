@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.2.6 - UNRELEASED
+
+* Update BabylonJS logo
+* Fixed minor issue with font size in preview window.
+
 ### 2.2.5 - 2019-05-05
 
 * Update BabylonJS to 4.0.3
