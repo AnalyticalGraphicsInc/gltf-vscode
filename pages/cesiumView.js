@@ -22,6 +22,19 @@ window.CesiumView = function() {
         shouldAnimate: true
     });
 
+    var articulationsViewModel = {
+        articulations: [],
+        stages: [],
+        selectedArticulation: undefined
+    };
+
+    Cesium.knockout.track(articulationsViewModel);
+    mainViewModel.articulationsViewModel = articulationsViewModel;
+
+    Cesium.knockout.getObservable(articulationsViewModel, 'selectedArticulation').subscribe(function(newArticulation) {
+        articulationsViewModel.stages = newArticulation.stages;
+    });
+
     function resize() {
         var zoomFactor = Cesium.defaultValue(window.devicePixelRatio, 1.0);
         var width = canvas.clientWidth * zoomFactor;
@@ -71,6 +84,42 @@ window.CesiumView = function() {
         }
         mainViewModel.animations(animations);
         mainViewModel.anyAnimChanged();
+    }
+
+    function updateArticulations(model) {
+        articulationsViewModel.articulations = Object.keys(model._runtime.articulationsByName).map(function(articulationName) {
+            return {
+                name: articulationName,
+                stages: model._runtime.articulationsByName[articulationName].stages.map(function(stage) {
+                    var stageModel = {
+                        name: stage.name,
+                        minimum: stage.minimumValue,
+                        maximum: stage.maximumValue,
+                        current: stage.currentValue
+                    };
+                    Cesium.knockout.track(stageModel);
+                    Cesium.knockout.defineProperty(stageModel, 'currentText', {
+                        get: function() {
+                            return stageModel.current.toString();
+                        },
+                        set: function(value) {
+                            // coerce values to number
+                            stageModel.current = +value;
+                        }
+                    });
+                    Cesium.knockout.getObservable(stageModel, 'current').subscribe(function(newValue) {
+                        model.setArticulationStage(articulationName + ' ' + stage.name, +newValue);
+                        model.applyArticulations();
+                    });
+                    return stageModel;
+                })
+            };
+        });
+
+        if (articulationsViewModel.articulations.length > 0) {
+            articulationsViewModel.selectedArticulation = articulationsViewModel.articulations[0];
+            mainViewModel.engineUI('articulationTemplate');
+        }
     }
 
     function startRenderLoop() {
@@ -145,6 +194,7 @@ window.CesiumView = function() {
             }
 
             updateAnimations(model);
+            updateArticulations(model);
 
             mainViewModel.onReady();
         }).otherwise(function(e) {
@@ -160,6 +210,7 @@ window.CesiumView = function() {
     this.cleanup = function() {
         enabled = false;
         mainViewModel.animations([]);
+        mainViewModel.engineUI('blankTemplate');
         scene = scene && scene.destroy();
     };
 

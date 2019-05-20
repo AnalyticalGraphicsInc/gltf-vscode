@@ -41,7 +41,9 @@
                     data-bind="checked: $parent.animPlayAllNone, checkedValue: $data" /><span data-bind="text: $data"></span></label>
             </div>
         </div>
+        <div data-bind="template: { name: engineUI }"></div>
         <div class="bottomUI" data-bind="click: toggleControls"><span data-bind="text: controlText()"></span></div>
     </div>
+    <script type="text/html" id="blankTemplate"></script>
 </body>
 </html>

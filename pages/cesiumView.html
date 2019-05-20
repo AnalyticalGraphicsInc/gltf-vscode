@@ -2,3 +2,28 @@
     <canvas id="cesiumCanvas"></canvas>
     <div id="cesiumCreditContainer"></div>
 </div>
+<script type="text/html" id="articulationTemplate">
+    <div class="rowUI">
+        <div>Articulation:
+            <select class="cesium-button" data-bind="options: articulationsViewModel.articulations,
+                                                     optionsText: 'name',
+                                                     value: articulationsViewModel.selectedArticulation"></select>
+        </div>
+        <table>
+            <tbody data-bind="foreach: articulationsViewModel.stages">
+                <tr>
+                    <td data-bind="text: name"></td>
+                    <td>
+                        <input type="range" min="-3" max="3" step="0.01" data-bind="value: current,
+                                                  valueUpdate: 'input',
+                                                  attr: {
+                                                      min: minimum,
+                                                      max: maximum
+                                                  }">
+                        <input type="text" size="2" data-bind="value: currentText">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
