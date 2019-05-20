@@ -27,9 +27,9 @@
                 <span>Show Background</span>
             </label>
         </div>
-        <div class="rowUI animationUI" style="display: none;" data-bind="visible: animations().length > 0">
-            <div>animations:</div>
-            <div class="animationList" data-bind="foreach: animations">
+        <div class="rowUI" style="display: none;" data-bind="visible: animations().length > 0">
+            <div class="smallHeading">animations:</div>
+            <div class="embeddedList" data-bind="foreach: animations">
                 <label class="checkboxLabel" data-bind="css: { active: active() }">
                     <input type="checkbox" data-bind="checked: active">
                     <span class="angleBox"><span></span></span>
