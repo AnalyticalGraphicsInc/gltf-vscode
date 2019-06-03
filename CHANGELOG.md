@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.6 - UNRELEASED
+### 2.2.6 - 2019-06-03
 
 * Update BabylonJS logo
 * Update Cesium to 1.58.
