@@ -706,8 +706,10 @@ export function activate(context: vscode.ExtensionContext) {
     //
     // Update all preview windows when the glTF file is saved.
     //
-    vscode.workspace.onDidSaveTextDocument((document) => {
-        gltfWindow.preview.updatePanel(document);
+    vscode.workspace.onDidChangeTextDocument((event) => {
+        if (!event.document.isDirty) {
+            gltfWindow.preview.updatePanel(event.document);
+        }
     });
 }
 
