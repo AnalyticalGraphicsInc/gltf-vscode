@@ -4,6 +4,7 @@
 
 * Update BabylonJS logo
 * Fixed minor issue with font size in preview window.
+* Fixed issue with 3D preview not reloading after external changes to the glTF file. [#163](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/163)
 
 ### 2.2.5 - 2019-05-05
 
