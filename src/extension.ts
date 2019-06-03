@@ -596,13 +596,27 @@ export function activate(context: vscode.ExtensionContext) {
 
         const samplerType = animationPointer.json.extras.vscode_gltf_type;
         const components = AccessorTypeToNumComponents[samplerType];
-        const interpMulti = animationPointer.json.interpolation == 'CUBICSPLINE' ? 3 : 1;
+        let entriesPerComponent = animationPointer.json.interpolation == 'CUBICSPLINE' ? 3 : 1;
+
+        // Check if this is a multi-target morph animation.
+        const animationIndex = +animationPointer.path.split('/')[2];
+        const outerAnimation = glTF.animations[animationIndex];
+        if (outerAnimation.channels && outerAnimation.channels[0]) {
+            const firstChannel = outerAnimation.channels[0];
+            if (firstChannel.target && firstChannel.target.path == 'weights') {
+                const animatedNode = glTF.nodes[firstChannel.target.node];
+                const animatedMesh = glTF.meshes[animatedNode.mesh];
+                const numTargets = animatedMesh.primitives[0].targets.length;
+                entriesPerComponent *= numTargets;
+            }
+        }
+
         const newData = {
             input: animationPointer.json.extras.vscode_gltf_input,
             output: animationPointer.json.extras.vscode_gltf_output
         };
-        if ((newData.input.length * components * interpMulti) != newData.output.length) {
-            vscode.window.showErrorMessage(`Number of input values (${newData.input.length}) does not equal output values (${newData.output.length / components / interpMulti}).`);
+        if ((newData.input.length * components * entriesPerComponent) != newData.output.length) {
+            vscode.window.showErrorMessage(`Number of input values (${newData.input.length}) does not equal output values (${newData.output.length / components / entriesPerComponent}).`);
             return;
         }
         delete animationPointer.json.extras.vscode_gltf_type;

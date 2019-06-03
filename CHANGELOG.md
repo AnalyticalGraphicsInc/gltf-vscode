@@ -3,8 +3,11 @@
 ### 2.2.6 - UNRELEASED
 
 * Update BabylonJS logo
+* Update Cesium to 1.58.
+* Update ThreeJS to r105.
 * Fixed minor issue with font size in preview window.
 * Fixed issue with 3D preview not reloading after external changes to the glTF file. [#163](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/163)
+* Fixed issue with editing animations targeting multiple morph targets. [#165](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/165)
 
 ### 2.2.5 - 2019-05-05
 
