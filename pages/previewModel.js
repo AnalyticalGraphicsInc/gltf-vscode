@@ -31,6 +31,7 @@ var ANIM_PLAY_NONE = 'None';
 // This is the main view model for the UI controls.
 var mainViewModel = window.mainViewModel = {
     engineInfo: ko.observableArray(engineInfo),
+    engineUI: ko.observable('blankTemplate'),
     selectedEngine: ko.observable(engineInfo.find(e => e.name === document.getElementById('defaultEngine').textContent)),
     showControls: ko.observable(true),
     hasBackground: ko.observable(false),

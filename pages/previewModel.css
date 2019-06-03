@@ -153,12 +153,12 @@ html, body {
     font-size: 0.7rem;
 }
 
-.animationUI > div:first-child {
+.smallHeading {
     font-size: 0.7rem;
     margin-bottom: 0.2rem;
 }
 
-.animationList {
+.embeddedList {
     overflow-y: auto;
     max-height: 30vh;
     margin-bottom: 0.2rem;
@@ -243,4 +243,27 @@ label:hover .angleBox {
 
 label:hover .angleBox::before {
     border-top-color: #3c9cff;
+}
+
+.combo {
+    margin-bottom: 10px;
+}
+
+.rowUI input[type=range i] {
+    margin-top: 12px;
+    margin-bottom: 15px;
+    width: 156px;
+    position: relative;
+    top: -2px;
+}
+
+.rowUI input[type=range i]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 2px;
+    cursor: pointer;
+    background: #307ccb;
+}
+
+.rowUI input[type=range i]::-webkit-slider-thumb {
+    margin-top: -11px;
 }
