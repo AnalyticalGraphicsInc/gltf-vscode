@@ -5,10 +5,11 @@
 <script type="text/html" id="articulationTemplate">
     <div class="rowUI">
         <div class="smallHeading">articulations:</div>
-        <select class="cesium-button" data-bind="options: articulationsViewModel.articulations,
-                                                 optionsText: 'name',
-                                                 value: articulationsViewModel.selectedArticulation"></select>
+        <select class="combo" data-bind="options: articulationsViewModel.articulations,
+                                                  optionsText: 'name',
+                                                  value: articulationsViewModel.selectedArticulation"></select>
         <div class="embeddedList" data-bind="foreach: articulationsViewModel.stages">
+            <div class="smallHeading" data-bind="text: name + ':'"></div>
             <div>
                 <input type="range" min="-3" max="3" step="0.01" data-bind="value: current,
                     valueUpdate: 'input',
@@ -18,7 +19,6 @@
                     }">
                 <input type="text" size="2" data-bind="value: currentText">
             </div>
-            <div class="smallHeading" data-bind="text: name"></div>
         </div>
     </div>
 </script>
