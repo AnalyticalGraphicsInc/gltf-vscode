@@ -17,6 +17,8 @@ interface GltfPreviewPanelInfo extends GltfPreviewPanel {
     _jsonMap: { data: GLTF2.GLTF, pointers: any };
     _defaultBabylonReflection: string;
     _defaultThreeReflection: string;
+
+    _watchedFilePaths: Array<string>;
 }
 
 export class GltfPreview extends ContextBase {
@@ -77,9 +79,12 @@ export class GltfPreview extends ContextBase {
             panel._defaultBabylonReflection = defaultBabylonReflection;
             panel._defaultThreeReflection = defaultThreeReflection;
 
+            panel._watchedFilePaths = [];
+
             panel.textEditor = gltfEditor;
 
             panel.onDidDispose(() => {
+                this.unwatchFiles(this._panels[gltfFilePath]);
                 delete this._panels[gltfFilePath];
                 this.updateActivePanel();
             });
@@ -92,19 +97,10 @@ export class GltfPreview extends ContextBase {
         }
 
         const gltfContent = gltfEditor.document.getText();
-        this.updatePanelInternal(panel, gltfFilePath, gltfContent);
+        this.updatePanel(panel, gltfFilePath, gltfContent);
         panel.reveal(vscode.ViewColumn.Two);
 
         this.setActivePanel(panel);
-    }
-
-    public updatePanel(gltfDocument: vscode.TextDocument): void {
-        const gltfFileName = gltfDocument.fileName;
-        let panel = this._panels[gltfFileName];
-        if (panel) {
-            const gltfContent = gltfDocument.getText();
-            this.updatePanelInternal(panel, gltfFileName, gltfContent);
-        }
     }
 
     public get activePanel(): GltfPreviewPanel | undefined {
@@ -138,7 +134,7 @@ export class GltfPreview extends ContextBase {
         this.setActivePanel(activePanel);
     }
 
-    private updatePanelInternal(panel: GltfPreviewPanelInfo, gltfFilePath: string, gltfContent: string): void {
+    private updatePanel(panel: GltfPreviewPanelInfo, gltfFilePath: string, gltfContent: string): void {
         const map = parseJsonMap(gltfContent);
         panel._jsonMap = map;
 
@@ -163,6 +159,8 @@ export class GltfPreview extends ContextBase {
         panel.webview.onDidReceiveMessage(message => {
             this.onDidReceiveMessage(panel, message);
         });
+
+        this.watchFiles(panel);
     }
 
     private onDidReceiveMessage(panel: GltfPreviewPanelInfo, message: any): void {
@@ -251,5 +249,46 @@ export class GltfPreview extends ContextBase {
             styles.map(s => `<link rel="stylesheet" href="${this.extensionRootPath + s}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
             scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${this.extensionRootPath + s}"></script>\n`).join(''));
+    }
+
+    private watchFiles(panel: GltfPreviewPanelInfo): void {
+        this.unwatchFiles(panel);
+
+        const document = panel.textEditor.document;
+        const documentFilePath = document.fileName;
+        fs.watch(documentFilePath, () => {
+            this.updatePanel(panel, documentFilePath, document.getText());
+        });
+        panel._watchedFilePaths.push(documentFilePath);
+
+        const documentDirectoryPath = path.dirname(documentFilePath);
+
+        const watch = (object: Object) => {
+            for (const key in object) {
+                if (object.hasOwnProperty(key)) {
+                    const value = object[key];
+                    if (key === "uri" && typeof value === "string" && !value.startsWith("data:")) {
+                        const filePath = path.join(documentDirectoryPath, value);
+                        fs.watch(filePath, () => {
+                            panel.webview.postMessage({ command: 'refresh' });
+                        });
+                        panel._watchedFilePaths.push(filePath);
+                    }
+                    else if (typeof value === "object") {
+                        watch(value);
+                    }
+                }
+            }
+        };
+
+        watch(panel._jsonMap.data);
+    }
+
+    private unwatchFiles(panel: GltfPreviewPanelInfo) {
+        for (const watchedFilePath of panel._watchedFilePaths) {
+            fs.unwatchFile(watchedFilePath);
+        }
+
+        panel._watchedFilePaths.length = 0;
     }
 }

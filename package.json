@@ -355,13 +355,14 @@
         "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
     },
     "devDependencies": {
-        "ajv": "^5.5.2",
         "@types/mocha": "^2.2.48",
         "@types/node": "^8.10.12",
+        "ajv": "^5.5.2",
         "eslint": "^5.16.0",
         "eslint-config-cesium": "^7.0.0",
         "eslint-plugin-html": "^5.0.3",
         "mocha": "^4.1.0",
+        "tslint": "^5.17.0",
         "typescript": "^2.8.3",
         "vscode": "^1.1.21",
         "yargs": "^11.1.0"

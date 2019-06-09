@@ -702,15 +702,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         activeTextEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
     }));
-
-    //
-    // Update all preview windows when the glTF file is saved.
-    //
-    vscode.workspace.onDidChangeTextDocument((event) => {
-        if (!event.document.isDirty) {
-            gltfWindow.preview.updatePanel(event.document);
-        }
-    });
 }
 
 // This method is called when your extension is deactivated.

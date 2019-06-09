@@ -80,7 +80,7 @@ function playAllOrNoAnimations(option) {
 
 /**
 * @function updatePreview
-* Stops any any ction from the active engine, and then updates
+* Stops any action from the active engine, and then updates
 * the DOM to use the newly selected engine.
 */
 function updatePreview() {
@@ -127,6 +127,10 @@ function initPreview()
 
     window.addEventListener('message', function(event) {
         switch (event.data.command) {
+            case 'refresh': {
+                updatePreview();
+                break;
+            }
             case 'enableDebugMode':
             case 'disableDebugMode': {
                 if (mainViewModel.selectedEngine().name === 'Babylon.js') {
