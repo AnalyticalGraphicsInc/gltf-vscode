@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.7 - UNRELEASED
+
+* Fixed sidebar "TF" logo to have correct size in VSCode version 1.37.0 and above.
+
 ### 2.2.6 - 2019-06-03
 
 * Update BabylonJS logo

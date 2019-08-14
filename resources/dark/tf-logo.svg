@@ -7,12 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 50 40"
+   viewBox="0 0 24 24"
    version="1.1"
    id="svg16"
    sodipodi:docname="tf-logo.svg"
-   width="50"
-   height="40"
+   width="24"
+   height="24"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata20">
@@ -36,13 +36,13 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1137"
+     inkscape:window-height="1017"
      id="namedview18"
      showgrid="false"
-     inkscape:zoom="18.413771"
-     inkscape:cx="25.118644"
-     inkscape:cy="18.813559"
-     inkscape:window-x="1272"
+     inkscape:zoom="36.827542"
+     inkscape:cx="10.621288"
+     inkscape:cy="15.628126"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg16" />
@@ -56,7 +56,7 @@
   <g
      id="Isolation_Mode"
      data-name="Isolation Mode"
-     transform="matrix(0.56988668,0,0,0.56988668,11.958929,5.5928135)"
+     transform="matrix(0.52123129,0,0,0.52123129,-0.63239274,-0.64342858)"
      style="stroke-width:1.75473475">
     <path
        class="cls-1"
@@ -67,7 +67,7 @@
   </g>
   <g
      id="SPIR"
-     transform="matrix(0.56988668,0,0,0.56988668,11.958929,5.5928135)"
+     transform="matrix(0.52123129,0,0,0.52123129,-0.63239274,-0.64342858)"
      style="stroke-width:1.75473475">
     <path
        class="cls-2"
