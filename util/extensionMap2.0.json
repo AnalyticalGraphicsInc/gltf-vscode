@@ -12,6 +12,7 @@
     "material": {
         "title": "Material Extensions",
         "extensions": {
+            "KHR_materials_clearcoat": "glTF.KHR_materials_clearcoat.schema.json",
             "KHR_materials_pbrSpecularGlossiness": "glTF.KHR_materials_pbrSpecularGlossiness.schema.json",
             "KHR_materials_unlit": "glTF.KHR_materials_unlit.schema.json"
         }
