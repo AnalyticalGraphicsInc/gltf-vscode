@@ -1,0 +1,58 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "KHR_materials_clearcoat glTF extension",
+    "type" : "object",
+    "description" : "glTF extension that defines the clearcoat material layer.",
+    "allOf" : [
+        {
+            "$ref" : "../../glTFProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "clearcoatFactor" : {
+            "type" : "number",
+            "description" : "The clearcoat layer intensity (aka opacity) of the material. A value of 0.0 means the material has no clearcoat layer enabled.",
+            "default" : 0,
+            "minimum" : 0,
+            "maximum" : 1,
+            "short_description" : "The clearcoat layer intensity."
+        },
+        "clearcoatTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The clearcoat layer intensity texture. Stored in channel R with default linear value 1.0.",
+            "short_description" : "The clearcoat layer intensity texture."
+        },
+        "clearcoatRoughnessFactor" : {
+            "type" : "number",
+            "description" : "The clearcoat layer roughness of the material.",
+            "default" : 0,
+            "minimum" : 0,
+            "maximum" : 1,
+            "short_description" : "The clearcoat layer roughness."
+        },
+        "clearcoatRoughnessTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The clearcoat layer roughness texture. Stored in channel G with default linear value 1.0.",
+            "short_description" : "The clearcoat layer roughness texture."
+        },
+        "clearcoatNormalTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../material.normalTextureInfo.schema.json"
+                }
+            ],
+            "description" : "A tangent space normal map for the clearcoat layer.",
+            "short_description" : "The clearcoat normal map texture."
+        },
+        "extensions" : {},
+        "extras" : {}
+    }
+}
