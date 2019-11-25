@@ -2,6 +2,7 @@
 
 ### 2.2.7 - UNRELEASED
 
+* Fixed an issue where 16-bit unsigned numbers were reported as signed. [#171](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/171)
 * Fixed sidebar "TF" logo to have correct size in VSCode version 1.37.0 and above.
 
 ### 2.2.6 - 2019-06-03
