@@ -101,7 +101,7 @@ export function getAccessorData(fileName: string, gltf: GLTF2.GLTF, accessor: GL
             return buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
 
         case GLTF2.AccessorComponentType.UNSIGNED_SHORT:
-            return buildArrayBuffer(Int16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
+            return buildArrayBuffer(Uint16Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
 
         case GLTF2.AccessorComponentType.UNSIGNED_INT:
             return buildArrayBuffer(Uint32Array, bufferViewBuf, accessorByteOffset, accessor.count, AccessorTypeToNumComponents[accessor.type], bufferStride);
