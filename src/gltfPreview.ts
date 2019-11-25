@@ -18,7 +18,7 @@ interface GltfPreviewPanelInfo extends GltfPreviewPanel {
     _defaultBabylonReflection: string;
     _defaultThreeReflection: string;
 
-    _watchedFilePaths: Array<string>;
+    _watchers: Array<fs.FSWatcher>;
 }
 
 export class GltfPreview extends ContextBase {
@@ -79,7 +79,7 @@ export class GltfPreview extends ContextBase {
             panel._defaultBabylonReflection = defaultBabylonReflection;
             panel._defaultThreeReflection = defaultThreeReflection;
 
-            panel._watchedFilePaths = [];
+            panel._watchers = [];
 
             panel.textEditor = gltfEditor;
 
@@ -256,10 +256,9 @@ export class GltfPreview extends ContextBase {
 
         const document = panel.textEditor.document;
         const documentFilePath = document.fileName;
-        fs.watch(documentFilePath, () => {
+        panel._watchers.push(fs.watch(documentFilePath, () => {
             this.updatePanel(panel, documentFilePath, document.getText());
-        });
-        panel._watchedFilePaths.push(documentFilePath);
+        }));
 
         const documentDirectoryPath = path.dirname(documentFilePath);
 
@@ -269,10 +268,9 @@ export class GltfPreview extends ContextBase {
                     const value = object[key];
                     if (key === "uri" && typeof value === "string" && !value.startsWith("data:")) {
                         const filePath = path.join(documentDirectoryPath, value);
-                        fs.watch(filePath, () => {
+                        panel._watchers.push(fs.watch(filePath, () => {
                             panel.webview.postMessage({ command: 'refresh' });
-                        });
-                        panel._watchedFilePaths.push(filePath);
+                        }));
                     }
                     else if (typeof value === "object") {
                         watch(value);
@@ -285,10 +283,10 @@ export class GltfPreview extends ContextBase {
     }
 
     private unwatchFiles(panel: GltfPreviewPanelInfo) {
-        for (const watchedFilePath of panel._watchedFilePaths) {
-            fs.unwatchFile(watchedFilePath);
+        for (const watcher of panel._watchers) {
+            watcher.close();
         }
 
-        panel._watchedFilePaths.length = 0;
+        panel._watchers.length = 0;
     }
 }
