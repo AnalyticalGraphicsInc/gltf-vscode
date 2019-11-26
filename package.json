@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.30.0"
+        "vscode": "^1.36.0"
     },
     "categories": [
         "Formatters",
@@ -355,17 +355,17 @@
         "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.48",
-        "@types/node": "^8.10.12",
-        "ajv": "^5.5.2",
-        "eslint": "^5.16.0",
-        "eslint-config-cesium": "^7.0.0",
-        "eslint-plugin-html": "^5.0.3",
-        "mocha": "^4.1.0",
-        "tslint": "^5.17.0",
-        "typescript": "^2.8.3",
-        "vscode": "^1.1.21",
-        "yargs": "^11.1.0"
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.12.14",
+        "ajv": "^6.10.2",
+        "eslint": "^6.7.1",
+        "eslint-config-cesium": "^8.0.1",
+        "eslint-plugin-html": "^6.0.0",
+        "mocha": "^6.2.2",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.2",
+        "vscode": "^1.1.36",
+        "yargs": "^15.0.2"
     },
     "dependencies": {
         "babylonjs": "^4.0.3",
@@ -374,8 +374,8 @@
         "draco3dgltf": "1.3.4",
         "gltf-import-export": "1.0.15",
         "gltf-validator": "2.0.0-dev.2.7",
-        "json-source-map": "0.4.0",
-        "sprintf-js": "1.1.1",
-        "vscode-languageclient": "^3.5.1"
+        "json-source-map": "0.6.1",
+        "sprintf-js": "1.1.2",
+        "vscode-languageclient": "^5.2.1"
     }
 }

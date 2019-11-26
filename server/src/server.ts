@@ -3,7 +3,7 @@ import {
     Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams, Hover, MarkedString,
     Location
 } from 'vscode-languageserver';
-import Uri from 'vscode-uri';
+import { URI } from 'vscode-uri';
 import * as Url from 'url';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -179,7 +179,7 @@ function clearTextDocument(textDocument: TextDocument): void {
 function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument): void {
     console.log('validate ' + textDocument.uri);
 
-    const fileName = Uri.parse(textDocument.uri).fsPath;
+    const fileName = URI.parse(textDocument.uri).fsPath;
     const baseName = path.basename(fileName);
 
     const gltfText = textDocument.getText();
@@ -404,7 +404,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     }
 
     function makeDataUri(doc: TextDocumentPositionParams, path: string): string {
-        return 'gltf-dataUri:' + path + '#' + encodeURIComponent(Uri.parse(doc.textDocument.uri).fsPath);
+        return 'gltf-dataUri:' + path + '#' + encodeURIComponent(URI.parse(doc.textDocument.uri).fsPath);
     }
 
     const firstValidIndex = 1; // Because the path has a leading slash.

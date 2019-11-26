@@ -53,7 +53,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
 
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const fileName = decodeURIComponent(uri.fragment);
-        const query = querystring.parse<QueryDataUri>(uri.query);
+        const query = querystring.parse(uri.query);
         query.viewColumn = query.viewColumn || vscode.ViewColumn.Active.toString();
         let glTFContent: string;
         const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
@@ -89,7 +89,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                             vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                         }
                         const previewUri: vscode.Uri = vscode.Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
-                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
+                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn.toString()));
                         return '';
                     } else {
                         return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
