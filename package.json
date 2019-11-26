@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.36.0"
+        "vscode": "^1.38.0"
     },
     "categories": [
         "Formatters",
@@ -347,7 +347,7 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "postinstall": "cd server && npm install && cd .. && node ./node_modules/vscode/bin/install",
+        "postinstall": "cd server && npm install && cd ..",
         "compile": "tsc -p ./tsconfig.json && cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
         "compile:client": "tsc -p ./tsconfig.json",
         "watch:client": "tsc -w -p ./tsconfig.json",
@@ -357,6 +357,7 @@
     "devDependencies": {
         "@types/mocha": "^5.2.7",
         "@types/node": "^12.12.14",
+        "@types/vscode": "^1.38.0",
         "ajv": "^6.10.2",
         "eslint": "^6.7.1",
         "eslint-config-cesium": "^8.0.1",
@@ -364,7 +365,6 @@
         "mocha": "^6.2.2",
         "tslint": "^5.20.1",
         "typescript": "^3.7.2",
-        "vscode": "^1.1.36",
         "yargs": "^15.0.2"
     },
     "dependencies": {
