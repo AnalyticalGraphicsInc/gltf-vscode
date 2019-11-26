@@ -154,7 +154,8 @@ export class GltfPreview extends ContextBase {
             gltfRootPath,
             gltfFileName,
             panel._defaultBabylonReflection,
-            panel._defaultThreeReflection);
+            panel._defaultThreeReflection)
+            .replace(/\${webview.cspSource}/g, panel.webview.cspSource);
 
         panel.webview.onDidReceiveMessage(message => {
             this.onDidReceiveMessage(panel, message);
