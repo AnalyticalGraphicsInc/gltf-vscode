@@ -10,8 +10,8 @@ import { GLTF2 } from './GLTF2';
 const decoderModule = draco3dgltf.createDecoderModule({});
 
 interface QueryDataUri {
-    viewColumn?: string,
-    previewHtml?: string,
+    viewColumn?: string;
+    previewHtml?: string;
 }
 
 export class DataUriTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
@@ -53,7 +53,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
 
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const fileName = decodeURIComponent(uri.fragment);
-        const query = querystring.parse<QueryDataUri>(uri.query);
+        const query = querystring.parse(uri.query);
         query.viewColumn = query.viewColumn || vscode.ViewColumn.Active.toString();
         let glTFContent: string;
         const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
@@ -82,14 +82,14 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                 if (this.isImage(jsonPointer)) {
                     if (!query.previewHtml || query.previewHtml !== 'true') {
                         // Peek Definition requests have a document that matches the current document
-                        // Go to Definition has a null activeTextEditor
+                        // Go to Definition has an undefined activeTextEditor
                         // Inspect Data Uri has a document that matches current but we provide a non-default viewColumn
                         // In the last two cases we want to close the current (to be empty editor), for Peek we leave it open.
-                        if (vscode.window.activeTextEditor == null || vscode.window.activeTextEditor.document != document || query.viewColumn != vscode.ViewColumn.Active.toString()) {
+                        if (vscode.window.activeTextEditor === undefined || vscode.window.activeTextEditor.document !== document || query.viewColumn !== vscode.ViewColumn.Active.toString()) {
                             vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                         }
                         const previewUri: vscode.Uri = vscode.Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
-                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn));
+                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn.toString()));
                         return '';
                     } else {
                         return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
@@ -120,7 +120,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         const numComponents = AccessorTypeToNumComponents[accessor.type];
         for (let index = 0; index < accessor.count; index++) {
             const values = getAccessorElement(data, index, numComponents, accessor.componentType, accessor.normalized);
-            const format = (accessor.componentType === GLTF2.AccessorComponentType.FLOAT || accessor.normalized) ? '%11.5f' : '%5d'
+            const format = (accessor.componentType === GLTF2.AccessorComponentType.FLOAT || accessor.normalized) ? '%11.5f' : '%5d';
             if (accessor.type.startsWith('MAT')) {
                 const size = Math.sqrt(numComponents);
                 for (let rowIndex = 0; rowIndex < size; rowIndex++) {
@@ -139,20 +139,20 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
 
     private formatDraco(glTF: GLTF2.GLTF, jsonPointer: string, fileName: string): string {
         const attrIndex = jsonPointer.lastIndexOf('/');
-        if (attrIndex == -1) {
+        if (attrIndex === -1) {
             return 'Invalid path:\n' + jsonPointer;
         }
         let attrName = jsonPointer.substr(attrIndex + 1);
         const dracoIndex = jsonPointer.lastIndexOf('/', attrIndex - 1);
-        if (dracoIndex == -1) {
+        if (dracoIndex === -1) {
             return 'Invalid path:\n' + jsonPointer;
         }
         const extIndex = jsonPointer.lastIndexOf('/', dracoIndex - 1);
-        if (extIndex == -1) {
+        if (extIndex === -1) {
             return 'Invalid path:\n' + jsonPointer;
         }
         const primitiveIndex = jsonPointer.lastIndexOf('/', extIndex - 1);
-        if (primitiveIndex == -1) {
+        if (primitiveIndex === -1) {
             return 'Invalid path:\n' + jsonPointer;
         }
         const primitivePointer = jsonPointer.substring(0, primitiveIndex);
@@ -217,7 +217,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                 const numComponents = attribute.num_components();
                 for (let i = 0; i < (numPoints * numComponents); i++) {
                     const value = dracoMeshData.GetValue(i);
-                    if (i % numComponents == 0 && i !== 0) {
+                    if (i % numComponents === 0 && i !== 0) {
                         result += '\n';
                     }
                     if (accessor.componentType === GLTF2.AccessorComponentType.FLOAT) {

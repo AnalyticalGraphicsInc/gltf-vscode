@@ -81,5 +81,5 @@ export class GltfWindow {
             this._activeTextEditor = activeTextEditor;
             this._onDidChangeActiveTextEditor.fire(activeTextEditor);
         }
-    };
+    }
 }

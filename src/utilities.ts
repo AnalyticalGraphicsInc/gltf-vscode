@@ -51,7 +51,7 @@ function buildArrayBuffer<T extends ArrayLike<number>>(typedArray: any, data: Ar
 
     const targetLength = count * numComponents;
 
-    if (byteStride == null || byteStride === numComponents * typedArray.BYTES_PER_ELEMENT) {
+    if (byteStride === undefined || byteStride === numComponents * typedArray.BYTES_PER_ELEMENT) {
         return new typedArray(data.buffer, byteOffset, targetLength);
     }
 
@@ -74,7 +74,7 @@ function buildArrayBuffer<T extends ArrayLike<number>>(typedArray: any, data: Ar
 }
 
 export function getAccessorData(fileName: string, gltf: GLTF2.GLTF, accessor: GLTF2.Accessor): ArrayLike<number> | undefined {
-    if (accessor.bufferView == undefined) {
+    if (accessor.bufferView === undefined) {
         return undefined;
     }
 
