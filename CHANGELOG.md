@@ -4,6 +4,8 @@
 
 * Added a file watcher for external assets, so for example when a texturemap gets overwritten the preview gets updated. [#167](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/167)
 * Fixed an issue where 16-bit unsigned numbers were reported as signed. [#171](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/171)
+* Updated extension to use some newer VSCode APIs. [#169](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/169) [#170](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/170)
+* Imported latest glTF schema, just minor clarifications to colorspace conversions for RGBA texturemaps.
 * Fixed sidebar "TF" logo to have correct size in VSCode version 1.37.0 and above.
 
 ### 2.2.6 - 2019-06-03
