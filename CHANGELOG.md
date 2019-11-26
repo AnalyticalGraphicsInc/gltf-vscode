@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.7 - UNRELEASED
+### 2.2.7 - 2019-11-26
 
 * Added a file watcher for external assets, so for example when a texturemap gets overwritten the preview gets updated. [#167](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/167)
 * Fixed an issue where 16-bit unsigned numbers were reported as signed. [#171](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/171)
