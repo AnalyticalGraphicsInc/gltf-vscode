@@ -22,13 +22,13 @@ let documents: TextDocuments = new TextDocuments();
 documents.listen(connection);
 
 interface JsonMap {
-    data: any,
+    data: any;
     pointers: any;
-};
+}
 
 interface ParseResult {
-    jsonMap: JsonMap,
-    parseable: boolean
+    jsonMap: JsonMap;
+    parseable: boolean;
 }
 
 let documentsToHandle: Map<TextDocument, ParseResult> = new Map<TextDocument, ParseResult>();
@@ -74,7 +74,7 @@ connection.onInitialize((): InitializeResult => {
             // Tell the client we provide definitions
             definitionProvider: true,
         }
-    }
+    };
 });
 
 // The settings interface describe the server relevant settings part
@@ -337,11 +337,11 @@ function getFromPath(glTF: any, path : string) {
 }
 
 interface PathData {
-    path: string,
-    start: Position,
-    end: Position,
-    jsonMap: JsonMap
-};
+    path: string;
+    start: Position;
+    end: Position;
+    jsonMap: JsonMap;
+}
 
 function getPath(textDocumentPosition: TextDocumentPositionParams): PathData {
     let hoverPos = textDocumentPosition.position;
@@ -390,13 +390,13 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
 
     function makeLocation(position?: any, uri?: string) {
         let range: Range;
-        if (position == null) {
+        if (!position) {
             range = Range.create(0, 0, 0, 0);
         } else {
             range = Range.create(document.positionAt(position.value.pos), document.positionAt(position.valueEnd.pos));
         }
 
-        if (uri == null) {
+        if (uri === undefined || uri === null) {
             uri = textDocumentPosition.textDocument.uri;
         }
 
@@ -418,7 +418,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
         let part = pathSplit[i];
         currentPath += '/' + part;
         result = result[part];
-        if (typeof result != 'object')
+        if (typeof result !== 'object')
         {
             if (part === 'scene') {
                 return makeLocation(pathData.jsonMap.pointers['/scenes/' + result]);
@@ -441,7 +441,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 if (primitive && primitive.extensions && primitive.extensions['KHR_draco_mesh_compression']) {
                     let indicesPath = primitivePath + '/extensions/KHR_draco_mesh_compression/attributes/indices';
                     let uri = makeDataUri(textDocumentPosition, indicesPath);
-                    return makeLocation(null, uri);
+                    return makeLocation(undefined, uri);
                 } else {
                     return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
                 }
@@ -449,7 +449,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
                 if (inDraco) {
                     let uri = makeDataUri(textDocumentPosition, currentPath);
-                    return makeLocation(null, uri);
+                    return makeLocation(undefined, uri);
                 } else {
                     return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
                 }
@@ -490,12 +490,12 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 inChannels = true;
                 currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
             }
-            else if (result.uri !== undefined) {
+            else if (result.uri !== undefined && result.uri !== null) {
                 if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
-                    return makeLocation(null, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
+                    return makeLocation(undefined, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
                 } else {
                     let uri = makeDataUri(textDocumentPosition, currentPath);
-                    return makeLocation(null, uri);
+                    return makeLocation(undefined, uri);
                 }
             } else if (part === 'accessors') {
                 inAccessors = true;
@@ -503,7 +503,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 inDraco = true;
             } else if (inAccessors && !path.includes('bufferView')) {
                 let uri = makeDataUri(textDocumentPosition, currentPath);
-                return makeLocation(null, uri);
+                return makeLocation(undefined, uri);
             }
         }
     }

@@ -26,7 +26,7 @@ function messageLabel(howMany: Number, name: string) {
 }
 
 export async function validate(sourceFilename: string) {
-    if (typeof sourceFilename == 'undefined') {
+    if (typeof sourceFilename === 'undefined') {
         return;
     }
     if (!fs.existsSync(sourceFilename)) {
@@ -44,7 +44,7 @@ export async function validate(sourceFilename: string) {
         maxIssues: currentSettings.maxIssues,
         ignoredIssues: currentSettings.ignoredIssues,
         severityOverrides: currentSettings.severityOverrides,
-        externalResourceFunction: (uri) =>
+        externalResourceFunction: (uri : string) =>
             new Promise((resolve, reject) => {
                 uri = path.resolve(folderName, decodeURIComponent(uri));
                 fs.readFile(uri, (err, data) => {
