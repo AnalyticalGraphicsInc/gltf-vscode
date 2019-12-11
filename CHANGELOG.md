@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.8 - UNRELEASED
+
+* Fixed crash when importing GLB with sparse accessors. [gltf-import-export#9](https://github.com/najadojo/gltf-import-export/pull/9)
+
 ### 2.2.7 - 2019-11-26
 
 * Added a file watcher for external assets, so for example when a texturemap gets overwritten the preview gets updated. [#167](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/167)
