@@ -2,6 +2,8 @@
 
 ### 2.2.8 - UNRELEASED
 
+* Update ThreeJS to r112.
+* Update Khronos glTF-Validator to 2.0.0-dev.3.0 (many changes, see [KhronosGroup/glTF-Validator#124](https://github.com/KhronosGroup/glTF-Validator/pull/124)).
 * Fixed crash when importing GLB with sparse accessors. [gltf-import-export#9](https://github.com/najadojo/gltf-import-export/pull/9)
 
 ### 2.2.7 - 2019-11-26
