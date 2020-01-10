@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.8 - UNRELEASED
+### 2.2.8 - 2020-01-09
 
 * Update ThreeJS to r112.
 * Update Khronos glTF-Validator to 2.0.0-dev.3.0 (many changes, see [KhronosGroup/glTF-Validator#124](https://github.com/KhronosGroup/glTF-Validator/pull/124)).
