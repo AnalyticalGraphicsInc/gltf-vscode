@@ -2,7 +2,7 @@
 
 ### 2.2.9 - UNRELEASED
 
-* Update Khronos glTF-Validator to 2.0.0-dev.3.1. [KhronosGroup/glTF-Validator#129](https://github.com/KhronosGroup/glTF-Validator/pull/129)
+* Update Khronos glTF-Validator to 2.0.0-dev.3.2. [KhronosGroup/glTF-Validator#129](https://github.com/KhronosGroup/glTF-Validator/pull/129) and [KhronosGroup/glTF-Validator#131](https://github.com/KhronosGroup/glTF-Validator/pull/131)
 
 ### 2.2.8 - 2020-01-09
 
