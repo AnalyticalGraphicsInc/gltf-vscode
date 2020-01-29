@@ -83,7 +83,7 @@ export function activateServer(context: vscode.ExtensionContext) {
     let serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
-    }
+    };
 
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
@@ -95,7 +95,7 @@ export function activateServer(context: vscode.ExtensionContext) {
             // Notify the server about file changes to '.clientrc files contain in the workspace
             fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
         }
-    }
+    };
 
     // Create the language client and start the client.
     let disposable = new LanguageClient('gltfLanguageServer', 'glTF Language Server', serverOptions, clientOptions).start();
@@ -281,7 +281,7 @@ export function activate(context: vscode.ExtensionContext) {
             let extension;
             let mimeType = '';
             if (mimeTypePos > 0) {
-                mimeType = dataUri.substring(5, mimeTypePos)
+                mimeType = dataUri.substring(5, mimeTypePos);
                 extension = guessFileExtension(mimeType);
                 guessName += extension;
             }
@@ -398,7 +398,7 @@ export function activate(context: vscode.ExtensionContext) {
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', async (fileUri) => {
 
-        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) || !fileUri.fsPath.endsWith('.glb')) {
+        if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) || !fileUri.fsPath.endsWith('.glb')) {
             if ((vscode.window.activeTextEditor !== undefined) &&
                 (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))) {
                 fileUri = vscode.window.activeTextEditor.document.uri;
@@ -422,7 +422,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         try {
-            if (typeof fileUri.fsPath == 'undefined') {
+            if (typeof fileUri.fsPath === 'undefined') {
                 return;
             }
             if (!fs.existsSync(fileUri.fsPath)) {
@@ -441,15 +441,15 @@ export function activate(context: vscode.ExtensionContext) {
                     };
                     let uri = await vscode.window.showSaveDialog(options);
                     if (!uri) {
-                        return null;
+                        return undefined;
                     }
                     targetFilename = uri.fsPath;
                 }
                 return targetFilename;
-            }
+            };
             let targetFilename = await ConvertGLBtoGltfLoadFirst(fileUri.fsPath, getTargetFilename);
 
-            if (targetFilename != null) {
+            if (targetFilename) {
                 vscode.commands.executeCommand('vscode.open', vscode.Uri.file(targetFilename));
             }
         } catch (ex) {
@@ -461,7 +461,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Run the validator on an external file.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.validateFile', async (fileUri) => {
-        if (typeof fileUri == 'undefined' || !(fileUri instanceof vscode.Uri) ||
+        if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) ||
             !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.gltf'))) {
             const options: vscode.OpenDialogOptions = {
                 canSelectMany: false,
@@ -496,8 +496,8 @@ export function activate(context: vscode.ExtensionContext) {
         let path = '';
         const firstValidIndex = 1; // Because the path has a leading slash.
         for (let i = firstValidIndex; i < numPointerSegments; ++i) {
-            inAnimation = inAnimation || (jsonPointerSplit[i] == 'animations');
-            inSampler = inAnimation && (inSampler || (jsonPointerSplit[i] == 'samplers'));
+            inAnimation = inAnimation || (jsonPointerSplit[i] === 'animations');
+            inSampler = inAnimation && (inSampler || (jsonPointerSplit[i] === 'samplers'));
             result = result[jsonPointerSplit[i]];
             path += '/' + jsonPointerSplit[i];
         }
@@ -538,7 +538,7 @@ export function activate(context: vscode.ExtensionContext) {
             const accessorId = animationPointer.json[key];
             const accessor = glTF.accessors[accessorId];
             let data: ArrayLike<number> = [];
-            if (accessor != undefined) {
+            if (accessor !== undefined) {
                 data = getAccessorData(activeTextEditor.document.fileName, glTF, accessor);
             }
             animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(data);
@@ -548,7 +548,7 @@ export function activate(context: vscode.ExtensionContext) {
         const pointer = map.pointers[animationPointer.path];
 
         const tabSize = activeTextEditor.options.tabSize as number;
-        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         let newJson = JSON.stringify(animationPointer.json, null, space);
         const newJsonLines = newJson.split(/\n/);
         const fullTab = new Array(5).join(space);
@@ -596,14 +596,14 @@ export function activate(context: vscode.ExtensionContext) {
 
         const samplerType = animationPointer.json.extras.vscode_gltf_type;
         const components = AccessorTypeToNumComponents[samplerType];
-        let entriesPerComponent = animationPointer.json.interpolation == 'CUBICSPLINE' ? 3 : 1;
+        let entriesPerComponent = animationPointer.json.interpolation === 'CUBICSPLINE' ? 3 : 1;
 
         // Check if this is a multi-target morph animation.
         const animationIndex = +animationPointer.path.split('/')[2];
         const outerAnimation = glTF.animations[animationIndex];
         if (outerAnimation.channels && outerAnimation.channels[0]) {
             const firstChannel = outerAnimation.channels[0];
-            if (firstChannel.target && firstChannel.target.path == 'weights') {
+            if (firstChannel.target && firstChannel.target.path === 'weights') {
                 const animatedNode = glTF.nodes[firstChannel.target.node];
                 const animatedMesh = glTF.meshes[animatedNode.mesh];
                 const numTargets = animatedMesh.primitives[0].targets.length;
@@ -615,20 +615,20 @@ export function activate(context: vscode.ExtensionContext) {
             input: animationPointer.json.extras.vscode_gltf_input,
             output: animationPointer.json.extras.vscode_gltf_output
         };
-        if ((newData.input.length * components * entriesPerComponent) != newData.output.length) {
+        if ((newData.input.length * components * entriesPerComponent) !== newData.output.length) {
             vscode.window.showErrorMessage(`Number of input values (${newData.input.length}) does not equal output values (${newData.output.length / components / entriesPerComponent}).`);
             return;
         }
         delete animationPointer.json.extras.vscode_gltf_type;
         delete animationPointer.json.extras.vscode_gltf_input;
         delete animationPointer.json.extras.vscode_gltf_output;
-        if (Object.keys(animationPointer.json.extras).length == 0) {
+        if (Object.keys(animationPointer.json.extras).length === 0) {
             delete animationPointer.json.extras;
         }
 
         const inputAccessor = glTF.accessors[animationPointer.json.input];
         let bufferIndex = 0;
-        if (inputAccessor != undefined) {
+        if (inputAccessor !== undefined) {
             const bufferView = glTF.bufferViews[inputAccessor.bufferView];
             bufferIndex = bufferView.buffer;
         }
@@ -636,7 +636,7 @@ export function activate(context: vscode.ExtensionContext) {
         const bufferData = getBuffer(glTF, bufferIndex, activeTextEditor.document.fileName);
         const alignedLength = (value: number) => {
             const alignValue = 4;
-            if (value == 0) {
+            if (value === 0) {
                 return value;
             }
 
@@ -646,17 +646,17 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             return value + (alignValue - multiple);
-        }
+        };
         let bufferOffset = alignedLength(bufferData.length);
 
         const outputBuffers = [bufferData];
-        if (bufferOffset != bufferData.length) {
+        if (bufferOffset !== bufferData.length) {
             outputBuffers.push(new Buffer(bufferOffset - bufferData.length));
         }
 
         for (const accessorType of ['input', 'output']) {
             const values = newData[accessorType];
-            const accessorComponents = accessorType == 'input' ? 1 : components;
+            const accessorComponents = accessorType === 'input' ? 1 : components;
             const max = new Array(accessorComponents).fill(Number.NEGATIVE_INFINITY);
             for (let i = 0; i < values.length; i++) {
                 const j = i % accessorComponents;
@@ -672,13 +672,13 @@ export function activate(context: vscode.ExtensionContext) {
                 "bufferView": glTF.bufferViews.length,
                 "componentType": 5126,
                 "count": values.length / accessorComponents,
-                "type": accessorType == 'input' ? 'SCALAR' : samplerType,
+                "type": accessorType === 'input' ? 'SCALAR' : samplerType,
                 "max": max,
                 "min": min
             };
 
             const accessorId = animationPointer.json[accessorType];
-            if (glTF.accessors[accessorId] == undefined) {
+            if (glTF.accessors[accessorId] === undefined) {
                 animationPointer.json[accessorType] = glTF.accessors.length;
                 glTF.accessors.push(accessor);
             } else {
@@ -691,7 +691,7 @@ export function activate(context: vscode.ExtensionContext) {
                 "byteLength": float32Values.byteLength,
             };
             glTF.bufferViews.push(newBufferView);
-            if (alignedLength(float32Values.byteLength) != float32Values.byteLength) {
+            if (alignedLength(float32Values.byteLength) !== float32Values.byteLength) {
                 throw new Error('Float32Array not 4 byte length');
             }
             bufferOffset += float32Values.byteLength;
@@ -703,7 +703,7 @@ export function activate(context: vscode.ExtensionContext) {
         bufferJson.uri = 'data:application/octet-stream;base64,' + finalBuffer.toString('base64');
         bufferJson.byteLength = finalBuffer.length;
         const tabSize = activeTextEditor.options.tabSize as number;
-        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t'
+        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         const newJson = JSON.stringify(glTF, null, space);
 
         const newRange = new vscode.Range(0, 0, activeTextEditor.document.lineCount + 1, 0);
@@ -716,15 +716,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         activeTextEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
     }));
-
-    //
-    // Update all preview windows when the glTF file is saved.
-    //
-    vscode.workspace.onDidChangeTextDocument((event) => {
-        if (!event.document.isDirty) {
-            gltfWindow.preview.updatePanel(event.document);
-        }
-    });
 }
 
 // This method is called when your extension is deactivated.

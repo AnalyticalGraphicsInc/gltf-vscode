@@ -1,7 +1,21 @@
 # Change Log
 
-### 2.2.7 - UNRELEASED
+### 2.2.9 - 2020-01-22
 
+* Update Khronos glTF-Validator to 2.0.0-dev.3.2. [KhronosGroup/glTF-Validator#129](https://github.com/KhronosGroup/glTF-Validator/pull/129) and [KhronosGroup/glTF-Validator#131](https://github.com/KhronosGroup/glTF-Validator/pull/131)
+
+### 2.2.8 - 2020-01-09
+
+* Update ThreeJS to r112.
+* Update Khronos glTF-Validator to 2.0.0-dev.3.0 (many changes, see [KhronosGroup/glTF-Validator#124](https://github.com/KhronosGroup/glTF-Validator/pull/124)).
+* Fixed crash when importing GLB with sparse accessors. [gltf-import-export#9](https://github.com/najadojo/gltf-import-export/pull/9)
+
+### 2.2.7 - 2019-11-26
+
+* Added a file watcher for external assets, so for example when a texturemap gets overwritten the preview gets updated. [#167](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/167)
+* Fixed an issue where 16-bit unsigned numbers were reported as signed. [#171](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/171)
+* Updated extension to use some newer VSCode APIs. [#169](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/169) [#170](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/170)
+* Imported latest glTF schema, just minor clarifications to colorspace conversions for RGBA texturemaps.
 * Fixed sidebar "TF" logo to have correct size in VSCode version 1.37.0 and above.
 
 ### 2.2.6 - 2019-06-03

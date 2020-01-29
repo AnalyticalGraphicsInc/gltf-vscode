@@ -71,7 +71,7 @@ window.ThreeView = function() {
         renderer.setClearColor(0x222222);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.gammaOutput = true;
+        renderer.outputEncoding = THREE.sRGBEncoding;
 
         if (sceneInfo.shadows) {
             renderer.shadowMap.enabled = true;
@@ -109,9 +109,10 @@ window.ThreeView = function() {
         var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
         // Replace a slash followed by anything but a slash, to the end, with just a slash.
         var dracoLoaderPath = dracoLoaderPathAndFile.replace(/\/[^\/]*$/, '/');
-        THREE.DRACOLoader.setDecoderPath(dracoLoaderPath);
+        var dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath(dracoLoaderPath);
 
-        loader.setDRACOLoader( new THREE.DRACOLoader() );
+        loader.setDRACOLoader( dracoLoader );
 
         var url = sceneInfo.url;
 
@@ -153,15 +154,18 @@ window.ThreeView = function() {
             if (sceneInfo.cameraPos) {
                 object.updateMatrixWorld();
                 var boundingBox = new THREE.Box3().setFromObject(object);
-                var modelSize = boundingBox.getSize().length();
-                var modelCenter = boundingBox.getCenter();
+                var modelSizeVec3 = new THREE.Vector3();
+                boundingBox.getSize(modelSizeVec3);
+                var modelSize = modelSizeVec3.length();
+                var modelCenter = new THREE.Vector3();
+                boundingBox.getCenter(modelCenter);
 
                 orbitControls.reset();
                 orbitControls.maxDistance = modelSize * 50;
                 orbitControls.enableDamping = true;
                 orbitControls.dampingFactor = 0.07;
-                orbitControls.rotateSpeed = 0.07;
-                orbitControls.panSpeed = 0.07;
+                orbitControls.rotateSpeed = 0.4;
+                orbitControls.panSpeed = 0.4;
                 orbitControls.screenSpacePanning = true;
 
                 object.position.x = -modelCenter.x;

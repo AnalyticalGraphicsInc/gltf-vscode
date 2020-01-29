@@ -22,7 +22,7 @@ interface GltfNode {
 interface MeshInfo {
     size: number;
     vertices: number;
-};
+}
 
 export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
     private tree: GltfNode;
@@ -429,7 +429,7 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
         };
         if (mesh.primitives) {
             for (let primitiveIndex = 0; primitiveIndex < mesh.primitives.length; primitiveIndex++) {
-                let primitiveInfo = this.createMeshPrimitive(mesh, meshIndex, primitiveIndex.toString(), meshObj, assetReport)
+                let primitiveInfo = this.createMeshPrimitive(mesh, meshIndex, primitiveIndex.toString(), meshObj, assetReport);
                 if (assetReport) {
                     meshInfo.size += primitiveInfo.size;
                     meshInfo.vertices += primitiveInfo.vertices;
@@ -622,7 +622,7 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
         if (set.size === 0) {
             return '';
         }
-        return ` (Skin${set.size == 1 ? '' : 's'} ${Array.from(set.values()).join(', ')})`;
+        return ` (Skin${set.size === 1 ? '' : 's'} ${Array.from(set.values()).join(', ')})`;
     }
 
     private getIcon(nodeType: GltfNodeType): any {
@@ -633,6 +633,6 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
         return {
             light: this.context.asAbsolutePath(path.join('resources', 'light', nodeType + '.svg')),
             dark: this.context.asAbsolutePath(path.join('resources', 'dark', nodeType + '.svg'))
-        }
+        };
     }
 }
