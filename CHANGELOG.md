@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.10 - UNRELEASED
+
+* Add `KHR_materials_clearcoat` extension schema. [#180](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/180)
+
 ### 2.2.9 - 2020-01-22
 
 * Update Khronos glTF-Validator to 2.0.0-dev.3.2. [KhronosGroup/glTF-Validator#129](https://github.com/KhronosGroup/glTF-Validator/pull/129) and [KhronosGroup/glTF-Validator#131](https://github.com/KhronosGroup/glTF-Validator/pull/131)
