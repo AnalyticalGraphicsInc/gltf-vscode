@@ -23,7 +23,7 @@
                     "$ref" : "../../textureInfo.schema.json"
                 }
             ],
-            "description" : "The clearcoat layer intensity texture. Stored in channel R with default linear value 1.0.",
+            "description" : "The clearcoat layer intensity texture. These values are sampled from the R channel.  The values are linear.  Use value 1.0 if no texture is supplied.",
             "short_description" : "The clearcoat layer intensity texture."
         },
         "clearcoatRoughnessFactor" : {
@@ -40,7 +40,7 @@
                     "$ref" : "../../textureInfo.schema.json"
                 }
             ],
-            "description" : "The clearcoat layer roughness texture. Stored in channel G with default linear value 1.0.",
+            "description" : "The clearcoat layer roughness texture. These values are sampled from the G channel.  The values are linear.  Use value 1.0 if no texture is supplied.",
             "short_description" : "The clearcoat layer roughness texture."
         },
         "clearcoatNormalTexture" : {
@@ -49,7 +49,7 @@
                     "$ref" : "../../material.normalTextureInfo.schema.json"
                 }
             ],
-            "description" : "A tangent space normal map for the clearcoat layer.",
+            "description" : "A tangent space normal map for the clearcoat layer.  If desired, this may be a reference to the same normal map used by the base material.  If not supplied, no normal mapping is applied to the clear coat layer.",
             "short_description" : "The clearcoat normal map texture."
         },
         "extensions" : {},
