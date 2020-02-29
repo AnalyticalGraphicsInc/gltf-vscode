@@ -56,6 +56,10 @@ window.BabylonDebug = function (scene) {
      * Show the inspector.
      */
     this.showInspector = function () {
+        // HACK: delete Storage object to avoid localStorage errors
+        window._Storage = window.Storage;
+        delete window.Storage;
+
         BABYLON.Inspector.Show(scene, {
             embedMode: true,
             enablePopup: false,
@@ -84,6 +88,10 @@ window.BabylonDebug = function (scene) {
         }
 
         BABYLON.Inspector.Hide();
+
+        // HACK: restore Storage
+        window.Storage = window._Storage;
+        delete window._Storage;
     };
 
     /**
