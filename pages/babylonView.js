@@ -88,6 +88,7 @@
 
             BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
                 plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+                plugin.validate = false;
             });
 
             var defaultBabylonReflection = document.getElementById('defaultBabylonReflection').textContent;
