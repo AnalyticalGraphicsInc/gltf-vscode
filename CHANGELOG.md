@@ -1,8 +1,9 @@
 # Change Log
 
-### 2.2.10 - UNRELEASED
+### 2.2.10 - 2020-03-01
 
 * Add `KHR_materials_clearcoat` extension schema. [#180](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/180)
+* Update BabylonJS to 4.1.0, with support for [`KHR_materials_clearcoat`](https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md) and several other draft "PBR Next" extensions.
 
 ### 2.2.9 - 2020-01-22
 
