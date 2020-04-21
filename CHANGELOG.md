@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.2.11 - UNRELEASED
+
+* Update Draco decoder to 1.3.6
+
 ### 2.2.10 - 2020-03-01
 
 * Add `KHR_materials_clearcoat` extension schema. [#180](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/180)
