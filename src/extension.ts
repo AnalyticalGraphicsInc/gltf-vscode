@@ -72,7 +72,7 @@ function configurationChanged() {
 }
 
 // This method activates the language server, to run the glTF Validator.
-export function activateServer(context: vscode.ExtensionContext) {
+export function activateServer(context: vscode.ExtensionContext): void {
     // The server is implemented in node
     let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
     // The debug options for the server
@@ -107,7 +107,7 @@ export function activateServer(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is activated
 // your extension is activated the very first time a command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
 
     // Set configuration options
     vscode.workspace.onDidChangeConfiguration(configurationChanged);
@@ -214,7 +214,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             // Not a DataURI: Look up external reference.
             const name = Url.resolve(activeTextEditor.document.fileName, dataUri);
-            let contents;
+            let contents: Buffer;
             try {
                 contents = fs.readFileSync(name);
             } catch (ex) {
@@ -719,5 +719,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated.
-export function deactivate() {
+export function deactivate(): void {
 }

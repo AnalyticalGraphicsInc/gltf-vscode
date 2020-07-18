@@ -408,11 +408,11 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     }
 
     const firstValidIndex = 1; // Because the path has a leading slash.
-    let inNodes: boolean = false;
-    let inChannels: boolean = false;
-    let inAccessors: boolean = false;
-    let inDraco: boolean = false;
-    let currentPath: string = '';
+    let inNodes = false;
+    let inChannels = false;
+    let inAccessors = false;
+    let inDraco = false;
+    let currentPath = '';
     let currentAnimationPath: string;
     for (let i = firstValidIndex; i < numPathSegments; ++i) {
         let part = pathSplit[i];
@@ -442,17 +442,15 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                     let indicesPath = primitivePath + '/extensions/KHR_draco_mesh_compression/attributes/indices';
                     let uri = makeDataUri(textDocumentPosition, indicesPath);
                     return makeLocation(undefined, uri);
-                } else {
-                    return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
                 }
+                return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
             }
             else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
                 if (inDraco) {
                     let uri = makeDataUri(textDocumentPosition, currentPath);
                     return makeLocation(undefined, uri);
-                } else {
-                    return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
                 }
+                return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
             }
             else if (part === 'node' || part === 'skeleton' || inNodes ) {
                 return makeLocation(pathData.jsonMap.pointers['/nodes/' + result]);
@@ -469,9 +467,8 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
             else if (part === 'sampler') {
                 if (inChannels) {
                     return makeLocation(pathData.jsonMap.pointers[currentAnimationPath + '/samplers/' + result]);
-                } else {
-                    return makeLocation(pathData.jsonMap.pointers['/samplers/' + result]);
                 }
+                return makeLocation(pathData.jsonMap.pointers['/samplers/' + result]);
             }
             else if (part === 'source') {
                 return makeLocation(pathData.jsonMap.pointers['/images/' + result]);
@@ -482,29 +479,26 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 return makeLocation(pathData.jsonMap.pointers['/shaders/' + result]);
             }
         }
-        else {
-            if (part === 'nodes' || part === 'children' || part === 'joints') {
-                inNodes = true;
+        else if (part === 'nodes' || part === 'children' || part === 'joints') {
+            inNodes = true;
+        }
+        else if (part === 'channels') {
+            inChannels = true;
+            currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
+        }
+        else if (result.uri !== undefined && result.uri !== null) {
+            if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
+                return makeLocation(undefined, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
             }
-            else if (part === 'channels') {
-                inChannels = true;
-                currentAnimationPath = currentPath.substring(0, currentPath.length - '/channels'.length);
-            }
-            else if (result.uri !== undefined && result.uri !== null) {
-                if (!result.uri.startsWith('data:') && !currentPath.startsWith('/images/')) {
-                    return makeLocation(undefined, Url.resolve(textDocumentPosition.textDocument.uri, result.uri));
-                } else {
-                    let uri = makeDataUri(textDocumentPosition, currentPath);
-                    return makeLocation(undefined, uri);
-                }
-            } else if (part === 'accessors') {
-                inAccessors = true;
-            } else if (part === 'KHR_draco_mesh_compression') {
-                inDraco = true;
-            } else if (inAccessors && !path.includes('bufferView')) {
-                let uri = makeDataUri(textDocumentPosition, currentPath);
-                return makeLocation(undefined, uri);
-            }
+            let uri = makeDataUri(textDocumentPosition, currentPath);
+            return makeLocation(undefined, uri);
+        } else if (part === 'accessors') {
+            inAccessors = true;
+        } else if (part === 'KHR_draco_mesh_compression') {
+            inDraco = true;
+        } else if (inAccessors && !path.includes('bufferView')) {
+            let uri = makeDataUri(textDocumentPosition, currentPath);
+            return makeLocation(undefined, uri);
         }
     }
 

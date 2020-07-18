@@ -38,12 +38,12 @@ export function truncateJsonPointer(value: string, level: number): string {
     return components.join('/');
 }
 
-export function atob(str): string {
+export function atob(str: string): string {
     return Buffer.from(str, 'base64').toString('binary');
 }
 
-export function btoa(str): string {
-    return Buffer.from(str, 'binary').toString('base64');
+export function btoa(str: Buffer): string {
+    return str.toString('base64');
 }
 
 function buildArrayBuffer<T extends ArrayLike<number>>(typedArray: any, data: ArrayBufferView, byteOffset: number, count: number, numComponents: number, byteStride?: number): T {
@@ -140,7 +140,7 @@ const gltfMimeTypes = {
     'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt']
 };
 
-export function guessFileExtension(mimeType) {
+export function guessFileExtension(mimeType: string): string {
     if (gltfMimeTypes.hasOwnProperty(mimeType)) {
         return '.' + gltfMimeTypes[mimeType][0];
     }

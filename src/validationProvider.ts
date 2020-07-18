@@ -14,7 +14,7 @@ interface ValidatorSettings {
     severityOverrides: object;
 }
 
-function messageLabel(howMany: Number, name: string) {
+function messageLabel(howMany: number, name: string) {
     if (howMany === 1) {
         if (name.endsWith('.')) {
             name = name.replace('s.', '.');
@@ -25,7 +25,7 @@ function messageLabel(howMany: Number, name: string) {
     return howMany.toFixed() + ' ' + name;
 }
 
-export async function validate(sourceFilename: string) {
+export async function validate(sourceFilename: string): Promise<void> {
     if (typeof sourceFilename === 'undefined') {
         return;
     }

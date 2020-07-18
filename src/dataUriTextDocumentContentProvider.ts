@@ -24,7 +24,8 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         this._context = context;
     }
 
-    public uriIfNotDataUri(glTF, jsonPointer: string): string {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public uriIfNotDataUri(glTF: any, jsonPointer: string): string {
         const data = getFromJsonPointer(glTF, jsonPointer);
         if ((typeof data === 'object') && data.hasOwnProperty('uri')) {
             const uri: string = data.uri;
@@ -60,7 +61,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         if (document) {
             glTFContent = document.getText();
         } else {
-            glTFContent = fs.readFileSync(fileName, 'UTF-8');
+            glTFContent = fs.readFileSync(fileName, 'utf-8');
         }
         const glTF = JSON.parse(glTFContent) as GLTF2.GLTF;
         let jsonPointer = uri.path;
@@ -91,15 +92,13 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                         const previewUri: vscode.Uri = vscode.Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
                         await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn.toString()));
                         return '';
-                    } else {
-                        return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
-                            `<body><div class="monaco-resource-viewer image oversized" onclick="this.classList.toggle(\'full-size\');" ><img src="${dataUri}" /></div></body></html>`;
                     }
-                } else {
-                    const posBase = dataUri.indexOf('base64,');
-                    const body = dataUri.substring(posBase + 7);
-                    return atob(body);
+                    return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
+                        `<body><div class="monaco-resource-viewer image oversized" onclick="this.classList.toggle(\'full-size\');" ><img src="${dataUri}" /></div></body></html>`;
                 }
+                const posBase = dataUri.indexOf('base64,');
+                const body = dataUri.substring(posBase + 7);
+                return atob(body);
             } else if (this.isAccessor(jsonPointer)) {
                 return this.formatAccessor(fileName, glTF, data);
             }
@@ -201,7 +200,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
                 return status.error_msg();
             }
 
-            let result: string = '';
+            let result = '';
             if (attrName === 'indices') {
                 const faceIndices = new decoderModule.DracoInt32Array();
                 for (let i = 0; i < dracoGeometry.num_faces(); i++) {
@@ -247,7 +246,7 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         return this._onDidChange.event;
     }
 
-    public update(uri: vscode.Uri) {
+    public update(uri: vscode.Uri): void {
         this._onDidChange.fire(uri);
     }
 }

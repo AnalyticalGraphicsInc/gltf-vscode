@@ -561,7 +561,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         };
 
         this._nodes = getAccessorNodes(fileName, gltf, accessor);
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
         this._treeView.reveal(this._headerNode, { select: false, focus: true });
     }
 
@@ -581,7 +581,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         const verticesNode = getVerticesNode(this._fileName, gltf, meshPrimitive.attributes);
         const indicesNode = getIndicesNode(this._fileName, gltf, verticesNode.numVertices, meshPrimitive.mode, meshPrimitive.indices);
         this._nodes = [verticesNode, indicesNode];
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
         this._treeView.reveal(this._headerNode, { select: false, focus: true });
     }
 
@@ -590,7 +590,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         delete this._jsonPointer;
         delete this._headerNode;
         delete this._nodes;
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
 
     private updateSelection(panel: GltfPreviewPanel, selection: Node[]): void {
