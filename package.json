@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.44.0"
+        "vscode": "^1.47.0"
     },
     "categories": [
         "Formatters",
@@ -355,16 +355,16 @@
         "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
     },
     "devDependencies": {
-        "@types/mocha": "^7.0.2",
-        "@types/node": "^12.12.36",
-        "@types/vscode": "^1.44.0",
-        "ajv": "^6.12.2",
-        "eslint": "^6.8.0",
-        "eslint-config-cesium": "^8.0.1",
+        "@types/mocha": "^8.0.0",
+        "@types/node": "^14.0.23",
+        "@types/vscode": "^1.47.0",
+        "ajv": "^6.12.3",
+        "eslint": "^7.4.0",
+        "eslint-config-cesium": "8.0.1",
         "eslint-plugin-html": "^6.0.2",
-        "mocha": "^7.1.1",
-        "typescript": "^3.8.3",
-        "yargs": "^15.3.1"
+        "mocha": "^8.0.1",
+        "typescript": "^3.9.7",
+        "yargs": "^15.4.1"
     },
     "dependencies": {
         "babylonjs": "^4.1.0",
@@ -375,6 +375,6 @@
         "gltf-validator": "2.0.0-dev.3.2",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "vscode-languageclient": "^5.2.1"
+        "vscode-languageclient": "^6.1.3"
     }
 }

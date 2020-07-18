@@ -5,7 +5,6 @@ out
 node_modules
 npm-debug.log
 debug.log
-package-lock.json
 
 # For debugging
 engines/CesiumUnminified
