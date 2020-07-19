@@ -42,24 +42,18 @@ letting you know that the built version has overwritten it for just the debugger
 Please add bullet point(s) for changes or new features to the top of `CHANGELOG.md`.  The publish date can be left as `UNRELEASED` since
 the release is not on any set schedule, and likely will not happen on the same day that the pull request is created.
 
-## Debugging the HTML preview window in VSCode
+## Debugging the Webview (glTF preview window) in VSCode
 
 This is tricky, because HTML is previewed inside a sandboxed iframe which is itself inside an embedded webview inside
 VSCode's Electron-based user interface.  Here are the steps:
 
-1. Use the extension to launch the HTML preview window (such as by previewing a glTF model).
+1. Open the glTF preview window.
 
-2. Click `Help` -> `Toggle Developer Tools`.  Note that this DevTools is docked, and is only for VSCode itself.
+2. Press <kbd>F1</kbd> to open the command bar at the top of VSCode.
 
-3. In the Console tab, paste this line:
+3. Type in and run the following command: `Developer: Open Webview Developer Tools`
 
-```
-    document.body.querySelector('webview').getWebContents().openDevTools();
-```
-
-4. You now have a second DevTools.  This new one is un-docked.  Close the old docked one.
-
-5. In the top of the Console tab of the remaining un-docked DevTools, click the pull-down and change `top` to `active-frame (webview.html)`.
+4. In the top of the Console tab of DevTools, click the pull-down and change `top` to `active-frame (index.html)`.
 
 Now you can debug the HTML preview in the sandboxed iframe.
 

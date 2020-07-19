@@ -42,20 +42,17 @@ export class GltfPreview extends ContextBase {
         this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'utf-8'));
     }
 
-    // Instructions to open Chrome DevTools on the HTML preview window:
+    // Instructions to open DevTools on the glTF preview window:
     //
-    // 1. With the HTML preview window open, click Help->Toggle Developer Tools.
-    //    Note that this DevTools is docked and is only for VSCode itself.
+    // 1. Open the glTF preview window.
     //
-    // 2. In the Console tab, paste this line:
-    //    document.body.querySelector('webview').getWebContents().openDevTools();
+    // 2. Press F1 to open the command bar at the top of VSCode.
     //
-    // 3. You now have a second DevTools, the new one is un-docked.  Close the
-    //    old docked one.
+    // 3. Type in and run the following command:
+    //    Developer: Open Webview Developer Tools
     //
-    // 4. In the top of the Console tab of the remaining un-docked DevTools,
-    //    click the pull-down and change "top" to "active-frame (webview.html)".
-    //    Now you can debug the HTML preview in the sandboxed iframe.
+    // 4. In the top of the Console tab of DevTools, click the pull-down
+    //    and change `top` to `active-frame (index.html)`.
 
     public openPanel(gltfEditor: vscode.TextEditor): void {
         const gltfFilePath = gltfEditor.document.fileName;
