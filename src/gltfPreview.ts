@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ContextBase } from './contextBase';
-import { toResourceUrl, parseJsonMap } from './utilities';
+import { parseJsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 export interface GltfPreviewPanel extends vscode.WebviewPanel {
@@ -135,7 +135,7 @@ export class GltfPreview extends ContextBase {
         const map = parseJsonMap(gltfContent);
         panel._jsonMap = map;
 
-        const gltfRootPath = toResourceUrl(`${path.dirname(gltfFilePath)}/`);
+        const gltfRootPath = `${path.dirname(gltfFilePath)}/`;
         const gltfFileName = path.basename(gltfFilePath);
 
         const gltf = map.data;
@@ -146,6 +146,7 @@ export class GltfPreview extends ContextBase {
 
         panel.title = `glTF Preview [${gltfFileName}]`;
         panel.webview.html = this.formatHtml(
+            panel,
             gltfMajorVersion,
             gltfContent,
             gltfRootPath,
@@ -193,7 +194,8 @@ export class GltfPreview extends ContextBase {
         }
     }
 
-    private formatHtml(gltfMajorVersion: number, gltfContent: string, gltfRootPath: string, gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
+    private formatHtml(panel: GltfPreviewPanelInfo, gltfMajorVersion: number, gltfContent: string, gltfRootPath: string,
+            gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
         const dracoLoaderPath = this.extensionRootPath + 'engines/Draco/draco_decoder.js';
@@ -223,7 +225,7 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.css',
             'pages/threeView.css',
             'pages/previewModel.css'
-        ];
+        ].map(s => panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))));
 
         const scripts = [
             'engines/Cesium/Cesium.js',
@@ -240,13 +242,13 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.js',
             'pages/threeView.js',
             'pages/previewModel.js'
-        ];
+        ].map(s => panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))));
 
         // Note that with the file: protocol, we must manually specify the UTF-8 charset.
         return this._mainHtml.replace('{assets}',
-            styles.map(s => `<link rel="stylesheet" href="${this.extensionRootPath + s}"></link>\n`).join('') +
+            styles.map(s => `<link rel="stylesheet" href="${s}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
-            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${this.extensionRootPath + s}"></script>\n`).join(''));
+            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${s}"></script>\n`).join(''));
     }
 
     private watchFiles(panel: GltfPreviewPanelInfo): void {
