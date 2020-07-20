@@ -15,13 +15,13 @@ export abstract class ContextBase {
     }
 
     protected getConfigResourceUrl(section: string, name: string, localResourceRoots: Array<vscode.Uri>): string {
-        const value = vscode.workspace.getConfiguration(section).get<string>(name);
+        let value = vscode.workspace.getConfiguration(section).get<string>(name);
 
         if (value.startsWith('{extensionRootPath}')) {
-            return value.replace(/^{extensionRootPath}/, this._extensionRootPath);
+            value = path.join(this._extensionRootPath, value.replace(/^{extensionRootPath}\/?\\?/, ''));
         }
 
         localResourceRoots.push(vscode.Uri.file(path.dirname(value)));
-        return value.replace(/\\/g, '/');
+        return value;
     }
 }
