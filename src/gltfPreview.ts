@@ -42,6 +42,14 @@ export class GltfPreview extends ContextBase {
         this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'utf-8'));
     }
 
+    private asExtensionUriString(panel: GltfPreviewPanel, s: string): string {
+        return panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))).toString();
+    }
+
+    private asWebviewUriString(panel: GltfPreviewPanel, s: string): string {
+        return panel.webview.asWebviewUri(vscode.Uri.file(s)).toString();
+    }
+
     // Instructions to open DevTools on the glTF preview window:
     //
     // 1. Open the glTF preview window.
@@ -135,7 +143,7 @@ export class GltfPreview extends ContextBase {
         const map = parseJsonMap(gltfContent);
         panel._jsonMap = map;
 
-        const gltfRootPath = panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(gltfFilePath))).toString() + '/';
+        const gltfRootPath = this.asWebviewUriString(panel, path.dirname(gltfFilePath)) + '/';
         const gltfFileName = path.basename(gltfFilePath);
 
         const gltf = map.data;
@@ -198,20 +206,18 @@ export class GltfPreview extends ContextBase {
             gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
-        const dracoLoaderPath = panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath,
-            'engines/Draco/draco_decoder.js'))).toString();
-        const dracoLoaderWasmPath = panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath,
-            'engines/Draco/draco_decoder.wasm'))).toString();
+        const dracoLoaderPath = this.asExtensionUriString(panel, 'engines/Draco/draco_decoder.js');
+        const dracoLoaderWasmPath = this.asExtensionUriString(panel, 'engines/Draco/draco_decoder.wasm');
 
         // These strings are available in JavaScript by looking up the ID.  They provide the extension's root
         // path (needed for locating additional assets), various settings, and the glTF name and contents.
         // Some engines can display "live" glTF contents, others must load from the glTF path and filename.
         // The path name is needed for glTF files that include external resources.
         const strings = [
-            { id: 'extensionRootPath', text: panel.webview.asWebviewUri(vscode.Uri.file(this.extensionRootPath)).toString() },
+            { id: 'extensionRootPath', text: this.asWebviewUriString(panel, this.extensionRootPath) },
             { id: 'defaultEngine', text: defaultEngine },
-            { id: 'defaultBabylonReflection', text: panel.webview.asWebviewUri(vscode.Uri.file(defaultBabylonReflection)).toString() },
-            { id: 'defaultThreeReflection', text: panel.webview.asWebviewUri(vscode.Uri.file(defaultThreeReflection)).toString().replace('%7Bface%7D', '{face}') },
+            { id: 'defaultBabylonReflection', text: this.asWebviewUriString(panel, defaultBabylonReflection) },
+            { id: 'defaultThreeReflection', text: this.asWebviewUriString(panel, defaultThreeReflection).replace('%7Bface%7D', '{face}') },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
             { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
             { id: 'babylonHtml', text: this._babylonHtml },
@@ -227,7 +233,7 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.css',
             'pages/threeView.css',
             'pages/previewModel.css'
-        ].map(s => panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))).toString());
+        ].map(s => this.asExtensionUriString(panel, s));
 
         const scripts = [
             'engines/Cesium/Cesium.js',
@@ -244,7 +250,7 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.js',
             'pages/threeView.js',
             'pages/previewModel.js'
-        ].map(s => panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))).toString());
+        ].map(s => this.asExtensionUriString(panel, s));
 
         // Note that with the file: protocol, we must manually specify the UTF-8 charset.
         return this._mainHtml.replace('{assets}',
