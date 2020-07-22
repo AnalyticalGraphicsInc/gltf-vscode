@@ -59,7 +59,7 @@ export class GltfPreview extends ContextBase {
 
         let panel = this._panels[gltfFilePath];
         if (!panel) {
-            const localResourceRoots = [
+            let localResourceRoots = [
                 vscode.Uri.file(this._context.extensionPath),
                 vscode.Uri.file(path.dirname(gltfFilePath)),
             ];
@@ -135,7 +135,7 @@ export class GltfPreview extends ContextBase {
         const map = parseJsonMap(gltfContent);
         panel._jsonMap = map;
 
-        const gltfRootPath = panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(gltfFilePath))).toString();
+        const gltfRootPath = panel.webview.asWebviewUri(vscode.Uri.file(path.dirname(gltfFilePath))).toString() + '/';
         const gltfFileName = path.basename(gltfFilePath);
 
         const gltf = map.data;
@@ -211,7 +211,7 @@ export class GltfPreview extends ContextBase {
             { id: 'extensionRootPath', text: panel.webview.asWebviewUri(vscode.Uri.file(this.extensionRootPath)).toString() },
             { id: 'defaultEngine', text: defaultEngine },
             { id: 'defaultBabylonReflection', text: panel.webview.asWebviewUri(vscode.Uri.file(defaultBabylonReflection)).toString() },
-            { id: 'defaultThreeReflection', text: panel.webview.asWebviewUri(vscode.Uri.file(defaultThreeReflection)).toString() },
+            { id: 'defaultThreeReflection', text: panel.webview.asWebviewUri(vscode.Uri.file(defaultThreeReflection)).toString().replace('%7Bface%7D', '{face}') },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
             { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
             { id: 'babylonHtml', text: this._babylonHtml },
