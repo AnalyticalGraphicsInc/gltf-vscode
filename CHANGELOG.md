@@ -1,9 +1,10 @@
 # Change Log
 
-### 2.2.11 - UNRELEASED
+### 2.2.11 - 2020-07-22
 
 * Updated Webview resources to use newer access mechanism. [#183](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/183)
 * Update Draco decoder to 1.3.6
+* Dropped TSLint, which has been replaced by ESLint for TypeScript.
 
 ### 2.2.10 - 2020-03-01
 
