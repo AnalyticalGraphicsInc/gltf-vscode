@@ -2,6 +2,7 @@
 
 ### 2.2.11 - UNRELEASED
 
+* Updated Webview resources to use newer access mechanism. [#183](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/183)
 * Update Draco decoder to 1.3.6
 
 ### 2.2.10 - 2020-03-01

@@ -159,10 +159,6 @@ export function guessMimeType(filename: string): string {
     return 'application/octet-stream';
 }
 
-export function toResourceUrl(path: string): string {
-    return `vscode-resource:${path.replace(/\\/g, '/')}`;
-}
-
 interface JsonMapPointerValue {
     column: number;
     line: number;

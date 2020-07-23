@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ContextBase } from './contextBase';
-import { toResourceUrl, parseJsonMap } from './utilities';
+import { parseJsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 export interface GltfPreviewPanel extends vscode.WebviewPanel {
@@ -42,6 +42,14 @@ export class GltfPreview extends ContextBase {
         this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'utf-8'));
     }
 
+    private asExtensionUriString(panel: GltfPreviewPanel, s: string): string {
+        return panel.webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionRootPath, s))).toString();
+    }
+
+    private asWebviewUriString(panel: GltfPreviewPanel, s: string): string {
+        return panel.webview.asWebviewUri(vscode.Uri.file(s)).toString();
+    }
+
     // Instructions to open DevTools on the glTF preview window:
     //
     // 1. Open the glTF preview window.
@@ -59,7 +67,7 @@ export class GltfPreview extends ContextBase {
 
         let panel = this._panels[gltfFilePath];
         if (!panel) {
-            const localResourceRoots = [
+            let localResourceRoots = [
                 vscode.Uri.file(this._context.extensionPath),
                 vscode.Uri.file(path.dirname(gltfFilePath)),
             ];
@@ -135,7 +143,7 @@ export class GltfPreview extends ContextBase {
         const map = parseJsonMap(gltfContent);
         panel._jsonMap = map;
 
-        const gltfRootPath = toResourceUrl(`${path.dirname(gltfFilePath)}/`);
+        const gltfRootPath = this.asWebviewUriString(panel, path.dirname(gltfFilePath)) + '/';
         const gltfFileName = path.basename(gltfFilePath);
 
         const gltf = map.data;
@@ -146,6 +154,7 @@ export class GltfPreview extends ContextBase {
 
         panel.title = `glTF Preview [${gltfFileName}]`;
         panel.webview.html = this.formatHtml(
+            panel,
             gltfMajorVersion,
             gltfContent,
             gltfRootPath,
@@ -193,21 +202,22 @@ export class GltfPreview extends ContextBase {
         }
     }
 
-    private formatHtml(gltfMajorVersion: number, gltfContent: string, gltfRootPath: string, gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
+    private formatHtml(panel: GltfPreviewPanelInfo, gltfMajorVersion: number, gltfContent: string, gltfRootPath: string,
+            gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
-        const dracoLoaderPath = this.extensionRootPath + 'engines/Draco/draco_decoder.js';
-        const dracoLoaderWasmPath = this.extensionRootPath + 'engines/Draco/draco_decoder.wasm';
+        const dracoLoaderPath = this.asExtensionUriString(panel, 'engines/Draco/draco_decoder.js');
+        const dracoLoaderWasmPath = this.asExtensionUriString(panel, 'engines/Draco/draco_decoder.wasm');
 
         // These strings are available in JavaScript by looking up the ID.  They provide the extension's root
         // path (needed for locating additional assets), various settings, and the glTF name and contents.
         // Some engines can display "live" glTF contents, others must load from the glTF path and filename.
         // The path name is needed for glTF files that include external resources.
         const strings = [
-            { id: 'extensionRootPath', text: this.extensionRootPath },
+            { id: 'extensionRootPath', text: this.asWebviewUriString(panel, this.extensionRootPath) },
             { id: 'defaultEngine', text: defaultEngine },
-            { id: 'defaultBabylonReflection', text: defaultBabylonReflection },
-            { id: 'defaultThreeReflection', text: defaultThreeReflection },
+            { id: 'defaultBabylonReflection', text: this.asWebviewUriString(panel, defaultBabylonReflection) },
+            { id: 'defaultThreeReflection', text: this.asWebviewUriString(panel, defaultThreeReflection).replace('%7Bface%7D', '{face}') },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
             { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
             { id: 'babylonHtml', text: this._babylonHtml },
@@ -223,7 +233,7 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.css',
             'pages/threeView.css',
             'pages/previewModel.css'
-        ];
+        ].map(s => this.asExtensionUriString(panel, s));
 
         const scripts = [
             'engines/Cesium/Cesium.js',
@@ -240,13 +250,13 @@ export class GltfPreview extends ContextBase {
             'pages/cesiumView.js',
             'pages/threeView.js',
             'pages/previewModel.js'
-        ];
+        ].map(s => this.asExtensionUriString(panel, s));
 
         // Note that with the file: protocol, we must manually specify the UTF-8 charset.
         return this._mainHtml.replace('{assets}',
-            styles.map(s => `<link rel="stylesheet" href="${this.extensionRootPath + s}"></link>\n`).join('') +
+            styles.map(s => `<link rel="stylesheet" href="${s}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
-            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${this.extensionRootPath + s}"></script>\n`).join(''));
+            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${s}"></script>\n`).join(''));
     }
 
     private watchFiles(panel: GltfPreviewPanelInfo): void {

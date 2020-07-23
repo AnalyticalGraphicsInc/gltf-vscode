@@ -95,13 +95,12 @@ function updatePreview() {
     // Update the DOM's "content" div with the HTML content for the currently selected
     // 3D engine.
     var activeEngineInfo = mainViewModel.selectedEngine();
-    var engineHtml = decodeURI(document.getElementById(activeEngineInfo.html).textContent);
-    var extensionRootPath = document.getElementById('extensionRootPath').textContent;
-    content.innerHTML = engineHtml.replace(/{extensionRootPath}/g, extensionRootPath);
+    content.innerHTML = decodeURI(document.getElementById(activeEngineInfo.html).textContent);
 
     // Cesium has some external assets that it will need to locate.  We configure the hint here,
     // before any of the 3D engines have loaded.
-    window.CESIUM_BASE_URL = extensionRootPath + 'engines/Cesium/';
+    var extensionRootPath = document.getElementById('extensionRootPath').textContent;
+    window.CESIUM_BASE_URL = extensionRootPath + '/engines/Cesium/';
 
     activeView = new activeEngineInfo.view();
     activeView.startPreview();
