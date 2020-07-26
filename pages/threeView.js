@@ -301,6 +301,9 @@ window.ThreeView = function() {
     };
 
     this.startPreview = function() {
+        var rev = document.getElementById('threeRevision');
+        rev.textContent = 'r' + THREE.REVISION;
+
         var rootPath = document.getElementById('gltfRootPath').textContent;
         var fileName = document.getElementById('gltfFileName').textContent;
         sceneList = [

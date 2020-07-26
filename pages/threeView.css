@@ -5,12 +5,25 @@
     height:100%;
 }
 
-#threeLogo {
+#threeLogoContainer {
     position: absolute;
     width: 100px;
     bottom: 0px;
     left: 0px;
-    padding: 10px;
+    padding: 4px;
     background-color: white;
     opacity: 0.8;
+}
+
+#threeLogo {
+    width: 100%;
+}
+
+#threeRevision {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    padding: 0;
+    color: black;
+    font-size: 12px;
 }

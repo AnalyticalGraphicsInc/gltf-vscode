@@ -233,6 +233,7 @@ window.CesiumView = function() {
         scene.rethrowRenderErrors = true;
         scene.camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;
         scene.backgroundColor = Cesium.Color.SLATEGRAY;
+        scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit(Cesium.VERSION, true));
 
         enabled = true;
         startRenderLoop();
