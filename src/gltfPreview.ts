@@ -220,6 +220,7 @@ export class GltfPreview extends ContextBase {
             { id: 'defaultThreeReflection', text: this.asWebviewUriString(panel, defaultThreeReflection).replace('%7Bface%7D', '{face}') },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
             { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
+            { id: 'threeModulePath', text: this.asExtensionUriString(panel, 'node_modules/three/build/three.module.js') },
             { id: 'babylonHtml', text: this._babylonHtml },
             { id: 'cesiumHtml', text: this._cesiumHtml },
             { id: 'threeHtml', text: this._threeHtml },
@@ -240,14 +241,12 @@ export class GltfPreview extends ContextBase {
             'node_modules/babylonjs/babylon.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
             'node_modules/babylonjs-inspector/babylon.inspector.bundle.js',
-            'engines/Three/three.min.js',
-            'engines/Three/DDSLoader.js',
-            'engines/Three/DRACOLoader.js',
-            'engines/Three/GLTFLoader.js',
-            'engines/Three/OrbitControls.js',
             'pages/babylonView.js',
             'pages/babylonDebug.js',
-            'pages/cesiumView.js',
+            'pages/cesiumView.js'
+        ].map(s => this.asExtensionUriString(panel, s));
+
+        const modules = [
             'pages/threeView.js',
             'pages/previewModel.js'
         ].map(s => this.asExtensionUriString(panel, s));
@@ -256,7 +255,8 @@ export class GltfPreview extends ContextBase {
         return this._mainHtml.replace('{assets}',
             styles.map(s => `<link rel="stylesheet" href="${s}"></link>\n`).join('') +
             strings.map(s => `<script id="${s.id}" type="text/plain">${s.text}</script>\n`).join('') +
-            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${s}"></script>\n`).join(''));
+            scripts.map(s => `<script type="text/javascript" charset="UTF-8" crossorigin="anonymous" src="${s}"></script>\n`).join('') +
+            modules.map(s => `<script type="module" charset="UTF-8" src="${s}"></script>\n`).join(''));
     }
 
     private watchFiles(panel: GltfPreviewPanelInfo): void {

@@ -1,9 +1,8 @@
-/*global THREE,mainViewModel,ko*/
-(function() {
-    'use strict';
-
-// This is a modified/simplified version of the published example:
-//     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
+/*global mainViewModel,ko*/
+import * as THREE from '../node_modules/three/build/three.module.js';
+import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 window.ThreeView = function() {
     // Tracks if this engine is currently the active engine.
@@ -104,12 +103,12 @@ window.ThreeView = function() {
             scene.add(ground);
         }
 
-        loader = new THREE.GLTFLoader();
+        loader = new GLTFLoader();
 
         var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
         // Replace a slash followed by anything but a slash, to the end, with just a slash.
         var dracoLoaderPath = dracoLoaderPathAndFile.replace(/\/[^\/]*$/, '/');
-        var dracoLoader = new THREE.DRACOLoader();
+        var dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( dracoLoader );
@@ -241,7 +240,7 @@ window.ThreeView = function() {
             mainViewModel.showErrorMessage(error.stack);
         });
 
-        orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+        orbitControls = new OrbitControls(camera, renderer.domElement);
     }
 
     function onWindowResize() {
@@ -318,4 +317,3 @@ window.ThreeView = function() {
         window.addEventListener('resize', onWindowResize, false);
     };
 };
-})();
