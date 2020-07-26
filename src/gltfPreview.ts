@@ -247,7 +247,6 @@ export class GltfPreview extends ContextBase {
         ].map(s => this.asExtensionUriString(panel, s));
 
         const modules = [
-            'pages/threeView.js',
             'pages/previewModel.js'
         ].map(s => this.asExtensionUriString(panel, s));
 

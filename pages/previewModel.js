@@ -1,4 +1,6 @@
-/*global Cesium,ko,CesiumView,ThreeView,BabylonView,acquireVsCodeApi*/
+/*global Cesium,ko,CesiumView,BabylonView,acquireVsCodeApi*/
+import { ThreeView } from './threeView.js';
+
 (function() {
     'use strict';
 
