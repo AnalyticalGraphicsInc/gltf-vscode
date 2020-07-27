@@ -7,7 +7,15 @@ util/**
 src/**
 server/src/**
 engines/CesiumUnminified/**
+engines/*/README.md
+node_modules/three/examples/fonts/**
+node_modules/three/examples/js/**
+node_modules/**/*.d.ts
+node_modules/**/*.max.js
 **/*.map
+**/*.map.js
 .gitignore
 tsconfig.json
+.eslint*
+gltf-vscode-*.vsix
 vsc-extension-quickstart.md
