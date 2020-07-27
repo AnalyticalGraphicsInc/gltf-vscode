@@ -237,16 +237,16 @@ export class GltfPreview extends ContextBase {
         ].map(s => this.asExtensionUriString(panel, s));
 
         const scripts = [
-            'engines/Cesium/Cesium.js',
+            'node_modules/cesium/Build/Cesium/Cesium.js',
             'node_modules/babylonjs/babylon.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
             'node_modules/babylonjs-inspector/babylon.inspector.bundle.js',
             'pages/babylonView.js',
-            'pages/babylonDebug.js',
-            'pages/cesiumView.js'
+            'pages/babylonDebug.js'
         ].map(s => this.asExtensionUriString(panel, s));
 
         const modules = [
+            'pages/cesiumView.js',
             'pages/previewModel.js'
         ].map(s => this.asExtensionUriString(panel, s));
 

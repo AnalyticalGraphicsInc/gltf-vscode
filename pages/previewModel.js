@@ -102,7 +102,7 @@ function updatePreview() {
     // Cesium has some external assets that it will need to locate.  We configure the hint here,
     // before any of the 3D engines have loaded.
     var extensionRootPath = document.getElementById('extensionRootPath').textContent;
-    window.CESIUM_BASE_URL = extensionRootPath + '/engines/Cesium/';
+    window.CESIUM_BASE_URL = extensionRootPath + '/node_modules/cesium/Build/Cesium/';
 
     activeView = new activeEngineInfo.view();
     activeView.startPreview();
