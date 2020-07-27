@@ -4,6 +4,7 @@
 
 * Add version display for all engines to the glTF preview window.
 * Update ThreeJS to r118, convert to ES6 module imports.
+* Update Cesium to 1.71, convert to npm dependency.
 
 ### 2.2.11 - 2020-07-22
 
