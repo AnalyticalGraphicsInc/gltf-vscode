@@ -70,6 +70,7 @@
 
         this.startPreview = function () {
             enabled = true;
+            document.getElementById('babylonVersion').textContent = BABYLON.Engine.Version;
 
             BABYLON.DracoCompression.Configuration = {
                 decoder: {

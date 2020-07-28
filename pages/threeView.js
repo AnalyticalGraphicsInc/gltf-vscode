@@ -1,27 +1,29 @@
-/*global THREE,mainViewModel,ko*/
-(function() {
-    'use strict';
+/*global mainViewModel,ko*/
+import * as THREE from '../node_modules/three/build/three.module.js';
+import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
-// This is a modified/simplified version of the published example:
-//     https://github.com/mrdoob/three.js/blob/dev/examples/webgl_loader_gltf2.html
+// Tracks if this engine is currently the active engine.
+var enabled = false;
 
-window.ThreeView = function() {
-    // Tracks if this engine is currently the active engine.
-    var enabled = false;
+var orbitControls = null;
+var container = null;
+var camera = null;
+var scene = null;
+var renderer = null;
+var loader = null;
+var gltf = null;
+var mixer = null;
+var clock = new THREE.Clock();
+var sceneList = null;
+var backgroundSubscription;
 
-    var orbitControls = null;
-    var container = null;
-    var camera = null;
-    var scene = null;
-    var renderer = null;
-    var loader = null;
-    var gltf = null;
-    var mixer = null;
-    var clock = new THREE.Clock();
-    var sceneList = null;
-    var backgroundSubscription;
+export class ThreeView {
+    constructor() {
+    }
 
-    function subscribeToAnimUI(anim) {
+    _subscribeToAnimUI(anim) {
         anim.active.subscribe(function(newValue) {
             mainViewModel.anyAnimChanged();
             var action = anim.clipAction;
@@ -33,7 +35,7 @@ window.ThreeView = function() {
         });
     }
 
-    function initScene() {
+    _initScene() {
         container = document.getElementById('threeContainer');
 
         scene = new THREE.Scene();
@@ -104,12 +106,12 @@ window.ThreeView = function() {
             scene.add(ground);
         }
 
-        loader = new THREE.GLTFLoader();
+        loader = new GLTFLoader();
 
         var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
         // Replace a slash followed by anything but a slash, to the end, with just a slash.
         var dracoLoaderPath = dracoLoaderPathAndFile.replace(/\/[^\/]*$/, '/');
-        var dracoLoader = new THREE.DRACOLoader();
+        var dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( dracoLoader );
@@ -224,7 +226,7 @@ window.ThreeView = function() {
                         active: ko.observable(false),
                         clipAction: clipAction
                     };
-                    subscribeToAnimUI(anim);
+                    this._subscribeToAnimUI(anim);
                     koAnimations.push(anim);
                 }
 
@@ -233,7 +235,7 @@ window.ThreeView = function() {
             }
 
             scene.add(object);
-            onWindowResize();
+            ThreeView._onWindowResize();
 
             mainViewModel.onReady();
         }, undefined, function(error) {
@@ -241,10 +243,10 @@ window.ThreeView = function() {
             mainViewModel.showErrorMessage(error.stack);
         });
 
-        orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+        orbitControls = new OrbitControls(camera, renderer.domElement);
     }
 
-    function onWindowResize() {
+    static _onWindowResize() {
         if (!enabled) {
             return;
         }
@@ -255,22 +257,22 @@ window.ThreeView = function() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    function animate() {
+    static _animate() {
         if (!enabled) {
             return;
         }
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(ThreeView._animate);
 
         if (mixer) {
             mixer.update(clock.getDelta());
         }
 
         orbitControls.update();
-        render();
+        ThreeView._render();
     }
 
-    function render() {
+    static _render() {
         renderer.render(scene, camera);
     }
 
@@ -279,7 +281,7 @@ window.ThreeView = function() {
     * Perform any cleanup that needs to happen to stop rendering the current model.
     * This is called right before the active engine for the preview window is switched.
     */
-    this.cleanup = function() {
+    cleanup() {
         if (backgroundSubscription) {
             backgroundSubscription.dispose();
             backgroundSubscription = undefined;
@@ -298,10 +300,13 @@ window.ThreeView = function() {
 
         mainViewModel.animations([]);
         mixer.stopAllAction();
-        window.removeEventListener('resize', onWindowResize, false);
-    };
+        window.removeEventListener('resize', ThreeView._onWindowResize, false);
+    }
 
-    this.startPreview = function() {
+    startPreview() {
+        var rev = document.getElementById('threeRevision');
+        rev.textContent = 'r' + THREE.REVISION;
+
         var rootPath = document.getElementById('gltfRootPath').textContent;
         var fileName = document.getElementById('gltfFileName').textContent;
         sceneList = [
@@ -313,9 +318,8 @@ window.ThreeView = function() {
         ];
 
         enabled = true;
-        initScene();
-        animate();
-        window.addEventListener('resize', onWindowResize, false);
-    };
-};
-})();
+        this._initScene();
+        ThreeView._animate();
+        window.addEventListener('resize', ThreeView._onWindowResize, false);
+    }
+}

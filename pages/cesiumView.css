@@ -13,3 +13,9 @@
     bottom: 0;
     left: 0;
 }
+
+.cesium-credit-textContainer {
+    font-size: 12px;
+    position: relative;
+    top: -7px;
+}

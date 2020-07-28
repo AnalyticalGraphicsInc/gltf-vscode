@@ -371,11 +371,13 @@
         "babylonjs": "^4.1.0",
         "babylonjs-inspector": "^4.1.0",
         "babylonjs-loaders": "^4.1.0",
+        "cesium": "^1.71.0",
         "draco3dgltf": "1.3.6",
         "gltf-import-export": "1.0.16",
         "gltf-validator": "2.0.0-dev.3.2",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
+        "three": "^0.118.3",
         "vscode-languageclient": "^5.2.1"
     }
 }
