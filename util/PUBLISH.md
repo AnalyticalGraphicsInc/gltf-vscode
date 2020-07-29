@@ -1,9 +1,9 @@
 # Publish Steps
 
-* Run `npm install`, `npm update` to get the latest versions of dependencies.
 * Update `CHANGELOG.md` with new version number, publish date, and all changes.
 * Update `package.json`, specifically the `version` field.
 * If the glTF Language Server changed at all, bump its own `version` number in `server/package.json`.
+* Run `npm install`, `npm update` to get the latest versions of dependencies.
 * In PowerShell, run `vsce publish` to actually publish to the marketplace.
 * Add a git tag for the release.  For example: `git tag -a 2.2.0 -m "Release version 2.2.0"`
 * Push the branch & tag. `git push --tags`

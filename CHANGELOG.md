@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.2.12 - UNRELEASED
+### 2.2.12 - 2020-07-28
 
 * Add version display for all engines to the glTF preview window.
 * Update ThreeJS to r118, convert to ES6 module imports.
