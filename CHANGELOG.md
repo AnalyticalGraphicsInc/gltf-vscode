@@ -1,5 +1,11 @@
 # Change Log
 
+### 2.2.12 - 2020-07-28
+
+* Add version display for all engines to the glTF preview window.
+* Update ThreeJS to r118, convert to ES6 module imports.
+* Update Cesium to 1.71, convert to npm dependency.
+
 ### 2.2.11 - 2020-07-22
 
 * Updated Webview resources to use newer access mechanism. [#183](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/183)

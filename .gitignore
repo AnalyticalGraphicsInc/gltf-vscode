@@ -5,6 +5,7 @@ out
 node_modules
 npm-debug.log
 debug.log
+gltf-vscode-*.vsix
 
 # For debugging
 engines/CesiumUnminified

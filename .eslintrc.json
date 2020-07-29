@@ -1,16 +1,17 @@
 {
     "parser": "@typescript-eslint/parser",
     "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "eslint:recommended"
     ],
     "plugins": [
-        "html",
-        "@typescript-eslint"
+        "html"
     ],
     "env": {
         "browser": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
     },
     "globals": {
         "process": false,
@@ -62,12 +63,26 @@
 
         "strict": "off",
         "semi": "error",
-        "prefer-const": "off",
-
-        "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/triple-slash-reference": "off"
-    }
+        "prefer-const": "off"
+    },
+    "overrides": [
+        {
+            "files": ["*.ts"],
+            "plugins": [
+                "@typescript-eslint"
+            ],
+            "extends": [
+                "plugin:@typescript-eslint/eslint-recommended",
+                "plugin:@typescript-eslint/recommended"
+            ],
+            "rules": {
+                "prefer-const": "off",
+                "@typescript-eslint/no-empty-function": "off",
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-unused-vars": "off",
+                "@typescript-eslint/ban-types": "off",
+                "@typescript-eslint/triple-slash-reference": "off"
+            }
+        }
+    ]
 }
