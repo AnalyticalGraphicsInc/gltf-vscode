@@ -4,23 +4,19 @@ import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoade
 import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
-// Tracks if this engine is currently the active engine.
-var enabled = false;
-
-var orbitControls = null;
-var container = null;
-var camera = null;
-var scene = null;
-var renderer = null;
-var loader = null;
-var gltf = null;
-var mixer = null;
-var clock = new THREE.Clock();
-var sceneList = null;
-var backgroundSubscription;
-
 export class ThreeView {
     constructor() {
+        // Tracks if this engine is currently the active engine.
+        this._enabled = false;
+
+        this._container = null;
+        this._camera = null;
+        this._clock = null;
+        this._scene = null;
+        this._renderer = null;
+        this._mixer = null;
+        this._orbitControls = null;
+        this._backgroundSubscription = undefined;
     }
 
     _subscribeToAnimUI(anim) {
@@ -35,78 +31,31 @@ export class ThreeView {
         });
     }
 
-    _initScene() {
-        container = document.getElementById('threeContainer');
+    _initScene(rootPath, fileName) {
+        this._clock = new THREE.Clock();
 
-        scene = new THREE.Scene();
+        this._container = document.getElementById('threeContainer');
+
+        var scene = this._scene = new THREE.Scene();
 
         // Note: The near and far planes can be set this way due to the use of "logarithmicDepthBuffer" in the renderer below.
-        camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 1e-5, 1e10);
+        var camera = this._camera = new THREE.PerspectiveCamera(45, this._container.offsetWidth / this._container.offsetHeight, 1e-5, 1e10);
 
         scene.add(camera);
 
-        var sceneInfo = sceneList[0];
-
-        var spot1 = null;
-
-        if (sceneInfo.addLights) {
-          var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 1.2);
-          scene.add(hemispheric);
-
-            if (sceneInfo.shadows) {
-                hemispheric.intensity = 0.5;
-                spot1 = new THREE.SpotLight(0xffffff, 0.7);
-                spot1.position.set(10, 20, 10);
-                spot1.angle = 0.25;
-                spot1.distance = 1024;
-                spot1.penumbra = 0.75;
-                spot1.castShadow = true;
-                spot1.shadow.bias = 0.0001;
-                spot1.shadow.mapSize.width = 2048;
-                spot1.shadow.mapSize.height = 2048;
-                scene.add(spot1);
-            }
-        }
+        var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 1.2);
+        scene.add(hemispheric);
 
         // RENDERER
-        renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+        var renderer = this._renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
         renderer.setClearColor(0x222222);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.outputEncoding = THREE.sRGBEncoding;
 
-        if (sceneInfo.shadows) {
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        }
+        this._container.appendChild(renderer.domElement);
 
-        container.appendChild(renderer.domElement);
-
-        var ground = null;
-
-        if (sceneInfo.addGround) {
-            var groundMaterial = new THREE.MeshPhongMaterial({
-                color: 0xFFFFFF,
-                shading: THREE.SmoothShading
-            });
-            ground = new THREE.Mesh(new THREE.PlaneBufferGeometry(512, 512), groundMaterial);
-
-            if (sceneInfo.shadows) {
-                ground.receiveShadow = true;
-            }
-
-            if (sceneInfo.groundPos) {
-                ground.position.copy(sceneInfo.groundPos);
-            } else {
-                ground.position.z = -70;
-            }
-
-            ground.rotation.x = -Math.PI / 2;
-
-            scene.add(ground);
-        }
-
-        loader = new GLTFLoader();
+        var loader = new GLTFLoader();
 
         var dracoLoaderPathAndFile = document.getElementById('dracoLoaderPath').textContent;
         // Replace a slash followed by anything but a slash, to the end, with just a slash.
@@ -116,10 +65,13 @@ export class ThreeView {
 
         loader.setDRACOLoader( dracoLoader );
 
-        var url = sceneInfo.url;
+        var url = rootPath + fileName;
+        var cameraPos = new THREE.Vector3(-0.2, 0.4, 1.4);
 
-        loader.load(url, function(data) {
-            gltf = data;
+        var orbitControls = this._orbitControls = new OrbitControls(this._camera, renderer.domElement);
+
+        loader.load(url, data => {
+            var gltf = data;
 
             var object = gltf.scene;
 
@@ -151,74 +103,48 @@ export class ThreeView {
                 scene.background = showBackground ? envMap : null;
             }
             applyBackground(mainViewModel.showBackground());
-            backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
+            this._backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
-            if (sceneInfo.cameraPos) {
-                object.updateMatrixWorld();
-                var boundingBox = new THREE.Box3().setFromObject(object);
-                var modelSizeVec3 = new THREE.Vector3();
-                boundingBox.getSize(modelSizeVec3);
-                var modelSize = modelSizeVec3.length();
-                var modelCenter = new THREE.Vector3();
-                boundingBox.getCenter(modelCenter);
+            // Center the model on screen based on bounding box information.
+            object.updateMatrixWorld();
+            var boundingBox = new THREE.Box3().setFromObject(object);
+            var modelSizeVec3 = new THREE.Vector3();
+            boundingBox.getSize(modelSizeVec3);
+            var modelSize = modelSizeVec3.length();
+            var modelCenter = new THREE.Vector3();
+            boundingBox.getCenter(modelCenter);
 
-                orbitControls.reset();
-                orbitControls.maxDistance = modelSize * 50;
-                orbitControls.enableDamping = true;
-                orbitControls.dampingFactor = 0.07;
-                orbitControls.rotateSpeed = 0.4;
-                orbitControls.panSpeed = 0.4;
-                orbitControls.screenSpacePanning = true;
+            // Set up mouse orbit controls.
+            orbitControls.reset();
+            orbitControls.maxDistance = modelSize * 50;
+            orbitControls.enableDamping = true;
+            orbitControls.dampingFactor = 0.07;
+            orbitControls.rotateSpeed = 0.4;
+            orbitControls.panSpeed = 0.4;
+            orbitControls.screenSpacePanning = true;
 
-                object.position.x = -modelCenter.x;
-                object.position.y = -modelCenter.y;
-                object.position.z = -modelCenter.z;
-                camera.position.copy(modelCenter);
-                camera.position.x += modelSize * sceneInfo.cameraPos.x;
-                camera.position.y += modelSize * sceneInfo.cameraPos.y;
-                camera.position.z += modelSize * sceneInfo.cameraPos.z;
-                camera.near = modelSize / 100;
-                camera.far = modelSize * 100;
-                camera.updateProjectionMatrix();
-                camera.lookAt(modelCenter);
-            }
+            // Position the camera accordingly.
+            object.position.x = -modelCenter.x;
+            object.position.y = -modelCenter.y;
+            object.position.z = -modelCenter.z;
+            camera.position.copy(modelCenter);
+            camera.position.x += modelSize * cameraPos.x;
+            camera.position.y += modelSize * cameraPos.y;
+            camera.position.z += modelSize * cameraPos.z;
+            camera.near = modelSize / 100;
+            camera.far = modelSize * 100;
+            camera.updateProjectionMatrix();
+            camera.lookAt(modelCenter);
 
-            if (sceneInfo.center) {
-                orbitControls.target.copy(sceneInfo.center);
-            }
-
-            if (sceneInfo.objectPosition) {
-                object.position.copy(sceneInfo.objectPosition);
-
-                if (spot1) {
-                    spot1.position.set(sceneInfo.objectPosition.x - 100, sceneInfo.objectPosition.y + 200, sceneInfo.objectPosition.z - 100);
-                    spot1.target.position.copy(sceneInfo.objectPosition);
-                }
-            }
-
-            if (sceneInfo.objectRotation) {
-                object.rotation.copy(sceneInfo.objectRotation);
-            }
-
-            if (sceneInfo.objectScale) {
-                object.scale.copy(sceneInfo.objectScale);
-            }
-
+            // Set up UI controls for any animations in the model.
             var gltfAnimations = gltf.animations;
             var koAnimations = [];
             if (gltfAnimations && gltfAnimations.length) {
-                mixer = new THREE.AnimationMixer(object);
+                this._mixer = new THREE.AnimationMixer(object);
 
                 for (let i = 0; i < gltfAnimations.length; i++) {
                     var animation = gltfAnimations[i];
-
-                    // There's .3333 seconds junk at the tail of the Monster animation that
-                    // keeps it from looping cleanly. Clip it at 3 seconds
-                    if (sceneInfo.animationTime) {
-                        animation.duration = sceneInfo.animationTime;
-                    }
-
-                    var clipAction = mixer.clipAction(animation);
+                    var clipAction = this._mixer.clipAction(animation);
 
                     var anim = {
                         index: i,
@@ -235,45 +161,39 @@ export class ThreeView {
             }
 
             scene.add(object);
-            ThreeView._onWindowResize();
+            this._onWindowResize();
 
             mainViewModel.onReady();
         }, undefined, function(error) {
             console.error(error);
             mainViewModel.showErrorMessage(error.stack);
         });
-
-        orbitControls = new OrbitControls(camera, renderer.domElement);
     }
 
-    static _onWindowResize() {
-        if (!enabled) {
+    _onWindowResize() {
+        if (!this._enabled) {
             return;
         }
 
-        camera.aspect = container.offsetWidth / container.offsetHeight;
-        camera.updateProjectionMatrix();
+        this._camera.aspect = this._container.offsetWidth / this._container.offsetHeight;
+        this._camera.updateProjectionMatrix();
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        this._renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    static _animate() {
-        if (!enabled) {
+    _animate() {
+        if (!this._enabled) {
             return;
         }
 
-        requestAnimationFrame(ThreeView._animate);
+        requestAnimationFrame(() => this._animate());
 
-        if (mixer) {
-            mixer.update(clock.getDelta());
+        if (this._mixer) {
+            this._mixer.update(this._clock.getDelta());
         }
 
-        orbitControls.update();
-        ThreeView._render();
-    }
-
-    static _render() {
-        renderer.render(scene, camera);
+        this._orbitControls.update();
+        this._renderer.render(this._scene, this._camera);
     }
 
     /**
@@ -282,25 +202,24 @@ export class ThreeView {
     * This is called right before the active engine for the preview window is switched.
     */
     cleanup() {
-        if (backgroundSubscription) {
-            backgroundSubscription.dispose();
-            backgroundSubscription = undefined;
+        if (this._backgroundSubscription) {
+            this._backgroundSubscription.dispose();
+            this._backgroundSubscription = undefined;
         }
-        enabled = false;
+        this._enabled = false;
 
-        if (container && renderer) {
-            container.removeChild(renderer.domElement);
+        if (this._container && this._renderer) {
+            this._container.removeChild(this._renderer.domElement);
         }
 
-        camera = null;
-
-        if (!loader || !mixer) {
-            return;
-        }
+        this._camera = null;
 
         mainViewModel.animations([]);
-        mixer.stopAllAction();
-        window.removeEventListener('resize', ThreeView._onWindowResize, false);
+        if (this._mixer) {
+            this._mixer.stopAllAction();
+        }
+
+        window.removeEventListener('resize', this._resizeHandler, false);
     }
 
     startPreview() {
@@ -309,17 +228,11 @@ export class ThreeView {
 
         var rootPath = document.getElementById('gltfRootPath').textContent;
         var fileName = document.getElementById('gltfFileName').textContent;
-        sceneList = [
-            {
-                name: 'glTF Preview', url: rootPath + fileName,
-                cameraPos: new THREE.Vector3(-0.2, 0.4, 1.4),
-                addLights: true
-            }
-        ];
 
-        enabled = true;
-        this._initScene();
-        ThreeView._animate();
-        window.addEventListener('resize', ThreeView._onWindowResize, false);
+        this._resizeHandler = () => this._onWindowResize();
+        this._enabled = true;
+        this._initScene(rootPath, fileName);
+        this._animate();
+        window.addEventListener('resize', this._resizeHandler, false);
     }
 }
