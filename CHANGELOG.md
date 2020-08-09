@@ -1,5 +1,11 @@
 # Change Log
 
+### 2.2.13 - UNRELEASED
+
+* Preview window always loads from document contents now, allowing previews of unsaved glTF changes in all 3 engines.
+* Update ThreeJS to r119.
+* Update Cesium to 1.72.
+
 ### 2.2.12 - 2020-07-28
 
 * Add version display for all engines to the glTF preview window.
