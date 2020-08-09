@@ -124,8 +124,15 @@
                 scene.activeCamera.alpha += Math.PI;
 
                 if (!scene.environmentTexture) {
-                    scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-                        defaultBabylonReflection, scene);
+                    if (!/\.hdr$/.test(defaultBabylonReflection.toLowerCase())) {
+                        // Pre-filtered environments, such as DDS
+                        scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+                            defaultBabylonReflection, scene);
+                    } else {
+                        // HDR environments
+                        scene.environmentTexture = new BABYLON.HDRCubeTexture(defaultBabylonReflection,
+                            scene, 128, false, true, false, true);
+                    }
                 }
 
                 mainViewModel.hasBackground(true);

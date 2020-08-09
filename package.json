@@ -67,11 +67,11 @@
                 "glTF.Babylon.environment": {
                     "type": "string",
                     "default": "{extensionRootPath}environments/babylon/countrySpecularHDR.dds",
-                    "description": "The path to a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image"
+                    "description": "The path to an HDR environment, or a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/use_hdr_environment"
                 },
                 "glTF.Three.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}environments/threejs/symmetrical_garden_1k.hdr",
+                    "default": "{extensionRootPath}environments/hdr/symmetrical_garden_1k.hdr",
                     "description": "The path to an HDR environment file for ThreeJS.  Note that if {face} appears in the name, a legacy non-HDR cube map texture will be used instead."
                 },
                 "glTF.showToolbar3D": {

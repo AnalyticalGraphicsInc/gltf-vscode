@@ -178,7 +178,7 @@ New samplers can be created as well simply use `-1` for the accessor references 
 
 ### Reflection Environments
 
-* `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Creating a DDS Environment File From an HDR Image](https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image).
+* `glTF.Babylon.environment` - Override the default reflection map for the BabylonJS glTF preview window.  This specifies a local path to a Babylon DDS environment file, such as one created by following steps in [Use a HDR environment](https://doc.babylonjs.com/how_to/use_hdr_environment), or a raw HDR file (which is slower to load due to runtime pre-filtering).
 
 * `glTF.Three.environment` - Override the default reflection map for the ThreeJS glTF preview window.  This should be the full path and filename of an `*.hdr` environment file, such as one from [HDRI Haven](https://hdrihaven.com/hdris/).  There's a legacy, non-HDR mode, when `{face}` appears in the filename, no longer recommended.  When legacy mode is used, there are 6 cube faces, with face names `posx`, `negx`, `posy`, `negy`, `posz`, and `negz`.  The rest of the path and filename should be identical for all 6 files.  The path and filename are specified as a single string, using `{face}` in place of the face name.  The legacy environment files must be in a format usable on the web, such as PNG or JPEG.
 
