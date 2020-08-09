@@ -71,8 +71,8 @@
                 },
                 "glTF.Three.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}environments/threejs/Park2/{face}.jpg",
-                    "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
+                    "default": "{extensionRootPath}environments/threejs/symmetrical_garden_1k.hdr",
+                    "description": "The path to an HDR environment file for ThreeJS.  Note that if {face} appears in the name, a legacy non-HDR cube map texture will be used instead."
                 },
                 "glTF.showToolbar3D": {
                     "type": "boolean",

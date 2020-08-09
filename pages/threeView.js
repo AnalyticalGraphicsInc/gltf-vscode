@@ -1,6 +1,7 @@
 /*global mainViewModel,ko*/
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { RGBELoader } from '../node_modules/three/examples/jsm/loaders/RGBELoader.js';
 import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
@@ -43,7 +44,7 @@ export class ThreeView {
 
         scene.add(camera);
 
-        var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 1.2);
+        var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 0.5);
         scene.add(hemispheric);
 
         // RENDERER
@@ -73,27 +74,33 @@ export class ThreeView {
             var object = gltf.scene;
 
             var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
+            var envMap;
             var envPath = defaultThreeReflection[0];
-            var envFormat = defaultThreeReflection[1];
+            if (defaultThreeReflection.length === 2) {
+                // Backwards compatibility for older, standard dynamic range backgrounds.
+                var envFormat = defaultThreeReflection[1];
 
-            var envMap = new THREE.CubeTextureLoader().load([
-                envPath + 'posx' + envFormat, envPath + 'negx' + envFormat,
-                envPath + 'posy' + envFormat, envPath + 'negy' + envFormat,
-                envPath + 'posz' + envFormat, envPath + 'negz' + envFormat
-            ]);
-            envMap.format = THREE.RGBFormat;
-            object.traverse(function(node) {
-                if (node.isMesh) {
-                    const materials = Array.isArray(node.material) ? node.material : [node.material];
-                    materials.forEach((material) => {
-                        // MeshBasicMaterial means that KHR_materials_unlit is set, so reflections are not needed.
-                        if ('envMap' in material && !material.isMeshBasicMaterial) {
-                            material.envMap = envMap;
-                            material.needsUpdate = true;
-                        }
+                envMap = new THREE.CubeTextureLoader().load([
+                    envPath + 'posx' + envFormat, envPath + 'negx' + envFormat,
+                    envPath + 'posy' + envFormat, envPath + 'negy' + envFormat,
+                    envPath + 'posz' + envFormat, envPath + 'negz' + envFormat
+                ]);
+                envMap.format = THREE.RGBFormat;
+                scene.environment = envMap;
+            } else {
+                // Recommended path: HDR environments have details revealed by bright and dark reflective surfaces on models.
+                var pmremGenerator = new THREE.PMREMGenerator( renderer );
+                pmremGenerator.compileEquirectangularShader();
+
+                new RGBELoader()
+                    .setDataType(THREE.UnsignedByteType)
+                    .load(envPath, (texture) => {
+                        envMap = pmremGenerator.fromEquirectangular(texture).texture;
+                        pmremGenerator.dispose();
+                        scene.environment = envMap;
+                        applyBackground(mainViewModel.showBackground());
                     });
-                }
-            });
+            }
 
             mainViewModel.hasBackground(true);
             function applyBackground(showBackground) {

@@ -3,6 +3,8 @@
 ### 2.2.13 - UNRELEASED
 
 * Preview window always loads from document contents now, allowing previews of unsaved glTF changes in all 3 engines.
+* Upgraded ThreeJS preview window to allow HDRI environment maps.
+* Changed default ThreeJS environment map to [Symmetrical Garden by Greg Zaal](https://hdrihaven.com/hdri/?c=nature&h=symmetrical_garden).  This is still configurable in settings, and legacy support for non-HDR `{face}` environments has been preserved.
 * Update ThreeJS to r119.
 * Update Cesium to 1.72.
 
