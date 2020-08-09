@@ -31,7 +31,7 @@ export class ThreeView {
         });
     }
 
-    _initScene(rootPath, fileName) {
+    _initScene(rootPath, gltfContent) {
         this._clock = new THREE.Clock();
 
         this._container = document.getElementById('threeContainer');
@@ -65,14 +65,11 @@ export class ThreeView {
 
         loader.setDRACOLoader( dracoLoader );
 
-        var url = rootPath + fileName;
         var cameraPos = new THREE.Vector3(-0.2, 0.4, 1.4);
-
         var orbitControls = this._orbitControls = new OrbitControls(this._camera, renderer.domElement);
 
-        loader.load(url, data => {
+        loader.parse(gltfContent, rootPath, data => {
             var gltf = data;
-
             var object = gltf.scene;
 
             var defaultThreeReflection = document.getElementById('defaultThreeReflection').textContent.split('{face}');
@@ -164,7 +161,7 @@ export class ThreeView {
             this._onWindowResize();
 
             mainViewModel.onReady();
-        }, undefined, function(error) {
+        }, function(error) {
             console.error(error);
             mainViewModel.showErrorMessage(error.stack);
         });
@@ -227,11 +224,11 @@ export class ThreeView {
         rev.textContent = 'r' + THREE.REVISION;
 
         var rootPath = document.getElementById('gltfRootPath').textContent;
-        var fileName = document.getElementById('gltfFileName').textContent;
+        var gltfContent = document.getElementById('gltf').textContent;
 
         this._resizeHandler = () => this._onWindowResize();
         this._enabled = true;
-        this._initScene(rootPath, fileName);
+        this._initScene(rootPath, gltfContent);
         this._animate();
         window.addEventListener('resize', this._resizeHandler, false);
     }
