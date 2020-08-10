@@ -66,8 +66,8 @@
                 },
                 "glTF.Babylon.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}environments/babylon/countrySpecularHDR.dds",
-                    "description": "The path to an HDR environment, or a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/use_hdr_environment"
+                    "default": "{extensionRootPath}environments/babylon/symmetrical_garden.env",
+                    "description": "The path to an HDR environment, or a BabylonJS-ready pre-filtered ENV or DDS environment file.  Pre-filtering gives quicker load performance, see: https://doc.babylonjs.com/how_to/use_hdr_environment"
                 },
                 "glTF.Three.environment": {
                     "type": "string",
