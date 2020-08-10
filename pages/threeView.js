@@ -123,8 +123,8 @@ export class ThreeView {
             orbitControls.maxDistance = modelSize * 50;
             orbitControls.enableDamping = true;
             orbitControls.dampingFactor = 0.07;
-            orbitControls.rotateSpeed = 0.4;
-            orbitControls.panSpeed = 0.4;
+            orbitControls.rotateSpeed = 1.25;
+            orbitControls.panSpeed = 1.25;
             orbitControls.screenSpacePanning = true;
 
             // Position the camera accordingly.
