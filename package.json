@@ -66,13 +66,13 @@
                 },
                 "glTF.Babylon.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}environments/babylon/countrySpecularHDR.dds",
-                    "description": "The path to a BabylonJS-ready DDS environment file.  See: https://doc.babylonjs.com/how_to/physically_based_rendering#creating-a-dds-environment-file-from-an-hdr-image"
+                    "default": "{extensionRootPath}environments/babylon/symmetrical_garden.env",
+                    "description": "The path to an HDR environment, or a BabylonJS-ready pre-filtered ENV or DDS environment file.  Pre-filtering gives quicker load performance, see: https://doc.babylonjs.com/how_to/use_hdr_environment"
                 },
                 "glTF.Three.environment": {
                     "type": "string",
-                    "default": "{extensionRootPath}environments/threejs/Park2/{face}.jpg",
-                    "description": "The path to a set of environment cube faces usable by ThreeJS.  Use {face} for the face name, and six files must exist with the following face names: posx, negx, posy, negy, posz, and negz."
+                    "default": "{extensionRootPath}environments/hdr/symmetrical_garden_1k.hdr",
+                    "description": "The path to an HDR environment file for ThreeJS.  Note that if {face} appears in the name, a legacy non-HDR cube map texture will be used instead."
                 },
                 "glTF.showToolbar3D": {
                     "type": "boolean",
@@ -371,13 +371,13 @@
         "babylonjs": "^4.1.0",
         "babylonjs-inspector": "^4.1.0",
         "babylonjs-loaders": "^4.1.0",
-        "cesium": "^1.71.0",
+        "cesium": "^1.72.0",
         "draco3dgltf": "1.3.6",
         "gltf-import-export": "1.0.16",
         "gltf-validator": "2.0.0-dev.3.2",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.118.3",
+        "three": "^0.119.1",
         "vscode-languageclient": "^5.2.1"
     }
 }

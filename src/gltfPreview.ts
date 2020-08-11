@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ContextBase } from './contextBase';
-import { parseJsonMap } from './utilities';
+import { parseJsonMap, JsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 export interface GltfPreviewPanel extends vscode.WebviewPanel {
@@ -140,7 +140,13 @@ export class GltfPreview extends ContextBase {
     }
 
     private updatePanel(panel: GltfPreviewPanelInfo, gltfFilePath: string, gltfContent: string): void {
-        const map = parseJsonMap(gltfContent);
+        let map: JsonMap<GLTF2.GLTF>;
+        try {
+            map = parseJsonMap(gltfContent);
+        } catch (ex) {
+            vscode.window.showErrorMessage('' + ex);
+            map = { data: { asset: { version: '2.0' } }, pointers: {} };
+        }
         panel._jsonMap = map;
 
         const gltfRootPath = this.asWebviewUriString(panel, path.dirname(gltfFilePath)) + '/';

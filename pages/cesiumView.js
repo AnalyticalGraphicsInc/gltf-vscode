@@ -159,7 +159,7 @@ window.CesiumView = function() {
         scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
     }
 
-    function loadModelFromContent(gltfContent, gltfRootPath, resetCamera) {
+    function loadModel(gltfContent, gltfRootPath, resetCamera) {
         scene.primitives.removeAll();
 
         var model = scene.primitives.add(new Cesium.Model({
@@ -169,23 +169,6 @@ window.CesiumView = function() {
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
         }));
 
-        loadModel(model, resetCamera);
-    }
-
-    function loadModelFromFile(gltfFileName, gltfRootPath, resetCamera) {
-        scene.primitives.removeAll();
-
-        var model = scene.primitives.add(Cesium.Model.fromGltf({
-            url: gltfRootPath + gltfFileName,
-            basePath: gltfRootPath,
-            forwardAxis: Cesium.Axis.X,
-            scale: 100
-        }));
-
-        loadModel(model, resetCamera);
-    }
-
-    function loadModel(model, resetCamera) {
         Cesium.when(model.readyPromise).then(function(model) {
             if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
                 model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
@@ -243,14 +226,10 @@ window.CesiumView = function() {
 
         try {
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-            loadModelFromContent(gltfContent, gltfRootPath, true);
+            loadModel(gltfContent, gltfRootPath, true);
         }
         catch (ex) {
-            console.warn('Cesium: Loading glTF content from saved file.');
-
-            // If the glTF content is missing or not valid JSON, then try to load the
-            // model directly from the glTF file.
-            loadModelFromFile(gltfFileName, gltfRootPath, true);
+            mainViewModel.showErrorMessage(ex);
         }
     };
 };
