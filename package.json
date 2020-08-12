@@ -363,7 +363,7 @@
         "ajv": "^6.12.3",
         "eslint": "^7.5.0",
         "eslint-plugin-html": "^6.0.2",
-        "mocha": "^8.0.1",
+        "mocha": "^8.1.1",
         "typescript": "^3.9.7",
         "yargs": "^15.4.1"
     },
