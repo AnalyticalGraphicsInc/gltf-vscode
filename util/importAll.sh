@@ -19,6 +19,24 @@ echo "~~~ KHR_techniques_webgl ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
 echo "~~~ KHR_texture_transform ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_transform/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_transform -s ../../
+
+# PBR Next
+#
+echo "~~~ KHR_materials_transmission ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_transmission -s ../../
+echo "~~~ KHR_materials_sheen ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_sheen/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_sheen -s ../../
+echo "~~~ KHR_materials_specular ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_specular/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_specular -s ../../
+echo "~~~ KHR_materials_ior ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_ior/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_ior -s ../../
+echo "~~~ KHR_materials_volume ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_volume/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_volume -s ../../
+echo "~~~ KHR_materials_translucency ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_translucency/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_translucency -s ../../
+
+# Vendor and Multi-vendor extensions
+#
 echo "~~~ EXT_lights_image_based ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
 echo "~~~ EXT_texture_webp ~~~"
