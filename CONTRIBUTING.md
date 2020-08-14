@@ -1,17 +1,14 @@
-Thanks for contributing to gltf-vscode!
+# Contributing to gltf-vscode
 
-Contributions to this repository should follow the same general guidelines as [the main Cesium CONTRIBUTING guide](https://github.com/AnalyticalGraphicsInc/cesium/blob/master/CONTRIBUTING.md).
+Thanks for contributing to gltf-vscode!  By opening a Pull Request with your contribution to this
+code repository, you grant to the maintainers and to recipients of this software a perpetual, worldwide,
+non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare
+derivative works of, publicly display, publicly perform, sublicense, and distribute your
+contributions and such derivative works.
 
-## Contributor License Agreement (CLA)
+## Code of Conduct
 
-Before we can merge a pull request, we require a signed Contributor License Agreement.  There is a CLA for:
-
-* [individuals](https://github.com/AnalyticalGraphicsInc/cesium/blob/master/Documentation/Contributors/CLAs/individual-cla-agi-v1.0.txt) and
-* [corporations](https://github.com/AnalyticalGraphicsInc/cesium/blob/master/Documentation/Contributors/CLAs/corporate-cla-agi-v1.0.txt).
-
-This only needs to be completed once, and enables contributions to all of the projects under the [Analytical Graphics Inc](https://github.com/AnalyticalGraphicsInc) organization.  The CLA ensures you retain copyright to your contributions, and provides us the right to use, modify, and redistribute your contributions using the [Apache 2.0 License](LICENSE.md).
-
-Please email a completed CLA with all fields filled in to [cla@agi.com](mailto:cla@agi.com).  Related questions are also welcome.
+To ensure an inclusive community, contributors and users should follow the [code of conduct](./CODE_OF_CONDUCT.md).
 
 ## Developer Environment
 
@@ -56,8 +53,4 @@ VSCode's Electron-based user interface.  Here are the steps:
 4. In the top of the Console tab of DevTools, click the pull-down and change `top` to `active-frame (index.html)`.
 
 Now you can debug the HTML preview in the sandboxed iframe.
-
-## Code of Conduct
-
-To ensure an inclusive community, contributors and users in the Cesium community should follow the [code of conduct](./CODE_OF_CONDUCT.md).
 
