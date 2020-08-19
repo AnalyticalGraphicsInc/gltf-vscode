@@ -1,4 +1,4 @@
-/*global Cesium,ko,CesiumView,BabylonView,acquireVsCodeApi*/
+/*global Cesium,ko,CesiumView,BabylonView,FilamentView,acquireVsCodeApi*/
 import { ThreeView } from './threeView.js';
 
 (function() {
@@ -15,6 +15,10 @@ var engineInfo = [{
     name: 'Cesium',
     html: 'cesiumHtml',
     view: CesiumView
+}, {
+    name: 'Filament',
+    html: 'filamentHtml',
+    view: FilamentView
 }, {
     name: 'Three.js',
     html: 'threeHtml',
