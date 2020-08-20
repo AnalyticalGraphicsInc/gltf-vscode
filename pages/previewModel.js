@@ -1,4 +1,5 @@
-/*global Cesium,ko,CesiumView,BabylonView,FilamentView,acquireVsCodeApi*/
+/*global Cesium,ko,CesiumView,BabylonView,acquireVsCodeApi*/
+import { FilamentView } from './filamentView.js';
 import { ThreeView } from './threeView.js';
 
 (function() {

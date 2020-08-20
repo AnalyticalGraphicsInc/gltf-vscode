@@ -25,6 +25,7 @@ export class GltfPreview extends ContextBase {
     private readonly _mainHtml: string;
     private readonly _babylonHtml: string;
     private readonly _cesiumHtml: string;
+    private readonly _filamentHtml: string;
     private readonly _threeHtml: string;
 
     private _panels: { [fileName: string]: GltfPreviewPanelInfo } = {};
@@ -39,6 +40,7 @@ export class GltfPreview extends ContextBase {
         this._mainHtml = fs.readFileSync(this._context.asAbsolutePath('pages/previewModel.html'), 'utf-8');
         this._babylonHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/babylonView.html'), 'utf-8'));
         this._cesiumHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/cesiumView.html'), 'utf-8'));
+        this._filamentHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/filamentView.html'), 'utf-8'));
         this._threeHtml = encodeURI(fs.readFileSync(this._context.asAbsolutePath('pages/threeView.html'), 'utf-8'));
     }
 
@@ -229,6 +231,7 @@ export class GltfPreview extends ContextBase {
             { id: 'threeModulePath', text: this.asExtensionUriString(panel, 'node_modules/three/build/three.module.js') },
             { id: 'babylonHtml', text: this._babylonHtml },
             { id: 'cesiumHtml', text: this._cesiumHtml },
+            { id: 'filamentHtml', text: this._filamentHtml },
             { id: 'threeHtml', text: this._threeHtml },
             { id: 'gltf', text: gltfContent },
             { id: 'gltfRootPath', text: gltfRootPath },
@@ -238,6 +241,7 @@ export class GltfPreview extends ContextBase {
         const styles = [
             'pages/babylonView.css',
             'pages/cesiumView.css',
+            'pages/filamentView.css',
             'pages/threeView.css',
             'pages/previewModel.css'
         ].map(s => this.asExtensionUriString(panel, s));
@@ -247,6 +251,8 @@ export class GltfPreview extends ContextBase {
             'node_modules/babylonjs/babylon.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
             'node_modules/babylonjs-inspector/babylon.inspector.bundle.js',
+            'node_modules/gltumble/gltumble.min.js',
+            'node_modules/filament/filament.js',
             'pages/babylonView.js',
             'pages/babylonDebug.js'
         ].map(s => this.asExtensionUriString(panel, s));

@@ -1,18 +1,14 @@
-/*global Filament,ko,mainViewModel*/
-(function() {
-    'use strict';
-window.FilamentView = function() {
+/*global Filament,Trackball,mainViewModel*/
 
-    // Tracks if this engine is currently the active engine.
-    var enabled = false;
-
-    function start(canvas) {
+export class FilamentView {
+    start(canvas) {
         this.canvas = canvas;
         const engine = this.engine = Filament.Engine.create(this.canvas);
         this.scene = engine.createScene();
-        this.trackball = new Filament.Trackball(canvas, {startSpin: 0.000});
+        this.trackball = new Trackball(canvas, {startSpin: 0.000});
+
         const sunlight = Filament.EntityManager.get().create();
-        Filament.LightManager.Builder(LightType.SUN)
+        Filament.LightManager.Builder(Filament.LightManager$Type.SUN)
             .color([0.98, 0.92, 0.89])
             .intensity(50000.0)
             .direction([0.6, -1.0, -0.8])
@@ -22,24 +18,23 @@ window.FilamentView = function() {
             .build(engine, sunlight);
         this.scene.addEntity(sunlight);
 
+        /*
         const indirectLight = this.ibl = engine.createIblFromKtx(ibl_url);
         this.scene.setIndirectLight(indirectLight);
         indirectLight.setIntensity(50000);
 
         const skybox = engine.createSkyFromKtx(sky_url);
         this.scene.setSkybox(skybox);
+        */
+        this.Fov = Filament.Camera$Fov;
+
+        var gltfContent = document.getElementById('gltf').textContent;
+        var textEncoder = new TextEncoder();
+        Filament.assets.model = textEncoder.encode(gltfContent);
 
         const loader = engine.createAssetLoader();
-        if (mesh_url.split('.').pop() == 'glb') {
-            this.asset= loader.createAssetFromBinary(mesh_url);
-        } else {
-            this.asset= loader.createAssetFromJson(mesh_url);
-        }
-        const asset = this.asset;
-        const messages = document.getElementById('messages');
+        const asset = this.asset = loader.createAssetFromJson('model');
 
-        // Crudely indicate progress by printing the URI of each resource as it is loaded.
-        const onFetched = (uri) => messages.innerText += `Downloaded ${uri}\n`;
         const onDone = () => {
             // Destroy the asset loader.
             loader.delete();
@@ -53,23 +48,11 @@ window.FilamentView = function() {
                 instance.delete();
             }
 
-            /*
-            const cameras = asset.getCameraEntities();
-            // TODO: Since TransmissionTest.gltf looks better when rotated, it temporarily ignores the built-in camera.
-            if (cameras.length > 0 && modelInfo.name != "TransmissionTest") {
-                const index = Math.floor(Math.random() * cameras.length);
-                const c = engine.getCameraComponent(cameras[index]);
-                const aspect = window.innerWidth / window.innerHeight;
-                c.setScaling([1 / aspect, 1, 1, 1]);
-                this.view.setCamera(c);
-            }
-            */
-
-            messages.remove();
             this.animator = asset.getAnimator();
             this.animationStartTime = Date.now();
         };
-        asset.loadResources(onDone, onFetched, basePath);
+        var gltfRootPath = document.getElementById('gltfRootPath').textContent;
+        asset.loadResources(onDone, null, gltfRootPath);
 
         this.swapChain = engine.createSwapChain();
         this.renderer = engine.createRenderer();
@@ -79,21 +62,21 @@ window.FilamentView = function() {
         this.view.setScene(this.scene);
         this.renderer.setClearOptions({clearColor: [1.0, 1.0, 1.0, 1.0], clear: true});
         this.resize();
-        this.render = this.render.bind(this);
-        this.resize = this.resize.bind(this);
-        window.addEventListener('resize', this.resize);
-        window.requestAnimationFrame(this.render);
+        this.renderBinding = this.render.bind(this);
+        this.resizeBinding = this.resize.bind(this);
+        window.addEventListener('resize', this.resizeBinding);
+        window.requestAnimationFrame(this.renderBinding);
     }
 
-    function render() {
+    render() {
+        if (!this.enabled) {
+            return;
+        }
+
+        // Spin the model according to the trackball controller.
         const tcm = this.engine.getTransformManager();
         const inst = tcm.getInstance(this.asset.getRoot());
-        let m = mat4.create();
-        let s = vec3.create();
-        let t = vec3.create();
-        vec3.set(s, scale, scale, scale);
-        mat4.scale(m, m, s);
-        tcm.setTransform(inst, m);
+        tcm.setTransform(inst, this.trackball.getMatrix());
         inst.delete();
 
         // Add renderable entities to the scene as they become ready.
@@ -113,29 +96,26 @@ window.FilamentView = function() {
                 this.animator.updateBoneMatrices();
             }
         }
-        const eye = [0, 2, 3];
-        const center = [0, 0, 0];
-        const up = [0, 1, 0];
-        const radians = Date.now() / 10000;
-        vec3.rotateY(eye, eye, center, radians);
-        vec3.transformMat4(eye, eye, this.trackball.getMatrix());
-        this.camera.lookAt(eye, center, up);
         this.renderer.render(this.swapChain, this.view);
-        window.requestAnimationFrame(this.render);
+        window.requestAnimationFrame(this.renderBinding);
     }
 
-    function resize() {
+    resize() {
+        if (!this.enabled) {
+            return;
+        }
+
         const dpr = window.devicePixelRatio;
         const width = this.canvas.width = window.innerWidth * dpr;
         const height = this.canvas.height = window.innerHeight * dpr;
         this.view.setViewport([0, 0, width, height]);
-        const eye = [0, 2, 3];
+        const eye = [0, 0, 3];
         const center = [0, 0, 0];
         const up = [0, 1, 0];
         this.camera.lookAt(eye, center, up);
         const aspect = width / height;
-        const fov = aspect < 1 ? Fov.HORIZONTAL : Fov.VERTICAL;
-        this.camera.setProjectionFov(75, aspect, 0.01, 10000.0, fov);
+        const fov = aspect < 1 ? this.Fov.HORIZONTAL : this.Fov.VERTICAL;
+        this.camera.setProjectionFov(55, aspect, 0.01, 10000.0, fov);
     }
 
     /**
@@ -143,49 +123,32 @@ window.FilamentView = function() {
     * Perform any cleanup that needs to happen to stop rendering the current model.
     * This is called right before the active engine for the preview window is switched.
     */
-    this.cleanup = function() {
-        enabled = false;
+    cleanup() {
+        this.enabled = false;
+        window.removeEventListener('resize', this.resizeBinding);
         mainViewModel.animations([]);
         mainViewModel.engineUI('blankTemplate');
-    };
+    }
 
-    this.startPreview = function() {
+    startPreview() {
         mainViewModel.hasBackground(false);
+        this.enabled = true;
 
         var canvas = document.getElementById('filamentCanvas');
-        start(canvas);
-        /*
-        canvas = document.getElementById('cesiumCanvas');
-        canvas.addEventListener('contextmenu', function() {
-            return false;
-        }, false);
-        canvas.addEventListener('selectstart', function() {
-            return false;
-        }, false);
+        var extensionRootPath = document.getElementById('extensionRootPath').textContent;
 
-        scene = new Cesium.Scene({
-            canvas: canvas,
-            creditContainer: document.getElementById('cesiumCreditContainer')
-        });
-        scene.rethrowRenderErrors = true;
-        scene.camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;
-        scene.backgroundColor = Cesium.Color.SLATEGRAY;
-        scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit(Cesium.VERSION, true));
+        fetch(extensionRootPath + '/node_modules/filament/package.json')
+            .then(r => r.json())
+            .then(r => console.log('Filament ' + r.version));
 
-        enabled = true;
-        startRenderLoop();
-
-        var gltfFileName = document.getElementById('gltfFileName').textContent;
-        var gltfRootPath = document.getElementById('gltfRootPath').textContent;
-
-        try {
-            var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-            loadModel(gltfContent, gltfRootPath, true);
+        // Check if Filament has already been through "init".  Don't init twice, even
+        // if the user switches to another engine tab and back again.
+        if (typeof Filament !== 'object') {
+            Filament.init([], () => {
+                this.start(canvas);
+            });
+        } else {
+            this.start(canvas);
         }
-        catch (ex) {
-            mainViewModel.showErrorMessage(ex);
-        }
-        */
-    };
-};
-})();
+    }
+}
