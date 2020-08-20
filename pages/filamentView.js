@@ -60,7 +60,7 @@ export class FilamentView {
         this.view = engine.createView();
         this.view.setCamera(this.camera);
         this.view.setScene(this.scene);
-        this.renderer.setClearOptions({clearColor: [1.0, 1.0, 1.0, 1.0], clear: true});
+        this.renderer.setClearOptions({clearColor: [0.05, 0.1, 0.2, 1.0], clear: true});
         this.resize();
         this.renderBinding = this.render.bind(this);
         this.resizeBinding = this.resize.bind(this);
@@ -137,6 +137,7 @@ export class FilamentView {
         var canvas = document.getElementById('filamentCanvas');
         var extensionRootPath = document.getElementById('extensionRootPath').textContent;
 
+        // https://google.github.io/filament/
         fetch(extensionRootPath + '/node_modules/filament/package.json')
             .then(r => r.json())
             .then(r => console.log('Filament ' + r.version));
