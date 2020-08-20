@@ -178,6 +178,30 @@ window.CesiumView = function() {
                 setCamera(scene, model);
             }
 
+            var environmentMapUrl = document.getElementById('defaultFilamentReflection').textContent;
+            var coefficientsUrl = environmentMapUrl.replace(/ibl.ktx$/, 'sh.txt');
+            fetch(coefficientsUrl)
+                .then(r => r.text())
+                .then(coefficientsText => {
+                    var coefficientsLines = coefficientsText.split('\n');
+                    if (coefficientsLines.length === 10) {
+                        coefficientsLines.pop();
+                    }
+                    if (coefficientsLines.length === 9) {
+                        var coefficients = coefficientsLines.map(line => {
+                            var words = line.split(',');
+                            var x = parseFloat(words[0].substring(1));
+                            var y = parseFloat(words[1]);
+                            var z = parseFloat(words[2].split(')')[0]);
+                            return new Cesium.Cartesian3(x, y, z);
+                        });
+
+                        // coefficients order is: [L00, L1_1, L10, L11, L2_2, L2_1, L20, L21, L22]
+                        model.sphericalHarmonicCoefficients = coefficients;
+                        model.specularEnvironmentMaps = environmentMapUrl;
+                    }
+                });
+
             updateAnimations(model);
             updateArticulations(model);
 
