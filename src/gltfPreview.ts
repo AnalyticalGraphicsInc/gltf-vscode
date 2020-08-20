@@ -16,6 +16,7 @@ interface GltfPreviewPanelInfo extends GltfPreviewPanel {
 
     _jsonMap: { data: GLTF2.GLTF, pointers: any };
     _defaultBabylonReflection: string;
+    _defaultFilamentReflection: string;
     _defaultThreeReflection: string;
 
     _watchers: Array<fs.FSWatcher>;
@@ -75,6 +76,7 @@ export class GltfPreview extends ContextBase {
             ];
 
             const defaultBabylonReflection = this.getConfigResourceUrl('glTF.Babylon', 'environment', localResourceRoots);
+            const defaultFilamentReflection = this.getConfigResourceUrl('glTF.Filament', 'environment', localResourceRoots);
             const defaultThreeReflection = this.getConfigResourceUrl('glTF.Three', 'environment', localResourceRoots);
 
             panel = vscode.window.createWebviewPanel('gltf.preview', 'glTF Preview', vscode.ViewColumn.Two, {
@@ -84,6 +86,7 @@ export class GltfPreview extends ContextBase {
             }) as GltfPreviewPanelInfo;
 
             panel._defaultBabylonReflection = defaultBabylonReflection;
+            panel._defaultFilamentReflection = defaultFilamentReflection;
             panel._defaultThreeReflection = defaultThreeReflection;
 
             panel._watchers = [];
@@ -166,9 +169,7 @@ export class GltfPreview extends ContextBase {
             gltfMajorVersion,
             gltfContent,
             gltfRootPath,
-            gltfFileName,
-            panel._defaultBabylonReflection,
-            panel._defaultThreeReflection)
+            gltfFileName)
             .replace(/\${webview.cspSource}/g, panel.webview.cspSource);
 
         panel.webview.onDidReceiveMessage(message => {
@@ -211,7 +212,7 @@ export class GltfPreview extends ContextBase {
     }
 
     private formatHtml(panel: GltfPreviewPanelInfo, gltfMajorVersion: number, gltfContent: string, gltfRootPath: string,
-            gltfFileName: string, defaultBabylonReflection: string, defaultThreeReflection: string): string {
+            gltfFileName: string): string {
         const defaultEngine = vscode.workspace.getConfiguration('glTF').get('defaultV' + gltfMajorVersion + 'Engine');
 
         const dracoLoaderPath = this.asExtensionUriString(panel, 'engines/Draco/draco_decoder.js');
@@ -224,8 +225,9 @@ export class GltfPreview extends ContextBase {
         const strings = [
             { id: 'extensionRootPath', text: this.asWebviewUriString(panel, this.extensionRootPath) },
             { id: 'defaultEngine', text: defaultEngine },
-            { id: 'defaultBabylonReflection', text: this.asWebviewUriString(panel, defaultBabylonReflection) },
-            { id: 'defaultThreeReflection', text: this.asWebviewUriString(panel, defaultThreeReflection).replace('%7Bface%7D', '{face}') },
+            { id: 'defaultBabylonReflection', text: this.asWebviewUriString(panel, panel._defaultBabylonReflection) },
+            { id: 'defaultFilamentReflection', text: this.asWebviewUriString(panel, panel._defaultFilamentReflection) },
+            { id: 'defaultThreeReflection', text: this.asWebviewUriString(panel, panel._defaultThreeReflection).replace('%7Bface%7D', '{face}') },
             { id: 'dracoLoaderPath', text: dracoLoaderPath },
             { id: 'dracoLoaderWasmPath', text: dracoLoaderWasmPath },
             { id: 'threeModulePath', text: this.asExtensionUriString(panel, 'node_modules/three/build/three.module.js') },

@@ -6,7 +6,9 @@ export class FilamentView {
         const engine = this.engine = Filament.Engine.create(this.canvas);
         this.scene = engine.createScene();
         this.trackball = new Trackball(canvas, {startSpin: 0.000});
+        this.Fov = Filament.Camera$Fov;
 
+        /*
         const sunlight = Filament.EntityManager.get().create();
         Filament.LightManager.Builder(Filament.LightManager$Type.SUN)
             .color([0.98, 0.92, 0.89])
@@ -17,16 +19,14 @@ export class FilamentView {
             .sunHaloFalloff(80.0)
             .build(engine, sunlight);
         this.scene.addEntity(sunlight);
+        */
 
-        /*
-        const indirectLight = this.ibl = engine.createIblFromKtx(ibl_url);
+        const indirectLight = this.ibl = engine.createIblFromKtx(this.ibl_url);
         this.scene.setIndirectLight(indirectLight);
         indirectLight.setIntensity(50000);
 
-        const skybox = engine.createSkyFromKtx(sky_url);
+        const skybox = engine.createSkyFromKtx(this.sky_url);
         this.scene.setSkybox(skybox);
-        */
-        this.Fov = Filament.Camera$Fov;
 
         var gltfContent = document.getElementById('gltf').textContent;
         var textEncoder = new TextEncoder();
@@ -142,10 +142,13 @@ export class FilamentView {
             .then(r => r.json())
             .then(r => console.log('Filament ' + r.version));
 
+        this.ibl_url = document.getElementById('defaultFilamentReflection').textContent;
+        this.sky_url = this.ibl_url.replace(/ibl.ktx$/, 'skybox.ktx');
+
         // Check if Filament has already been through "init".  Don't init twice, even
         // if the user switches to another engine tab and back again.
         if (typeof Filament !== 'object') {
-            Filament.init([], () => {
+            Filament.init([this.ibl_url, this.sky_url], () => {
                 this.start(canvas);
             });
         } else {

@@ -221,7 +221,6 @@ window.CesiumView = function() {
         enabled = true;
         startRenderLoop();
 
-        var gltfFileName = document.getElementById('gltfFileName').textContent;
         var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
         try {
