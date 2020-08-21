@@ -7,3 +7,20 @@
     overflow: hidden;
     font-family: sans-serif;
 }
+
+#filamentLogoContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: white;
+    opacity: 0.8;
+    padding: 5px 5px 1px 5px;
+    text-decoration: none;
+}
+
+#filamentVersion {
+    padding-top: 1px;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+}

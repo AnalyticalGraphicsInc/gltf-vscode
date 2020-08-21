@@ -137,10 +137,9 @@ export class FilamentView {
         var canvas = document.getElementById('filamentCanvas');
         var extensionRootPath = document.getElementById('extensionRootPath').textContent;
 
-        // https://google.github.io/filament/
         fetch(extensionRootPath + '/node_modules/filament/package.json')
             .then(r => r.json())
-            .then(r => console.log('Filament ' + r.version));
+            .then(r => document.getElementById('filamentVersion').textContent = r.version);
 
         this.ibl_url = document.getElementById('defaultFilamentReflection').textContent;
         this.sky_url = this.ibl_url.replace(/ibl.ktx$/, 'skybox.ktx');
