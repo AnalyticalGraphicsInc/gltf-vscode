@@ -172,6 +172,13 @@
                         }
                     ]
                 },
+                "KHR_materials_variants" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_variants/glTF.KHR_materials_variants.schema.json"
+                        }
+                    ]
+                },
                 "EXT_lights_image_based" : {
                     "allOf" : [
                         {
