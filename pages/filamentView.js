@@ -78,7 +78,9 @@ export class FilamentView {
         this.resize();
         this.renderBinding = this.render.bind(this);
         this.resizeBinding = this.resize.bind(this);
+        this.wheelBinding = this.wheel.bind(this);
         window.addEventListener('resize', this.resizeBinding);
+        canvas.addEventListener('wheel', this.wheelBinding);
         window.requestAnimationFrame(this.renderBinding);
     }
 
@@ -132,6 +134,15 @@ export class FilamentView {
         this.camera.setProjectionFov(55, aspect, 0.01, 10000.0, fov);
     }
 
+    wheel(event) {
+        if (!this.enabled) {
+            return;
+        }
+
+        this.zoom *= Math.pow(1.002, event.deltaY);
+        this.zoom = Math.min(Math.max(this.zoom, 0.001), 1e8);
+    }
+
     /**
     * @function cleanup
     * Perform any cleanup that needs to happen to stop rendering the current model.
@@ -139,6 +150,7 @@ export class FilamentView {
     */
     cleanup() {
         this.enabled = false;
+        this.canvas.removeEventListener('wheel', this.wheelBinding);
         window.removeEventListener('resize', this.resizeBinding);
         mainViewModel.animations([]);
         mainViewModel.engineUI('blankTemplate');
