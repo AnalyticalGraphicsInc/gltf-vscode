@@ -5,7 +5,12 @@ export class FilamentView {
         this.canvas = canvas;
         const engine = this.engine = Filament.Engine.create(this.canvas);
         this.scene = engine.createScene();
-        this.trackball = new Trackball(canvas, {startSpin: 0.000});
+        this.trackball = new Trackball(canvas,
+            {
+                startSpin: 0.000,
+                radiansPerPixel: [0.004, 0.004]
+            }
+        );
         this.Fov = Filament.Camera$Fov;
 
         /*
@@ -73,11 +78,12 @@ export class FilamentView {
             return;
         }
 
-        // Spin the model according to the trackball controller.
-        const tcm = this.engine.getTransformManager();
-        const inst = tcm.getInstance(this.asset.getRoot());
-        tcm.setTransform(inst, this.trackball.getMatrix());
-        inst.delete();
+        const zoom = 3;
+        const ballMatrix = this.trackball.getMatrix();
+        const eye = [ballMatrix[2] * zoom, ballMatrix[6] * zoom, ballMatrix[10] * zoom];
+        const center = [0, 0, 0];
+        const up = [ballMatrix[1], ballMatrix[5], ballMatrix[9]];
+        this.camera.lookAt(eye, center, up);
 
         // Add renderable entities to the scene as they become ready.
         let entity;
