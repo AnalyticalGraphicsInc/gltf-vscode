@@ -1,6 +1,10 @@
 /*global Filament,Trackball,mainViewModel*/
 
 export class FilamentView {
+    constructor() {
+        this._backgroundSubscription = undefined;
+    }
+
     start(canvas) {
         this.canvas = canvas;
         const engine = this.engine = Filament.Engine.create(this.canvas);
@@ -33,7 +37,9 @@ export class FilamentView {
         indirectLight.setIntensity(50000);
 
         const skybox = engine.createSkyFromKtx(this.sky_url);
-        this.scene.setSkybox(skybox);
+        const applyBackground = showBackground => this.scene.setSkybox(showBackground ? skybox : null);
+        applyBackground(mainViewModel.showBackground());
+        this._backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
 
         var gltfContent = document.getElementById('gltf').textContent;
         var textEncoder = new TextEncoder();
@@ -91,7 +97,10 @@ export class FilamentView {
 
         const zoom = this.zoom;
         const ballMatrix = this.trackball.getMatrix();
-        const eye = [ballMatrix[2] * zoom, ballMatrix[6] * zoom, ballMatrix[10] * zoom];
+        const eye = [
+            ballMatrix[2] * zoom + this.center[0],
+            ballMatrix[6] * zoom + this.center[1],
+            ballMatrix[10] * zoom + this.center[2]];
         const up = [ballMatrix[1], ballMatrix[5], ballMatrix[9]];
         this.camera.lookAt(eye, this.center, up);
 
@@ -149,6 +158,10 @@ export class FilamentView {
     * This is called right before the active engine for the preview window is switched.
     */
     cleanup() {
+        if (this._backgroundSubscription) {
+            this._backgroundSubscription.dispose();
+            this._backgroundSubscription = undefined;
+        }
         this.enabled = false;
         this.canvas.removeEventListener('wheel', this.wheelBinding);
         window.removeEventListener('resize', this.resizeBinding);
@@ -157,7 +170,7 @@ export class FilamentView {
     }
 
     startPreview() {
-        mainViewModel.hasBackground(false);
+        mainViewModel.hasBackground(true);
         this.enabled = true;
 
         var canvas = document.getElementById('filamentCanvas');
