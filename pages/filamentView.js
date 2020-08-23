@@ -1,8 +1,21 @@
-/*global Filament,Trackball,mainViewModel*/
+/*global Filament,Trackball,ko,mainViewModel*/
 
 export class FilamentView {
     constructor() {
         this._backgroundSubscription = undefined;
+    }
+
+    _subscribeToAnimUI(anim) {
+        var animator = this.animator;
+        anim.active.subscribe(function(newValue) {
+            mainViewModel.anyAnimChanged();
+            if (newValue) {
+                anim.startTime = Date.now();
+            } else {
+                animator.applyAnimation(anim.index, 0);
+                animator.updateBoneMatrices();
+            }
+        });
     }
 
     start(canvas) {
@@ -18,6 +31,7 @@ export class FilamentView {
         this.Fov = Filament.Camera$Fov;
         this.zoom = 1;
         this.center = [0, 0, 0];
+        this.animationCount = 0;
 
         /*
         const sunlight = Filament.EntityManager.get().create();
@@ -69,7 +83,20 @@ export class FilamentView {
             this.zoom = box.min.reduce((p, c, i) => Math.max(p, Math.abs(c - this.center[i])), this.zoom) * 3.2;
 
             this.animator = asset.getAnimator();
-            this.animationStartTime = Date.now();
+            this.animationCount = asset.getAnimator().getAnimationCount();
+            this.koAnimations = [];
+            for (let i = 0; i < this.animationCount; ++i ) {
+                var anim = {
+                    index: i,
+                    name: this.animator.getAnimationName(i) || i,
+                    active: ko.observable(false),
+                    startTime: Date.now()
+                };
+                this._subscribeToAnimUI(anim);
+                this.koAnimations.push(anim);
+            }
+            mainViewModel.animations(this.koAnimations);
+            mainViewModel.anyAnimChanged();
         };
         var gltfRootPath = document.getElementById('gltfRootPath').textContent;
         asset.loadResources(onDone, null, gltfRootPath);
@@ -114,12 +141,16 @@ export class FilamentView {
             this.scene.addEntity(entity);
         }
 
-        if (this.animator) {
-            const ms = Date.now() - this.animationStartTime;
-            for (let i = 0; i < this.asset.getAnimator().getAnimationCount(); i++ ) {
-                this.animator.applyAnimation(i, ms / 1000);
-                this.animator.updateBoneMatrices();
+        if (this.animator && this.animationCount > 0) {
+            const now = Date.now();
+            for (let i = 0; i < this.animationCount; ++i ) {
+                let anim = this.koAnimations[i];
+                if (anim.active()) {
+                    const ms = now - anim.startTime;
+                    this.animator.applyAnimation(i, ms / 1000);
+                }
             }
+            this.animator.updateBoneMatrices();
         }
         this.renderer.render(this.swapChain, this.view);
         window.requestAnimationFrame(this.renderBinding);
@@ -165,7 +196,7 @@ export class FilamentView {
         this.enabled = false;
         this.canvas.removeEventListener('wheel', this.wheelBinding);
         window.removeEventListener('resize', this.resizeBinding);
-        mainViewModel.animations([]);
+        mainViewModel.animations(this.koAnimations = []);
         mainViewModel.engineUI('blankTemplate');
     }
 
