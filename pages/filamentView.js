@@ -18,7 +18,16 @@ export class FilamentView {
         });
     }
 
-    start(canvas) {
+    _updateCenterAndZoom() {
+        const box = this.asset.getBoundingBox();
+        this.center[0] = (box.min[0] + box.max[0]) * 0.5;
+        this.center[1] = (box.min[1] + box.max[1]) * 0.5;
+        this.center[2] = (box.min[2] + box.max[2]) * 0.5;
+        this.zoom = box.max.reduce((p, c, i) => Math.max(p, Math.abs(c - this.center[i])), 0.001);
+        this.zoom = box.min.reduce((p, c, i) => Math.max(p, Math.abs(c - this.center[i])), this.zoom) * 3.2;
+    }
+
+    _start(canvas) {
         this.canvas = canvas;
         const engine = this.engine = Filament.Engine.create(this.canvas);
         this.scene = engine.createScene();
@@ -29,9 +38,10 @@ export class FilamentView {
             }
         );
         this.Fov = Filament.Camera$Fov;
-        this.zoom = 1;
+        this.zoom = 10;
         this.center = [0, 0, 0];
         this.animationCount = 0;
+        this.animator = undefined;
 
         /*
         const sunlight = Filament.EntityManager.get().create();
@@ -61,6 +71,7 @@ export class FilamentView {
 
         const loader = engine.createAssetLoader();
         const asset = this.asset = loader.createAssetFromJson('model');
+        this._updateCenterAndZoom();
 
         const onDone = () => {
             // Destroy the asset loader.
@@ -74,13 +85,7 @@ export class FilamentView {
                 rm.setCastShadows(instance, true);
                 instance.delete();
             }
-
-            const box = asset.getBoundingBox();
-            this.center[0] = (box.min[0] + box.max[0]) * 0.5;
-            this.center[1] = (box.min[1] + box.max[1]) * 0.5;
-            this.center[2] = (box.min[2] + box.max[2]) * 0.5;
-            this.zoom = box.max.reduce((p, c, i) => Math.max(p, Math.abs(c - this.center[i])), 0.001);
-            this.zoom = box.min.reduce((p, c, i) => Math.max(p, Math.abs(c - this.center[i])), this.zoom) * 3.2;
+            this._updateCenterAndZoom();
 
             this.animator = asset.getAnimator();
             this.animationCount = asset.getAnimator().getAnimationCount();
@@ -218,10 +223,10 @@ export class FilamentView {
         // if the user switches to another engine tab and back again.
         if (typeof Filament !== 'object') {
             Filament.init([this.ibl_url, this.sky_url], () => {
-                this.start(canvas);
+                this._start(canvas);
             });
         } else {
-            this.start(canvas);
+            this._start(canvas);
         }
     }
 }
