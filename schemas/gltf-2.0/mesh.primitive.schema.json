@@ -118,7 +118,7 @@
                 "KHR_materials_variants" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_variants/mesh.primitive.KHR_materials_variants.mappings.schema.json"
+                            "$ref" : "extensions/KHR_materials_variants/mesh.primitive.KHR_materials_variants.schema.json"
                         }
                     ]
                 }

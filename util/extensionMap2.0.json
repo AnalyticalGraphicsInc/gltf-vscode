@@ -22,7 +22,7 @@
         "title": "Mesh Primitive Extensions",
         "extensions": {
             "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json",
-            "KHR_materials_variants": "mesh.primitive.KHR_materials_variants.mappings.schema.json"
+            "KHR_materials_variants": "mesh.primitive.KHR_materials_variants.schema.json"
         }
     },
     "node": {
