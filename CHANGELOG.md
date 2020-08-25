@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.3.0 - 2020-08-24
+
+* Added Google Filament as a preview engine. [#188](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/188)
+
 ### 2.2.13 - 2020-08-11
 
 * Preview window always loads from document contents now, allowing previews of unsaved glTF changes in all 3 engines. [#187](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/187)
