@@ -50,6 +50,7 @@
                     "enum": [
                         "Babylon.js",
                         "Cesium",
+                        "Filament",
                         "Three.js"
                     ],
                     "description": "The default 3D engine that will be used when previewing a glTF 1.0 model.  You can always change the current engine within the preview pane."
@@ -60,6 +61,7 @@
                     "enum": [
                         "Babylon.js",
                         "Cesium",
+                        "Filament",
                         "Three.js"
                     ],
                     "description": "The default 3D engine that will be used when previewing a glTF 2.0 model.  You can always change the current engine within the preview pane."
@@ -68,6 +70,11 @@
                     "type": "string",
                     "default": "{extensionRootPath}environments/babylon/symmetrical_garden.env",
                     "description": "The path to an HDR environment, or a BabylonJS-ready pre-filtered ENV or DDS environment file.  Pre-filtering gives quicker load performance, see: https://doc.babylonjs.com/how_to/use_hdr_environment"
+                },
+                "glTF.Filament.environment": {
+                    "type": "string",
+                    "default": "{extensionRootPath}environments/ktx/symmetrical_garden_ibl.ktx",
+                    "description": "The path to an HDR environment for use in Filament, processed into a KTX file by 'cmgen' (a tool bundled with Google Filament).  The name should end in '_ibl.ktx' and there should be a matching '_skybox.ktx' file alongside it."
                 },
                 "glTF.Three.environment": {
                     "type": "string",
@@ -373,8 +380,10 @@
         "babylonjs-loaders": "^4.1.0",
         "cesium": "^1.72.0",
         "draco3dgltf": "1.3.6",
+        "filament": "^1.8.1",
         "gltf-import-export": "1.0.16",
         "gltf-validator": "2.0.0-dev.3.2",
+        "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
         "three": "^0.119.1",
