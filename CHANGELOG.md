@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.3.1 - UNRELEASED
+
+* Added JSON schema for KHR_materials_transmission, KHR_xmp, and EXT_mesh_gpu_instancing [#193](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/193)
+* Added JSON schema for KHR_materials_variants [#189](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/189)
+
 ### 2.3.0 - 2020-08-24
 
 * Added Google Filament as a preview engine. [#188](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/188)

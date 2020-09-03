@@ -15,6 +15,8 @@ echo "~~~ KHR_materials_pbrSpecularGlossiness ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
 echo "~~~ KHR_materials_unlit ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_unlit/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_unlit -s ../../
+echo "~~~ KHR_materials_variants ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_variants/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_variants -s ../../
 echo "~~~ KHR_techniques_webgl ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
 echo "~~~ KHR_texture_transform ~~~"

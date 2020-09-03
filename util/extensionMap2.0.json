@@ -3,6 +3,7 @@
         "title": "Root Extensions",
         "extensions": {
             "KHR_lights_punctual": "glTF.KHR_lights_punctual.schema.json",
+            "KHR_materials_variants": "glTF.KHR_materials_variants.schema.json",
             "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json",
             "KHR_xmp": "glTF.KHR_xmp.schema.json",
             "EXT_lights_image_based": "glTF.EXT_lights_image_based.schema.json",
@@ -52,7 +53,8 @@
     "mesh.primitive": {
         "title": "Mesh Primitive Extensions",
         "extensions": {
-            "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json"
+            "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json",
+            "KHR_materials_variants": "mesh.primitive.KHR_materials_variants.schema.json"
         }
     },
     "node": {
