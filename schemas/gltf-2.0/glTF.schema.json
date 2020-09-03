@@ -165,6 +165,13 @@
                         }
                     ]
                 },
+                "KHR_materials_variants" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_variants/glTF.KHR_materials_variants.schema.json"
+                        }
+                    ]
+                },
                 "KHR_techniques_webgl" : {
                     "allOf" : [
                         {
@@ -172,10 +179,10 @@
                         }
                     ]
                 },
-                "KHR_materials_variants" : {
+                "KHR_xmp" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_variants/glTF.KHR_materials_variants.schema.json"
+                            "$ref" : "extensions/KHR_xmp/glTF.KHR_xmp.schema.json"
                         }
                     ]
                 },

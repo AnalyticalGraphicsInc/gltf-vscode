@@ -26,7 +26,17 @@
             "minItems" : 1
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "required" : [
