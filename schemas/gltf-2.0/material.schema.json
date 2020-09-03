@@ -26,13 +26,6 @@
                         }
                     ]
                 },
-                "KHR_materials_unlit" : {
-                    "allOf" : [
-                        {
-                            "$ref" : "extensions/KHR_materials_unlit/glTF.KHR_materials_unlit.schema.json"
-                        }
-                    ]
-                },
                 "KHR_materials_transmission" : {
                     "allOf" : [
                         {
@@ -72,6 +65,20 @@
                     "allOf" : [
                         {
                             "$ref" : "extensions/KHR_materials_translucency/glTF.KHR_materials_translucency.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_unlit" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_unlit/glTF.KHR_materials_unlit.schema.json"
+                        }
+                    ]
+                },
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
                         }
                     ]
                 }

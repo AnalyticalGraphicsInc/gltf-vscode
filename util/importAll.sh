@@ -19,6 +19,8 @@ echo "~~~ KHR_techniques_webgl ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
 echo "~~~ KHR_texture_transform ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_transform/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_transform -s ../../
+echo "~~~ KHR_xmp ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
 
 # PBR Next
 #
@@ -39,6 +41,8 @@ echo "~~~ KHR_materials_translucency ~~~"
 #
 echo "~~~ EXT_lights_image_based ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
+echo "~~~ EXT_mesh_gpu_instancing ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_gpu_instancing -s ../../
 echo "~~~ EXT_texture_webp ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_texture_webp/schema -o ../schemas/gltf-2.0/extensions/EXT_texture_webp -s ../../
 echo "~~~ AGI_articulations ~~~"
