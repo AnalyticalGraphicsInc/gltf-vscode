@@ -135,6 +135,20 @@
                         }
                     ]
                 },
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                },
+                "EXT_mesh_gpu_instancing" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_mesh_gpu_instancing/glTF.EXT_mesh_gpu_instancing.schema.json"
+                        }
+                    ]
+                },
                 "AGI_articulations" : {
                     "allOf" : [
                         {

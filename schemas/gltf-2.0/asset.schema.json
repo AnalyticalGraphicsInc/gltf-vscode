@@ -27,7 +27,17 @@
             "description" : "The minimum glTF version that this asset targets.",
             "pattern" : "^[0-9]+\\.[0-9]+$"
         },
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "required" : [

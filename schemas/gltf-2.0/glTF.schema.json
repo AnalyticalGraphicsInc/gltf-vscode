@@ -172,6 +172,13 @@
                         }
                     ]
                 },
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/glTF.KHR_xmp.schema.json"
+                        }
+                    ]
+                },
                 "EXT_lights_image_based" : {
                     "allOf" : [
                         {
