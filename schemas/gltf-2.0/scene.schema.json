@@ -27,6 +27,13 @@
                             "$ref" : "extensions/EXT_lights_image_based/scene.EXT_lights_image_based.schema.json"
                         }
                     ]
+                },
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
                 }
             }
         },

@@ -43,7 +43,17 @@
             "description" : "The index of the bufferView that contains the image. Use this instead of the image's uri property."
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_xmp" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "dependencies" : {
