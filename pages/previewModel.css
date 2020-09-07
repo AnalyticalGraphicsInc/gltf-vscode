@@ -20,7 +20,7 @@ html, body {
     position: absolute;
     top: 0;
     right: 20px;
-    width: 310px;
+    width: 330px;
     color: #ddd;
     /* Hide controls */
     opacity: 0.3;
@@ -252,7 +252,7 @@ label:hover .angleBox::before {
 .rowUI input[type=range i] {
     margin-top: 12px;
     margin-bottom: 15px;
-    width: 156px;
+    width: 220px;
     position: relative;
     top: -2px;
 }
@@ -266,4 +266,50 @@ label:hover .angleBox::before {
 
 .rowUI input[type=range i]::-webkit-slider-thumb {
     margin-top: -11px;
+}
+
+/* Small mode */
+@media (max-width: 400px) {
+    html, body {
+        font-size: 10px;
+    }
+
+    #mainUI {
+        width: 255px;
+    }
+
+    .topUI {
+        border-bottom-width: 0.9rem;
+        border-right-width: 0.9rem;
+    }
+
+    .topUI span {
+        bottom: -1.3rem;
+    }
+
+    .bottomUI span {
+        top: -1.2rem;
+    }
+
+    .topUI span,
+    .bottomUI span,
+    .smallHeading {
+        font-size: 0.9rem;
+    }
+
+    .angleBox {
+        height: 7px;
+    }
+
+    .active .angleBox > span::before {
+        height: 0;
+    }
+
+    .active .angleBox > span::after {
+        top: 4px;
+    }
+
+    .rowUI input[type=range i] {
+        width: 156px;
+    }
 }
