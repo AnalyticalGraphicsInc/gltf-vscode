@@ -378,7 +378,7 @@
         "babylonjs": "^4.1.0",
         "babylonjs-inspector": "^4.1.0",
         "babylonjs-loaders": "^4.1.0",
-        "cesium": "^1.72.0",
+        "cesium": "^1.73.0",
         "draco3dgltf": "1.3.6",
         "filament": "^1.8.1",
         "gltf-import-export": "1.0.16",
@@ -386,7 +386,7 @@
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.119.1",
+        "three": "^0.120.1",
         "vscode-languageclient": "^5.2.1"
     }
 }
