@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.1 - UNRELEASED
+### 2.3.1 - 2020-09-07
 
 * Added JSON schema for KHR_materials_transmission, KHR_xmp, and EXT_mesh_gpu_instancing [#193](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/193)
 * Added JSON schema for KHR_materials_variants [#189](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/189)
