@@ -4,6 +4,7 @@
 
 * Added JSON schema for KHR_materials_transmission, KHR_xmp, and EXT_mesh_gpu_instancing [#193](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/193)
 * Added JSON schema for KHR_materials_variants [#189](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/189)
+* Fixed an issue with buttons sticking off the edge in the default Windows Japanese font. [#190](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/190)
 
 ### 2.3.0 - 2020-08-24
 
