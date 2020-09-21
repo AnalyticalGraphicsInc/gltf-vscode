@@ -375,6 +375,7 @@
         "yargs": "^15.4.1"
     },
     "dependencies": {
+        "@gltf-transform/lib": "^0.7.0-alpha.2",
         "babylonjs": "^4.1.0",
         "babylonjs-inspector": "^4.1.0",
         "babylonjs-loaders": "^4.1.0",
