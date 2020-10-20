@@ -23,6 +23,18 @@
             "KHR_xmp": "node.KHR_xmp.schema.json"
         }
     },
+    "buffer": {
+        "title": "Buffer Extensions",
+        "extensions": {
+            "EXT_meshopt_compression": "buffer.EXT_meshopt_compression.schema.json"
+        }
+    },
+    "bufferView": {
+        "title": "Buffer View Extensions",
+        "extensions": {
+            "EXT_meshopt_compression": "bufferView.EXT_meshopt_compression.schema.json"
+        }
+    },
     "image": {
         "title": "Image Extensions",
         "extensions": {

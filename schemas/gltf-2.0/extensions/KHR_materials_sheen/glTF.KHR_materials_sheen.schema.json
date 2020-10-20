@@ -25,14 +25,14 @@
                 0
             ]
         },
-        "sheenTexture" : {
+        "sheenColorTexture" : {
             "allOf" : [
                 {
                     "$ref" : "../../textureInfo.schema.json"
                 }
             ],
-            "description" : "The sheen color (RGB) and roughness (Alpha) texture. Stored in channel RGB the sheen color in sRGB transfer function and in A the linear factor.",
-            "short_description" : "The sheen color (RGB) and roughness (Alpha) texture."
+            "description" : "The sheen color (RGB) texture. Stored in channel RGB, the sheen color is in sRGB transfer function.",
+            "short_description" : "The sheen color (RGB) texture."
         },
         "sheenRoughnessFactor" : {
             "type" : "number",
@@ -41,6 +41,15 @@
             "minimum" : 0,
             "maximum" : 1,
             "short_description" : "The sheen layer roughness."
+        },
+        "sheenRoughnessTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The sheen roughness (Alpha) texture. Stored in alpha channel, the roughness value is in linear space.",
+            "short_description" : "The sheen roughness (Alpha) texture."
         },
         "extensions" : {},
         "extras" : {}

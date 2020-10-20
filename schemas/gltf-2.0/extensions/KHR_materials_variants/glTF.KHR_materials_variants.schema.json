@@ -13,6 +13,11 @@
             "type" : "array",
             "items" : {
                 "type" : "object",
+                "allOf" : [
+                    {
+                        "$ref" : "../../glTFChildOfRootProperty.schema.json"
+                    }
+                ],
                 "description" : "An object defining a valid material variant",
                 "properties" : {
                     "name" : {
@@ -22,14 +27,18 @@
                     },
                     "extras" : {
                         "type" : "object"
-                    }
+                    },
+                    "extensions" : {}
                 },
                 "required" : [
                     "name"
                 ],
                 "short_description" : "An object defining a valid material variant"
-            }
-        }
+            },
+            "minItems" : 1
+        },
+        "extensions" : {},
+        "extras" : {}
     },
     "required" : [
         "variants"

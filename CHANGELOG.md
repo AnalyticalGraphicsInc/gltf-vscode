@@ -1,9 +1,17 @@
 # Change Log
 
-### 2.3.1 - UNRELEASED
+### 2.3.2 - UNRELEASED
+
+* Added JSON schema for KHR_materials_sheen and EXT_meshopt_compression. [#197](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/197)
+* Re-imported JSON schema for KHR_materials_variants.
+
+### 2.3.1 - 2020-09-07
 
 * Added JSON schema for KHR_materials_transmission, KHR_xmp, and EXT_mesh_gpu_instancing [#193](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/193)
 * Added JSON schema for KHR_materials_variants [#189](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/189)
+* Fixed an issue with buttons sticking off the edge in the default Windows Japanese font. [#190](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/190)
+* Update ThreeJS to r120.
+* Update Cesium to 1.73.
 
 ### 2.3.0 - 2020-08-24
 

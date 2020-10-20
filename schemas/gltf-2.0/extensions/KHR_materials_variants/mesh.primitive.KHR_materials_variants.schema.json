@@ -13,6 +13,11 @@
             "description" : "An array of object values that associate an indexed material to a set of variants.",
             "items" : {
                 "type" : "object",
+                "allOf" : [
+                    {
+                        "$ref" : "../../glTFProperty.schema.json"
+                    }
+                ],
                 "properties" : {
                     "variants" : {
                         "uniqueItems" : true,
@@ -52,8 +57,11 @@
                     "material"
                 ]
             },
+            "minItems" : 1,
             "short_description" : "A list of material to variant mappings"
-        }
+        },
+        "extensions" : {},
+        "extras" : {}
     },
     "required" : [
         "mappings"
