@@ -33,6 +33,13 @@
                         }
                     ]
                 },
+                "KHR_materials_sheen" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_sheen/glTF.KHR_materials_sheen.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_unlit" : {
                     "allOf" : [
                         {
