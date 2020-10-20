@@ -1,0 +1,57 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "KHR_materials_sheen glTF extension",
+    "type" : "object",
+    "description" : "glTF extension that defines the sheen material model.",
+    "allOf" : [
+        {
+            "$ref" : "../../glTFProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "sheenColorFactor" : {
+            "type" : "array",
+            "items" : {
+                "type" : "number",
+                "minimum" : 0,
+                "maximum" : 1
+            },
+            "minItems" : 3,
+            "maxItems" : 3,
+            "description" : "Color of the sheen layer (in linear space).",
+            "default" : [
+                0,
+                0,
+                0
+            ]
+        },
+        "sheenColorTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The sheen color (RGB) texture. Stored in channel RGB, the sheen color is in sRGB transfer function.",
+            "short_description" : "The sheen color (RGB) texture."
+        },
+        "sheenRoughnessFactor" : {
+            "type" : "number",
+            "description" : "The sheen layer roughness of the material.",
+            "default" : 0,
+            "minimum" : 0,
+            "maximum" : 1,
+            "short_description" : "The sheen layer roughness."
+        },
+        "sheenRoughnessTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The sheen roughness (Alpha) texture. Stored in alpha channel, the roughness value is in linear space.",
+            "short_description" : "The sheen roughness (Alpha) texture."
+        },
+        "extensions" : {},
+        "extras" : {}
+    }
+}

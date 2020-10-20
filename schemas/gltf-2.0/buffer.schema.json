@@ -22,7 +22,17 @@
             "minimum" : 1
         },
         "name" : {},
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "EXT_meshopt_compression" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_meshopt_compression/buffer.EXT_meshopt_compression.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "required" : [
