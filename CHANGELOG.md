@@ -2,6 +2,7 @@
 
 ### 2.3.2 - UNRELEASED
 
+* Update Babylon to 4.2.0.
 * Added JSON schema for KHR_materials_sheen and EXT_meshopt_compression. [#197](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/197)
 * Re-imported JSON schema for KHR_materials_variants.
 * Update Khronos glTF-Validator to 2.0.0-dev.3.3. [KhronosGroup/glTF-Validator#148](https://github.com/KhronosGroup/glTF-Validator/pull/148)

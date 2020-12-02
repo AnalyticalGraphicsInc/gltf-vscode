@@ -84,7 +84,6 @@
             engine = new BABYLON.Engine(canvas, true, { limitDeviceRatio: false });
             engine.enableOfflineSupport = false;
             scene = new BABYLON.Scene(engine);
-            scene.useRightHandedSystem = true;
             debug = new window.BabylonDebug(scene);
 
             BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
