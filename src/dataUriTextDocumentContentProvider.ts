@@ -7,7 +7,11 @@ import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
 import { getFromJsonPointer, btoa, atob, getAccessorData, AccessorTypeToNumComponents, getAccessorElement } from './utilities';
 import { GLTF2 } from './GLTF2';
-const decoderModule = draco3dgltf.createDecoderModule({});
+
+let decoderModule;
+draco3dgltf.createDecoderModule({}).then(function(module) {
+    decoderModule = module;
+});
 
 interface QueryDataUri {
     viewColumn?: string;
@@ -153,6 +157,9 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         const primitiveIndex = jsonPointer.lastIndexOf('/', extIndex - 1);
         if (primitiveIndex === -1) {
             return 'Invalid path:\n' + jsonPointer;
+        }
+        if (!decoderModule) {
+            return 'Error: Draco module not loaded.';
         }
         const primitivePointer = jsonPointer.substring(0, primitiveIndex);
         const primitive = getFromJsonPointer(glTF, primitivePointer);
