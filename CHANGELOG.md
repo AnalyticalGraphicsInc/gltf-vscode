@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.2 - UNRELEASED
+### 2.3.2 - 2020-12-02
 
 * Update Babylon to 4.2.0.
 * Update Cesium to 1.76.

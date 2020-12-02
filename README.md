@@ -211,11 +211,16 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 * `KHR_draco_mesh_compression`
 * `KHR_lights_punctual`
 * `KHR_materials_clearcoat`
+* `KHR_materials_transmission`
 * `KHR_materials_pbrSpecularGlossiness`
+* `KHR_materials_sheen`
 * `KHR_materials_unlit`
-* `KHR_techniques_webgl` (Draft)
+* `KHR_materials_variants`
 * `KHR_texture_transform`
 * `EXT_lights_image_based`
+* `EXT_mesh_gpu_instancing`
+* `EXT_meshopt_compression`
+* `EXT_texture_webp`
 * `AGI_articulations`
 * `AGI_stk_metadata`
 
