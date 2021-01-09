@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.3.4 - UNRELEASED
+
+* Enable KTX2 textures in the ThreeJS preview window.
+* Update ThreeJS to r124.
+
 ### 2.3.2 - 2020-12-02
 
 * Update Babylon to 4.2.0.

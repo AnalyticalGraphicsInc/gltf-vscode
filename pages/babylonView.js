@@ -79,6 +79,26 @@
                 }
             };
 
+            var extensionRootPath = document.getElementById('extensionRootPath').textContent;
+            var previewPath = extensionRootPath + '/engines/Babylon/preview/';
+
+            // This doesn't appear present in Babylon 4.2.0, maybe it's in 5.x alpha?
+            //BABYLON.GLTF2.Loader.Extensions.EXT_meshopt_compression.DecoderPath =
+            //    previewPath + 'meshopt_decoder.js';
+
+            // via https://github.com/BabylonJS/Babylon.js/blob/76ee91e726ef057a5173fb5bd2e99dcb438e64ed/localDev/index-views.html#L129-L137
+            BABYLON.KhronosTextureContainer2.URLConfig = {
+                jsDecoderModule: previewPath + 'babylon.ktx2Decoder.js',
+                wasmUASTCToASTC: previewPath + 'ktx2Transcoders/uastc_astc.wasm',
+                wasmUASTCToBC7: previewPath + 'ktx2Transcoders/uastc_bc7.wasm',
+                wasmUASTCToRGBA_UNORM: previewPath + 'ktx2Transcoders/uastc_rgba32_unorm.wasm',
+                wasmUASTCToRGBA_SRGB: previewPath + 'ktx2Transcoders/uastc_rgba32_srgb.wasm',
+                jsMSCTranscoder: previewPath + 'ktx2Transcoders/msc_basis_transcoder.js',
+                wasmMSCTranscoder: previewPath + 'ktx2Transcoders/msc_basis_transcoder.wasm'
+            };
+
+            //BABYLON.ZSTDDecoder.WasmModuleURL = previewPath + 'zstddec.wasm';
+
             BABYLON.SceneLoader.ShowLoadingScreen = false;
             canvas = document.getElementById('babylonRenderCanvas');
             engine = new BABYLON.Engine(canvas, true, { limitDeviceRatio: false });

@@ -2,6 +2,7 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from '../node_modules/three/examples/jsm/loaders/RGBELoader.js';
+import { KTX2Loader } from '../node_modules/three/examples/jsm/loaders/KTX2Loader.js';
 import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
@@ -65,6 +66,7 @@ export class ThreeView {
         dracoLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( dracoLoader );
+        loader.setKTX2Loader( new KTX2Loader().detectSupport( renderer ) );
 
         var cameraPos = new THREE.Vector3(-0.2, 0.4, 1.4);
         var orbitControls = this._orbitControls = new OrbitControls(this._camera, renderer.domElement);
