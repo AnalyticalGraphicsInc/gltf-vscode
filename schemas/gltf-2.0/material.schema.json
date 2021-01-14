@@ -40,6 +40,27 @@
                         }
                     ]
                 },
+                "KHR_materials_specular" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_specular/glTF.KHR_materials_specular.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_ior" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_ior/glTF.KHR_materials_ior.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_volume" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_volume/glTF.KHR_materials_volume.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_unlit" : {
                     "allOf" : [
                         {

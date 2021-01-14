@@ -30,6 +30,15 @@ echo "~~~ KHR_materials_transmission ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_transmission -s ../../
 echo "~~~ KHR_materials_sheen ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_sheen/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_sheen -s ../../
+# Un-comment specular after #1719 is merged in main glTF repo.
+#echo "~~~ KHR_materials_specular ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_specular/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_specular -s ../../
+# Un-comment ior after #1718 is merged in main glTF repo.
+#echo "~~~ KHR_materials_ior ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_ior/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_ior -s ../../
+# Un-comment volume after #1726 is merged in main glTF repo.
+#echo "~~~ KHR_materials_volume ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_volume/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_volume -s ../../
 
 # Vendor and Multi-vendor extensions
 #
