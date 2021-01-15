@@ -1,7 +1,7 @@
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
-    Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams, Hover, MarkedString,
-    Location
+    Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams,
+    Hover, MarkupContent, MarkupKind, Location
 } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 import * as Url from 'url';
@@ -524,7 +524,12 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
             if (!imageData.startsWith('data:')) {
                 imageData = Url.resolve(textDocumentPosition.textDocument.uri, imageData);
             }
-            let contents: MarkedString[] = [`![${path}](${imageData})`];
+            // Markdown images created here:
+            // https://github.com/microsoft/vscode/blob/6795d766a0a77aef8c72305948a4e63e41d996a9/src/vs/base/common/marked/marked.js#L1955
+            let contents: MarkupContent = {
+                kind: MarkupKind.Markdown,
+                value: `![${path}](${imageData})`
+            };
             return {
                 contents: contents,
                 range: Range.create(pathData.start, pathData.end)
@@ -542,7 +547,10 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         let blue = Math.round(colorData[1] * 255);
         let green = Math.round(colorData[2] * 255);
         let hexColor = ((red < 16) ? '0' : '') + red.toString(16) + ((blue < 16) ? '0' : '') +  blue.toString(16) + ((green < 16) ? '0' : '') +  green.toString(16);
-        let contents: MarkedString[] = [`![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`];
+        let contents: MarkupContent = {
+            kind: MarkupKind.Markdown,
+            value: `![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`
+        };
         return {
             contents: contents,
             range: Range.create(pathData.start, pathData.end)
