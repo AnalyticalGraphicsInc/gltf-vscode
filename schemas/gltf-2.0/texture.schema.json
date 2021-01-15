@@ -28,6 +28,13 @@
         "name" : {},
         "extensions" : {
             "properties" : {
+                "KHR_texture_basisu" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_texture_basisu/texture.KHR_texture_basisu.schema.json"
+                        }
+                    ]
+                },
                 "EXT_texture_webp" : {
                     "allOf" : [
                         {
