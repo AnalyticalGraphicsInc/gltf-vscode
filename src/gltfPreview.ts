@@ -289,10 +289,12 @@ export class GltfPreview extends ContextBase {
                 if (object.hasOwnProperty(key)) {
                     const value = object[key];
                     if (key === "uri" && typeof value === "string" && !value.startsWith("data:")) {
-                        const filePath = path.join(documentDirectoryPath, value);
-                        panel._watchers.push(fs.watch(filePath, () => {
-                            panel.webview.postMessage({ command: 'refresh' });
-                        }));
+                        const filePath = path.join(documentDirectoryPath, decodeURI(value));
+                        if (fs.existsSync(filePath)) {
+                            panel._watchers.push(fs.watch(filePath, () => {
+                                panel.webview.postMessage({ command: 'refresh' });
+                            }));
+                        }
                     }
                     else if (typeof value === "object") {
                         watch(value);
