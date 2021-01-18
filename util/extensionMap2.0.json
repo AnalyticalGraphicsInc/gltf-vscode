@@ -88,6 +88,7 @@
     "texture": {
         "title": "Texture Extensions",
         "extensions": {
+            "KHR_texture_basisu": "texture.KHR_texture_basisu.schema.json",
             "EXT_texture_webp": "glTF.EXT_texture_webp.schema.json"
         }
     },

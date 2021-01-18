@@ -1,7 +1,7 @@
 import {
     IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
-    Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams, Hover, MarkedString,
-    Location
+    Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams,
+    Hover, MarkupContent, MarkupKind, Location
 } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 import * as Url from 'url';
@@ -520,11 +520,10 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         }
         let imageData = getFromPath(pathData.jsonMap.data, path);
         if (imageData && imageData.uri) {
-            imageData = imageData.uri;
-            if (!imageData.startsWith('data:')) {
-                imageData = Url.resolve(textDocumentPosition.textDocument.uri, imageData);
-            }
-            let contents: MarkedString[] = [`![${path}](${imageData})`];
+            let contents: MarkupContent = {
+                kind: MarkupKind.Markdown,
+                value: 'Use "Go To Definition" (typically `F12`) to view images.'
+            };
             return {
                 contents: contents,
                 range: Range.create(pathData.start, pathData.end)
@@ -542,7 +541,10 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         let blue = Math.round(colorData[1] * 255);
         let green = Math.round(colorData[2] * 255);
         let hexColor = ((red < 16) ? '0' : '') + red.toString(16) + ((blue < 16) ? '0' : '') +  blue.toString(16) + ((green < 16) ? '0' : '') +  green.toString(16);
-        let contents: MarkedString[] = [`![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`];
+        let contents: MarkupContent = {
+            kind: MarkupKind.Markdown,
+            value: `![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`
+        };
         return {
             contents: contents,
             range: Range.create(pathData.start, pathData.end)

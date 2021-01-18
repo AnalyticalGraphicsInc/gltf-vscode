@@ -249,6 +249,7 @@ export class GltfPreview extends ContextBase {
         ].map(s => this.asExtensionUriString(panel, s));
 
         const scripts = [
+            'engines/Basis/msc_basis_transcoder.js',  // ThreeJS uses this.
             'node_modules/cesium/Build/Cesium/Cesium.js',
             'node_modules/babylonjs/babylon.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',
@@ -288,10 +289,12 @@ export class GltfPreview extends ContextBase {
                 if (object.hasOwnProperty(key)) {
                     const value = object[key];
                     if (key === "uri" && typeof value === "string" && !value.startsWith("data:")) {
-                        const filePath = path.join(documentDirectoryPath, value);
-                        panel._watchers.push(fs.watch(filePath, () => {
-                            panel.webview.postMessage({ command: 'refresh' });
-                        }));
+                        const filePath = path.join(documentDirectoryPath, decodeURI(value));
+                        if (fs.existsSync(filePath)) {
+                            panel._watchers.push(fs.watch(filePath, () => {
+                                panel.webview.postMessage({ command: 'refresh' });
+                            }));
+                        }
                     }
                     else if (typeof value === "object") {
                         watch(value);

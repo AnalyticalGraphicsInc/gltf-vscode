@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
@@ -77,28 +78,49 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         if (data && (typeof data === 'object')) {
             if (data.hasOwnProperty('uri')) {
                 let dataUri: string = data.uri;
+                let previewTitle = dataUri;
                 if (!dataUri.startsWith('data:')) {
                     // Not a DataURI: Look up external reference.
                     const name = decodeURI(Url.resolve(fileName, dataUri));
                     const contents = fs.readFileSync(name);
                     dataUri = 'data:image;base64,' + btoa(contents);
+                    previewTitle = decodeURI(previewTitle);
+                } else {
+                    previewTitle = jsonPointer;
                 }
 
                 if (this.isImage(jsonPointer)) {
-                    if (!query.previewHtml || query.previewHtml !== 'true') {
-                        // Peek Definition requests have a document that matches the current document
-                        // Go to Definition has an undefined activeTextEditor
-                        // Inspect Data Uri has a document that matches current but we provide a non-default viewColumn
-                        // In the last two cases we want to close the current (to be empty editor), for Peek we leave it open.
-                        if (vscode.window.activeTextEditor === undefined || vscode.window.activeTextEditor.document !== document || query.viewColumn !== vscode.ViewColumn.Active.toString()) {
-                            vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-                        }
-                        const previewUri: vscode.Uri = vscode.Uri.parse(this.UriPrefix + uri.path + '?previewHtml=true' + '#' + encodeURIComponent(fileName));
-                        await vscode.commands.executeCommand('vscode.previewHtml', previewUri, parseInt(query.viewColumn.toString()));
-                        return '';
+                    // Peek Definition requests have a document that matches the current document
+                    // Go to Definition has an undefined activeTextEditor
+                    // Inspect Data Uri has a document that matches current but we provide a non-default viewColumn
+                    // In the last two cases we want to close the current (to be empty editor), for Peek we leave it open.
+                    if (vscode.window.activeTextEditor === undefined || vscode.window.activeTextEditor.document !== document || query.viewColumn !== vscode.ViewColumn.Active.toString()) {
+                        await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                     }
-                    return `<html><head><link rel="stylesheet" href="file:///${this._context.asAbsolutePath('pages/imagePreview.css')}"></link></head>` +
-                        `<body><div class="monaco-resource-viewer image oversized" onclick="this.classList.toggle(\'full-size\');" ><img src="${dataUri}" /></div></body></html>`;
+
+                    let localResourceRoots = [
+                        vscode.Uri.file(this._context.extensionPath)
+                    ];
+
+                    if (document) {
+                        localResourceRoots.push(vscode.Uri.file(path.dirname(document.fileName)));
+                    }
+
+                    let panel = vscode.window.createWebviewPanel('gltf.imagePreview', previewTitle, vscode.ViewColumn.Two, {
+                        enableScripts: true,
+                        retainContextWhenHidden: true,
+                        localResourceRoots: localResourceRoots,
+                    });
+
+                    const cssUri = panel.webview.asWebviewUri(
+                        vscode.Uri.file(this._context.asAbsolutePath('pages/imagePreview.css'))).toString();
+
+                    panel.webview.html = `<html><head><link rel="stylesheet" href="${cssUri}"></link></head>` +
+                        `<body><div class="monaco-resource-viewer image oversized" ` +
+                        `onclick="this.classList.toggle(\'full-size\');" ><img src="${dataUri}" /></div></body></html>`;
+
+                    panel.reveal(vscode.ViewColumn.Two);
+                    return 'See image viewer window.';
                 }
                 const posBase = dataUri.indexOf('base64,');
                 const body = dataUri.substring(posBase + 7);

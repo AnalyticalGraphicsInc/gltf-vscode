@@ -24,6 +24,15 @@ interface MeshInfo {
     vertices: number;
 }
 
+const knownTextureExtensions = [
+    'KHR_texture_basisu',
+
+    // DDS and WebP are not officially supported by this VSCode extension, but
+    // naming them here will help to compute the correct asset size breakdown.
+    'EXT_texture_webp',
+    'MSFT_texture_dds'
+];
+
 export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
     private tree: GltfNode;
     private editor: vscode.TextEditor;
@@ -272,7 +281,7 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
             };
             assetObj.children.push(textureObj);
             for (let index = 0; index < this.gltf.textures.length; index++) {
-                textureObj.size += this.createTexture('Asset', { index: index.toString() }, textureObj, true);
+                textureObj.size += this.createTexture('Asset', { index: index.toString() }, textureObj, true) || 0;
             }
             totalSize += textureObj.size;
         }
@@ -557,6 +566,18 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
 
         let texture = this.gltf.textures[textureIndex.index];
         let imageIndex = texture.source;
+
+        if (texture.extensions) {
+            knownTextureExtensions.forEach(extensionName => {
+                if (texture.extensions[extensionName] && texture.extensions[extensionName].source !== undefined) {
+                    imageIndex = texture.extensions[extensionName].source;
+                }
+            });
+        }
+
+        if (imageIndex === undefined) {
+            return undefined;
+        }
         let name = this.createName(typeName + ' Texture', textureIndex.index, texture);
 
         let pointerPath = '/images/' + imageIndex;
