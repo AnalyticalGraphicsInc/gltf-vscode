@@ -381,7 +381,7 @@
         "cesium": "^1.76.0",
         "draco3dgltf": "1.4.0",
         "filament": "^1.9.8",
-        "gltf-import-export": "1.0.16",
+        "gltf-import-export": "1.0.18",
         "gltf-validator": "2.0.0-dev.3.3",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
