@@ -30,6 +30,7 @@ node_modules/three/build/three.min.js
 node_modules/three/examples/fonts/**
 node_modules/three/examples/js/**
 node_modules/three/examples/jsm/libs/**
+!node_modules/three/examples/jsm/libs/zstddec.module.js
 node_modules/three/examples/jsm/loaders/lwo/**
 node_modules/three/examples/jsm/loaders/obj2/**
 node_modules/three/examples/jsm/loaders/FBXLoader.js

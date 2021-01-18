@@ -2,6 +2,7 @@
 
 ### 2.3.4 - UNRELEASED
 
+* Fixed packaging error in previous version that broke the preview window.
 * Added `image/ktx2` MIME type during glTF / GLB conversions. [gltf-import-export#13](https://github.com/najadojo/gltf-import-export/pull/13)
 
 ### 2.3.3 - 2021-01-17
