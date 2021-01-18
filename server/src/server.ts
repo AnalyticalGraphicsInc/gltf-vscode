@@ -520,15 +520,9 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         }
         let imageData = getFromPath(pathData.jsonMap.data, path);
         if (imageData && imageData.uri) {
-            imageData = imageData.uri;
-            if (!imageData.startsWith('data:')) {
-                imageData = Url.resolve(textDocumentPosition.textDocument.uri, imageData);
-            }
-            // Markdown images created here:
-            // https://github.com/microsoft/vscode/blob/6795d766a0a77aef8c72305948a4e63e41d996a9/src/vs/base/common/marked/marked.js#L1955
             let contents: MarkupContent = {
                 kind: MarkupKind.Markdown,
-                value: `![${path}](${imageData})`
+                value: 'Use "Go To Definition" (typically `F12`) to view images.'
             };
             return {
                 contents: contents,

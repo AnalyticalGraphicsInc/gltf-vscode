@@ -7,6 +7,7 @@
 * Added JSON schema for KHR_texture_basisu.
 * Fixed an issue with URI-encoded names. [#200](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/200)
 * Fixed an issue with image previews. [#159](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/159)
+* Images no longer embed in JSON hovers, use image preview instead (typically ALT-D "Inspect Data" and/or F12 "Go To Definition").
 * Update ThreeJS to r124.
 
 ### 2.3.2 - 2020-12-02
