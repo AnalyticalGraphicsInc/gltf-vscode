@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.4 - UNRELEASED
+### 2.3.3 - 2021-01-17
 
 * Enable KTX2 textures in the ThreeJS preview window.
 * Added support for KTX2 texture size reporting in the Asset Size glTF sidebar panel.
