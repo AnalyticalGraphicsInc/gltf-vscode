@@ -47,9 +47,7 @@
                         "description" : "The optional user-defined name of this variant material mapping.  This is not necessarily unique.",
                         "short_description" : "The user-defined name of this variant material mapping."
                     },
-                    "extras" : {
-                        "type" : "object"
-                    },
+                    "extras" : {},
                     "extensions" : {}
                 },
                 "required" : [

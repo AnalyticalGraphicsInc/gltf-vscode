@@ -25,9 +25,7 @@
                         "description" : "The name of the material variant.",
                         "short_description" : "The name of the material variant"
                     },
-                    "extras" : {
-                        "type" : "object"
-                    },
+                    "extras" : {},
                     "extensions" : {}
                 },
                 "required" : [

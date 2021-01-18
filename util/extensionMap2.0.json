@@ -48,6 +48,9 @@
             "KHR_materials_pbrSpecularGlossiness": "glTF.KHR_materials_pbrSpecularGlossiness.schema.json",
             "KHR_materials_transmission": "glTF.KHR_materials_transmission.schema.json",
             "KHR_materials_sheen": "glTF.KHR_materials_sheen.schema.json",
+            "KHR_materials_specular": "glTF.KHR_materials_specular.schema.json",
+            "KHR_materials_ior": "glTF.KHR_materials_ior.schema.json",
+            "KHR_materials_volume": "glTF.KHR_materials_volume.schema.json",
             "KHR_materials_unlit": "glTF.KHR_materials_unlit.schema.json",
             "KHR_xmp": "node.KHR_xmp.schema.json"
         }
@@ -61,7 +64,7 @@
     "mesh.primitive": {
         "title": "Mesh Primitive Extensions",
         "extensions": {
-            "KHR_draco_mesh_compression": "node.KHR_draco_mesh_compression.schema.json",
+            "KHR_draco_mesh_compression": "mesh.primitive.KHR_draco_mesh_compression.schema.json",
             "KHR_materials_variants": "mesh.primitive.KHR_materials_variants.schema.json"
         }
     },

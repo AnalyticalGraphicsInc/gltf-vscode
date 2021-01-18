@@ -1,0 +1,49 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "KHR_materials_specular glTF extension",
+    "type" : "object",
+    "description" : "glTF extension that defines the strength of the specular reflection.",
+    "allOf" : [
+        {
+            "$ref" : "../../glTFProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "specularFactor" : {
+            "type" : "number",
+            "description" : "This parameter scales the amount of specular reflection on non-metallic surfaces. It has no effect on metals.",
+            "default" : 1,
+            "minimum" : 0,
+            "maximum" : 1,
+            "short_description" : "The strength of the specular reflection."
+        },
+        "specularColorFactor" : {
+            "type" : "array",
+            "items" : {
+                "type" : "number",
+                "minimum" : 0,
+                "maximum" : 1
+            },
+            "description" : "This is an additional RGB color parameter that tints the specular reflection of non-metallic surfaces. At grazing angles, the reflection still blends to white, and the parameter has not effect on metals. The value is linear.",
+            "default" : [
+                1,
+                1,
+                1
+            ],
+            "minItems" : 3,
+            "maxItems" : 3,
+            "short_description" : "The F0 RGB color of the specular reflection."
+        },
+        "specularTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "A 4-channel texture that defines the specular color in the RGB channels (encoded in sRGB) and the specular factor in the alpha channel. Will be multiplied by specularColorFactor and specularFactor.",
+            "short_description" : "A texture that defines the F0 color of the specular reflection and the specular factor."
+        },
+        "extensions" : {},
+        "extras" : {}
+    }
+}

@@ -111,7 +111,7 @@
                 "KHR_draco_mesh_compression" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_draco_mesh_compression/node.KHR_draco_mesh_compression.schema.json"
+                            "$ref" : "extensions/KHR_draco_mesh_compression/mesh.primitive.KHR_draco_mesh_compression.schema.json"
                         }
                     ]
                 },
