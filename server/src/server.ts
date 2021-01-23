@@ -505,6 +505,13 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     return null;
 });
 
+const colorFactorNames = [
+    'diffuseFactor',
+    'specularFactor',
+    'baseColorFactor',
+    'emissiveFactor'
+];
+
 connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => {
     let pathData = getPath(textDocumentPosition);
     if (!pathData) {
@@ -531,8 +538,7 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         }
     }
 
-    if (path.includes('diffuseFactor') || path.includes('specularFactor') || path.includes('baseColorFactor') || path.includes('emissiveFactor'))
-    {
+    if (colorFactorNames.some(n => path.includes(n))) {
         if (!Number.isNaN(parseInt(path.charAt(path.length-1)))) {
             path = path.substring(0, path.length-2);
         }
@@ -541,9 +547,15 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         let blue = Math.round(colorData[1] * 255);
         let green = Math.round(colorData[2] * 255);
         let hexColor = ((red < 16) ? '0' : '') + red.toString(16) + ((blue < 16) ? '0' : '') +  blue.toString(16) + ((green < 16) ? '0' : '') +  green.toString(16);
+        let svg =
+            `<?xml version="1.0" encoding="UTF-8" standalone="no"?>` +
+            `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="45" viewBox="0 0 180 45">` +
+            `<rect style="fill:#${hexColor}" width="100%" height="100%" x="0" y="0" />` +
+            `</svg>`;
+        let svgDataUri = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');  // This is inline btoa(svg).
         let contents: MarkupContent = {
             kind: MarkupKind.Markdown,
-            value: `![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`
+            value: `![#${hexColor}](${svgDataUri})`
         };
         return {
             contents: contents,
