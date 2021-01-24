@@ -5,6 +5,18 @@
 (function () {
     'use strict';
 
+    // TEMPORARY PATCH for https://github.com/BabylonJS/Babylon.js/issues/9837
+    // REMOVE once 5.0.0-alpha.8 is released.
+    BABYLON.SceneLoader._GetFileInfoPatched = BABYLON.SceneLoader._GetFileInfo;
+    BABYLON.SceneLoader._GetFileInfo = function(rootUrl, sceneFileName) {
+        var result = this._GetFileInfoPatched(rootUrl, sceneFileName);
+        if (result && sceneFileName.startsWith('data:')) {
+            result.url = sceneFileName;
+        }
+        return result;
+    };
+    // END OF TEMPORARY PATCH
+
     window.BabylonView = function () {
         // Tracks if this engine is currently the active engine.
         var enabled = false;

@@ -375,9 +375,9 @@
         "yargs": "^15.4.1"
     },
     "dependencies": {
-        "babylonjs": "^4.2.0",
-        "babylonjs-inspector": "^4.2.0",
-        "babylonjs-loaders": "^4.2.0",
+        "babylonjs": "5.0.0-alpha.7",
+        "babylonjs-inspector": "5.0.0-alpha.7",
+        "babylonjs-loaders": "5.0.0-alpha.7",
         "cesium": "^1.76.0",
         "draco3dgltf": "1.4.0",
         "filament": "^1.9.8",
