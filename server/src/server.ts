@@ -505,6 +505,23 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     return null;
 });
 
+function linearToSRGB(red: number, green: number, blue: number): string | null {
+    const l2sRGB = (c: number) => (c <= 0.0031308) ? (c * 12.92) : (1.055 * Math.pow(c, 1 / 2.4) - 0.055);
+
+    red = Math.round(l2sRGB(red) * 255);
+    green = Math.round(l2sRGB(green) * 255);
+    blue = Math.round(l2sRGB(blue) * 255);
+    return ((red < 16) ? '0' : '') + red.toString(16) + ((green < 16) ? '0' : '') + green.toString(16) + ((blue < 16) ? '0' : '') + blue.toString(16);
+}
+
+const colorFactorNames = [
+    'ColorFactor',  // Note: This includes anything that ends with ...ColorFactor
+    'diffuseFactor',
+    'specularFactor',
+    'emissiveFactor',
+    'attenuationColor'
+];
+
 connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => {
     let pathData = getPath(textDocumentPosition);
     if (!pathData) {
@@ -531,24 +548,28 @@ connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => 
         }
     }
 
-    if (path.includes('diffuseFactor') || path.includes('specularFactor') || path.includes('baseColorFactor') || path.includes('emissiveFactor'))
-    {
+    if (colorFactorNames.some(n => path.includes(n))) {
         if (!Number.isNaN(parseInt(path.charAt(path.length-1)))) {
             path = path.substring(0, path.length-2);
         }
         let colorData = getFromPath(pathData.jsonMap.data, path);
-        let red = Math.round(colorData[0] * 255);
-        let blue = Math.round(colorData[1] * 255);
-        let green = Math.round(colorData[2] * 255);
-        let hexColor = ((red < 16) ? '0' : '') + red.toString(16) + ((blue < 16) ? '0' : '') +  blue.toString(16) + ((green < 16) ? '0' : '') +  green.toString(16);
-        let contents: MarkupContent = {
-            kind: MarkupKind.Markdown,
-            value: `![${hexColor}](https://placehold.it/50/${hexColor}/000000?text=+)`
-        };
-        return {
-            contents: contents,
-            range: Range.create(pathData.start, pathData.end)
-        };
+        if (Array.isArray(colorData) && colorData.length >= 3) {
+            let hexColor = linearToSRGB(colorData[0], colorData[1], colorData[2]);
+            let svg =
+                `<?xml version="1.0" encoding="UTF-8" standalone="no"?>` +
+                `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="45" viewBox="0 0 300 45">` +
+                `<rect style="fill:#${hexColor}" width="100%" height="100%" x="0" y="0" />` +
+                `</svg>`;
+            let svgDataUri = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');  // This is inline btoa(svg).
+            let contents: MarkupContent = {
+                kind: MarkupKind.Markdown,
+                value: `![#${hexColor}](${svgDataUri})  \nConverted linear to sRGB color: \`#${hexColor}\``
+            };
+            return {
+                contents: contents,
+                range: Range.create(pathData.start, pathData.end)
+            };
+        }
     }
 
     return null;
