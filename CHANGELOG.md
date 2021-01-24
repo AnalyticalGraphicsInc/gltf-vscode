@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.5 - UNRELEASED
+### 2.3.5 - 2021-01-24
 
 * Update Babylon to 5.0.0-alpha.7.
 * Enable KTX2 textures in the BabylonJS preview window.

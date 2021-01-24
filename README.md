@@ -211,11 +211,15 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 * `KHR_draco_mesh_compression`
 * `KHR_lights_punctual`
 * `KHR_materials_clearcoat`
+* `KHR_materials_ior`
 * `KHR_materials_transmission`
 * `KHR_materials_pbrSpecularGlossiness`
 * `KHR_materials_sheen`
+* `KHR_materials_specular`
 * `KHR_materials_unlit`
 * `KHR_materials_variants`
+* `KHR_materials_volume`
+* `KHR_texture_basisu`
 * `KHR_texture_transform`
 * `EXT_lights_image_based`
 * `EXT_mesh_gpu_instancing`
@@ -234,10 +238,13 @@ on [GitHub](https://github.com/AnalyticalGraphicsInc/gltf-vscode).  See [CONTRIB
 
 This extension makes use of the following open source projects:
 
- * [Cesium](https://github.com/AnalyticalGraphicsInc/cesium) - One of the 3D engines used in the preview window
  * [Babylon.js](https://github.com/BabylonJS/Babylon.js) - One of the 3D engines used in the preview window
- * [Three.js](https://github.com/mrdoob/three.js/) - One of the 3D engines used in the preview window
+ * [Basis Universal](https://github.com/BinomialLLC/basis_universal) - A GPU supercompression format for textures
+ * [Cesium](https://github.com/CesiumGS/cesium) - One of the 3D engines used in the preview window
+ * [Draco](https://github.com/google/draco) - A mesh compression library from Google
+ * [Filament](https://google.github.io/filament/Filament.html) - One of the 3D engines used in the preview window
  * [Knockout](http://knockoutjs.com/) - Used to data-bind preview window's menu
+ * [Three.js](https://github.com/mrdoob/three.js/) - One of the 3D engines used in the preview window
 
 ## License
 

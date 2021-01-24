@@ -2,7 +2,7 @@
 
 * Update `CHANGELOG.md` with new version number, publish date, and all changes.
 * Update `package.json`, specifically the `version` field.
-* If the glTF Language Server changed at all, bump its own `version` number in `server/package.json`.
+* Copy the new `version` number to `server/package.json`.
 * Run `npm install`, `npm update` to get the latest versions of dependencies.
 * In PowerShell, run `vsce publish` to actually publish to the marketplace.
 * Add a git tag for the release.  For example: `git tag -a 2.3.0 -m "Release version 2.3.0"`
