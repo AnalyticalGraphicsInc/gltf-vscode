@@ -91,6 +91,25 @@
                 }
             };
 
+            var extensionRootPath = document.getElementById('extensionRootPath').textContent;
+            var babylonPath = extensionRootPath + '/engines/Babylon/';
+            var basisPath = extensionRootPath + '/engines/Basis/';
+
+            // via https://github.com/BabylonJS/Babylon.js/blob/cfde2ef094705213bf95547b5d1a2ef0adae79ec/localDev/index-views.html#L127-L138
+            BABYLON.GLTF2.Loader.Extensions.EXT_meshopt_compression.DecoderPath =
+                babylonPath + "meshopt_decoder.js";
+
+            BABYLON.KhronosTextureContainer2.URLConfig = {
+                jsDecoderModule: babylonPath + "babylon.ktx2Decoder.js",
+                wasmUASTCToASTC: basisPath + "uastc_astc.wasm",
+                wasmUASTCToBC7: basisPath + "uastc_bc7.wasm",
+                wasmUASTCToRGBA_UNORM: basisPath + "uastc_rgba32_unorm.wasm",
+                wasmUASTCToRGBA_SRGB: basisPath + "uastc_rgba32_srgb.wasm",
+                jsMSCTranscoder: basisPath + "msc_basis_transcoder.js",
+                wasmMSCTranscoder: basisPath + "msc_basis_transcoder.wasm",
+                wasmZSTDDecoder: babylonPath + "zstddec.wasm"
+            };
+
             BABYLON.SceneLoader.ShowLoadingScreen = false;
             canvas = document.getElementById('babylonRenderCanvas');
             engine = new BABYLON.Engine(canvas, true, { limitDeviceRatio: false });
@@ -111,7 +130,7 @@
             BABYLON.SceneLoader.AppendAsync(rootPath, 'data:' + gltfContent, scene, undefined, '.gltf').then(function () {
                 scene.createDefaultCameraOrLight(true);
                 scene.activeCamera.attachControl(canvas);
-                scene.activeCamera.wheelDeltaPercentage = 0.005;
+                scene.activeCamera.wheelDeltaPercentage = 0.05;
 
                 // Hook up animations to the UI.
                 let numAnimations = scene.animationGroups.length;
