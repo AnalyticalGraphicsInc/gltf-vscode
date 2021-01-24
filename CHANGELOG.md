@@ -2,6 +2,8 @@
 
 ### 2.3.5 - UNRELEASED
 
+* Update Babylon to 5.0.0-alpha.7.
+* Enable KTX2 textures in the BabylonJS preview window.
 * Hovering a color (such as `baseColorFactor`, etc) now converts the color from linear to sRGB colorspace for proper display.
 * Hovering a color no longer requires network access for the sample. [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207)
 * Various glTF extensions that supply color factors can now also be hovered.  Also [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207)
