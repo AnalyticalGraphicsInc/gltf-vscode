@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.3.6 - 2021-01-25
+
+* Recompiled language server. Fixes for [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207) didn't get packaged in the previous release.
+
 ### 2.3.5 - 2021-01-24
 
 * Update Babylon to 5.0.0-alpha.7.

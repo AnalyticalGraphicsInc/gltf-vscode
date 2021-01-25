@@ -4,6 +4,7 @@
 * Update `package.json`, specifically the `version` field.
 * Copy the new `version` number to `server/package.json`.
 * Run `npm install`, `npm update` to get the latest versions of dependencies.
+* Open the project and run `task watch` to recompile if needed.
 * In PowerShell, run `vsce publish` to actually publish to the marketplace.
 * Add a git tag for the release.  For example: `git tag -a 2.3.0 -m "Release version 2.3.0"`
 * Push the branch & tag. `git push --tags`
