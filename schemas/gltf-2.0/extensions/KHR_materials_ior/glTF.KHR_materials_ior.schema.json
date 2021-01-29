@@ -13,7 +13,15 @@
             "type" : "number",
             "description" : "The index of refraction (IOR) is a measured physical number usually in the range between 1 and 2 that determines how much the path of light is bent, or refracted, when entering a material. It also influences the ratio between reflected and transmitted light, calculated from the Fresnel equations.",
             "default" : 1.5,
-            "minimum" : 1,
+            "oneOf" : [
+                {
+                    "minimum" : 0,
+                    "maximum" : 0
+                },
+                {
+                    "minimum" : 1
+                }
+            ],
             "short_description" : "The index of refraction."
         },
         "extensions" : {},
