@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.3.7 - UNRELEASED
+
+* Update draft JSON schemas for KHR_materials_specular, KHR_materials_ior, and KHR_materials_volume.
+
 ### 2.3.6 - 2021-01-25
 
 * Recompiled language server. Fixes for [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207) didn't get packaged in the previous release.
