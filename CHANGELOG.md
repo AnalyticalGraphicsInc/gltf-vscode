@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.7 - UNRELEASED
+### 2.3.7 - 2021-02-01
 
 * Update draft JSON schemas for KHR_materials_specular, KHR_materials_ior, and KHR_materials_volume.
 
