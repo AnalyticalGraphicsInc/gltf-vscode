@@ -2,8 +2,10 @@
 
 ### 2.3.8 - UNRELEASED
 
+* Turn off non-IBL default lights, for better consistency between preview windows. [#210](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/210)
 * Update Cesium to 1.78.
-* Update Filament to 1.9.10.
+* Update Draco decoder to 1.4.1
+* Update Filament to 1.9.10.  This fixes an issue where the preview window turned black in VSCode 1.53.
 * Update ThreeJS to r125.2.
 
 ### 2.3.7 - 2021-02-01
