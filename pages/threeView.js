@@ -45,9 +45,6 @@ export class ThreeView {
 
         scene.add(camera);
 
-        var hemispheric = new THREE.HemisphereLight(0xffffff, 0x222222, 0.5);
-        scene.add(hemispheric);
-
         // RENDERER
         var renderer = this._renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
         renderer.setClearColor(0x222222);
