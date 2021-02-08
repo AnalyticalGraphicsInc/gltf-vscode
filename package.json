@@ -378,15 +378,15 @@
         "babylonjs": "5.0.0-alpha.7",
         "babylonjs-inspector": "5.0.0-alpha.7",
         "babylonjs-loaders": "5.0.0-alpha.7",
-        "cesium": "^1.76.0",
+        "cesium": "^1.78.0",
         "draco3dgltf": "1.4.0",
-        "filament": "^1.9.8",
+        "filament": "^1.9.10",
         "gltf-import-export": "1.0.18",
         "gltf-validator": "2.0.0-dev.3.3",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.124.0",
+        "three": "^0.125.2",
         "vscode-languageclient": "^5.2.1"
     }
 }

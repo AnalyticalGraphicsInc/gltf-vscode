@@ -1,5 +1,11 @@
 # Change Log
 
+### 2.3.8 - UNRELEASED
+
+* Update Cesium to 1.78.
+* Update Filament to 1.9.10.
+* Update ThreeJS to r125.2.
+
 ### 2.3.7 - 2021-02-01
 
 * Update draft JSON schemas for KHR_materials_specular, KHR_materials_ior, and KHR_materials_volume.
