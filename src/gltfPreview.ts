@@ -249,7 +249,6 @@ export class GltfPreview extends ContextBase {
         ].map(s => this.asExtensionUriString(panel, s));
 
         const scripts = [
-            'engines/Basis/msc_basis_transcoder.js',  // ThreeJS uses this.
             'node_modules/cesium/Build/Cesium/Cesium.js',
             'node_modules/babylonjs/babylon.js',
             'node_modules/babylonjs-loaders/babylonjs.loaders.min.js',

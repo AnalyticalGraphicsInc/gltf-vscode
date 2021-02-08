@@ -63,7 +63,10 @@ export class ThreeView {
         dracoLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( dracoLoader );
-        loader.setKTX2Loader( new KTX2Loader().detectSupport( renderer ) );
+
+        var extensionRootPath = document.getElementById('extensionRootPath').textContent;
+        var basisPath = extensionRootPath + '/node_modules/three/examples/js/libs/basis/';
+        loader.setKTX2Loader( new KTX2Loader().setTranscoderPath( basisPath ).detectSupport( renderer ) );
 
         var cameraPos = new THREE.Vector3(-0.2, 0.4, 1.4);
         var orbitControls = this._orbitControls = new OrbitControls(this._camera, renderer.domElement);
