@@ -128,7 +128,7 @@
 
             BABYLON.GLTFFileLoader.IncrementalLoading = false;
             BABYLON.SceneLoader.AppendAsync(rootPath, 'data:' + gltfContent, scene, undefined, '.gltf').then(function () {
-                scene.createDefaultCameraOrLight(true);
+                scene.createDefaultCamera(true);
                 scene.activeCamera.attachControl(canvas);
                 scene.activeCamera.wheelDeltaPercentage = 0.05;
 
