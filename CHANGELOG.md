@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.8 - UNRELEASED
+### 2.3.8 - 2021-02-07
 
 * Turn off non-IBL default lights, for better consistency between preview windows. [#210](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/210)
 * Update Cesium to 1.78.
