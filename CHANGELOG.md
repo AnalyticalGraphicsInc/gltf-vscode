@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.3.10 - 2021-05-09
+
+* Update Babylon to 5.0.0-alpha.20.
+* Update Cesium to 1.81.
+* Update ThreeJS to r127.
+* Adjust scale of top-bar icons.
+* Update schema for KHR_materials_volume to latest.
+
 ### 2.3.8, 2.3.9 - 2021-02-07
 
 * Turn off non-IBL default lights, for better consistency between preview windows. [#210](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/210)
