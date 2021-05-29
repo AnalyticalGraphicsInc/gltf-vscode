@@ -471,7 +471,7 @@ export function activate(context: vscode.ExtensionContext): void {
         const uri = vscode.Uri.parse('glb:' + fileUri.fsPath);
         const doc = await vscode.workspace.openTextDocument(uri); // calls back into the provider
         vscode.languages.setTextDocumentLanguage(doc, "json");
-        await vscode.window.showTextDocument(doc, { preview: true });
+        await vscode.window.showTextDocument(doc, { preview: false });
 
     }));
 
