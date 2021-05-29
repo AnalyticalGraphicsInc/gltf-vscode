@@ -14,7 +14,7 @@ export class GlbProvider implements vscode.TextDocumentContentProvider {
     provideTextDocumentContent(uri: vscode.Uri): string {
 
         let data = fs.readFileSync(uri.fsPath);
-        var offset = 0;
+        let offset = 0;
         if (data.readInt32LE(offset) != 0x46546C67) {
             return `not glb`;
         }
@@ -29,8 +29,8 @@ export class GlbProvider implements vscode.TextDocumentContentProvider {
         let length = data.readInt32LE(offset);
         offset += 4;
 
-        var json = null;
-        var binOffset = null;
+        let json = null;
+        let binOffset = null;
         while (offset < length) {
 
             let chunkLength = data.readInt32LE(offset);
@@ -43,7 +43,7 @@ export class GlbProvider implements vscode.TextDocumentContentProvider {
 
             if (chunkType == 0x4E4F534A) {
 
-                var json = JSON.parse(chunkData);
+                json = JSON.parse(chunkData);
 
             }
             else if (chunkType == 0x004E4942) {
