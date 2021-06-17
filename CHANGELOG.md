@@ -1,5 +1,12 @@
 # Change Log
 
+### 2.3.11 - UNRELEASED
+
+* Update Babylon to 5.0.0-alpha.25.
+* Update Cesium to 1.82.1.
+* Update Filament to 1.10.3.
+* Update Khronos glTF-Validator to 2.0.0-dev.3.4. [KhronosGroup/glTF-Validator#158](https://github.com/KhronosGroup/glTF-Validator/pull/158)
+
 ### 2.3.10 - 2021-05-09
 
 * Update Babylon to 5.0.0-alpha.20.
