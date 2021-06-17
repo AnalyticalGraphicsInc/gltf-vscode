@@ -468,7 +468,8 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.openGlbFile', async (fileUri) => {
 
-        const uri = vscode.Uri.parse('glb:' + fileUri.fsPath);
+        const virtualTextPath = `glb:${fileUri.fsPath}.json`;
+        const uri = vscode.Uri.parse(virtualTextPath);
         const doc = await vscode.workspace.openTextDocument(uri); // calls back into the provider
         vscode.languages.setTextDocumentLanguage(doc, "json");
         await vscode.window.showTextDocument(doc, { preview: false });

@@ -13,7 +13,12 @@ export class GlbProvider implements vscode.TextDocumentContentProvider {
 
     provideTextDocumentContent(uri: vscode.Uri): string {
 
-        let data = fs.readFileSync(uri.fsPath);
+        if (!uri.fsPath.endsWith(".json")) {
+            return "fsPath must endsWith .json";
+        }
+        let fsPath = uri.fsPath.substr(0, uri.fsPath.length - 5);
+
+        let data = fs.readFileSync(fsPath);
         let offset = 0;
         if (data.readInt32LE(offset) != 0x46546C67) {
             return `not glb`;
@@ -61,7 +66,7 @@ export class GlbProvider implements vscode.TextDocumentContentProvider {
         if (binOffset && json) {
 
             // buffer access hack
-            json.buffers[0]['uri'] = path.basename(uri.fsPath);
+            json.buffers[0]['uri'] = path.basename(fsPath);
             for (let bufferView of json.bufferViews) {
                 bufferView.byteOffset += binOffset;
             }
