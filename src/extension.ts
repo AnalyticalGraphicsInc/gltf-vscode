@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer } from './utilities';
 import { GLTF2 } from './GLTF2';
 import { GltfWindow } from './gltfWindow';
-import { GlbProvider } from './glbProvider';
+import { GlbTextDocumentContentProvider } from './glbTextDocumentContentProvider';
 
 function checkValidEditor(): boolean {
     if (vscode.window.activeTextEditor === undefined) {
@@ -461,7 +461,7 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     // Virtual TextDocumentContentProvider for glb json chunk.
     //
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('glb', new GlbProvider()));
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('glb', new GlbTextDocumentContentProvider()));
 
     //
     // Open GLB with 'glb:' schema, and send GlbProvider.

@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 //
-// Virtual TextDocumentContentProvider for glb json chunk.
+// GlbTextDocumentContentProvider provide json chunk of glb.
 //
-export class GlbProvider implements vscode.TextDocumentContentProvider {
+export class GlbTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
 
     // emitter and its event
     onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
