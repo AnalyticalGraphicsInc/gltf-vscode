@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for glTF and GLB 3D models",
-    "version": "2.3.10",
+    "version": "2.3.11",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -375,14 +375,14 @@
         "yargs": "^15.4.1"
     },
     "dependencies": {
-        "babylonjs": "5.0.0-alpha.25",
-        "babylonjs-inspector": "5.0.0-alpha.25",
-        "babylonjs-loaders": "5.0.0-alpha.25",
+        "babylonjs": "5.0.0-alpha.30",
+        "babylonjs-inspector": "5.0.0-alpha.30",
+        "babylonjs-loaders": "5.0.0-alpha.30",
         "cesium": "^1.82.1",
         "draco3dgltf": "1.4.1",
         "filament": "^1.10.3",
         "gltf-import-export": "1.0.18",
-        "gltf-validator": "2.0.0-dev.3.4",
+        "gltf-validator": "2.0.0-dev.3.5",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
