@@ -22,10 +22,13 @@ function main() {
         fileNames.forEach(name => {
             var fileName = path.join(basePath, name);
             var contents = fs.readFileSync(fileName).toString();
-            contents = contents.replace(
+            var updated = contents.replace(
                 '} from \'three\';',
                 '} from \'../../../build/three.module.js\';');
-            fs.writeFileSync(fileName, contents);
+            if (updated !== contents) {
+                fs.writeFileSync(fileName, updated);
+                console.log('Patched ' + fileName);
+            }
         });
     }
 }
