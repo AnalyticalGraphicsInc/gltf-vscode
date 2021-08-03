@@ -2,6 +2,9 @@
 
 ### 2.3.12 - UNRELEASED
 
+* Update Babylon to 5.0.0-alpha.36.
+* Update Cesium to 1.84.0.
+* Update Filament to 1.11.0.
 * Update ThreeJS to r131.1.
 
 ### 2.3.11 - 2021-06-29
