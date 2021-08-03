@@ -354,12 +354,13 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "postinstall": "cd server && npm install && cd ..",
+        "postinstall": "cd server && npm install && cd .. && npm run fixThree",
         "compile": "tsc -p ./tsconfig.json && cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
         "compile:client": "tsc -p ./tsconfig.json",
         "watch:client": "tsc -w -p ./tsconfig.json",
         "compile:server": "cd server && npm run installServer && cd .. && tsc -p server/tsconfig.json",
-        "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json"
+        "watch:server": "cd server && npm run installServer && cd .. && tsc -w -p server/tsconfig.json",
+        "fixThree": "node ./util/fixThree.js ./node_modules/three"
     },
     "devDependencies": {
         "@types/mocha": "^8.0.0",
@@ -386,7 +387,7 @@
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.127.0",
+        "three": "^0.131.1",
         "vscode-languageclient": "^5.2.1"
     }
 }

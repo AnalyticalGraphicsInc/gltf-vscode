@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.3.12 - UNRELEASED
+
+* Update ThreeJS to r131.1.
+
 ### 2.3.11 - 2021-06-29
 
 * Update Babylon to 5.0.0-alpha.30.
