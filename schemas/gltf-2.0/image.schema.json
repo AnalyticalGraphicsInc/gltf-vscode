@@ -1,5 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "image.schema.json",
     "title" : "Image",
     "type" : "object",
     "description" : "Image data used to create a texture. Image **MAY** be referenced by an URI (or IRI) or a buffer view index.",
@@ -12,21 +13,17 @@
         "uri" : {
             "type" : "string",
             "description" : "The URI (or IRI) of the image.  Relative paths are relative to the current glTF asset.  Instead of referencing an external file, this field **MAY** contain a `data:`-URI. This field **MUST NOT** be defined when `bufferView` is defined.",
-            "format" : "uriref",
+            "format" : "iri-reference",
             "gltf_uriType" : "image",
             "short_description" : "The URI (or IRI) of the image."
         },
         "mimeType" : {
             "anyOf" : [
                 {
-                    "enum" : [
-                        "image/jpeg"
-                    ]
+                    "const" : "image/jpeg"
                 },
                 {
-                    "enum" : [
-                        "image/png"
-                    ]
+                    "const" : "image/png"
                 },
                 {
                     "type" : "string"

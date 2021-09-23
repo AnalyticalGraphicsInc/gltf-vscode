@@ -66,7 +66,7 @@ function transformAnyOf(data, parentDescription) {
         var numBlocks = data.length;
         for (var i = 0; i < numBlocks; ++i) {
             var block = data[i];
-            if (block.hasOwnProperty('enum')) {
+            if (block.hasOwnProperty('enum') || block.hasOwnProperty('const')) {
                 if (block.hasOwnProperty('description')) {
                     block.description += ' - ' + parentDescription;
                 }

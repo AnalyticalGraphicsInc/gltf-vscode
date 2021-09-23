@@ -1,5 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "mesh.primitive.schema.json",
     "title" : "Mesh Primitive",
     "type" : "object",
     "description" : "Geometry to be rendered with the given material.",
@@ -40,51 +41,37 @@
             "default" : 4,
             "anyOf" : [
                 {
-                    "enum" : [
-                        0
-                    ],
+                    "const" : 0,
                     "description" : "POINTS - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        1
-                    ],
+                    "const" : 1,
                     "description" : "LINES - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        2
-                    ],
+                    "const" : 2,
                     "description" : "LINE_LOOP - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        3
-                    ],
+                    "const" : 3,
                     "description" : "LINE_STRIP - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        4
-                    ],
+                    "const" : 4,
                     "description" : "TRIANGLES - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        5
-                    ],
+                    "const" : 5,
                     "description" : "TRIANGLE_STRIP - The topology type of primitives to render.",
                     "type" : "integer"
                 },
                 {
-                    "enum" : [
-                        6
-                    ],
+                    "const" : 6,
                     "description" : "TRIANGLE_FAN - The topology type of primitives to render.",
                     "type" : "integer"
                 },
