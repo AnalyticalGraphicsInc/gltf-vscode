@@ -2,7 +2,7 @@
     "$schema" : "http://json-schema.org/draft-04/schema",
     "title" : "Accessor Sparse Indices",
     "type" : "object",
-    "description" : "Indices of those attributes that deviate from their initialization value.",
+    "description" : "An object pointing to a buffer view containing the indices of deviating accessor values. The number of indices is equal to `accessor.sparse.count`. Indices **MUST** strictly increase.",
     "allOf" : [
         {
             "$ref" : "glTFProperty.schema.json"
@@ -15,16 +15,16 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of the bufferView with sparse indices. Referenced bufferView can't have ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER target."
+            "description" : "The index of the buffer view with sparse indices. The referenced buffer view **MUST NOT** have its `target` or `byteStride` properties defined. The buffer view and the optional `byteOffset` **MUST** be aligned to the `componentType` byte length."
         },
         "byteOffset" : {
             "type" : "integer",
-            "description" : "The offset relative to the start of the bufferView in bytes. Must be aligned.",
+            "description" : "The offset relative to the start of the buffer view in bytes.",
             "minimum" : 0,
             "default" : 0
         },
         "componentType" : {
-            "description" : "The indices data type.  Valid values correspond to WebGL enums: `5121` (UNSIGNED_BYTE), `5123` (UNSIGNED_SHORT), `5125` (UNSIGNED_INT).",
+            "description" : "The indices data type.",
             "anyOf" : [
                 {
                     "enum" : [
@@ -50,8 +50,7 @@
                 {
                     "type" : "integer"
                 }
-            ],
-            "short_description" : "The indices data type."
+            ]
         },
         "extensions" : {},
         "extras" : {}

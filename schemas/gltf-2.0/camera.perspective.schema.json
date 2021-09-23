@@ -11,7 +11,7 @@
     "properties" : {
         "aspectRatio" : {
             "type" : "number",
-            "description" : "The floating-point aspect ratio of the field of view. When this is undefined, the aspect ratio of the canvas is used.",
+            "description" : "The floating-point aspect ratio of the field of view. When undefined, the aspect ratio of the rendering viewport **MUST** be used.",
             "minimum" : 0,
             "exclusiveMinimum" : true,
             "short_description" : "The floating-point aspect ratio of the field of view."
@@ -24,7 +24,7 @@
         },
         "zfar" : {
             "type" : "number",
-            "description" : "The floating-point distance to the far clipping plane. When defined, `zfar` must be greater than `znear`. If `zfar` is undefined, runtime must use infinite projection matrix.",
+            "description" : "The floating-point distance to the far clipping plane. When defined, `zfar` **MUST** be greater than `znear`. If `zfar` is undefined, client implementations **SHOULD** use infinite projection matrix.",
             "minimum" : 0,
             "exclusiveMinimum" : true,
             "short_description" : "The floating-point distance to the far clipping plane."

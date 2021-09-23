@@ -30,7 +30,7 @@
         },
         "byteStride" : {
             "type" : "integer",
-            "description" : "The stride, in bytes, between vertex attributes.  When this is not defined, data is tightly packed. When two or more accessors use the same bufferView, this field must be defined.",
+            "description" : "The stride, in bytes, between vertex attributes.  When this is not defined, data is tightly packed. When two or more accessors use the same buffer view, this field **MUST** be defined.",
             "minimum" : 4,
             "maximum" : 252,
             "multipleOf" : 4,
@@ -38,21 +38,21 @@
             "short_description" : "The stride, in bytes."
         },
         "target" : {
-            "description" : "The target that the GPU buffer should be bound to.",
+            "description" : "The hint representing the intended GPU buffer type to use with this buffer view.",
             "gltf_webgl" : "`bindBuffer()`",
             "anyOf" : [
                 {
                     "enum" : [
                         34962
                     ],
-                    "description" : "ARRAY_BUFFER - The target that the GPU buffer should be bound to.",
+                    "description" : "ARRAY_BUFFER - The hint representing the intended GPU buffer type to use with this buffer view.",
                     "type" : "integer"
                 },
                 {
                     "enum" : [
                         34963
                     ],
-                    "description" : "ELEMENT_ARRAY_BUFFER - The target that the GPU buffer should be bound to.",
+                    "description" : "ELEMENT_ARRAY_BUFFER - The hint representing the intended GPU buffer type to use with this buffer view.",
                     "type" : "integer"
                 },
                 {

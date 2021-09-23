@@ -11,7 +11,7 @@
     "properties" : {
         "extensionsUsed" : {
             "type" : "array",
-            "description" : "Names of glTF extensions used somewhere in this asset.",
+            "description" : "Names of glTF extensions used in this asset.",
             "items" : {
                 "type" : "string"
             },
@@ -129,7 +129,8 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of the default scene."
+            "description" : "The index of the default scene.  This property **MUST NOT** be defined, when `scenes` is undefined.",
+            "short_description" : "The index of the default scene."
         },
         "scenes" : {
             "type" : "array",
