@@ -230,10 +230,12 @@
             "explorer/context": [
                 {
                     "command": "gltf.importGlbFile",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.validateFile",
+                    "when": "resourceExtname == .gltf",
                     "group": "glTF"
                 }
             ],
