@@ -11,16 +11,30 @@ echo "~~~ KHR_lights_punctual ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
+echo "~~~ KHR_materials_ior ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_ior/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_ior -s ../../
+echo "~~~ KHR_materials_sheen ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_sheen/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_sheen -s ../../
+echo "~~~ KHR_materials_specular ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_specular/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_specular -s ../../
+echo "~~~ KHR_materials_transmission ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_transmission -s ../../
 echo "~~~ KHR_materials_unlit ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_unlit/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_unlit -s ../../
 echo "~~~ KHR_materials_variants ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_variants/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_variants -s ../../
+echo "~~~ KHR_materials_volume ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_volume/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_volume -s ../../
+# Note that KHR_mesh_quantization does not contribute a schema, so is not listed here.
 echo "~~~ KHR_texture_basisu ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_basisu/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_basisu -s ../../
 echo "~~~ KHR_texture_transform ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_transform/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_transform -s ../../
+echo "~~~ KHR_xmp_json_ld ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_xmp_json_ld/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp_json_ld -s ../../
 
 # Archived extensions
+#
 echo "~~~ KHR_materials_pbrSpecularGlossiness (Archived) ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
 echo "~~~ KHR_techniques_webgl (Archived) ~~~"
@@ -30,16 +44,6 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 
 # PBR Next
 #
-echo "~~~ KHR_materials_transmission ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_transmission -s ../../
-echo "~~~ KHR_materials_sheen ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_sheen/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_sheen -s ../../
-echo "~~~ KHR_materials_specular ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_specular/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_specular -s ../../
-echo "~~~ KHR_materials_ior ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_ior/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_ior -s ../../
-echo "~~~ KHR_materials_volume ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_volume/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_volume -s ../../
 
 # Vendor and Multi-vendor extensions
 #

@@ -142,6 +142,13 @@
                         }
                     ]
                 },
+                "KHR_xmp_json_ld" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp_json_ld/KHR_xmp_json_ld.schema.json"
+                        }
+                    ]
+                },
                 "EXT_mesh_gpu_instancing" : {
                     "allOf" : [
                         {

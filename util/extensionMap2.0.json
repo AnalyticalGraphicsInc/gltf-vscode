@@ -6,6 +6,7 @@
             "KHR_materials_variants": "glTF.KHR_materials_variants.schema.json",
             "KHR_techniques_webgl": "glTF.KHR_techniques_webgl.schema.json",
             "KHR_xmp": "glTF.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "glTF.KHR_xmp_json_ld.schema.json",
             "EXT_lights_image_based": "glTF.EXT_lights_image_based.schema.json",
             "AGI_articulations": "gltf.AGI_articulations.schema.json",
             "AGI_stk_metadata": "gltf.AGI_stk_metadata.schema.json"
@@ -14,13 +15,15 @@
     "animation": {
         "title": "Animation Extensions",
         "extensions": {
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "asset": {
         "title": "Asset Extensions",
         "extensions": {
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "buffer": {
@@ -38,7 +41,8 @@
     "image": {
         "title": "Image Extensions",
         "extensions": {
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "material": {
@@ -52,13 +56,15 @@
             "KHR_materials_ior": "glTF.KHR_materials_ior.schema.json",
             "KHR_materials_volume": "glTF.KHR_materials_volume.schema.json",
             "KHR_materials_unlit": "glTF.KHR_materials_unlit.schema.json",
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "mesh": {
         "title": "Mesh Extensions",
         "extensions": {
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "mesh.primitive": {
@@ -73,6 +79,7 @@
         "extensions": {
             "KHR_lights_punctual": "node.KHR_lights_punctual.schema.json",
             "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json",
             "EXT_mesh_gpu_instancing": "glTF.EXT_mesh_gpu_instancing.schema.json",
             "AGI_articulations": "node.AGI_articulations.schema.json",
             "AGI_stk_metadata": "node.AGI_stk_metadata.schema.json"
@@ -82,7 +89,8 @@
         "title": "Scene Extensions",
         "extensions": {
             "EXT_lights_image_based": "scene.EXT_lights_image_based.schema.json",
-            "KHR_xmp": "node.KHR_xmp.schema.json"
+            "KHR_xmp": "node.KHR_xmp.schema.json",
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
     "texture": {

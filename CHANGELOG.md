@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.3.13 - UNRELEASED
+
+* Update glTF schema to latest (document revision 2.0.1).
+* Added JSON schema for KHR_xmp_json_ld.
+
 ### 2.3.12 - 2021-08-03
 
 * Update Babylon to 5.0.0-alpha.36.

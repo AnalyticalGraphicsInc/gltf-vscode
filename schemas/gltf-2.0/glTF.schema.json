@@ -188,6 +188,13 @@
                         }
                     ]
                 },
+                "KHR_xmp_json_ld" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp_json_ld/glTF.KHR_xmp_json_ld.schema.json"
+                        }
+                    ]
+                },
                 "EXT_lights_image_based" : {
                     "allOf" : [
                         {
