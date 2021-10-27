@@ -11,20 +11,22 @@ echo "~~~ KHR_lights_punctual ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
-echo "~~~ KHR_materials_pbrSpecularGlossiness ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
 echo "~~~ KHR_materials_unlit ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_unlit/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_unlit -s ../../
 echo "~~~ KHR_materials_variants ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_variants/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_variants -s ../../
-echo "~~~ KHR_techniques_webgl ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
 echo "~~~ KHR_texture_basisu ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_basisu/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_basisu -s ../../
 echo "~~~ KHR_texture_transform ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_texture_transform/schema -o ../schemas/gltf-2.0/extensions/KHR_texture_transform -s ../../
-echo "~~~ KHR_xmp ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
+
+# Archived extensions
+echo "~~~ KHR_materials_pbrSpecularGlossiness (Archived) ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
+echo "~~~ KHR_techniques_webgl (Archived) ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
+echo "~~~ KHR_xmp (Archived) ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
 
 # PBR Next
 #
