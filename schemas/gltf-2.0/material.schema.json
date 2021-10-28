@@ -20,6 +20,13 @@
                         }
                     ]
                 },
+                "KHR_materials_emissive_strength" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_emissive_strength/glTF.KHR_materials_emissive_strength.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_pbrSpecularGlossiness" : {
                     "allOf" : [
                         {

@@ -43,7 +43,10 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
 
 # PBR Next
+# Any extensions listed here require a particular branch to be checked out before importing.
 #
+echo "~~~ KHR_materials_emissive_strength ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
 
 # Vendor and Multi-vendor extensions
 #
