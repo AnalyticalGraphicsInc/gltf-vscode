@@ -1,0 +1,62 @@
+{
+    "$schema" : "http://json-schema.org/draft-04/schema",
+    "title" : "KHR_materials_iridescence glTF extension",
+    "type" : "object",
+    "description" : "glTF extension that defines an iridescence effect.",
+    "allOf" : [
+        {
+            "$ref" : "../../glTFProperty.schema.json"
+        }
+    ],
+    "properties" : {
+        "iridescenceFactor" : {
+            "type" : "number",
+            "description" : "",
+            "default" : 0,
+            "minimum" : 0,
+            "maximum" : 1,
+            "short_description" : "The iridescence intensity factor."
+        },
+        "iridescenceTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The iridescence intensity texture. Stored in channel R with default linear value 1.0 of the iridescence texture.",
+            "short_description" : "The iridescence intensity texture."
+        },
+        "iridescenceIOR" : {
+            "type" : "number",
+            "description" : "",
+            "default" : 1.8,
+            "minimum" : 1,
+            "short_description" : "The index of refraction of the dielectric thin-film layer."
+        },
+        "iridescenceThicknessMinimum" : {
+            "type" : "number",
+            "description" : "",
+            "default" : 400,
+            "minimum" : 0,
+            "short_description" : "The minimum thickness of the thin-film layer."
+        },
+        "iridescenceThicknessMaximum" : {
+            "type" : "number",
+            "description" : "The maximum thickness of the thin-film layer. This value will be used as the overall thickness if no iridescenceThicknessTexture is provided.",
+            "default" : 1200,
+            "minimum" : 0,
+            "short_description" : "The maximum thickness of the thin-film layer."
+        },
+        "iridescenceThicknessTexture" : {
+            "allOf" : [
+                {
+                    "$ref" : "../../textureInfo.schema.json"
+                }
+            ],
+            "description" : "The thickness texture of the thin-film layer to blend between the minimum and maximum thickness. Stored in channel G with default linear value 1.0 of the iridescence texture.",
+            "short_description" : "The thickness texture of the thin-film layer to blend between the minimum and maximum thickness."
+        },
+        "extensions" : {},
+        "extras" : {}
+    }
+}

@@ -47,6 +47,8 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 #
 echo "~~~ KHR_materials_emissive_strength ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
+echo "~~~ KHR_materials_iridescence ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_iridescence/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_iridescence -s ../../
 
 # Vendor and Multi-vendor extensions
 #
