@@ -12,7 +12,7 @@
         "packets" : {
             "type" : "array",
             "items" : {
-                "$ref" : "../../#/definitions/packet"
+                "$ref" : "#/definitions/packet"
             },
             "minItems" : 1
         },

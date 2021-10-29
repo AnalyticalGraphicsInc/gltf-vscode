@@ -158,7 +158,7 @@ function transformSharedFolder(data, options) {
     // If we find a reference to a non-existent file, change it to reference
     // the shared glTF schema folder.  Most extensions freely reference those files.
     var ref = data['$ref'];
-    if (ref && !fs.existsSync(path.join(options.outputPath, ref))) {
+    if (ref && ref[0] !== '#' && !fs.existsSync(path.join(options.outputPath, ref))) {
         data['$ref'] = options.sharedFolder + ref;
     }
 }
