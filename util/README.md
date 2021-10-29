@@ -20,6 +20,8 @@ This folder contains a NodeJS script `importSchema.js` that will read in the off
 
 * `textureInfo.description` - This particular description field is rather simplistic: `"Reference to a texture."`.  This schema object is referred to by several texture channels (`baseColorTexture`, `metallicRoughnessTexture`, `normalTexture`, `occlusionTexture`, `emissiveTexture`).  Each of these parents has its own detailed description with usage instructions, and VSCode was ignoring all that in favor of showing `Reference to a texture`.  So, `textureInfo.description` is deliberately removed from the schema, causing the more informative parent descriptions to be revealed.
 
+* `glTF Property` title and `glTF Child of Root Property` title - Both of these are removed, to allow many more descriptive titles to show through instead.  This reveals the titles of most objects (such as Node objects, Mesh objects, etc.) as well as the titles of glTF extension objects.
+
 * Whitespace - The whitespace in the schema is changed as a side-effect of parsing and re-serializing the schema in this script.
 
 # Extensions

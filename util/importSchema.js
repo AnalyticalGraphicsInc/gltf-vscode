@@ -134,6 +134,11 @@ function upgradeDescriptions(data) {
         // that overwrites more specific descriptions from the referring parents.
         // So, we remove that here, and VSCode picks up better descriptions.
         delete data.description;
+    } else if (data.title &&
+        (data.title === 'glTF Property' || data.title === 'glTF Child of Root Property')) {
+        // This "glTF Property" title overwrites glTF extension titles, and the titles
+        // shown on the brackets around such objects as Node, Mesh, Accessor, etc.
+        delete data.title;
     } else if (data.hasOwnProperty('gltf_detailedDescription')) {
         // Swap out 'description' for 'gltf_detailedDescription' as the latter
         // typically has more detailed information.
