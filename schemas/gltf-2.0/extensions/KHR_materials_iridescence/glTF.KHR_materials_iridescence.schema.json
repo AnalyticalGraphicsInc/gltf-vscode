@@ -11,11 +11,10 @@
     "properties" : {
         "iridescenceFactor" : {
             "type" : "number",
-            "description" : "",
+            "description" : "The iridescence intensity factor.",
             "default" : 0,
             "minimum" : 0,
-            "maximum" : 1,
-            "short_description" : "The iridescence intensity factor."
+            "maximum" : 1
         },
         "iridescenceTexture" : {
             "allOf" : [
@@ -28,21 +27,20 @@
         },
         "iridescenceIOR" : {
             "type" : "number",
-            "description" : "",
+            "description" : "The index of refraction of the dielectric thin-film layer.",
             "default" : 1.8,
-            "minimum" : 1,
-            "short_description" : "The index of refraction of the dielectric thin-film layer."
+            "minimum" : 1
         },
         "iridescenceThicknessMinimum" : {
             "type" : "number",
-            "description" : "",
+            "description" : "The minimum thickness of the thin-film layer given in nanometers (nm). When defined, `iridescenceThicknessMinimum` **MUST** be smaller or equal than `iridescenceThicknessMaximum`.",
             "default" : 400,
             "minimum" : 0,
             "short_description" : "The minimum thickness of the thin-film layer."
         },
         "iridescenceThicknessMaximum" : {
             "type" : "number",
-            "description" : "The maximum thickness of the thin-film layer. This value will be used as the overall thickness if no iridescenceThicknessTexture is provided.",
+            "description" : "The maximum thickness of the thin-film layer given in nanometers (nm). This value will be used as the overall thickness if no iridescenceThicknessTexture is provided.",
             "default" : 1200,
             "minimum" : 0,
             "short_description" : "The maximum thickness of the thin-film layer."
