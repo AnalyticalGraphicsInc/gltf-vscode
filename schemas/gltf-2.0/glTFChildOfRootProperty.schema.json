@@ -1,6 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "glTF Child of Root Property",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "glTFChildOfRootProperty.schema.json",
     "type" : "object",
     "allOf" : [
         {

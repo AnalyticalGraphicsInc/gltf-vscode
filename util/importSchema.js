@@ -66,7 +66,7 @@ function transformAnyOf(data, parentDescription) {
         var numBlocks = data.length;
         for (var i = 0; i < numBlocks; ++i) {
             var block = data[i];
-            if (block.hasOwnProperty('enum')) {
+            if (block.hasOwnProperty('enum') || block.hasOwnProperty('const')) {
                 if (block.hasOwnProperty('description')) {
                     block.description += ' - ' + parentDescription;
                 }
@@ -134,6 +134,11 @@ function upgradeDescriptions(data) {
         // that overwrites more specific descriptions from the referring parents.
         // So, we remove that here, and VSCode picks up better descriptions.
         delete data.description;
+    } else if (data.title &&
+        (data.title === 'glTF Property' || data.title === 'glTF Child of Root Property')) {
+        // This "glTF Property" title overwrites glTF extension titles, and the titles
+        // shown on the brackets around such objects as Node, Mesh, Accessor, etc.
+        delete data.title;
     } else if (data.hasOwnProperty('gltf_detailedDescription')) {
         // Swap out 'description' for 'gltf_detailedDescription' as the latter
         // typically has more detailed information.
@@ -158,7 +163,7 @@ function transformSharedFolder(data, options) {
     // If we find a reference to a non-existent file, change it to reference
     // the shared glTF schema folder.  Most extensions freely reference those files.
     var ref = data['$ref'];
-    if (ref && !fs.existsSync(path.join(options.outputPath, ref))) {
+    if (ref && ref[0] !== '#' && !fs.existsSync(path.join(options.outputPath, ref))) {
         data['$ref'] = options.sharedFolder + ref;
     }
 }

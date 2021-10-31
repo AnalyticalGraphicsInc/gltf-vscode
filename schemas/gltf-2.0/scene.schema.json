@@ -1,5 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "scene.schema.json",
     "title" : "Scene",
     "type" : "object",
     "description" : "The root nodes of a scene.",
@@ -32,6 +33,13 @@
                     "allOf" : [
                         {
                             "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                },
+                "KHR_xmp_json_ld" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp_json_ld/KHR_xmp_json_ld.schema.json"
                         }
                     ]
                 }

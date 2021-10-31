@@ -1,6 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "glTF Property",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "glTFProperty.schema.json",
     "type" : "object",
     "properties" : {
         "extensions" : {

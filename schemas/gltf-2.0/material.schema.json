@@ -1,5 +1,6 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "material.schema.json",
     "title" : "Material",
     "type" : "object",
     "description" : "The material appearance of a primitive.",
@@ -19,17 +20,31 @@
                         }
                     ]
                 },
+                "KHR_materials_emissive_strength" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_emissive_strength/glTF.KHR_materials_emissive_strength.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_ior" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_ior/glTF.KHR_materials_ior.schema.json"
+                        }
+                    ]
+                },
+                "KHR_materials_iridescence" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_iridescence/glTF.KHR_materials_iridescence.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_pbrSpecularGlossiness" : {
                     "allOf" : [
                         {
                             "$ref" : "extensions/KHR_materials_pbrSpecularGlossiness/glTF.KHR_materials_pbrSpecularGlossiness.schema.json"
-                        }
-                    ]
-                },
-                "KHR_materials_transmission" : {
-                    "allOf" : [
-                        {
-                            "$ref" : "extensions/KHR_materials_transmission/glTF.KHR_materials_transmission.schema.json"
                         }
                     ]
                 },
@@ -47,17 +62,10 @@
                         }
                     ]
                 },
-                "KHR_materials_ior" : {
+                "KHR_materials_transmission" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_ior/glTF.KHR_materials_ior.schema.json"
-                        }
-                    ]
-                },
-                "KHR_materials_volume" : {
-                    "allOf" : [
-                        {
-                            "$ref" : "extensions/KHR_materials_volume/glTF.KHR_materials_volume.schema.json"
+                            "$ref" : "extensions/KHR_materials_transmission/glTF.KHR_materials_transmission.schema.json"
                         }
                     ]
                 },
@@ -68,10 +76,24 @@
                         }
                     ]
                 },
+                "KHR_materials_volume" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_volume/glTF.KHR_materials_volume.schema.json"
+                        }
+                    ]
+                },
                 "KHR_xmp" : {
                     "allOf" : [
                         {
                             "$ref" : "extensions/KHR_xmp/node.KHR_xmp.schema.json"
+                        }
+                    ]
+                },
+                "KHR_xmp_json_ld" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_xmp_json_ld/KHR_xmp_json_ld.schema.json"
                         }
                     ]
                 }
@@ -84,7 +106,7 @@
                     "$ref" : "material.pbrMetallicRoughness.schema.json"
                 }
             ],
-            "description" : "A set of parameter values that are used to define the metallic-roughness material model from Physically-Based Rendering (PBR) methodology. When not specified, all the default values of `pbrMetallicRoughness` apply."
+            "description" : "A set of parameter values that are used to define the metallic-roughness material model from Physically Based Rendering (PBR) methodology. When undefined, all the default values of `pbrMetallicRoughness` **MUST** apply."
         },
         "normalTexture" : {
             "allOf" : [
@@ -92,8 +114,8 @@
                     "$ref" : "material.normalTextureInfo.schema.json"
                 }
             ],
-            "description" : "A tangent space normal map. The texture contains RGB components in linear space. Each texel represents the XYZ components of a normal vector in tangent space. Red [0 to 255] maps to X [-1 to 1]. Green [0 to 255] maps to Y [-1 to 1]. Blue [128 to 255] maps to Z [1/255 to 1]. The normal vectors use the convention +X is right and +Y is up. +Z points toward the viewer. In GLSL, this vector would be unpacked like so: `vec3 normalVector = tex2D(<sampled normal map texture value>, texCoord) * 2 - 1`. Client implementations should normalize the normal vectors before using them in lighting equations.",
-            "short_description" : "The normal map texture."
+            "description" : "The tangent space normal texture. The texture encodes RGB components with linear transfer function. Each texel represents the XYZ components of a normal vector in tangent space. The normal vectors use the convention +X is right and +Y is up. +Z points toward the viewer. If a fourth component (A) is present, it **MUST** be ignored. When undefined, the material does not have a tangent space normal texture.",
+            "short_description" : "The tangent space normal texture."
         },
         "occlusionTexture" : {
             "allOf" : [
@@ -101,8 +123,8 @@
                     "$ref" : "material.occlusionTextureInfo.schema.json"
                 }
             ],
-            "description" : "The occlusion map texture. The occlusion values are sampled from the R channel. Higher values indicate areas that should receive full indirect lighting and lower values indicate no indirect lighting. These values are linear. If other channels are present (GBA), they are ignored for occlusion calculations.",
-            "short_description" : "The occlusion map texture."
+            "description" : "The occlusion texture. The occlusion values are linearly sampled from the R channel. Higher values indicate areas that receive full indirect lighting and lower values indicate no indirect lighting. If other channels are present (GBA), they **MUST** be ignored for occlusion calculations. When undefined, the material does not have an occlusion texture.",
+            "short_description" : "The occlusion texture."
         },
         "emissiveTexture" : {
             "allOf" : [
@@ -110,8 +132,8 @@
                     "$ref" : "textureInfo.schema.json"
                 }
             ],
-            "description" : "The emissive map controls the color and intensity of the light being emitted by the material. This texture contains RGB components encoded with the sRGB transfer function. If a fourth component (A) is present, it is ignored.",
-            "short_description" : "The emissive map texture."
+            "description" : "The emissive texture. It controls the color and intensity of the light being emitted by the material. This texture contains RGB components encoded with the sRGB transfer function. If a fourth component (A) is present, it **MUST** be ignored. When undefined, the texture **MUST** be sampled as having `1.0` in RGB components.",
+            "short_description" : "The emissive texture."
         },
         "emissiveFactor" : {
             "type" : "array",
@@ -127,29 +149,23 @@
                 0,
                 0
             ],
-            "description" : "The RGB components of the emissive color of the material. These values are linear. If an emissiveTexture is specified, this value is multiplied with the texel values.",
-            "short_description" : "The emissive color of the material."
+            "description" : "The factors for the emissive color of the material. This value defines linear multipliers for the sampled texels of the emissive texture.",
+            "short_description" : "The factors for the emissive color of the material."
         },
         "alphaMode" : {
             "default" : "OPAQUE",
-            "description" : "The material's alpha rendering mode enumeration specifying the interpretation of the alpha value of the main factor and texture.",
+            "description" : "The material's alpha rendering mode enumeration specifying the interpretation of the alpha value of the base color.",
             "anyOf" : [
                 {
-                    "enum" : [
-                        "OPAQUE"
-                    ],
-                    "description" : "The alpha value is ignored and the rendered output is fully opaque. - The alpha rendering mode of the material."
+                    "const" : "OPAQUE",
+                    "description" : "The alpha value is ignored, and the rendered output is fully opaque. - The alpha rendering mode of the material."
                 },
                 {
-                    "enum" : [
-                        "MASK"
-                    ],
-                    "description" : "The rendered output is either fully opaque or fully transparent depending on the alpha value and the specified alpha cutoff value. - The alpha rendering mode of the material."
+                    "const" : "MASK",
+                    "description" : "The rendered output is either fully opaque or fully transparent depending on the alpha value and the specified `alphaCutoff` value; the exact appearance of the edges **MAY** be subject to implementation-specific techniques such as \"`Alpha-to-Coverage`\". - The alpha rendering mode of the material."
                 },
                 {
-                    "enum" : [
-                        "BLEND"
-                    ],
+                    "const" : "BLEND",
                     "description" : "The alpha value is used to composite the source and destination areas. The rendered output is combined with the background using the normal painting operation (i.e. the Porter and Duff over operator). - The alpha rendering mode of the material."
                 },
                 {
@@ -162,13 +178,13 @@
             "type" : "number",
             "minimum" : 0,
             "default" : 0.5,
-            "description" : "Specifies the cutoff threshold when in `MASK` mode. If the alpha value is greater than or equal to this value then it is rendered as fully opaque, otherwise, it is rendered as fully transparent. A value greater than 1.0 will render the entire material as fully transparent. This value is ignored for other modes.",
+            "description" : "Specifies the cutoff threshold when in `MASK` alpha mode. If the alpha value is greater than or equal to this value then it is rendered as fully opaque, otherwise, it is rendered as fully transparent. A value greater than `1.0` will render the entire material as fully transparent. This value **MUST** be ignored for other alpha modes. When `alphaMode` is not defined, this value **MUST NOT** be defined.",
             "short_description" : "The alpha cutoff value of the material."
         },
         "doubleSided" : {
             "type" : "boolean",
             "default" : false,
-            "description" : "Specifies whether the material is double sided. When this value is false, back-face culling is enabled. When this value is true, back-face culling is disabled and double sided lighting is enabled. The back-face must have its normals reversed before the lighting equation is evaluated.",
+            "description" : "Specifies whether the material is double sided. When this value is false, back-face culling is enabled. When this value is true, back-face culling is disabled and double-sided lighting is enabled. The back-face **MUST** have its normals reversed before the lighting equation is evaluated.",
             "short_description" : "Specifies whether the material is double sided."
         }
     },

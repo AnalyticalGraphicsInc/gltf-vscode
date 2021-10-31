@@ -1,8 +1,9 @@
 {
-    "$schema" : "http://json-schema.org/draft-04/schema",
+    "$schema" : "https://json-schema.org/draft/2020-12/schema",
+    "$id" : "animation.sampler.schema.json",
     "title" : "Animation Sampler",
     "type" : "object",
-    "description" : "Combines input and output accessors with an interpolation algorithm to define a keyframe graph (but not its target).",
+    "description" : "An animation sampler combines timestamps with a sequence of output values and defines an interpolation algorithm.",
     "allOf" : [
         {
             "$ref" : "glTFProperty.schema.json"
@@ -15,30 +16,24 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of an accessor containing keyframe input values, e.g., time. That accessor must have componentType `FLOAT`. The values represent time in seconds with `time[0] >= 0.0`, and strictly increasing values, i.e., `time[n + 1] > time[n]`.",
-            "short_description" : "The index of an accessor containing keyframe input values, e.g., time."
+            "description" : "The index of an accessor containing keyframe timestamps. The accessor **MUST** be of scalar type with floating-point components. The values represent time in seconds with `time[0] >= 0.0`, and strictly increasing values, i.e., `time[n + 1] > time[n]`.",
+            "short_description" : "The index of an accessor containing keyframe timestamps."
         },
         "interpolation" : {
             "description" : "Interpolation algorithm.",
             "default" : "LINEAR",
             "anyOf" : [
                 {
-                    "enum" : [
-                        "LINEAR"
-                    ],
-                    "description" : "The animated values are linearly interpolated between keyframes. When targeting a rotation, spherical linear interpolation (slerp) should be used to interpolate quaternions. The number output of elements must equal the number of input elements. - Interpolation algorithm."
+                    "const" : "LINEAR",
+                    "description" : "The animated values are linearly interpolated between keyframes. When targeting a rotation, spherical linear interpolation (slerp) **SHOULD** be used to interpolate quaternions. The number of output elements **MUST** equal the number of input elements. - Interpolation algorithm."
                 },
                 {
-                    "enum" : [
-                        "STEP"
-                    ],
-                    "description" : "The animated values remain constant to the output of the first keyframe, until the next keyframe. The number of output elements must equal the number of input elements. - Interpolation algorithm."
+                    "const" : "STEP",
+                    "description" : "The animated values remain constant to the output of the first keyframe, until the next keyframe. The number of output elements **MUST** equal the number of input elements. - Interpolation algorithm."
                 },
                 {
-                    "enum" : [
-                        "CUBICSPLINE"
-                    ],
-                    "description" : "The animation's interpolation is computed using a cubic spline with specified tangents. The number of output elements must equal three times the number of input elements. For each input element, the output stores three elements, an in-tangent, a spline vertex, and an out-tangent. There must be at least two keyframes when using this interpolation. - Interpolation algorithm."
+                    "const" : "CUBICSPLINE",
+                    "description" : "The animation's interpolation is computed using a cubic spline with specified tangents. The number of output elements **MUST** equal three times the number of input elements. For each input element, the output stores three elements, an in-tangent, a spline vertex, and an out-tangent. There **MUST** be at least two keyframes when using this interpolation. - Interpolation algorithm."
                 },
                 {
                     "type" : "string"
@@ -52,8 +47,7 @@
                     "$ref" : "glTFid.schema.json"
                 }
             ],
-            "description" : "The index of an accessor containing keyframe output values. When targeting translation or scale paths, the `accessor.componentType` of the output values must be `FLOAT`. When targeting rotation or morph weights, the `accessor.componentType` of the output values must be `FLOAT` or normalized integer. For weights, each output element stores `SCALAR` values with a count equal to the number of morph targets.",
-            "short_description" : "The index of an accessor, containing keyframe output values."
+            "description" : "The index of an accessor, containing keyframe output values."
         },
         "extensions" : {},
         "extras" : {}
