@@ -103,13 +103,16 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 }
             }
 
-            if (insert < 0) {
-                return;
-            }
-
             newJson =
                 ',' + eol +
                 space + space + '"' + extensionName + '"';
+
+            if (insert < 0) {
+                // This block only executes if "extensionsUsed" is an empty array,
+                // which is invalid glTF, but possible in the editor.
+                insert = pointers['/extensionsUsed'].value.pos + 1;
+                newJson = newJson.substring(1);
+            }
 
         } else {
             // Create a new extensionsUsed section.
