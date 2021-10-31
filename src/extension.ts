@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
+import * as Action from './gltfActionProvider';
 import * as GltfValidate from './validationProvider';
 import * as path from 'path';
 import * as Url from 'url';
@@ -361,6 +362,12 @@ export function activate(context: vscode.ExtensionContext): void {
         }
     }));
 
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider('json', new Action.GltfActionProvider(), {
+            providedCodeActionKinds: Action.GltfActionProvider.providedCodeActionKinds
+        })
+    );
+
     //
     // Preview a glTF model.
     //
@@ -485,6 +492,22 @@ export function activate(context: vscode.ExtensionContext): void {
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
+    }));
+
+    //
+    // Copy the currently-selected extension to "extensionsUsed".
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.declareExtension', (diagnostic: any) => {
+        if (!checkValidEditor()) {
+            return;
+        }
+
+        const map = tryGetJsonMap();
+        if (!map) {
+            return;
+        }
+
+        Action.GltfActionProvider.declareExtension(diagnostic, map);
     }));
 
     function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {

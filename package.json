@@ -178,6 +178,10 @@
                 "title": "glTF: Import from GLB"
             },
             {
+                "command": "gltf.declareExtension",
+                "title": "glTF: Add Extension to 'extensionsUsed'"
+            },
+            {
                 "command": "gltf.importAnimation",
                 "title": "glTF: Import animation"
             },

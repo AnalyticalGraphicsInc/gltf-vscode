@@ -4,6 +4,7 @@
 
 * Update glTF schema to latest (document revision 2.0.1).
 * Added JSON schema for KHR_materials_emissive_strength, KHR_materials_iridescence, and KHR_xmp_json_ld.
+* Added the first "Quick Fix": Add an undeclared extension to `extensionsUsed`.
 
 ### 2.3.12 - 2021-08-03
 

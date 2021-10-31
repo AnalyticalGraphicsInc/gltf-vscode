@@ -173,6 +173,8 @@ export interface JsonMap<T> {
     data: T;
     pointers: {
         [pointer: string]: {
+            key?: JsonMapPointerValue,
+            keyEnd?: JsonMapPointerValue,
             value: JsonMapPointerValue,
             valueEnd: JsonMapPointerValue
         }
