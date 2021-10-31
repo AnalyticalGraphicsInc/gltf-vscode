@@ -38,6 +38,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         const activeTextEditor = vscode.window.activeTextEditor;
         const document = activeTextEditor.document;
         let searchRange: vscode.Range;
+
+        // This could be called by the QuickFix system, or just invoked directly
+        // by a user as an editor command.  Figure out where this was invoked.
         if (diagnostic) {
             searchRange = diagnostic.range;
         } else {
@@ -48,6 +51,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             );
         }
 
+        // Next, figure out if we're on (or inside) a named extension, and
+        // what the extension name is.
         const pointers = map.pointers;
         let bestKey = '';
         for (let key of Object.keys(pointers)) {
@@ -81,6 +86,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             return;
         }
 
+        // Now we know the extension name.  Figure out if there's already
+        // an "extensionsUsed" block, create one if not, and add the extension name to it.
         const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
         const tabSize = activeTextEditor.options.tabSize as number;
         const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
