@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
-import * as Action from './gltfActionProvider';
+import { GltfActionProvider } from './gltfActionProvider';
 import * as GltfValidate from './validationProvider';
 import * as path from 'path';
 import * as Url from 'url';
@@ -363,8 +363,8 @@ export function activate(context: vscode.ExtensionContext): void {
     }));
 
     context.subscriptions.push(
-        vscode.languages.registerCodeActionsProvider('json', new Action.GltfActionProvider(), {
-            providedCodeActionKinds: Action.GltfActionProvider.providedCodeActionKinds
+        vscode.languages.registerCodeActionsProvider('json', new GltfActionProvider(), {
+            providedCodeActionKinds: GltfActionProvider.providedCodeActionKinds
         })
     );
 
@@ -507,7 +507,7 @@ export function activate(context: vscode.ExtensionContext): void {
             return;
         }
 
-        Action.GltfActionProvider.declareExtension(diagnostic, map);
+        GltfActionProvider.declareExtension(diagnostic, map);
     }));
 
     function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {
