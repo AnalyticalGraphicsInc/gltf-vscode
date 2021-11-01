@@ -404,13 +404,14 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     // Preview a glTF model.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
-        const textEditor = vscode.window.activeTextEditor;
-        if (!checkValidEditor(textEditor)) {
-            return;
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', (fileUri) => {
+        let textEditor = vscode.window.activeTextEditor;
+        if (textEditor && fileUri && (fileUri instanceof vscode.Uri) && fileUri.fsPath !== textEditor.document.uri.fsPath) {
+            // If the textEditor exists, but the fileUri points somewhere else, nevermind the active textEditor.
+            textEditor = undefined;
         }
 
-        gltfWindow.preview.openPanel(textEditor);
+        gltfWindow.preview.openPanel(textEditor, fileUri);
     }));
 
     //

@@ -233,6 +233,11 @@
         "menus": {
             "explorer/context": [
                 {
+                    "command": "gltf.previewModel",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
+                    "group": "glTF"
+                },
+                {
                     "command": "gltf.exportGlbFile",
                     "when": "resourceExtname == .gltf",
                     "group": "glTF"
@@ -288,6 +293,11 @@
                 }
             ],
             "editor/title/context": [
+                {
+                    "command": "gltf.previewModel",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
+                    "group": "glTF"
+                },
                 {
                     "command": "gltf.exportGlbFile",
                     "when": "resourceExtname == .gltf",

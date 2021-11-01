@@ -65,8 +65,8 @@ export class GltfPreview extends ContextBase {
     // 4. In the top of the Console tab of DevTools, click the pull-down
     //    and change `top` to `active-frame (index.html)`.
 
-    public openPanel(gltfEditor: vscode.TextEditor): void {
-        const gltfFilePath = gltfEditor.document.fileName;
+    public openPanel(gltfEditor: vscode.TextEditor, fileUri: vscode.Uri): void {
+        const gltfFilePath = gltfEditor ? gltfEditor.document.fileName : fileUri.fsPath;
 
         let panel = this._panels[gltfFilePath];
         if (!panel) {
@@ -106,7 +106,7 @@ export class GltfPreview extends ContextBase {
             this._panels[gltfFilePath] = panel;
         }
 
-        const gltfContent = gltfEditor.document.getText();
+        const gltfContent = gltfEditor ? gltfEditor.document.getText() : '';
         this.updatePanel(panel, gltfFilePath, gltfContent);
         panel.reveal(vscode.ViewColumn.Two);
 
@@ -145,23 +145,28 @@ export class GltfPreview extends ContextBase {
     }
 
     private updatePanel(panel: GltfPreviewPanelInfo, gltfFilePath: string, gltfContent: string): void {
-        let map: JsonMap<GLTF2.GLTF>;
-        try {
-            map = parseJsonMap(gltfContent);
-        } catch (ex) {
-            vscode.window.showErrorMessage('' + ex);
-            map = { data: { asset: { version: '2.0' } }, pointers: {} };
+        let gltfMajorVersion = 1;
+        if (!panel.textEditor) {
+            // We only support previewing glTF 2.0 straight from GLB files.
+            gltfMajorVersion = 2;
+        } else {
+            let map: JsonMap<GLTF2.GLTF>;
+            try {
+                map = parseJsonMap(gltfContent);
+            } catch (ex) {
+                vscode.window.showErrorMessage('' + ex);
+                map = { data: { asset: { version: '2.0' } }, pointers: {} };
+            }
+            panel._jsonMap = map;
+
+            const gltf = map.data;
+            if (gltf && gltf.asset && gltf.asset.version && gltf.asset.version[0] === '2') {
+                gltfMajorVersion = 2;
+            }
         }
-        panel._jsonMap = map;
 
         const gltfRootPath = this.asWebviewUriString(panel, path.dirname(gltfFilePath)) + '/';
         const gltfFileName = path.basename(gltfFilePath);
-
-        const gltf = map.data;
-        let gltfMajorVersion = 1;
-        if (gltf && gltf.asset && gltf.asset.version && gltf.asset.version[0] === '2') {
-            gltfMajorVersion = 2;
-        }
 
         panel.title = `glTF Preview [${gltfFileName}]`;
         panel.webview.html = this.formatHtml(
@@ -182,10 +187,12 @@ export class GltfPreview extends ContextBase {
     private onDidReceiveMessage(panel: GltfPreviewPanelInfo, message: any): void {
         switch (message.command) {
             case 'select': {
-                const pointer = panel._jsonMap.pointers[message.jsonPointer];
-                const document = panel.textEditor.document;
-                const range = new vscode.Range(document.positionAt(pointer.value.pos), document.positionAt(pointer.valueEnd.pos));
-                vscode.commands.executeCommand('gltf.openGltfSelection', range);
+                if (panel.textEditor) {
+                    const pointer = panel._jsonMap.pointers[message.jsonPointer];
+                    const document = panel.textEditor.document;
+                    const range = new vscode.Range(document.positionAt(pointer.value.pos), document.positionAt(pointer.valueEnd.pos));
+                    vscode.commands.executeCommand('gltf.openGltfSelection', range);
+                }
                 break;
             }
             case 'setDebugActive': {
@@ -274,6 +281,9 @@ export class GltfPreview extends ContextBase {
 
     private watchFiles(panel: GltfPreviewPanelInfo): void {
         this.unwatchFiles(panel);
+        if (!panel.textEditor) {
+            return;
+        }
 
         const document = panel.textEditor.document;
         const documentFilePath = document.fileName;
