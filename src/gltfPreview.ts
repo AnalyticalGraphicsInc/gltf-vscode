@@ -188,8 +188,8 @@ export class GltfPreview extends ContextBase {
                 vscode.commands.executeCommand('gltf.openGltfSelection', range);
                 break;
             }
-            case 'setContext': {
-                vscode.commands.executeCommand('setContext', message.name, message.value);
+            case 'setDebugActive': {
+                vscode.commands.executeCommand('setContext', 'gltfDebugActive', message.value);
                 break;
             }
             case 'showErrorMessage': {
