@@ -7,12 +7,12 @@ import * as GltfValidate from './validationProvider';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
-import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer } from './utilities';
+import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer, JsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 import { GltfWindow } from './gltfWindow';
 
-function checkValidEditor(): boolean {
-    if (vscode.window.activeTextEditor === undefined) {
+function checkValidEditor(textEditor: vscode.TextEditor): boolean {
+    if (textEditor === undefined) {
         vscode.window.showErrorMessage('Document too large (or no editor selected). ' +
             'Click \'More info\' for details via GitHub.', 'More info').then(choice => {
                 if (choice === 'More info') {
@@ -25,30 +25,30 @@ function checkValidEditor(): boolean {
     return true;
 }
 
-function pointerContains(pointer: any, selection: vscode.Selection): boolean {
-    const doc = vscode.window.activeTextEditor.document;
+function pointerContains(pointer: any, selection: vscode.Selection, textEditor: vscode.TextEditor): boolean {
+    const doc = textEditor.document;
     const range = new vscode.Range(doc.positionAt(pointer.value.pos), doc.positionAt(pointer.valueEnd.pos));
 
     return range.contains(selection);
 }
 
-function tryGetJsonMap() {
+function tryGetJsonMap(textEditor: vscode.TextEditor): JsonMap<GLTF2.GLTF> {
     try {
-        return parseJsonMap(vscode.window.activeTextEditor.document.getText());
+        return parseJsonMap(textEditor.document.getText());
     } catch (ex) {
         vscode.window.showErrorMessage('Error parsing this document.  Please make sure it is valid JSON.');
     }
     return undefined;
 }
 
-function tryGetCurrentJsonPointer(map) {
-    const selection = vscode.window.activeTextEditor.selection;
+function tryGetCurrentJsonPointer(map: JsonMap<GLTF2.GLTF>, textEditor: vscode.TextEditor): string {
+    const selection = textEditor.selection;
     const pointers = map.pointers;
 
     let bestKey: string, secondBestKey: string;
     for (let key of Object.keys(pointers)) {
         let pointer = pointers[key];
-        if (pointerContains(pointer, selection)) {
+        if (pointerContains(pointer, selection, textEditor)) {
             secondBestKey = bestKey;
             bestKey = key;
         }
@@ -65,7 +65,7 @@ function tryGetCurrentJsonPointer(map) {
     return bestKey;
 }
 
-function configurationChanged() {
+function configurationChanged(): void {
     const config = vscode.workspace.getConfiguration('glTF');
     const showToolbar3D = config.get('showToolbar3D');
 
@@ -127,20 +127,23 @@ export function activate(context: vscode.ExtensionContext): void {
 
     // Commands are registered in 2 to 3 places in the package.json file:
     // activationEvents, contributes.commands, and optionally contributes.keybindings.
+    // Also, note two different kinds: 'registerCommand' vs. 'registerTextEditorCommand'.
+    // The latter includes the selected editor and an edit context as the first 2 args.
     //
     // Inspect the contents of the current json pointer in the glTF.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.inspectData', async () => {
-        if (!checkValidEditor()) {
+        const textEditor = vscode.window.activeTextEditor;
+        if (!checkValidEditor(textEditor)) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
 
-        let jsonPointer = tryGetCurrentJsonPointer(map);
+        let jsonPointer = tryGetCurrentJsonPointer(map, textEditor);
         if (!jsonPointer) {
             return;
         }
@@ -157,7 +160,7 @@ export function activate(context: vscode.ExtensionContext): void {
             return;
         }
 
-        const fileName = vscode.window.activeTextEditor.document.fileName;
+        const fileName = textEditor.document.fileName;
 
         if (isAccessor) {
             jsonPointer = truncateJsonPointer(jsonPointer, 2);
@@ -192,29 +195,30 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     // Import a filename URI into a dataURI.
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.importUri', () => {
-        if (!checkValidEditor()) {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.importUri', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit
+    ) => {
+        if (!checkValidEditor(textEditor)) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
 
-        let bestKey = tryGetCurrentJsonPointer(map);
+        let bestKey = tryGetCurrentJsonPointer(map, textEditor);
         if (!bestKey) {
             return;
         }
 
-        const activeTextEditor = vscode.window.activeTextEditor;
         const data = getFromJsonPointer(map.data, bestKey);
         let dataUri: string = data.uri;
         if (dataUri.startsWith('data:')) {
             vscode.window.showWarningMessage('This field is already a dataURI.');
         } else {
             // Not a DataURI: Look up external reference.
-            const name = Url.resolve(activeTextEditor.document.fileName, dataUri);
+            const name = Url.resolve(textEditor.document.fileName, dataUri);
             let contents: Buffer;
             try {
                 contents = fs.readFileSync(name);
@@ -225,17 +229,15 @@ export function activate(context: vscode.ExtensionContext): void {
             dataUri = 'data:' + guessMimeType(name) + ';base64,' + btoa(contents);
             const pointer = map.pointers[bestKey + '/uri'];
 
-            activeTextEditor.edit(editBuilder => {
-                editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
-                    pointer.valueEnd.line, pointer.valueEnd.column - 1), dataUri);
-            });
+            edit.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
+                pointer.valueEnd.line, pointer.valueEnd.column - 1), dataUri);
         }
     }));
 
     //
     // Export a Data URI to a file.
     //
-    function exportToFile(filename: string, pathFilename: string, pointer, dataUri: string) {
+    function exportToFile(filename: string, pathFilename: string, pointer, dataUri: string, textEditor: vscode.TextEditor) {
         const pos = dataUri.indexOf(',');
         const fileContents = Buffer.from(dataUri.substring(pos + 1), 'base64');
 
@@ -246,29 +248,31 @@ export function activate(context: vscode.ExtensionContext): void {
             return;
         }
 
-        vscode.window.activeTextEditor.edit(editBuilder => {
+        textEditor.edit(editBuilder => {
             editBuilder.replace(new vscode.Range(pointer.value.line, pointer.value.column + 1,
                 pointer.valueEnd.line, pointer.valueEnd.column - 1), filename);
         });
         vscode.window.showInformationMessage('File saved: ' + pathFilename);
     }
 
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.exportUri', async () => {
-        if (!checkValidEditor()) {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportUri', async (
+        textEditor: vscode.TextEditor
+        // Because this is async, we can't trust the TextEditorEdit to stick around long enough.
+    ) => {
+        if (!checkValidEditor(textEditor)) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
 
-        let bestKey = tryGetCurrentJsonPointer(map);
+        let bestKey = tryGetCurrentJsonPointer(map, textEditor);
         if (!bestKey) {
             return;
         }
 
-        const activeTextEditor = vscode.window.activeTextEditor;
         const data = getFromJsonPointer(map.data, bestKey);
         let dataUri: string = data.uri;
         if (!dataUri.startsWith('data:')) {
@@ -286,7 +290,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 extension = guessFileExtension(mimeType);
                 guessName += extension;
             }
-            let pathGuessName = path.join(path.dirname(activeTextEditor.document.fileName), guessName);
+            let pathGuessName = path.join(path.dirname(textEditor.document.fileName), guessName);
 
             const pointer = map.pointers[bestKey + '/uri'];
             if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
@@ -303,11 +307,11 @@ export function activate(context: vscode.ExtensionContext): void {
                     if (extension && filename.indexOf('.') < 0) {
                         filename += extension;
                     }
-                    exportToFile(path.basename(filename), filename, pointer, dataUri);
+                    exportToFile(path.basename(filename), filename, pointer, dataUri, textEditor);
                 }
             } else {
                 // File may exist, but user says it's OK to overwrite.
-                exportToFile(guessName, pathGuessName, pointer, dataUri);
+                exportToFile(guessName, pathGuessName, pointer, dataUri, textEditor);
             }
         }
     }));
@@ -315,12 +319,48 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     // Export the whole file and its dependencies to a binary GLB file.
     //
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportGlbFile', async (te, t) => {
-        if (!checkValidEditor()) {
-            return;
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.exportGlbFile', async (fileUri) => {
+        const textEditor = vscode.window.activeTextEditor;
+        let gltfContent: string;
+        if (textEditor &&
+            ((!fileUri) || !(fileUri instanceof vscode.Uri) || fileUri.fsPath === textEditor.document.uri.fsPath)
+        ) {
+            // textEditor is valid, fileUri is either matching the editor or invalid.
+            fileUri = textEditor.document.uri;
+            gltfContent = textEditor.document.getText();
+        } else {
+            // Text file to export will need loading.
+            if ((!fileUri) || !(fileUri instanceof vscode.Uri)) {
+                // fileUri appears invalid, ask the user for a better one.
+                const options: vscode.OpenDialogOptions = {
+                    canSelectMany: false,
+                    openLabel: 'Convert to GLB',
+                    filters: {
+                        'Text glTF': ['gltf'],
+                        'All files': ['*']
+                    }
+                };
+
+                let openUri = await vscode.window.showOpenDialog(options);
+                if (openUri && openUri[0]) {
+                    fileUri = openUri[0];
+                } else {
+                    return;
+                }
+            }
+
+            // Load the JSON text from disk.
+            try {
+                if (!fs.existsSync(fileUri.fsPath)) {
+                    throw new Error('File not found.');
+                }
+                gltfContent = fs.readFileSync(fileUri.fsPath).toString();
+            } catch (ex) {
+                vscode.window.showErrorMessage('Can\'t read file: ' + fileUri.fsPath);
+                return;
+            }
         }
 
-        let gltfContent = te.document.getText();
         let gltf: GLTF2.GLTF;
         try {
             gltf = JSON.parse(gltfContent);
@@ -333,8 +373,7 @@ export function activate(context: vscode.ExtensionContext): void {
             return;
         }
 
-        let editor = vscode.window.activeTextEditor;
-        let glbPath = editor.document.uri.fsPath.replace('.gltf', '.glb');
+        let glbPath = fileUri.fsPath.replace('.gltf', '.glb');
         if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
             const options: vscode.SaveDialogOptions = {
                 defaultUri: vscode.Uri.file(glbPath),
@@ -346,7 +385,7 @@ export function activate(context: vscode.ExtensionContext): void {
             let uri = await vscode.window.showSaveDialog(options);
             if (uri !== undefined) {
                 try {
-                    ConvertToGLB(gltf, editor.document.uri.fsPath, uri.fsPath);
+                    ConvertToGLB(gltf, fileUri.fsPath, uri.fsPath);
                     vscode.window.showInformationMessage('Glb exported as: ' + uri.fsPath);
                 } catch (ex) {
                     vscode.window.showErrorMessage(ex.toString());
@@ -354,7 +393,7 @@ export function activate(context: vscode.ExtensionContext): void {
             }
         } else {
             try {
-                ConvertToGLB(gltf, editor.document.uri.fsPath, glbPath);
+                ConvertToGLB(gltf, fileUri.fsPath, glbPath);
                 vscode.window.showInformationMessage('Glb exported as: ' + glbPath);
             } catch (ex) {
                 vscode.window.showErrorMessage(ex.toString());
@@ -362,21 +401,16 @@ export function activate(context: vscode.ExtensionContext): void {
         }
     }));
 
-    context.subscriptions.push(
-        vscode.languages.registerCodeActionsProvider('json', new GltfActionProvider(), {
-            providedCodeActionKinds: GltfActionProvider.providedCodeActionKinds
-        })
-    );
-
     //
     // Preview a glTF model.
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.previewModel', () => {
-        if (!checkValidEditor()) {
+        const textEditor = vscode.window.activeTextEditor;
+        if (!checkValidEditor(textEditor)) {
             return;
         }
 
-        gltfWindow.preview.openPanel(vscode.window.activeTextEditor);
+        gltfWindow.preview.openPanel(textEditor);
     }));
 
     //
@@ -407,7 +441,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
         if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) || !fileUri.fsPath.endsWith('.glb')) {
             if ((vscode.window.activeTextEditor !== undefined) &&
-                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))) {
+                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))
+            ) {
                 fileUri = vscode.window.activeTextEditor.document.uri;
             } else {
                 const options: vscode.OpenDialogOptions = {
@@ -494,20 +529,28 @@ export function activate(context: vscode.ExtensionContext): void {
         }
     }));
 
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider('json', new GltfActionProvider(), {
+            providedCodeActionKinds: GltfActionProvider.providedCodeActionKinds
+        })
+    );
+
     //
     // Copy the currently-selected extension to "extensionsUsed".
     //
-    context.subscriptions.push(vscode.commands.registerCommand('gltf.declareExtension', (diagnostic: any) => {
-        if (!checkValidEditor()) {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.declareExtension', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
 
-        GltfActionProvider.declareExtension(diagnostic, map);
+        GltfActionProvider.declareExtension(diagnostic, map, textEditor, edit);
     }));
 
     function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {
@@ -534,23 +577,24 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     // Import an animation for editing.
     //
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.importAnimation', async (te, t) => {
-        if (!checkValidEditor()) {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.importAnimation', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit
+    ) => {
+        if (!textEditor) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
 
-        const bestKey = tryGetCurrentJsonPointer(map);
+        const bestKey = tryGetCurrentJsonPointer(map, textEditor);
         if (!bestKey) {
             return;
         }
         const glTF = map.data;
 
-        const activeTextEditor = vscode.window.activeTextEditor;
         const animationPointer = getAnimationFromJsonPointer(glTF, bestKey);
         if (!animationPointer.json) {
             return;
@@ -562,7 +606,7 @@ export function activate(context: vscode.ExtensionContext): void {
             const accessor = glTF.accessors[accessorId];
             let data: ArrayLike<number> = [];
             if (accessor !== undefined) {
-                data = getAccessorData(activeTextEditor.document.fileName, glTF, accessor);
+                data = getAccessorData(textEditor.document.fileName, glTF, accessor);
             }
             animationPointer.json.extras[`vscode_gltf_${key}`] = Array.from(data);
             animationPointer.json.extras['vscode_gltf_type'] = accessor ? accessor.type : 'SCALAR';
@@ -570,8 +614,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
         const pointer = map.pointers[animationPointer.path];
 
-        const tabSize = activeTextEditor.options.tabSize as number;
-        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const tabSize = textEditor.options.tabSize as number;
+        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         let newJson = JSON.stringify(animationPointer.json, null, space);
         const newJsonLines = newJson.split(/\n/);
         const fullTab = new Array(5).join(space);
@@ -582,30 +626,30 @@ export function activate(context: vscode.ExtensionContext): void {
 
         const newRange = new vscode.Range(pointer.value.line, pointer.value.column,
             pointer.valueEnd.line, pointer.valueEnd.column);
-        await activeTextEditor.edit(editBuilder => {
-            editBuilder.replace(newRange, newJson);
-        });
+
+        edit.replace(newRange, newJson);
     }));
 
     //
     // Export an editable animation.
     //
-    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportAnimation', async (te, t) => {
-        if (!checkValidEditor()) {
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.exportAnimation', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit
+    ) => {
+        if (!textEditor) {
             return;
         }
 
-        const map = tryGetJsonMap();
+        const map = tryGetJsonMap(textEditor);
         if (!map) {
             return;
         }
-        let bestKey = tryGetCurrentJsonPointer(map);
+        let bestKey = tryGetCurrentJsonPointer(map, textEditor);
         if (!bestKey) {
             return;
         }
 
         const glTF = map.data;
-        const activeTextEditor = vscode.window.activeTextEditor;
         const animationPointer = getAnimationFromJsonPointer(map.data, bestKey);
         if (!animationPointer.json ||
             !animationPointer.json.extras ||
@@ -656,7 +700,7 @@ export function activate(context: vscode.ExtensionContext): void {
             bufferIndex = bufferView.buffer;
         }
         const bufferJson = glTF.buffers[bufferIndex];
-        const bufferData = getBuffer(glTF, bufferIndex, activeTextEditor.document.fileName);
+        const bufferData = getBuffer(glTF, bufferIndex, textEditor.document.fileName);
         const alignedLength = (value: number) => {
             const alignValue = 4;
             if (value === 0) {
@@ -725,19 +769,17 @@ export function activate(context: vscode.ExtensionContext): void {
 
         bufferJson.uri = 'data:application/octet-stream;base64,' + finalBuffer.toString('base64');
         bufferJson.byteLength = finalBuffer.length;
-        const tabSize = activeTextEditor.options.tabSize as number;
-        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const tabSize = textEditor.options.tabSize as number;
+        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         const newJson = JSON.stringify(glTF, null, space);
+        const newRange = new vscode.Range(0, 0, textEditor.document.lineCount + 1, 0);
 
-        const newRange = new vscode.Range(0, 0, activeTextEditor.document.lineCount + 1, 0);
-        await activeTextEditor.edit(editBuilder => {
-            editBuilder.replace(newRange, newJson);
-        });
+        edit.replace(newRange, newJson);
 
-        const newMap = tryGetJsonMap();
+        const newMap = tryGetJsonMap(textEditor);
         const newPointer = newMap.pointers[animationPointer.path];
 
-        activeTextEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
+        textEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
     }));
 }
 

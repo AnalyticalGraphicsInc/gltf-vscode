@@ -34,9 +34,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         return action;
     }
 
-    public static declareExtension(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>): void {
-        const activeTextEditor = vscode.window.activeTextEditor;
-        const document = activeTextEditor.document;
+    public static declareExtension(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
+        const document = textEditor.document;
         let searchRange: vscode.Range;
 
         // This could be called by the QuickFix system, or just invoked directly
@@ -44,7 +44,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         if (diagnostic) {
             searchRange = diagnostic.range;
         } else {
-            const selection = activeTextEditor.selection;
+            const selection = textEditor.selection;
             searchRange = new vscode.Range(
                 selection.active,
                 selection.active
@@ -89,8 +89,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         // Now we know the extension name.  Figure out if there's already
         // an "extensionsUsed" block, create one if not, and add the extension name to it.
         const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = activeTextEditor.options.tabSize as number;
-        const space = activeTextEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const tabSize = textEditor.options.tabSize as number;
+        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         let insert = -1;
         let newJson: string;
 
@@ -130,8 +130,6 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 space + ']';
         }
 
-        activeTextEditor.edit(editBuilder => {
-            editBuilder.insert(document.positionAt(insert), newJson);
-        });
+        edit.insert(document.positionAt(insert), newJson);
     }
 }
