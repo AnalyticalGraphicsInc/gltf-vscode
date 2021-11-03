@@ -15,7 +15,7 @@
         "gltf-validator": "2.0.0-dev.3.5",
         "json-source-map": "0.6.1",
         "vscode-languageserver": "^5.2.1",
-        "vscode-uri": "^2.1.2"
+        "vscode-uri": "^3.0.2"
     },
     "scripts": {
         "installServer": "installServerIntoExtension .. ./package.json ./tsconfig.json",

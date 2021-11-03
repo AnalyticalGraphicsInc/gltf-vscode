@@ -366,31 +366,31 @@
         "fixThree": "node ./util/fixThree.js ./node_modules/three"
     },
     "devDependencies": {
-        "@types/mocha": "^8.0.0",
+        "@types/mocha": "^9.0.0",
         "@types/node": "^14.0.23",
         "@types/vscode": "^1.47.0",
         "@typescript-eslint/eslint-plugin": "^3.6.1",
         "@typescript-eslint/parser": "^3.6.1",
-        "ajv": "^6.12.3",
+        "ajv": "^8.6.3",
         "eslint": "^7.5.0",
         "eslint-plugin-html": "^6.0.2",
-        "mocha": "^8.1.1",
-        "typescript": "^3.9.7",
-        "yargs": "^15.4.1"
+        "mocha": "^9.1.3",
+        "typescript": "^4.4.4",
+        "yargs": "^17.2.1"
     },
     "dependencies": {
-        "babylonjs": "5.0.0-alpha.36",
-        "babylonjs-inspector": "5.0.0-alpha.36",
-        "babylonjs-loaders": "5.0.0-alpha.36",
-        "cesium": "^1.84.0",
-        "draco3dgltf": "1.4.1",
-        "filament": "^1.11.0",
+        "babylonjs": "5.0.0-alpha.60",
+        "babylonjs-inspector": "5.0.0-alpha.60",
+        "babylonjs-loaders": "5.0.0-alpha.60",
+        "cesium": "^1.87.0",
+        "draco3dgltf": "1.4.3",
+        "filament": "^1.12.11",
         "gltf-import-export": "1.0.18",
         "gltf-validator": "2.0.0-dev.3.5",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.131.1",
+        "three": "^0.134.0",
         "vscode-languageclient": "^5.2.1"
     }
 }
