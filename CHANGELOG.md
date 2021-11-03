@@ -7,7 +7,9 @@
 * Added the first "Quick Fix": Add an undeclared extension to `extensionsUsed`. [#227](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/227)
 * Changed when certain commands appear in certain menus. [#228](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/228)
 * Import (convert .glb to .gltf) and export (convert .gltf to .glb) are now available from VSCode's file explorer window context menu. Included in [#228](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/228)
+* Update Babylon to 5.0.0-alpha.60.
 * Update Cesium to 1.87.
+* Update Draco decoder to 1.4.3.
 * Update Filament to 1.12.11.
 * Update ThreeJS to r134.
 
