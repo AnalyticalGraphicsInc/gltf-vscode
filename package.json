@@ -233,11 +233,18 @@
         "menus": {
             "explorer/context": [
                 {
+                    "command": "gltf.exportGlbFile",
+                    "when": "resourceExtname == .gltf",
+                    "group": "glTF"
+                },
+                {
                     "command": "gltf.importGlbFile",
+                    "when": "resourceExtname == .glb",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.validateFile",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
                     "group": "glTF"
                 }
             ],
@@ -249,6 +256,16 @@
                 },
                 {
                     "command": "gltf.inspectData",
+                    "when": "gltfFileActive",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.importUri",
+                    "when": "gltfFileActive",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.exportUri",
                     "when": "gltfFileActive",
                     "group": "glTF"
                 }
@@ -272,36 +289,18 @@
             ],
             "editor/title/context": [
                 {
-                    "command": "gltf.previewModel",
-                    "when": "gltfFileActive",
-                    "group": "glTF"
-                },
-                {
-                    "command": "gltf.inspectData",
-                    "when": "gltfFileActive",
-                    "group": "glTF"
-                },
-                {
-                    "command": "gltf.importUri",
-                    "when": "gltfFileActive",
-                    "group": "glTF"
-                },
-                {
-                    "command": "gltf.exportUri",
-                    "when": "gltfFileActive",
-                    "group": "glTF"
-                },
-                {
                     "command": "gltf.exportGlbFile",
-                    "when": "gltfFileActive",
+                    "when": "resourceExtname == .gltf",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.importGlbFile",
+                    "when": "resourceExtname == .glb",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.validateFile",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
                     "group": "glTF"
                 }
             ],

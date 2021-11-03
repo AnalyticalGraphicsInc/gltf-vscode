@@ -5,6 +5,8 @@
 * Update glTF schema to latest (document revision 2.0.1). [#226](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/226)
 * Added JSON schema for KHR_materials_emissive_strength, KHR_materials_iridescence, and KHR_xmp_json_ld. Included in [#226](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/226)
 * Added the first "Quick Fix": Add an undeclared extension to `extensionsUsed`. [#227](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/227)
+* Changed when certain commands appear in certain menus. [#228](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/228)
+* Import (convert .glb to .gltf) and export (convert .gltf to .glb) are now available from VSCode's file explorer window context menu. Included in [#228](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/228)
 
 ### 2.3.12 - 2021-08-03
 
