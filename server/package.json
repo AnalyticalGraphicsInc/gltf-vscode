@@ -1,7 +1,7 @@
 {
     "name": "gltf-language-server",
     "description": "glTF Language Server",
-    "version": "2.3.12",
+    "version": "2.3.13",
     "author": "Analytical Graphics, Inc. and outside contributors",
     "license": "Apache-2.0",
     "engines": {

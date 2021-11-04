@@ -19,7 +19,7 @@ node_modules/cesium/Build/Cesium/Assets/approx*
 node_modules/cesium/Build/Cesium/ThirdParty/*oog*
 node_modules/cesium/Build/Cesium/Widgets/**
 node_modules/cesium/Build/Cesium/Workers/*eometry*
-node_modules/cesium/Build/Cesium/Workers/*ans*
+node_modules/cesium/Build/Cesium/Workers/Transforms*
 node_modules/cesium/Build/Cesium/Workers/*oog*
 node_modules/cesium/Build/CesiumUnminified/**
 node_modules/cesium/Source/**
