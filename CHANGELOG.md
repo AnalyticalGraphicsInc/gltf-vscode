@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.13 - UNRELEASED
+### 2.3.13 - 2021-11-03
 
 * Update glTF schema to latest (document revision 2.0.1). [#226](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/226)
 * Added JSON schema for KHR_materials_emissive_strength, KHR_materials_iridescence, and KHR_xmp_json_ld. Included in [#226](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/226)
