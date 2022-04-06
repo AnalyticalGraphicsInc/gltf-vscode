@@ -2,6 +2,7 @@
 
 ### 2.3.14 - UNRELEASED
 
+* Added a "Preview Report..." option to manual glTF validation requests, opening the report's contents in an unsaved text editor window. [#239](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/239)
 * Update Babylon to 5.0.4.
 * Update Cesium to 1.92.0.
 * Update Draco decoder to 1.5.2.
