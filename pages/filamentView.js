@@ -221,7 +221,7 @@ export class FilamentView {
 
         // Check if Filament has already been through "init".  Don't init twice, even
         // if the user switches to another engine tab and back again.
-        if (typeof Filament !== 'object') {
+        if (!Filament.initialized) {
             Filament.init([this.ibl_url, this.sky_url], () => {
                 this._start(canvas);
             });

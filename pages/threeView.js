@@ -95,7 +95,7 @@ export class ThreeView {
                 pmremGenerator.compileEquirectangularShader();
 
                 new RGBELoader()
-                    .setDataType(THREE.UnsignedByteType)
+                    .setDataType(THREE.HalfFloatType)
                     .load(envPath, (texture) => {
                         envMap = pmremGenerator.fromEquirectangular(texture).texture;
                         pmremGenerator.dispose();

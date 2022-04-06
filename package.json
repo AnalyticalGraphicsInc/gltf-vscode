@@ -379,18 +379,18 @@
         "yargs": "^17.2.1"
     },
     "dependencies": {
-        "babylonjs": "5.0.0-alpha.60",
-        "babylonjs-inspector": "5.0.0-alpha.60",
-        "babylonjs-loaders": "5.0.0-alpha.60",
-        "cesium": "^1.87.0",
-        "draco3dgltf": "1.4.3",
-        "filament": "^1.12.11",
+        "babylonjs": "5.0.4",
+        "babylonjs-inspector": "5.0.4",
+        "babylonjs-loaders": "5.0.4",
+        "cesium": "^1.92.0",
+        "draco3dgltf": "1.5.2",
+        "filament": "^1.21.0",
         "gltf-import-export": "1.0.18",
         "gltf-validator": "2.0.0-dev.3.5",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.134.0",
+        "three": "^0.139.2",
         "vscode-languageclient": "^5.2.1"
     }
 }
