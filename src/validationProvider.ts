@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as gltfValidator from 'gltf-validator';
 
+const PreviewReport = 'Preview Report...';
 const SaveReportAs = 'Save Report As...';
 const OverwriteReport = 'Save report.json';
 
@@ -67,50 +68,63 @@ export async function validate(sourceFilename: string): Promise<void> {
     if (result.issues.numErrors > 0 && result.issues.numWarnings > 0) {
         userChoicePromise = vscode.window.showErrorMessage('glTF Validator found ' +
             messageLabel(result.issues.numErrors, 'errors') + ' and ' +
-            messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
+            messageLabel(result.issues.numWarnings, 'warnings.'), PreviewReport, SaveReport);
     } else if (result.issues.numErrors > 0) {
         userChoicePromise = vscode.window.showErrorMessage('glTF Validator found ' +
-            messageLabel(result.issues.numErrors, 'errors.'), SaveReport);
+            messageLabel(result.issues.numErrors, 'errors.'), PreviewReport, SaveReport);
     } else if (result.issues.numWarnings > 0) {
         userChoicePromise = vscode.window.showWarningMessage('glTF Validator found ' +
-            messageLabel(result.issues.numWarnings, 'warnings.'), SaveReport);
+            messageLabel(result.issues.numWarnings, 'warnings.'), PreviewReport, SaveReport);
     } else if (result.issues.numInfos > 0) {
-        userChoicePromise = vscode.window.showWarningMessage('glTF Validator added information to its report.', SaveReport);
+        userChoicePromise = vscode.window.showWarningMessage('glTF Validator added information to its report.', PreviewReport, SaveReport);
     } else {
-        userChoicePromise = vscode.window.showInformationMessage('glTF Validator: Passed \u2714', SaveReport);
+        userChoicePromise = vscode.window.showInformationMessage('glTF Validator: Passed \u2714', PreviewReport, SaveReport);
     }
+
     let userChoice = await userChoicePromise;
-    if (userChoice !== SaveReport) {
-        return;
-    }
-
-    // Compose a target filename
-    let targetFilename = sourceFilename;
-    if (path.extname(targetFilename).length > 1) {
-        let components = targetFilename.split('.');
-        components.pop();
-        targetFilename = components.join('.');
-    }
-    targetFilename += '_report.json';
-
-    if (useSaveAs) {
-        const options: vscode.SaveDialogOptions = {
-            defaultUri: vscode.Uri.file(targetFilename),
-            filters: {
-                'JSON': ['json'],
-                'All files': ['*']
-            }
-        };
-        let uri = await vscode.window.showSaveDialog(options);
-        if (!uri) {
-            return;
+    if (userChoice === PreviewReport) {
+        const textEditor = vscode.window.activeTextEditor;
+        let space = '    ';
+        if (textEditor) {
+            const tabSize = textEditor.options.tabSize as number;
+            space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
         }
-        targetFilename = uri.fsPath;
+        let reportString = JSON.stringify(result, null, space);
+        vscode.workspace.openTextDocument({
+            content: reportString,
+            language: "json"
+        }).then(document => vscode.window.showTextDocument(document));
     }
 
-    // write out the final GLTF json and open.
-    let reportString = JSON.stringify(result, null, '    ');
-    fs.writeFileSync(targetFilename, reportString, 'utf8');
+    if (userChoice === SaveReport) {
+        // Compose a target filename
+        let targetFilename = sourceFilename;
+        if (path.extname(targetFilename).length > 1) {
+            let components = targetFilename.split('.');
+            components.pop();
+            targetFilename = components.join('.');
+        }
+        targetFilename += '_report.json';
 
-    vscode.commands.executeCommand('vscode.open', vscode.Uri.file(targetFilename));
+        if (useSaveAs) {
+            const options: vscode.SaveDialogOptions = {
+                defaultUri: vscode.Uri.file(targetFilename),
+                filters: {
+                    'JSON': ['json'],
+                    'All files': ['*']
+                }
+            };
+            let uri = await vscode.window.showSaveDialog(options);
+            if (!uri) {
+                return;
+            }
+            targetFilename = uri.fsPath;
+        }
+
+        // write out the final GLTF json and open.
+        let reportString = JSON.stringify(result, null, '    ');
+        fs.writeFileSync(targetFilename, reportString, 'utf8');
+
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.file(targetFilename));
+    }
 }
