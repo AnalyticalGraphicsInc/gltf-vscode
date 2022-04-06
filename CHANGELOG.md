@@ -1,5 +1,13 @@
 # Change Log
 
+### 2.3.14 - UNRELEASED
+
+* Update Babylon to 5.0.4.
+* Update Cesium to 1.92.0.
+* Update Draco decoder to 1.5.2.
+* Update Filament to 1.21.0.
+* Update ThreeJS to r139.2.
+
 ### 2.3.13 - 2021-11-03
 
 * Update glTF schema to latest (document revision 2.0.1). [#226](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/226)
