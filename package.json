@@ -182,6 +182,10 @@
                 "title": "glTF: Add Extension to 'extensionsUsed'"
             },
             {
+                "command": "gltf.addBufferViewTarget",
+                "title": "glTF: Add a target to the bufferView based on attribute type"
+            },
+            {
                 "command": "gltf.importAnimation",
                 "title": "glTF: Import animation"
             },

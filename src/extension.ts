@@ -553,6 +553,24 @@ export function activate(context: vscode.ExtensionContext): void {
         GltfActionProvider.declareExtension(diagnostic, map, textEditor, edit);
     }));
 
+    //
+    // Add a target to the bufferView based on attribute type.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.addBufferViewTarget', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
+            return;
+        }
+
+        const map = tryGetJsonMap(textEditor);
+        if (!map) {
+            return;
+        }
+
+        GltfActionProvider.addBufferViewTarget(diagnostic, map, textEditor, edit);
+    }));
+
     function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {
         let inAnimation = false;
         let inSampler = false;

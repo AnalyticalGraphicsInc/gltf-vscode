@@ -6,7 +6,9 @@ import { GLTF2 } from './GLTF2';
 
 const GLTF_VALIDATOR = 'glTF Validator';
 const UNDECLARED_EXTENSION = 'UNDECLARED_EXTENSION';
+const BUFFER_VIEW_TARGET_MISSING = 'BUFFER_VIEW_TARGET_MISSING';
 const ADD_EXTENSION = 'Add Extension to \'extensionsUsed\'';
+const ADD_BUFFER_VIEW_TARGET = 'Add bufferView.target';
 
 export class GltfActionProvider implements vscode.CodeActionProvider {
 
@@ -14,11 +16,27 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         vscode.CodeActionKind.QuickFix
     ];
 
+    public static readonly supportedCodes = [
+        UNDECLARED_EXTENSION,
+        BUFFER_VIEW_TARGET_MISSING
+    ];
+
     provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.CodeAction[] {
         // for each diagnostic entry that has the matching `code`, create a code action command
         return context.diagnostics
-            .filter(diagnostic => diagnostic.source === GLTF_VALIDATOR && diagnostic.code === UNDECLARED_EXTENSION)
-            .map(diagnostic => this.createCommandDeclareExtension(diagnostic));
+            .filter(diagnostic => diagnostic.source === GLTF_VALIDATOR && GltfActionProvider.supportedCodes.indexOf(diagnostic.code.toString()) >= 0)
+            .map(diagnostic => this.createCommandFromDiagnostic(diagnostic));
+    }
+
+    private createCommandFromDiagnostic(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+        switch (diagnostic.code) {
+            case UNDECLARED_EXTENSION:
+                return this.createCommandDeclareExtension(diagnostic);
+            case BUFFER_VIEW_TARGET_MISSING:
+                return this.createCommandAddTarget(diagnostic);
+            default:
+                throw new Error("Invalid diagnostic code.");
+        }
     }
 
     private createCommandDeclareExtension(diagnostic: vscode.Diagnostic): vscode.CodeAction {
@@ -128,6 +146,81 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 space + '"extensionsUsed": [' + eol +
                 space + space + '"' + extensionName + '"' + eol +
                 space + ']';
+        }
+
+        edit.insert(document.positionAt(insert), newJson);
+    }
+
+    private createCommandAddTarget(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+        const action = new vscode.CodeAction(ADD_BUFFER_VIEW_TARGET, vscode.CodeActionKind.QuickFix);
+        action.command = {
+            command: 'gltf.addBufferViewTarget',
+            arguments: [diagnostic],
+            title: ADD_BUFFER_VIEW_TARGET,
+            tooltip: 'Add a target to the bufferView based on attribute type.'
+        };
+        action.diagnostics = [diagnostic];
+        action.isPreferred = true;
+        return action;
+    }
+
+    public static addBufferViewTarget(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
+        const document = textEditor.document;
+        let searchRange: vscode.Range;
+
+        // This could be called by the QuickFix system, or just invoked directly
+        // by a user as an editor command.  Figure out where this was invoked.
+        if (diagnostic) {
+            searchRange = diagnostic.range;
+        } else {
+            const selection = textEditor.selection;
+            searchRange = new vscode.Range(
+                selection.active,
+                selection.active
+            );
+        }
+
+        // Next, figure out if we're on (or inside) a mesh primitive, and
+        // what the related accessor is.
+        const pointers = map.pointers;
+        let bestKey = '';
+        for (let key of Object.keys(pointers)) {
+            let pointer = pointers[key];
+
+            if (pointer.key) {
+                const range = new vscode.Range(
+                    document.positionAt(pointer.key.pos),
+                    document.positionAt(pointer.valueEnd.pos)
+                );
+
+                if (range.contains(searchRange)) {
+                    bestKey = key;
+                }
+            }
+        }
+
+        if (bestKey.indexOf('primitives') < 0) {
+            return;
+        }
+
+        let accessorId : any = map.data;
+        bestKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
+
+        let bufferViewId = map.data.accessors[accessorId].bufferView;
+        let bufferViewKey = '/bufferViews/' + bufferViewId;
+        let bufferViewPointer = map.pointers[bufferViewKey];
+
+        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
+        const tabSize = textEditor.options.tabSize as number;
+        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        let insert = bufferViewPointer.value.pos + 1;
+        let newJson: string;
+
+        if (bestKey.endsWith('/indices')) {
+            newJson = eol + space + space + space + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
+        } else {
+            newJson = eol + space + space + space + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
         }
 
         edit.insert(document.positionAt(insert), newJson);
