@@ -8,6 +8,7 @@
 * Update Draco decoder to 1.5.2.
 * Update Filament to 1.21.0.
 * Update ThreeJS to r139.2.
+* Update Khronos glTF-Validator to 2.0.0-dev.3.6. [KhronosGroup/glTF-Validator#179](https://github.com/KhronosGroup/glTF-Validator/pull/179)
 
 ### 2.3.13 - 2021-11-03
 

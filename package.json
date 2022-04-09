@@ -386,7 +386,7 @@
         "draco3dgltf": "1.5.2",
         "filament": "^1.21.0",
         "gltf-import-export": "1.0.18",
-        "gltf-validator": "2.0.0-dev.3.5",
+        "gltf-validator": "2.0.0-dev.3.6",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
