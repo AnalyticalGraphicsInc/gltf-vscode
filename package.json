@@ -186,6 +186,10 @@
                 "title": "glTF: Add a target to the bufferView based on attribute type"
             },
             {
+                "command": "gltf.clearUnusedJoints",
+                "title": "glTF: Clear Joint IDs with zero weight"
+            },
+            {
                 "command": "gltf.importAnimation",
                 "title": "glTF: Import animation"
             },

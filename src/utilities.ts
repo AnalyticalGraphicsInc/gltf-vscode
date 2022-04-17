@@ -133,6 +133,29 @@ export function getAccessorElement(data: ArrayLike<number>, elementIndex: number
     return values;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function setAccessorElement(data: any, elementIndex: number, numComponents: number, componentType: GLTF2.AccessorComponentType, normalized: boolean, values: ArrayLike<number>): void {
+    const denormalize = (value: number): number => {
+        switch (componentType) {
+            case GLTF2.AccessorComponentType.BYTE: return Math.round(value * 127.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_BYTE: return Math.round(value * 255.0);
+            case GLTF2.AccessorComponentType.SHORT: return Math.round(value * 32767.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_SHORT: return Math.round(value * 65535.0);
+        }
+
+        return value;
+    };
+
+    if (values.length !== numComponents) {
+        throw new Error("Supplied values must equal numComponents.");
+    }
+    const startIndex = elementIndex * numComponents;
+    for (let index = 0; index < numComponents; index++) {
+        const value = values[index];
+        data[startIndex + index] = normalized ? denormalize(value) : value;
+    }
+}
+
 const gltfMimeTypes: any = {
     'image/png' : ['png'],
     'image/jpeg' : ['jpg', 'jpeg'],

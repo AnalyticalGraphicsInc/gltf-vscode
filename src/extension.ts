@@ -571,6 +571,24 @@ export function activate(context: vscode.ExtensionContext): void {
         GltfActionProvider.addBufferViewTarget(diagnostic, map, textEditor, edit);
     }));
 
+    //
+    // Clear all Joint IDs with zero weight.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.clearUnusedJoints', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
+            return;
+        }
+
+        const map = tryGetJsonMap(textEditor);
+        if (!map) {
+            return;
+        }
+
+        GltfActionProvider.clearUnusedJoints(diagnostic, map, textEditor, edit);
+    }));
+
     function getAnimationFromJsonPointer(glTF, jsonPointer: string): { json: any, path: string } {
         let inAnimation = false;
         let inSampler = false;
