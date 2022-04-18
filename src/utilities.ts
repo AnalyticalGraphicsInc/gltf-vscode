@@ -22,13 +22,8 @@ export const AccessorTypeToNumComponents = {
 };
 
 export function getFromJsonPointer(glTF: GLTF2.GLTF, jsonPointer: string): any {
-    const jsonPointerSplit = jsonPointer.split('/');
-    const numPointerSegments = jsonPointerSplit.length;
-    let result = glTF;
-    const firstValidIndex = 1; // Because the path has a leading slash.
-    for (let i = firstValidIndex; i < numPointerSegments; ++i) {
-        result = result[jsonPointerSplit[i]];
-    }
+    let result: any = glTF;
+    jsonPointer.split('/').slice(1).forEach(element => result = result[element]);
     return result;
 }
 

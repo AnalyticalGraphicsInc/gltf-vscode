@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
-import { JsonMap, getAccessorData, getAccessorElement, setAccessorElement } from './utilities';
+import { JsonMap, getFromJsonPointer, getAccessorData, getAccessorElement, setAccessorElement } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 // This file offers "Quick Fixes" for select validation issues.
@@ -62,26 +62,12 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         }
     }
 
-    private createCommandDeclareExtension(diagnostic: vscode.Diagnostic): vscode.CodeAction {
-        const action = new vscode.CodeAction(ADD_EXTENSION, vscode.CodeActionKind.QuickFix);
-        action.command = {
-            command: 'gltf.declareExtension',
-            arguments: [diagnostic],
-            title: ADD_EXTENSION,
-            tooltip: 'Add this extension to the extensionsUsed array.'
-        };
-        action.diagnostics = [diagnostic];
-        action.isPreferred = true;
-        return action;
-    }
-
-    public static declareExtension(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
-        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
-        const document = textEditor.document;
-        let searchRange: vscode.Range;
-
+    private static getBestKeyFromDiagnostic(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor): string {
         // This could be called by the QuickFix system, or just invoked directly
         // by a user as an editor command.  Figure out where this was invoked.
+        const document = textEditor.document;
+        let searchRange: vscode.Range;
         if (diagnostic) {
             searchRange = diagnostic.range;
         } else {
@@ -92,8 +78,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             );
         }
 
-        // Next, figure out if we're on (or inside) a named extension, and
-        // what the extension name is.
+        // The last pointer in the list matching the range has the "best" (most specific) key.
         const pointers = map.pointers;
         let bestKey = '';
         for (let key of Object.keys(pointers)) {
@@ -111,6 +96,27 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             }
         }
 
+        return bestKey;
+    }
+
+    private createCommandDeclareExtension(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+        const action = new vscode.CodeAction(ADD_EXTENSION, vscode.CodeActionKind.QuickFix);
+        action.command = {
+            command: 'gltf.declareExtension',
+            arguments: [diagnostic],
+            title: ADD_EXTENSION,
+            tooltip: 'Add this extension to the extensionsUsed array.'
+        };
+        action.diagnostics = [diagnostic];
+        action.isPreferred = true;
+        return action;
+    }
+
+    public static declareExtension(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
+        const document = textEditor.document;
+        const pointers = map.pointers;
+        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
         let pos = bestKey.lastIndexOf('/extensions/');
         if (pos < 0) {
             return;
@@ -190,38 +196,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
     public static addBufferViewTarget(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
         const document = textEditor.document;
-        let searchRange: vscode.Range;
-
-        // This could be called by the QuickFix system, or just invoked directly
-        // by a user as an editor command.  Figure out where this was invoked.
-        if (diagnostic) {
-            searchRange = diagnostic.range;
-        } else {
-            const selection = textEditor.selection;
-            searchRange = new vscode.Range(
-                selection.active,
-                selection.active
-            );
-        }
-
-        // Next, figure out if we're on (or inside) a mesh primitive, and
-        // what the related accessor is.
-        const pointers = map.pointers;
-        let bestKey = '';
-        for (let key of Object.keys(pointers)) {
-            let pointer = pointers[key];
-
-            if (pointer.key) {
-                const range = new vscode.Range(
-                    document.positionAt(pointer.key.pos),
-                    document.positionAt(pointer.valueEnd.pos)
-                );
-
-                if (range.contains(searchRange)) {
-                    bestKey = key;
-                }
-            }
-        }
+        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('primitives') < 0) {
             return;
@@ -262,52 +237,19 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         return action;
     }
 
-    public static clearUnusedJoints(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
-        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
-        const document = textEditor.document;
-        let searchRange: vscode.Range;
-
-        // This could be called by the QuickFix system, or just invoked directly
-        // by a user as an editor command.  Figure out where this was invoked.
-        if (diagnostic) {
-            searchRange = diagnostic.range;
-        } else {
-            const selection = textEditor.selection;
-            searchRange = new vscode.Range(
-                selection.active,
-                selection.active
-            );
-        }
-
-        // Next, figure out if we're on (or inside) a mesh primitive's
-        // JOINTS_0 attribute, and what the related accessor is.
+    public static async clearUnusedJoints(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): Promise<void> {
         const pointers = map.pointers;
-        let bestKey = '';
-        for (let key of Object.keys(pointers)) {
-            let pointer = pointers[key];
-
-            if (pointer.key) {
-                const range = new vscode.Range(
-                    document.positionAt(pointer.key.pos),
-                    document.positionAt(pointer.valueEnd.pos)
-                );
-
-                if (range.contains(searchRange)) {
-                    bestKey = key;
-                }
-            }
-        }
+        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('/attributes/JOINTS') < 0) {
-            return;
+            throw new Error("This command should be used on a mesh primitive attribute JOINTS_*");
         }
 
         let gltf = map.data;
         let fileName = textEditor.document.fileName;
 
-        let accessorId : any = map.data;
-        bestKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
-
+        let accessorId = getFromJsonPointer(gltf, bestKey);
         let jointsAccessor = map.data.accessors[accessorId];
 
         let weightsKey = bestKey.replace('/JOINTS_', '/WEIGHTS_');
@@ -366,12 +308,36 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         let updatedBuffer = (jointsData as any).buffer as ArrayBuffer;
 
-        let outName = decodeURI(Url.resolve(fileName, 'ed_test_1.bin'));
-        fs.writeFileSync(outName, Buffer.from(updatedBuffer));
-
         let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
         let bufferId = jointsBufferView.buffer;
         let bufferKey = '/buffers/' + bufferId + '/uri';
+        let defaultName = 'data_patch_1';
+        if (pointers.hasOwnProperty(bufferKey)) {
+            const pointer = pointers[bufferKey];
+            defaultName = JSON.parse(textEditor.document.getText().substring(
+                pointer.value.pos, pointer.valueEnd.pos));
+            let patchNum = 1;
+            if (/_patch[0-9]+\.bin$/i.test(defaultName)) {
+                let pos = defaultName.lastIndexOf('_patch');
+                patchNum = parseInt(defaultName.substring(pos + 6), 10) + 1;
+                defaultName = defaultName.replace(/_patch[0-9]+\.bin$/i, '_patch' + patchNum + '.bin');
+            } else {
+                defaultName = defaultName.replace(/\.bin$/i, '_patch' + patchNum + '.bin');
+            }
+        }
+
+        defaultName = decodeURI(Url.resolve(fileName, defaultName));
+        const saveOptions: vscode.SaveDialogOptions = {
+            defaultUri: vscode.Uri.file(defaultName),
+            filters: {
+                'Binary Data': ['bin'],
+                'All files': ['*']
+            }
+        };
+        let uri = await vscode.window.showSaveDialog(saveOptions);
+        if (uri !== undefined) {
+            fs.writeFileSync(uri.fsPath, Buffer.from(updatedBuffer));
+        }
 
         let x = 42;
 
