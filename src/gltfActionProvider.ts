@@ -255,7 +255,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             command: 'gltf.clearUnusedJoints',
             arguments: [diagnostic],
             title: CLEAR_UNUSED_JOINTS,
-            tooltip: 'Clear all Joint IDs with zero weight.'
+            tooltip: 'Clear all Joint IDs in this accessor with zero weight.'
         };
         action.diagnostics = [diagnostic];
         action.isPreferred = true;
@@ -309,9 +309,6 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         bestKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
 
         let jointsAccessor = map.data.accessors[accessorId];
-        let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
-        let bufferId = jointsBufferView.buffer;
-        let bufferKey = '/buffers/' + bufferId;
 
         let weightsKey = bestKey.replace('/JOINTS_', '/WEIGHTS_');
         if (weightsKey === bestKey) {
@@ -321,7 +318,6 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         weightsKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
 
         let weightsAccessor = map.data.accessors[accessorId];
-        let weightsBufferView = map.data.bufferViews[weightsAccessor.bufferView];
 
         //////////////////
         //////////////////
@@ -367,6 +363,17 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                     jointsAccessor.componentType, jointsAccessor.normalized, jointsValues);
             }
         }
+
+        let updatedBuffer = (jointsData as any).buffer as ArrayBuffer;
+
+        let outName = decodeURI(Url.resolve(fileName, 'ed_test_1.bin'));
+        fs.writeFileSync(outName, Buffer.from(updatedBuffer));
+
+        let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
+        let bufferId = jointsBufferView.buffer;
+        let bufferKey = '/buffers/' + bufferId + '/uri';
+
+        let x = 42;
 
         //////////////////
         //////////////////
