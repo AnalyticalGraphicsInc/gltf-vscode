@@ -536,7 +536,7 @@ export function activate(context: vscode.ExtensionContext): void {
     );
 
     //
-    // Copy the currently-selected extension to "extensionsUsed".
+    // Quick Fix: Copy the currently-selected extension to "extensionsUsed".
     //
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.declareExtension', (
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
@@ -558,7 +558,7 @@ export function activate(context: vscode.ExtensionContext): void {
     }));
 
     //
-    // Add a target to the bufferView based on attribute type.
+    // Quick Fix: Add a target to the bufferView based on attribute type.
     //
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.addBufferViewTarget', (
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
@@ -580,7 +580,29 @@ export function activate(context: vscode.ExtensionContext): void {
     }));
 
     //
-    // Clear all Joint IDs with zero weight.
+    // Quick Fix: Add targets to all bufferViews that require them.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.addAllBufferViewTargets', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
+            return;
+        }
+
+        const map = tryGetJsonMap(textEditor);
+        if (!map) {
+            return;
+        }
+
+        try {
+            GltfActionProvider.addAllBufferViewTargets(diagnostic, map, textEditor, edit);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
+    }));
+
+    //
+    // Quick Fix: Clear all Joint IDs with zero weight.
     //
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.clearUnusedJoints', async (
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic

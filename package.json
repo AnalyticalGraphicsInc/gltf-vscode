@@ -194,6 +194,10 @@
                 "title": "glTF Quick-Fix: Add a target to the bufferView based on attribute type"
             },
             {
+                "command": "gltf.addAllBufferViewTargets",
+                "title": "glTF Quick-Fix: Add targets to all bufferViews that require them"
+            },
+            {
                 "command": "gltf.clearUnusedJoints",
                 "title": "glTF Quick-Fix: Clear Joint IDs with zero weight"
             },
