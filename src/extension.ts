@@ -595,7 +595,8 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         try {
-            await GltfActionProvider.clearUnusedJoints(diagnostic, map, textEditor, edit);
+            // Note the provided "edit" is invalid after awaiting the results of a save file dialog.
+            await GltfActionProvider.clearUnusedJoints(diagnostic, map, textEditor);
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }

@@ -238,7 +238,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
     }
 
     public static async clearUnusedJoints(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
-        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): Promise<void> {
+        textEditor: vscode.TextEditor): Promise<void> {
+        const document = textEditor.document;
         const pointers = map.pointers;
         let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
@@ -249,20 +250,15 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         let gltf = map.data;
         let fileName = textEditor.document.fileName;
 
-        let accessorId = getFromJsonPointer(gltf, bestKey);
-        let jointsAccessor = map.data.accessors[accessorId];
+        // Locate the joints & weights data.
+
+        let jointsAccessor = map.data.accessors[getFromJsonPointer(gltf, bestKey)];
 
         let weightsKey = bestKey.replace('/JOINTS_', '/WEIGHTS_');
         if (weightsKey === bestKey) {
             throw new Error("Can't find weights key.");
         }
-        accessorId = map.data;
-        weightsKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
-
-        let weightsAccessor = map.data.accessors[accessorId];
-
-        //////////////////
-        //////////////////
+        let weightsAccessor = map.data.accessors[getFromJsonPointer(gltf, weightsKey)];
 
         if (jointsAccessor.type !== GLTF2.AccessorType.VEC4) {
             throw new Error("Joints accessor type must be VEC4.");
@@ -286,6 +282,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         // Joints is VEC4 of unsigned byte or unsigned short.
         // Weights is VEC4 of float, unsigned byte normalized, or unsigned short normalized.
+        // Iterate to discover and clear any nonzero joints with zero weights.
 
         for (let i = 0; i < howMany; ++i) {
             const jointsValues = getAccessorElement(jointsData, i, numComponents,
@@ -306,91 +303,75 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             }
         }
 
+        // The underlying buffer can now replace its predecessor.
         let updatedBuffer = (jointsData as any).buffer as ArrayBuffer;
+        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
+        const tabSize = textEditor.options.tabSize as number;
+        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
 
+        // Try to work out a good default name.
         let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
         let bufferId = jointsBufferView.buffer;
-        let bufferKey = '/buffers/' + bufferId + '/uri';
+        let bufferUriKey = '/buffers/' + bufferId + '/uri';
         let defaultName = 'data_patch_1';
-        if (pointers.hasOwnProperty(bufferKey)) {
-            const pointer = pointers[bufferKey];
+        if (pointers.hasOwnProperty(bufferUriKey)) {
+            const pointer = pointers[bufferUriKey];
             defaultName = JSON.parse(textEditor.document.getText().substring(
                 pointer.value.pos, pointer.valueEnd.pos));
-            let patchNum = 1;
             if (/_patch[0-9]+\.bin$/i.test(defaultName)) {
                 let pos = defaultName.lastIndexOf('_patch');
-                patchNum = parseInt(defaultName.substring(pos + 6), 10) + 1;
+                let patchNum = parseInt(defaultName.substring(pos + 6), 10) + 1;
                 defaultName = defaultName.replace(/_patch[0-9]+\.bin$/i, '_patch' + patchNum + '.bin');
+            } else if (/\.bin$/i.test(defaultName)) {
+                defaultName = defaultName.replace(/\.bin$/i, '_patch1.bin');
             } else {
-                defaultName = defaultName.replace(/\.bin$/i, '_patch' + patchNum + '.bin');
+                defaultName = 'model_data_patch1.bin';
             }
         }
-
         defaultName = decodeURI(Url.resolve(fileName, defaultName));
+
+        // Ask the user for confirmation, then save the new bin file.
         const saveOptions: vscode.SaveDialogOptions = {
             defaultUri: vscode.Uri.file(defaultName),
+            title: 'Save Updated Model Data As',
             filters: {
                 'Binary Data': ['bin'],
                 'All files': ['*']
             }
         };
-        let uri = await vscode.window.showSaveDialog(saveOptions);
-        if (uri !== undefined) {
-            fs.writeFileSync(uri.fsPath, Buffer.from(updatedBuffer));
+        let saveUri = await vscode.window.showSaveDialog(saveOptions);
+        // CAUTION: The provided "edit" is no longer valid after the above "await".
+        //          A new textEditor.edit must be obtained.
+
+        if (saveUri !== undefined) {
+            fs.writeFileSync(saveUri.fsPath, Buffer.from(updatedBuffer));
+
+            await textEditor.edit(edit => {
+                let replacementUri = JSON.stringify(encodeURI(path.basename(saveUri.fsPath)));
+                if (pointers.hasOwnProperty(bufferUriKey)) {
+                    const pointer = pointers[bufferUriKey];
+                    edit.replace(new vscode.Range(pointer.value.line, pointer.value.column,
+                        pointer.valueEnd.line, pointer.valueEnd.column), replacementUri);
+                    let pos = new vscode.Position(pointer.value.line, pointer.value.column);
+                    textEditor.selection = new vscode.Selection(pos, pos);
+                    textEditor.revealRange(new vscode.Range(pos, pos),
+                        vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+                } else {
+                    let bufferKey = '/buffers/' + bufferId;
+                    if (!pointers.hasOwnProperty(bufferKey)) {
+                        throw new Error("Can't find buffer in JSON.");
+                    }
+
+                    const pointer = pointers[bufferKey];
+                    let newJson = eol + space + space + space + '"uri": ' + replacementUri + ',';
+                    let insert = pointer.value.pos + 1;
+                    edit.insert(document.positionAt(insert), newJson);
+                    let pos = new vscode.Position(pointer.value.line + 1, 0);
+                    textEditor.selection = new vscode.Selection(pos, pos);
+                    textEditor.revealRange(new vscode.Range(pos, pos),
+                        vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+                }
+            });
         }
-
-        let x = 42;
-
-        //////////////////
-        //////////////////
-
-        /*
-        if (bufferId !== weightsBufferView.buffer) {
-            throw new Error("Joints & Weights must be in the same buffer for this Quick Fix.");
-        }
-
-        let buffer = map.data.buffers[bufferId];
-        const name = decodeURI(Url.resolve(textEditor.document.fileName, buffer.uri));
-        const bufferSize = fs.statSync(name).size;
-
-        let contents = fs.readFileSync(name);
-
-        let jointsOffset = (jointsAccessor.byteOffset || 0) + (jointsBufferView.byteOffset || 0);
-        let jointsStride = jointsBufferView.byteStride;
-        if (!jointsStride) {
-            // Validator has an error, byteStride must be present when 2 or more accessors use it.
-            throw new Error("Stride autocompute not implemented yet."); // TODO!
-        }
-
-        let weightsOffset = (weightsAccessor.byteOffset || 0) + (weightsBufferView.byteOffset || 0);
-        let weightsStride = weightsBufferView.byteStride;
-        if (!weightsStride) {
-            // Validator has an error, byteStride must be present when 2 or more accessors use it.
-            throw new Error("Stride autocompute not implemented yet."); // TODO!
-        }
-
-        for (let i = 0; i < howMany; ++i) {
-            let pos = i * weightsStride + weightsOffset;
-        }
-        */
-
-        /*
-        let bufferViewKey = '/bufferViews/' + bufferViewId;
-        let bufferViewPointer = map.pointers[bufferViewKey];
-
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let insert = bufferViewPointer.value.pos + 1;
-        let newJson: string;
-
-        if (bestKey.endsWith('/indices')) {
-            newJson = eol + space + space + space + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
-        } else {
-            newJson = eol + space + space + space + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
-        }
-
-        //edit.insert(document.positionAt(insert), newJson);
-        */
     }
 }
