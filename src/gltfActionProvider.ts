@@ -119,7 +119,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
         let pos = bestKey.lastIndexOf('/extensions/');
         if (pos < 0) {
-            return;
+            throw new Error("This quick-fix command should be used on a glTF extension.");
         }
 
         let extensionName = bestKey.substring(pos + 12);
@@ -130,7 +130,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         }
 
         if (extensionName === '') {
-            return;
+            throw new Error("Extension name cannot be blank.");
         }
 
         // Now we know the extension name.  Figure out if there's already
@@ -199,13 +199,12 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('primitives') < 0) {
-            return;
+            throw new Error("This quick-fix command should be used on a mesh primitive that lacks a bufferView target.");
         }
 
-        let accessorId : any = map.data;
-        bestKey.split('/').slice(1).forEach(element => accessorId = accessorId[element]);
-
-        let bufferViewId = map.data.accessors[accessorId].bufferView;
+        let gltf = map.data;
+        let accessorId = getFromJsonPointer(gltf, bestKey);
+        let bufferViewId = gltf.accessors[accessorId].bufferView;
         let bufferViewKey = '/bufferViews/' + bufferViewId;
         let bufferViewPointer = map.pointers[bufferViewKey];
 
@@ -244,7 +243,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('/attributes/JOINTS') < 0) {
-            throw new Error("This command should be used on a mesh primitive attribute JOINTS_*");
+            throw new Error("This quick-fix command should be used on a mesh primitive attribute JOINTS_*");
         }
 
         let gltf = map.data;

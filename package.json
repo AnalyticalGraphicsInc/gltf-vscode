@@ -178,18 +178,6 @@
                 "title": "glTF: Import from GLB"
             },
             {
-                "command": "gltf.declareExtension",
-                "title": "glTF: Add Extension to 'extensionsUsed'"
-            },
-            {
-                "command": "gltf.addBufferViewTarget",
-                "title": "glTF: Add a target to the bufferView based on attribute type"
-            },
-            {
-                "command": "gltf.clearUnusedJoints",
-                "title": "glTF: Clear Joint IDs with zero weight"
-            },
-            {
                 "command": "gltf.importAnimation",
                 "title": "glTF: Import animation"
             },
@@ -198,12 +186,26 @@
                 "title": "glTF: Export animation"
             },
             {
+                "command": "gltf.declareExtension",
+                "title": "glTF Quick-Fix: Add Extension to 'extensionsUsed'"
+            },
+            {
+                "command": "gltf.addBufferViewTarget",
+                "title": "glTF Quick-Fix: Add a target to the bufferView based on attribute type"
+            },
+            {
+                "command": "gltf.clearUnusedJoints",
+                "title": "glTF Quick-Fix: Clear Joint IDs with zero weight"
+            },
+            {
                 "command": "gltfInspectData.copyAll",
-                "title": "Copy All"
+                "title": "glTF Inspect Data: Copy all values",
+                "shortTitle": "Copy All"
             },
             {
                 "command": "gltfInspectData.copy",
-                "title": "Copy"
+                "title": "glTF Inspect Data: Copy current value",
+                "shortTitle": "Copy"
             }
         ],
         "keybindings": [
@@ -321,6 +323,10 @@
             "view/item/context": [
                 {
                     "command": "gltfInspectData.copy",
+                    "when": "view == gltfInspectData"
+                },
+                {
+                    "command": "gltfInspectData.copyAll",
                     "when": "view == gltfInspectData"
                 }
             ]
