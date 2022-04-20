@@ -13,7 +13,7 @@ const BUFFER_VIEW_TARGET_MISSING = 'BUFFER_VIEW_TARGET_MISSING';
 const ACCESSOR_JOINTS_USED_ZERO_WEIGHT = 'ACCESSOR_JOINTS_USED_ZERO_WEIGHT';
 const ADD_EXTENSION = 'Add Extension to \'extensionsUsed\'';
 const ADD_BUFFER_VIEW_TARGET = 'Add target for this bufferView';
-const ADD_ALL_BUFFER_VIEW_TARGETS = 'Add all needed targets for all bufferViews';
+const ADD_ALL_BUFFER_VIEW_TARGETS = 'Add all needed targets for all bufferViews in this file';
 const CLEAR_UNUSED_JOINTS = 'Clear Joint IDs with Zero Weight';
 
 export class GltfActionProvider implements vscode.CodeActionProvider {
@@ -285,6 +285,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             }
         }
 
+        // Make sure 'target' isn't added to the same bufferView twice.
+        const touchedBufferIds: number[] = [];
+
         // Apply ELEMENT_ARRAY_BUFFER targets for indicies.
         const numIndiciesAccessors = indiciesAccessorIds.length;
         for (let a = 0; a < numIndiciesAccessors; ++a) {
@@ -292,12 +295,14 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             let bufferViewId = gltf.accessors[indiciesAccessorIds[a]].bufferView;
             if (bufferViewId) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
-                if (!pointers.hasOwnProperty(bufferViewKey + '/target')) {
+                if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
+                    touchedBufferIds.indexOf(bufferViewId) < 0) {
                     let bufferViewPointer = pointers[bufferViewKey];
                     let insert = bufferViewPointer.value.pos + 1;
                     let newJson = eol + space + space + space + '"target": 34963,';
 
                     edit.insert(document.positionAt(insert), newJson);
+                    touchedBufferIds.push(bufferViewId);
                 }
             }
         }
@@ -309,12 +314,14 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
             let bufferViewId = gltf.accessors[attributeAccessorIds[a]].bufferView;
             if (bufferViewId) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
-                if (!pointers.hasOwnProperty(bufferViewKey + '/target')) {
+                if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
+                    touchedBufferIds.indexOf(bufferViewId) < 0) {
                     let bufferViewPointer = pointers[bufferViewKey];
                     let insert = bufferViewPointer.value.pos + 1;
                     let newJson = eol + space + space + space + '"target": 34962,';
 
                     edit.insert(document.positionAt(insert), newJson);
+                    touchedBufferIds.push(bufferViewId);
                 }
             }
         }
