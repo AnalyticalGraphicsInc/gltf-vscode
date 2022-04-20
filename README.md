@@ -1,12 +1,12 @@
 # glTF Tools Extension for Visual Studio Code
 
-[![GitHub issues](https://img.shields.io/github/issues/AnalyticalGraphicsInc/gltf-vscode.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues) [![Gitter chat](https://img.shields.io/gitter/room/AnalyticalGraphicsInc/gltf-vscode.svg)](https://gitter.im/gltf-vscode/Lobby) [![GitHub license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/LICENSE.md) [![VS Code marketplace](https://vsmarketplacebadge.apphb.com/installs/cesium.gltf-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode)
+[![GitHub issues](https://img.shields.io/github/issues/AnalyticalGraphicsInc/gltf-vscode.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues) [![GitHub license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/LICENSE.md) [![VS Code marketplace](https://vsmarketplacebadge.apphb.com/installs/cesium.gltf-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode)
 
 ## Preview and debug glTF 3D models directly in the editor
 
 ![Damaged Helmet by theblueturtle_](images/DamagedHelmet.png)
 
-Command name: `glTF: Preview 3D Model`, default keybinding: <kbd>ALT</kbd> + <kbd>G</kbd>
+Command name: `glTF: Preview 3D Model`, default key binding: <kbd>ALT</kbd> + <kbd>G</kbd>
 
 The above model, other sample models, and associated licenses can be obtained from the [glTF-Sample-Models](https://github.com/KhronosGroup/glTF-Sample-Models) repository.
 
@@ -53,7 +53,7 @@ The user is given a "Save As..." dialog for the base `.gltf` output filename onl
 
 ![Inspect Data](images/InspectData.png)
 
-Command name: `glTF: Inspect Data`, default keybinding: <kbd>ALT</kbd> + <kbd>D</kbd>
+Command name: `glTF: Inspect Data`, default key binding: <kbd>ALT</kbd> + <kbd>D</kbd>
 
 Above, the user is inspecting the first accessor that is part of the `BoomBox.gltf` model from the official sample model repository.  Place the document cursor on shaders, images, accessors, or mesh primitives then select the `glTF: Inspect Data` command to inspect the data.  The command works for files or data-URIs.
 
@@ -103,9 +103,33 @@ In the screenshot below, the Khronos glTF Validator is displaying one `error`, o
 
 ![Sample validation problems](images/SampleValidationErrors.png)
 
-Even if the `PROBLEMS` window is not visible, some icons down in the bottom footer show a summary of the validation messages.  Click these icons to reveal the `PROBLEMS` window.
+Even if the "Problems" window is not visible, some icons down in the bottom footer show a summary of the validation messages.  Click these icons to reveal the "Problems" window.
 
 ![Sample validation icons](images/SampleValidationIcons.png)
+
+## "Quick Fixes" for Specific Validator Codes
+
+Certain messages supplied by the Khronos glTF Validator will be accompanied by an offer of a "Quick Fix" from this VSCode extension.  This may appear as a blue lightbulb in the text editor, a link in a hover popup, and/or a menu on the icon in the "Problems" window.  Activate the "Quick Fix" for this extension's best effort to apply automated correction the problem identified by the Validator.  As with all features of this software, the user assumes all risk associated with its use.  Please make a backup of any important files before using this software.
+
+### &bull; UNDECLARED_EXTENSION
+
+When adding new extensions into a glTF file, the Validator may report this code on any extension not declared in the glTF `extensionsUsed` block.  The Quick Fix for this is called "Add Extension to 'extensionsUsed'", and will attempt to locate or create the `extensionsUsed` block, and add the name of the selected extension.  The user may not notice the resulting edit to the document, which potentially happens far from the active cursor position, but it should be apparent that it worked because the validation message will immediately disappear.  This is a JSON-only change.
+
+![Quick Fix Add Extension screenshot](images/QuickFixAddExtension.png)
+
+### &bull; BUFFER_VIEW_TARGET_MISSING
+
+By default the glTF Validator offers only the lowest-severity hints about targets missing from bufferViews.  This is a fairly deep feature of glTF that most users don't need to directly edit or understand, yet it is still best practice to set these values correctly in the JSON document.  There are two "Quick Fixes" offered here:  "Add target for this bufferView" and "Add all needed targets for all bufferViews in this file."  These will correct the problem for one or multiple bufferViews accordingly.  This is a JSON-only change that can be undone with a single "Undo" command in the editor during the same editing session.
+
+![Quick Fix Add Target screenshot](images/QuickFixAddTarget.png)
+
+### &bull; ACCESSOR_JOINTS_USED_ZERO_WEIGHT
+
+This validation message relates to skinned meshes, indicating where particular joints are called out with zero weight, meaning they have no influence on the final result.  The "Quick Fix" here is called "Clear Joint IDs with Zero Weight" and will attempt to remove this validation warning by zeroing-out the unused joint IDs.  **NOTE**: The next thing that will happen is a save file dialog will open up.  The edits needed for this fix take place in the binary data, typically an external `*.bin` file referenced by the `buffers` section of the glTF.  The save dialog is asking to save an updated copy of this binary data to a new `.bin` file containing the adjustments to the joint IDs.  The new file must be placed in the same folder as the `*.gltf` file.
+
+The default name for the updated file will typically have `*_patch1.bin` added on the end, but this is adjustable in the save file dialog.  Saving to this new filename allows the updated bin file to coexist with the original, in case comparison or "Undo" is needed afterwards.  The `buffers` section of the JSON document will be edited such that the `uri` field indicates the newly-chosen filename.  The editor's built-in "Undo" and "Redo" features will apply only to this tiny edit of that buffer's `uri` field, but that is enough to direct the Validator's efforts at either the old or new binary data as appropriate, so you should see the validation messages reappear on "Undo" and be dismissed again with "Redo."
+
+**WARNING**: If you overwrite an existing file, the editor's "Undo" feature **cannot** undo the action.
 
 ## Convert files to and from Data URIs
 

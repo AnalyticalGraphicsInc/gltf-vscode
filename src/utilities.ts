@@ -22,13 +22,8 @@ export const AccessorTypeToNumComponents = {
 };
 
 export function getFromJsonPointer(glTF: GLTF2.GLTF, jsonPointer: string): any {
-    const jsonPointerSplit = jsonPointer.split('/');
-    const numPointerSegments = jsonPointerSplit.length;
-    let result = glTF;
-    const firstValidIndex = 1; // Because the path has a leading slash.
-    for (let i = firstValidIndex; i < numPointerSegments; ++i) {
-        result = result[jsonPointerSplit[i]];
-    }
+    let result: any = glTF;
+    jsonPointer.split('/').slice(1).forEach(element => result = result[element]);
     return result;
 }
 
@@ -131,6 +126,29 @@ export function getAccessorElement(data: ArrayLike<number>, elementIndex: number
     }
 
     return values;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function setAccessorElement(data: any, elementIndex: number, numComponents: number, componentType: GLTF2.AccessorComponentType, normalized: boolean, values: ArrayLike<number>): void {
+    const denormalize = (value: number): number => {
+        switch (componentType) {
+            case GLTF2.AccessorComponentType.BYTE: return Math.round(value * 127.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_BYTE: return Math.round(value * 255.0);
+            case GLTF2.AccessorComponentType.SHORT: return Math.round(value * 32767.0);
+            case GLTF2.AccessorComponentType.UNSIGNED_SHORT: return Math.round(value * 65535.0);
+        }
+
+        return value;
+    };
+
+    if (values.length !== numComponents) {
+        throw new Error("Supplied values must equal numComponents.");
+    }
+    const startIndex = elementIndex * numComponents;
+    for (let index = 0; index < numComponents; index++) {
+        const value = values[index];
+        data[startIndex + index] = normalized ? denormalize(value) : value;
+    }
 }
 
 const gltfMimeTypes: any = {

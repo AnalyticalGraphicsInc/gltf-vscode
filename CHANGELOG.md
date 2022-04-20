@@ -2,6 +2,7 @@
 
 ### 2.3.14 - UNRELEASED
 
+* Added "Quick Fixes" for BUFFER_VIEW_TARGET_MISSING and ACCESSOR_JOINTS_USED_ZERO_WEIGHT. [#240](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/240)
 * Added a "Preview Report..." option to manual glTF validation requests, opening the report's contents in an unsaved text editor window. [#239](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/239)
 * Update Babylon to 5.0.4.
 * Update Cesium to 1.92.0.
