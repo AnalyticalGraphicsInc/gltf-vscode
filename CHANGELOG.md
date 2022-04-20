@@ -4,10 +4,10 @@
 
 * Added "Quick Fixes" for BUFFER_VIEW_TARGET_MISSING and ACCESSOR_JOINTS_USED_ZERO_WEIGHT. [#240](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/240)
 * Added a "Preview Report..." option to manual glTF validation requests, opening the report's contents in an unsaved text editor window. [#239](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/239)
-* Update Babylon to 5.0.4.
+* Update Babylon to 5.2.0.
 * Update Cesium to 1.92.0.
 * Update Draco decoder to 1.5.2.
-* Update Filament to 1.21.0.
+* Update Filament to 1.21.1.
 * Update ThreeJS to r139.2.
 * Update Khronos glTF-Validator to 2.0.0-dev.3.6. [KhronosGroup/glTF-Validator#179](https://github.com/KhronosGroup/glTF-Validator/pull/179)
 
