@@ -11,7 +11,7 @@
     "properties" : {
         "emissiveStrength" : {
             "type" : "number",
-            "description" : "The strength adjustment to be multiplied with the material's emissiveFactor and emissiveTexture.",
+            "description" : "The strength adjustment to be multiplied with the material's emissive value.",
             "default" : 1,
             "minimum" : 0
         },
