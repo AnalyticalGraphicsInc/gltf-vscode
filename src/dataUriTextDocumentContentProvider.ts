@@ -10,7 +10,7 @@ import { getFromJsonPointer, btoa, atob, getAccessorData, AccessorTypeToNumCompo
 import { GLTF2 } from './GLTF2';
 
 let decoderModule;
-draco3dgltf.createDecoderModule({}).then(function(module) {
+draco3dgltf.createDecoderModule({}).then(function (module) {
     decoderModule = module;
 });
 
@@ -57,12 +57,54 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         return !!jsonPointer.match(/^\/meshes\/\d+\/primitives\//);
     }
 
+    getDocument(fileName: string): vscode.TextDocument {
+        let document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
+        if (document) {
+            return document;
+        }
+
+        // get json document from glbProvider
+        return vscode.workspace.textDocuments.find(e => e.uri.scheme === 'glb' && e.fileName === fileName);
+    }
+
+    getTitleAndData(data: any, gltf: GLTF2.GLTF, jsonPointer: string, fileName: string): [string, string] {
+        if (data.hasOwnProperty('uri')) {
+            // from external uri
+            let dataUri: string = data.uri;
+            let previewTitle = dataUri;
+            if (!dataUri.startsWith('data:')) {
+                // Not a DataURI: Look up external reference.
+                const name = decodeURI(Url.resolve(fileName, dataUri));
+                const contents = fs.readFileSync(name);
+                dataUri = 'data:image;base64,' + btoa(contents);
+                previewTitle = decodeURI(previewTitle);
+            } else {
+                previewTitle = jsonPointer;
+            }
+
+            return [previewTitle, dataUri];
+        }
+
+        if (data.hasOwnProperty('bufferView')) {
+            // from internal bufferView
+            const bufferView = gltf.bufferViews[data.bufferView];
+            const buffer = gltf.buffers[bufferView.buffer];
+            const name = decodeURI(Url.resolve(fileName, buffer.uri));
+            const contents = fs.readFileSync(name).slice(bufferView.byteOffset, bufferView.byteOffset + bufferView.byteLength);
+            const dataUri = 'data:image;base64,' + btoa(contents);
+            const previewTitle = `${buffer.uri}:${jsonPointer}`;
+            return [previewTitle, dataUri];
+        }
+
+        return [null, null]
+    }
+
     public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         const fileName = decodeURIComponent(uri.fragment);
         const query = querystring.parse(uri.query);
         query.viewColumn = query.viewColumn || vscode.ViewColumn.Active.toString();
         let glTFContent: string;
-        const document = vscode.workspace.textDocuments.find(e => e.uri.scheme === 'file' && e.fileName === fileName);
+        const document = this.getDocument(fileName);
         if (document) {
             glTFContent = document.getText();
         } else {
@@ -76,18 +118,8 @@ export class DataUriTextDocumentContentProvider implements vscode.TextDocumentCo
         const data = getFromJsonPointer(glTF, jsonPointer);
 
         if (data && (typeof data === 'object')) {
-            if (data.hasOwnProperty('uri')) {
-                let dataUri: string = data.uri;
-                let previewTitle = dataUri;
-                if (!dataUri.startsWith('data:')) {
-                    // Not a DataURI: Look up external reference.
-                    const name = decodeURI(Url.resolve(fileName, dataUri));
-                    const contents = fs.readFileSync(name);
-                    dataUri = 'data:image;base64,' + btoa(contents);
-                    previewTitle = decodeURI(previewTitle);
-                } else {
-                    previewTitle = jsonPointer;
-                }
+            let [previewTitle, dataUri] = this.getTitleAndData(data, glTF, jsonPointer, fileName);
+            if (previewTitle && dataUri) {
 
                 if (this.isImage(jsonPointer)) {
                     // Peek Definition requests have a document that matches the current document

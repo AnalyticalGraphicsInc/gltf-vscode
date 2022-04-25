@@ -4,7 +4,15 @@ import { GltfInspectData } from './gltfInspectData';
 import { GltfOutline } from './gltfOutline';
 
 function isGltfFile(editor: vscode.TextEditor | undefined): boolean {
-    return editor && editor.document.fileName.toLowerCase().endsWith('.gltf');
+    if (editor) {
+        if (editor.document.fileName.toLowerCase().endsWith('.gltf')) {
+            return true;
+        }
+        if (editor.document.uri.scheme == 'glb') {
+            return true;
+        }
+    }
+    return false;
 }
 
 export class GltfWindow {

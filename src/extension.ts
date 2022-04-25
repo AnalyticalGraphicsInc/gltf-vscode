@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer, JsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 import { GltfWindow } from './gltfWindow';
+import { GlbTextDocumentContentProvider } from './glbTextDocumentContentProvider';
 
 function checkValidEditor(textEditor: vscode.TextEditor): boolean {
     if (textEditor === undefined) {
@@ -497,6 +498,24 @@ export function activate(context: vscode.ExtensionContext): void {
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
+    }));
+
+    //
+    // Virtual TextDocumentContentProvider for glb json chunk.
+    //
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('glb', new GlbTextDocumentContentProvider()));
+
+    //
+    // Open GLB with 'glb:' schema, and send GlbProvider.
+    //
+    context.subscriptions.push(vscode.commands.registerCommand('gltf.openGlbFile', async (fileUri) => {
+
+        const virtualTextPath = `glb:${fileUri.fsPath}.json`;
+        const uri = vscode.Uri.parse(virtualTextPath);
+        const doc = await vscode.workspace.openTextDocument(uri); // calls back into the provider
+        vscode.languages.setTextDocumentLanguage(doc, "json");
+        await vscode.window.showTextDocument(doc, { preview: false });
+
     }));
 
     //

@@ -37,7 +37,8 @@
         "onCommand:gltf.previewModel",
         "onCommand:gltf.validateFile",
         "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile"
+        "onCommand:gltf.importGlbFile",
+        "onCommand:gltf.openGlbFile"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -178,6 +179,10 @@
                 "title": "glTF: Import from GLB"
             },
             {
+                "command": "gltf.openGlbFile",
+                "title": "glTF: Open GLB"
+            },
+            {
                 "command": "gltf.importAnimation",
                 "title": "glTF: Import animation"
             },
@@ -254,6 +259,10 @@
                 {
                     "command": "gltf.importGlbFile",
                     "when": "resourceExtname == .glb",
+                    "group": "glTF"
+                },
+                {
+                    "command": "gltf.openGlbFile",
                     "group": "glTF"
                 },
                 {
