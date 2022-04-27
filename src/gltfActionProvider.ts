@@ -108,6 +108,21 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         return bestKey;
     }
 
+    private static getLastSubKey(map: JsonMap<GLTF2.GLTF>, searchKey: string): string {
+        const pointers = map.pointers;
+        let subKey = '';
+        searchKey += '/';
+        for (let key of Object.keys(pointers)) {
+            let pointer = pointers[key];
+
+            if (pointer.key && key.startsWith(searchKey)) {
+                subKey = key;
+            }
+        }
+
+        return subKey;
+    }
+
     private createCommandDeclareExtension(diagnostic: vscode.Diagnostic): vscode.CodeAction {
         const action = new vscode.CodeAction(ADD_EXTENSION, vscode.CodeActionKind.QuickFix);
         action.command = {
@@ -218,18 +233,23 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         if (map.pointers.hasOwnProperty(bufferViewKey + '/target')) {
             throw new Error("This bufferView already has a target set.");
         }
-        let bufferViewPointer = map.pointers[bufferViewKey];
+        let subKey = this.getLastSubKey(map, bufferViewKey);
+        let insertPos: number;
+        if (subKey) {
+            insertPos = map.pointers[subKey].valueEnd.pos;
+        } else {
+            insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
+        }
 
         const insertables = new Insertables(textEditor);
         const eol = insertables.eol;
         const indent = insertables.indent;
-        let insertPos = bufferViewPointer.value.pos + 1;
         let newJson: string;
 
         if (bestKey.endsWith('/indices')) {
-            newJson = eol + indent + indent + indent + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
+            newJson = ',' + eol + indent + indent + indent + '"target": 34963'; // ELEMENT_ARRAY_BUFFER for indices
         } else {
-            newJson = eol + indent + indent + indent + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
+            newJson = ',' + eol + indent + indent + indent + '"target": 34962'; // ARRAY_BUFFER for vertex attributes
         }
 
         edit.insert(document.positionAt(insertPos), newJson);
@@ -294,13 +314,18 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         for (let a = 0; a < numIndiciesAccessors; ++a) {
 
             let bufferViewId = gltf.accessors[indiciesAccessorIds[a]].bufferView;
-            if (bufferViewId) {
+            if (bufferViewId !== undefined) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let bufferViewPointer = pointers[bufferViewKey];
-                    let insertPos = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + indent + indent + indent + '"target": 34963,';
+                    let subKey = this.getLastSubKey(map, bufferViewKey);
+                    let insertPos: number;
+                    if (subKey) {
+                        insertPos = map.pointers[subKey].valueEnd.pos;
+                    } else {
+                        insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
+                    }
+                    let newJson = ',' + eol + indent + indent + indent + '"target": 34963';
 
                     edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
@@ -313,13 +338,18 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         for (let a = 0; a < numAttributeAccessors; ++a) {
 
             let bufferViewId = gltf.accessors[attributeAccessorIds[a]].bufferView;
-            if (bufferViewId) {
+            if (bufferViewId !== undefined) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let bufferViewPointer = pointers[bufferViewKey];
-                    let insertPos = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + indent + indent + indent + '"target": 34962,';
+                    let subKey = this.getLastSubKey(map, bufferViewKey);
+                    let insertPos: number;
+                    if (subKey) {
+                        insertPos = map.pointers[subKey].valueEnd.pos;
+                    } else {
+                        insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
+                    }
+                    let newJson = ',' + eol + indent + indent + indent + '"target": 34962';
 
                     edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
