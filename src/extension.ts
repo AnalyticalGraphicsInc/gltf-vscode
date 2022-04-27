@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import { getFromJsonPointer, guessMimeType, btoa, guessFileExtension, getAccessorData, AccessorTypeToNumComponents, parseJsonMap, truncateJsonPointer, JsonMap } from './utilities';
 import { GLTF2 } from './GLTF2';
 import { GltfWindow } from './gltfWindow';
+import { Insertables } from './editorUtilities';
 
 function checkValidEditor(textEditor: vscode.TextEditor): boolean {
     if (textEditor === undefined) {
@@ -685,15 +686,16 @@ export function activate(context: vscode.ExtensionContext): void {
 
         const pointer = map.pointers[animationPointer.path];
 
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let newJson = JSON.stringify(animationPointer.json, null, space);
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
+        let newJson = JSON.stringify(animationPointer.json, null, indent);
         const newJsonLines = newJson.split(/\n/);
-        const fullTab = new Array(5).join(space);
+        const fullTab = new Array(5).join(indent);
         for (let i = 1; i < newJsonLines.length; i++) {
             newJsonLines[i] = fullTab + newJsonLines[i];
         }
-        newJson = newJsonLines.join('\n');
+        newJson = newJsonLines.join(eol);
 
         const newRange = new vscode.Range(pointer.value.line, pointer.value.column,
             pointer.valueEnd.line, pointer.valueEnd.column);
@@ -840,9 +842,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
         bufferJson.uri = 'data:application/octet-stream;base64,' + finalBuffer.toString('base64');
         bufferJson.byteLength = finalBuffer.length;
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        const newJson = JSON.stringify(glTF, null, space);
+        const insertables = new Insertables(textEditor);
+        const indent = insertables.indent;
+        const newJson = JSON.stringify(glTF, null, indent);
         const newRange = new vscode.Range(0, 0, textEditor.document.lineCount + 1, 0);
 
         edit.replace(newRange, newJson);
@@ -850,7 +852,7 @@ export function activate(context: vscode.ExtensionContext): void {
         const newMap = tryGetJsonMap(textEditor);
         const newPointer = newMap.pointers[animationPointer.path];
 
-        textEditor.selection = new vscode.Selection(newPointer.value.line, space.length * 5, newPointer.value.line, space.length * 5);
+        textEditor.selection = new vscode.Selection(newPointer.value.line, indent.length * 5, newPointer.value.line, indent.length * 5);
     }));
 }
 

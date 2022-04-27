@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import { JsonMap, getFromJsonPointer, getAccessorData, getAccessorElement, setAccessorElement } from './utilities';
+import { Insertables } from './editorUtilities';
 import { GLTF2 } from './GLTF2';
 
 // This file offers "Quick Fixes" for select validation issues.
@@ -143,10 +144,10 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         // Now we know the extension name.  Figure out if there's already
         // an "extensionsUsed" block, create one if not, and add the extension name to it.
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let insert = -1;
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
+        let insertPos = -1;
         let newJson: string;
 
         if (pointers['/extensionsUsed'] !== undefined) {
@@ -154,18 +155,18 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
             for (let key of Object.keys(pointers)) {
                 if (key.startsWith('/extensionsUsed/')) {
-                    insert = Math.max(insert, pointers[key].valueEnd.pos);
+                    insertPos = Math.max(insertPos, pointers[key].valueEnd.pos);
                 }
             }
 
             newJson =
                 ',' + eol +
-                space + space + '"' + extensionName + '"';
+                indent + indent + '"' + extensionName + '"';
 
-            if (insert < 0) {
+            if (insertPos < 0) {
                 // This block only executes if "extensionsUsed" is an empty array,
                 // which is invalid glTF, but possible in the editor.
-                insert = pointers['/extensionsUsed'].value.pos + 1;
+                insertPos = pointers['/extensionsUsed'].value.pos + 1;
                 newJson = newJson.substring(1);
             }
 
@@ -174,18 +175,18 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
             for (let key of Object.keys(pointers)) {
                 if (key.length > 2) {
-                    insert = Math.max(insert, pointers[key].valueEnd.pos);
+                    insertPos = Math.max(insertPos, pointers[key].valueEnd.pos);
                 }
             }
 
             newJson =
                 ',' + eol +
-                space + '"extensionsUsed": [' + eol +
-                space + space + '"' + extensionName + '"' + eol +
-                space + ']';
+                indent + '"extensionsUsed": [' + eol +
+                indent + indent + '"' + extensionName + '"' + eol +
+                indent + ']';
         }
 
-        edit.insert(document.positionAt(insert), newJson);
+        edit.insert(document.positionAt(insertPos), newJson);
     }
 
     private createCommandAddTarget(diagnostic: vscode.Diagnostic): vscode.CodeAction {
@@ -219,19 +220,19 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         }
         let bufferViewPointer = map.pointers[bufferViewKey];
 
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let insert = bufferViewPointer.value.pos + 1;
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
+        let insertPos = bufferViewPointer.value.pos + 1;
         let newJson: string;
 
         if (bestKey.endsWith('/indices')) {
-            newJson = eol + space + space + space + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
+            newJson = eol + indent + indent + indent + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
         } else {
-            newJson = eol + space + space + space + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
+            newJson = eol + indent + indent + indent + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
         }
 
-        edit.insert(document.positionAt(insert), newJson);
+        edit.insert(document.positionAt(insertPos), newJson);
     }
 
     private createCommandAddAllTargets(diagnostic: vscode.Diagnostic): vscode.CodeAction {
@@ -251,9 +252,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
         const document = textEditor.document;
         const pointers = map.pointers;
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
 
         let gltf = map.data;
         const indiciesAccessorIds: number[] = [];
@@ -298,10 +299,10 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
                     let bufferViewPointer = pointers[bufferViewKey];
-                    let insert = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + space + space + space + '"target": 34963,';
+                    let insertPos = bufferViewPointer.value.pos + 1;
+                    let newJson = eol + indent + indent + indent + '"target": 34963,';
 
-                    edit.insert(document.positionAt(insert), newJson);
+                    edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
                 }
             }
@@ -317,10 +318,10 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
                     let bufferViewPointer = pointers[bufferViewKey];
-                    let insert = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + space + space + space + '"target": 34962,';
+                    let insertPos = bufferViewPointer.value.pos + 1;
+                    let newJson = eol + indent + indent + indent + '"target": 34962,';
 
-                    edit.insert(document.positionAt(insert), newJson);
+                    edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
                 }
             }
@@ -408,9 +409,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         // The underlying buffer can now replace its predecessor.
         let updatedBuffer = (jointsData as any).buffer as ArrayBuffer;
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
 
         // Try to work out a good default name.
         let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
@@ -466,9 +467,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                     }
 
                     const pointer = pointers[bufferKey];
-                    let newJson = eol + space + space + space + '"uri": ' + replacementUri + ',';
-                    let insert = pointer.value.pos + 1;
-                    edit.insert(document.positionAt(insert), newJson);
+                    let newJson = eol + indent + indent + indent + '"uri": ' + replacementUri + ',';
+                    let insertPos = pointer.value.pos + 1;
+                    edit.insert(document.positionAt(insertPos), newJson);
                     let pos = new vscode.Position(pointer.value.line + 1, 0);
                     textEditor.selection = new vscode.Selection(pos, pos);
                     textEditor.revealRange(new vscode.Range(pos, pos),
