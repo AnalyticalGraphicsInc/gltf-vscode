@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import { JsonMap, getFromJsonPointer, getAccessorData, getAccessorElement, setAccessorElement } from './utilities';
-import { clearRangeOfJsonKey, getBestKeyFromDiagnostic, getLastSubKey, Insertables } from './editorUtilities';
+import { clearRangeOfJsonKey, getBestKeyFromDiagnostic, getInsertPointForKey, Insertables } from './editorUtilities';
 import { GLTF2 } from './GLTF2';
 
 // This file offers "Quick Fixes" for select validation issues.
@@ -196,13 +196,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         if (map.pointers.hasOwnProperty(bufferViewKey + '/target')) {
             throw new Error("This bufferView already has a target set.");
         }
-        let subKey = getLastSubKey(map, bufferViewKey);
-        let insertPos: number;
-        if (subKey) {
-            insertPos = map.pointers[subKey].valueEnd.pos;
-        } else {
-            insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
-        }
+        let insertPos = getInsertPointForKey(map, bufferViewKey);
 
         const insertables = new Insertables(textEditor);
         const eol = insertables.eol;
@@ -281,13 +275,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let subKey = getLastSubKey(map, bufferViewKey);
-                    let insertPos: number;
-                    if (subKey) {
-                        insertPos = map.pointers[subKey].valueEnd.pos;
-                    } else {
-                        insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
-                    }
+                    let insertPos = getInsertPointForKey(map, bufferViewKey);
                     let newJson = ',' + eol + indent + indent + indent + '"target": 34963';
 
                     edit.insert(document.positionAt(insertPos), newJson);
@@ -305,13 +293,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let subKey = getLastSubKey(map, bufferViewKey);
-                    let insertPos: number;
-                    if (subKey) {
-                        insertPos = map.pointers[subKey].valueEnd.pos;
-                    } else {
-                        insertPos = map.pointers[bufferViewKey].valueEnd.pos - 1;
-                    }
+                    let insertPos = getInsertPointForKey(map, bufferViewKey);
                     let newJson = ',' + eol + indent + indent + indent + '"target": 34962';
 
                     edit.insert(document.positionAt(insertPos), newJson);

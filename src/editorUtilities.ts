@@ -51,21 +51,48 @@ export function getBestKeyFromDiagnostic(diagnostic: vscode.Diagnostic, map: Jso
     return bestKey;
 }
 
-export function getLastSubKey(map: JsonMap<GLTF2.GLTF>, searchKey: string): string {
+/**
+ * Finds a position in the JSON document to begin inserting a new key for
+ * an existing object with pre-existing keys.
+ *
+ * @param map The JSON Map
+ * @param searchKey The JSON pointer of the object that needs a new key
+ * @returns The document position to begin inserting a comma and a new key
+ */
+export function getInsertPointForKey(map: JsonMap<GLTF2.GLTF>, searchKey: string): number {
     const pointers = map.pointers;
     let subKey = '';
-    searchKey += '/';
+    let searchKeyPrefix = searchKey + '/';
+    let depth = searchKeyPrefix.split('/').length;
     for (let key of Object.keys(pointers)) {
         let pointer = pointers[key];
 
-        if (pointer.key && key.startsWith(searchKey)) {
+        // Testing "pointer.key" here makes sure the key's editor positions are known.
+        // The test rules out positions of array entries, for example.
+        if (pointer.key && key.startsWith(searchKeyPrefix) &&
+            key.split('/').length === depth) {
             subKey = key;
         }
     }
 
-    return subKey;
+    let insertPos: number;
+    if (subKey) {
+        insertPos = map.pointers[subKey].valueEnd.pos;
+    } else {
+        insertPos = map.pointers[searchKey].valueEnd.pos - 1;
+    }
+
+    return insertPos;
 }
 
+/**
+ * Calculates an editor range that can be deleted to remove a key from an object.
+ *
+ * @param map The JSON Map
+ * @param parentKey The JSON pointer to an object holding a key
+ * @param keyName The name of a key in the parent object
+ * @returns The vscode range to delete from the editor.
+ */
 export function clearRangeOfJsonKey(map: JsonMap<GLTF2.GLTF>, parentKey: string, keyName: string): vscode.Range {
     const pointers = map.pointers;
     parentKey += '/';
@@ -76,6 +103,8 @@ export function clearRangeOfJsonKey(map: JsonMap<GLTF2.GLTF>, parentKey: string,
     for (let key of Object.keys(pointers)) {
         let pointer = pointers[key];
 
+        // Testing "pointer.key" here makes sure the key's editor positions are known.
+        // The test rules out positions of array entries, for example.
         if (pointer.key && key.startsWith(parentKey)) {
             if (key === targetKey) {
                 foundTarget = true;
