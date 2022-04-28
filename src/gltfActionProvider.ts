@@ -525,8 +525,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                     }
 
                     const pointer = pointers[bufferKey];
-                    let newJson = eol + indent + indent + indent + '"uri": ' + replacementUri + ',';
-                    let insertPos = pointer.value.pos + 1;
+                    let insertPos = getInsertPointForKey(map, bufferKey);
+                    let newJson = ',' + eol + indent + indent + indent + '"uri": ' + replacementUri;
                     edit.insert(document.positionAt(insertPos), newJson);
                     let pos = new vscode.Position(pointer.value.line + 1, 0);
                     textEditor.selection = new vscode.Selection(pos, pos);
