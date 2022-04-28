@@ -195,7 +195,15 @@
             },
             {
                 "command": "gltf.addAllBufferViewTargets",
-                "title": "glTF Quick-Fix: Add targets to all bufferViews that require them"
+                "title": "glTF Quick-Fix: Add all needed targets for all bufferViews in this file"
+            },
+            {
+                "command": "gltf.clearAnimationByteStride",
+                "title": "glTF Quick-Fix: Clear byteStride for this animation's bufferView"
+            },
+            {
+                "command": "gltf.clearAllAnimationByteStrides",
+                "title": "glTF Quick-Fix: Clear byteStrides for all animation bufferViews in this file"
             },
             {
                 "command": "gltf.clearUnusedJoints",

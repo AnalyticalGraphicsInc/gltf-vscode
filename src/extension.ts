@@ -581,7 +581,7 @@ export function activate(context: vscode.ExtensionContext): void {
     }));
 
     //
-    // Quick Fix: Add targets to all bufferViews that require them.
+    // Quick Fix: Add all needed targets for all bufferViews in this file.
     //
     context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.addAllBufferViewTargets', (
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
@@ -597,6 +597,50 @@ export function activate(context: vscode.ExtensionContext): void {
 
         try {
             GltfActionProvider.addAllBufferViewTargets(diagnostic, map, textEditor, edit);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
+    }));
+
+    //
+    // Quick Fix: Clear byteStride for this animation's bufferView.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.clearAnimationByteStride', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
+            return;
+        }
+
+        const map = tryGetJsonMap(textEditor);
+        if (!map) {
+            return;
+        }
+
+        try {
+            GltfActionProvider.clearAnimationByteStride(diagnostic, map, textEditor, edit);
+        } catch (ex) {
+            vscode.window.showErrorMessage(ex.toString());
+        }
+    }));
+
+    //
+    // Quick Fix: Clear byteStrides for all animation bufferViews in this file.
+    //
+    context.subscriptions.push(vscode.commands.registerTextEditorCommand('gltf.clearAllAnimationByteStrides', (
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, diagnostic: vscode.Diagnostic
+    ) => {
+        if (!textEditor) {
+            return;
+        }
+
+        const map = tryGetJsonMap(textEditor);
+        if (!map) {
+            return;
+        }
+
+        try {
+            GltfActionProvider.clearAllAnimationByteStrides(diagnostic, map, textEditor, edit);
         } catch (ex) {
             vscode.window.showErrorMessage(ex.toString());
         }
