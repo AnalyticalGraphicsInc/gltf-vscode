@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as gltfValidator from 'gltf-validator';
+import { Insertables } from './editorUtilities';
 
 const PreviewReport = 'Preview Report...';
 const SaveReportAs = 'Save Report As...';
@@ -84,12 +85,12 @@ export async function validate(sourceFilename: string): Promise<void> {
     let userChoice = await userChoicePromise;
     if (userChoice === PreviewReport) {
         const textEditor = vscode.window.activeTextEditor;
-        let space = '    ';
+        let indent = '    ';
         if (textEditor) {
-            const tabSize = textEditor.options.tabSize as number;
-            space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+            const insertables = new Insertables(textEditor);
+            indent = insertables.indent;
         }
-        let reportString = JSON.stringify(result, null, space);
+        let reportString = JSON.stringify(result, null, indent);
         vscode.workspace.openTextDocument({
             content: reportString,
             language: "json"

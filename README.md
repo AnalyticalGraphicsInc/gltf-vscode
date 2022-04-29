@@ -123,6 +123,10 @@ By default the glTF Validator offers only the lowest-severity hints about target
 
 ![Quick Fix Add Target screenshot](images/QuickFixAddTarget.png)
 
+### &bull; ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE
+
+When storing animation data in glTF bufferViews, the `byteStride` parameter (for interleaved vertex attributes) must not be used.  The Quick Fix here simply deletes the offending parameters from the JSON document, without checking if some custom byteStride value had been used (as such things are not allowed for animations).  This has the potential to convert a previously invalid glTF file into one marked "valid," so be sure to test the glTF's animations afterwards to ensure correctness.
+
 ### &bull; ACCESSOR_JOINTS_USED_ZERO_WEIGHT
 
 This validation message relates to skinned meshes, indicating where particular joints are called out with zero weight, meaning they have no influence on the final result.  The "Quick Fix" here is called "Clear Joint IDs with Zero Weight" and will attempt to remove this validation warning by zeroing-out the unused joint IDs.  **NOTE**: The next thing that will happen is a save file dialog will open up.  The edits needed for this fix take place in the binary data, typically an external `*.bin` file referenced by the `buffers` section of the glTF.  The save dialog is asking to save an updated copy of this binary data to a new `.bin` file containing the adjustments to the joint IDs.  The new file must be placed in the same folder as the `*.gltf` file.

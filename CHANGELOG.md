@@ -1,9 +1,17 @@
 # Change Log
 
+### 2.3.15 - UNRELEASED
+
+* Added a pair of "Quick Fixes" for `ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE`. [#242](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/242)
+* Update Babylon to 5.4.0.
+* Update Filament to 1.21.2.
+* Update Khronos glTF-Validator to 2.0.0-dev.3.7. [KhronosGroup/glTF-Validator#181](https://github.com/KhronosGroup/glTF-Validator/pull/181)
+
 ### 2.3.14 - 2022-04-20
 
-* Added "Quick Fixes" for BUFFER_VIEW_TARGET_MISSING and ACCESSOR_JOINTS_USED_ZERO_WEIGHT. [#240](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/240)
+* Added "Quick Fixes" for `BUFFER_VIEW_TARGET_MISSING` and `ACCESSOR_JOINTS_USED_ZERO_WEIGHT`. [#240](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/240)
 * Added a "Preview Report..." option to manual glTF validation requests, opening the report's contents in an unsaved text editor window. [#239](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/239)
+* Update schemas for `KHR_materials_iridescence` and `KHR_materials_emissive_strength`.
 * Update Babylon to 5.2.0.
 * Update Cesium to 1.92.0.
 * Update Draco decoder to 1.5.2.
@@ -66,7 +74,7 @@
 
 * Update Babylon to 5.0.0-alpha.7.
 * Enable KTX2 textures in the BabylonJS preview window.
-* Hovering a color (such as `baseColorFactor`, etc) now converts the color from linear to sRGB colorspace for proper display.
+* Hovering a color (such as `baseColorFactor`, etc.) now converts the color from linear to sRGB colorspace for proper display.
 * Hovering a color no longer requires network access for the sample. [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207)
 * Various glTF extensions that supply color factors can now also be hovered.  Also [#207](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/207)
 

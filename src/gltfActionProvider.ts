@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import { JsonMap, getFromJsonPointer, getAccessorData, getAccessorElement, setAccessorElement } from './utilities';
+import { clearRangeOfJsonKey, getBestKeyFromDiagnostic, getInsertPointForKey, Insertables } from './editorUtilities';
 import { GLTF2 } from './GLTF2';
 
 // This file offers "Quick Fixes" for select validation issues.
@@ -10,10 +11,13 @@ import { GLTF2 } from './GLTF2';
 const GLTF_VALIDATOR = 'glTF Validator';
 const UNDECLARED_EXTENSION = 'UNDECLARED_EXTENSION';
 const BUFFER_VIEW_TARGET_MISSING = 'BUFFER_VIEW_TARGET_MISSING';
+const ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE = 'ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE';
 const ACCESSOR_JOINTS_USED_ZERO_WEIGHT = 'ACCESSOR_JOINTS_USED_ZERO_WEIGHT';
 const ADD_EXTENSION = 'Add Extension to \'extensionsUsed\'';
 const ADD_BUFFER_VIEW_TARGET = 'Add target for this bufferView';
 const ADD_ALL_BUFFER_VIEW_TARGETS = 'Add all needed targets for all bufferViews in this file';
+const CLEAR_ANIMATION_BYTESTRIDE = 'Clear byteStride for this animation\'s bufferView';
+const CLEAR_ALL_ANIMATION_BYTESTRIDES = 'Clear byteStrides for all animation bufferViews in this file';
 const CLEAR_UNUSED_JOINTS = 'Clear Joint IDs with Zero Weight';
 
 export class GltfActionProvider implements vscode.CodeActionProvider {
@@ -25,6 +29,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
     public static readonly supportedCodes = [
         UNDECLARED_EXTENSION,
         BUFFER_VIEW_TARGET_MISSING,
+        ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE,
         ACCESSOR_JOINTS_USED_ZERO_WEIGHT
     ];
 
@@ -61,6 +66,11 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                     this.createCommandAddTarget(diagnostic),
                     this.createCommandAddAllTargets(diagnostic)
                 ];
+            case ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE:
+                return [
+                    this.createCommandClearByteStride(diagnostic),
+                    this.createCommandClearAllByteStrides(diagnostic)
+                ];
             case ACCESSOR_JOINTS_USED_ZERO_WEIGHT:
                 return [
                     this.createCommandClearUnusedJoints(diagnostic)
@@ -70,42 +80,8 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         }
     }
 
-    private static getBestKeyFromDiagnostic(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
-        textEditor: vscode.TextEditor): string {
-        // This could be called by the QuickFix system, or just invoked directly
-        // by a user as an editor command.  Figure out where this was invoked.
-        const document = textEditor.document;
-        let searchRange: vscode.Range;
-        if (diagnostic) {
-            searchRange = diagnostic.range;
-        } else {
-            const selection = textEditor.selection;
-            searchRange = new vscode.Range(
-                selection.active,
-                selection.active
-            );
-        }
-
-        // The last pointer in the list matching the range has the "best" (most specific) key.
-        const pointers = map.pointers;
-        let bestKey = '';
-        for (let key of Object.keys(pointers)) {
-            let pointer = pointers[key];
-
-            if (pointer.key) {
-                const range = new vscode.Range(
-                    document.positionAt(pointer.key.pos),
-                    document.positionAt(pointer.valueEnd.pos)
-                );
-
-                if (range.contains(searchRange)) {
-                    bestKey = key;
-                }
-            }
-        }
-
-        return bestKey;
-    }
+    /////////////////////////////////////////////////////////////////
+    // UNDECLARED_EXTENSION
 
     private createCommandDeclareExtension(diagnostic: vscode.Diagnostic): vscode.CodeAction {
         const action = new vscode.CodeAction(ADD_EXTENSION, vscode.CodeActionKind.QuickFix);
@@ -124,7 +100,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
         const document = textEditor.document;
         const pointers = map.pointers;
-        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
+        let bestKey = getBestKeyFromDiagnostic(diagnostic, map, textEditor);
         let pos = bestKey.lastIndexOf('/extensions/');
         if (pos < 0) {
             throw new Error("This quick-fix command should be used on a glTF extension.");
@@ -143,10 +119,10 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         // Now we know the extension name.  Figure out if there's already
         // an "extensionsUsed" block, create one if not, and add the extension name to it.
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let insert = -1;
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
+        let insertPos = -1;
         let newJson: string;
 
         if (pointers['/extensionsUsed'] !== undefined) {
@@ -154,18 +130,18 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
             for (let key of Object.keys(pointers)) {
                 if (key.startsWith('/extensionsUsed/')) {
-                    insert = Math.max(insert, pointers[key].valueEnd.pos);
+                    insertPos = Math.max(insertPos, pointers[key].valueEnd.pos);
                 }
             }
 
             newJson =
                 ',' + eol +
-                space + space + '"' + extensionName + '"';
+                indent + indent + '"' + extensionName + '"';
 
-            if (insert < 0) {
+            if (insertPos < 0) {
                 // This block only executes if "extensionsUsed" is an empty array,
                 // which is invalid glTF, but possible in the editor.
-                insert = pointers['/extensionsUsed'].value.pos + 1;
+                insertPos = pointers['/extensionsUsed'].value.pos + 1;
                 newJson = newJson.substring(1);
             }
 
@@ -174,19 +150,22 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
             for (let key of Object.keys(pointers)) {
                 if (key.length > 2) {
-                    insert = Math.max(insert, pointers[key].valueEnd.pos);
+                    insertPos = Math.max(insertPos, pointers[key].valueEnd.pos);
                 }
             }
 
             newJson =
                 ',' + eol +
-                space + '"extensionsUsed": [' + eol +
-                space + space + '"' + extensionName + '"' + eol +
-                space + ']';
+                indent + '"extensionsUsed": [' + eol +
+                indent + indent + '"' + extensionName + '"' + eol +
+                indent + ']';
         }
 
-        edit.insert(document.positionAt(insert), newJson);
+        edit.insert(document.positionAt(insertPos), newJson);
     }
+
+    /////////////////////////////////////////////////////////////////
+    // BUFFER_VIEW_TARGET_MISSING
 
     private createCommandAddTarget(diagnostic: vscode.Diagnostic): vscode.CodeAction {
         const action = new vscode.CodeAction(ADD_BUFFER_VIEW_TARGET, vscode.CodeActionKind.QuickFix);
@@ -204,7 +183,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
     public static addBufferViewTarget(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
         const document = textEditor.document;
-        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
+        let bestKey = getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('primitives') < 0) {
             throw new Error("This quick-fix command should be used on a mesh primitive that lacks a bufferView target.");
@@ -217,21 +196,20 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         if (map.pointers.hasOwnProperty(bufferViewKey + '/target')) {
             throw new Error("This bufferView already has a target set.");
         }
-        let bufferViewPointer = map.pointers[bufferViewKey];
+        let insertPos = getInsertPointForKey(map, bufferViewKey);
 
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
-        let insert = bufferViewPointer.value.pos + 1;
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
         let newJson: string;
 
         if (bestKey.endsWith('/indices')) {
-            newJson = eol + space + space + space + '"target": 34963,'; // ELEMENT_ARRAY_BUFFER for indices
+            newJson = ',' + eol + indent + indent + indent + '"target": 34963'; // ELEMENT_ARRAY_BUFFER for indices
         } else {
-            newJson = eol + space + space + space + '"target": 34962,'; // ARRAY_BUFFER for vertex attributes
+            newJson = ',' + eol + indent + indent + indent + '"target": 34962'; // ARRAY_BUFFER for vertex attributes
         }
 
-        edit.insert(document.positionAt(insert), newJson);
+        edit.insert(document.positionAt(insertPos), newJson);
     }
 
     private createCommandAddAllTargets(diagnostic: vscode.Diagnostic): vscode.CodeAction {
@@ -251,9 +229,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
         const document = textEditor.document;
         const pointers = map.pointers;
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
 
         let gltf = map.data;
         const indiciesAccessorIds: number[] = [];
@@ -293,15 +271,14 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         for (let a = 0; a < numIndiciesAccessors; ++a) {
 
             let bufferViewId = gltf.accessors[indiciesAccessorIds[a]].bufferView;
-            if (bufferViewId) {
+            if (bufferViewId !== undefined) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let bufferViewPointer = pointers[bufferViewKey];
-                    let insert = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + space + space + space + '"target": 34963,';
+                    let insertPos = getInsertPointForKey(map, bufferViewKey);
+                    let newJson = ',' + eol + indent + indent + indent + '"target": 34963';
 
-                    edit.insert(document.positionAt(insert), newJson);
+                    edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
                 }
             }
@@ -312,20 +289,102 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         for (let a = 0; a < numAttributeAccessors; ++a) {
 
             let bufferViewId = gltf.accessors[attributeAccessorIds[a]].bufferView;
-            if (bufferViewId) {
+            if (bufferViewId !== undefined) {
                 let bufferViewKey = '/bufferViews/' + bufferViewId;
                 if (!pointers.hasOwnProperty(bufferViewKey + '/target') &&
                     touchedBufferIds.indexOf(bufferViewId) < 0) {
-                    let bufferViewPointer = pointers[bufferViewKey];
-                    let insert = bufferViewPointer.value.pos + 1;
-                    let newJson = eol + space + space + space + '"target": 34962,';
+                    let insertPos = getInsertPointForKey(map, bufferViewKey);
+                    let newJson = ',' + eol + indent + indent + indent + '"target": 34962';
 
-                    edit.insert(document.positionAt(insert), newJson);
+                    edit.insert(document.positionAt(insertPos), newJson);
                     touchedBufferIds.push(bufferViewId);
                 }
             }
         }
     }
+
+    /////////////////////////////////////////////////////////////////
+    // ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE
+
+    private createCommandClearByteStride(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+        const action = new vscode.CodeAction(CLEAR_ANIMATION_BYTESTRIDE, vscode.CodeActionKind.QuickFix);
+        action.command = {
+            command: 'gltf.clearAnimationByteStride',
+            arguments: [diagnostic],
+            title: CLEAR_ANIMATION_BYTESTRIDE
+        };
+        action.diagnostics = [diagnostic];
+        action.isPreferred = true;
+        return action;
+    }
+
+    public static clearAnimationByteStride(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
+        const document = textEditor.document;
+        let bestKey = getBestKeyFromDiagnostic(diagnostic, map, textEditor);
+
+        // Key should be '/animations/n/samplers/n/output'
+        let keySplit = bestKey.split('/');
+        if (keySplit.length < 6 || keySplit[1] !== 'animations' ||
+            keySplit[3] !== 'samplers' || keySplit[5] !== 'output') {
+            throw new Error("This quick-fix command should be used on an animation sampler output.");
+        }
+
+        let gltf = map.data;
+        let accessorId = getFromJsonPointer(gltf, bestKey);
+        let bufferViewId = gltf.accessors[accessorId].bufferView;
+        let bufferViewKey = '/bufferViews/' + bufferViewId;
+        if (!map.pointers.hasOwnProperty(bufferViewKey + '/byteStride')) {
+            throw new Error("This bufferView does not have a byteStride.");
+        }
+
+        let range = clearRangeOfJsonKey(map, bufferViewKey, 'byteStride');
+        edit.delete(range);
+    }
+
+    private createCommandClearAllByteStrides(diagnostic: vscode.Diagnostic): vscode.CodeAction {
+        const action = new vscode.CodeAction(CLEAR_ALL_ANIMATION_BYTESTRIDES, vscode.CodeActionKind.QuickFix);
+        action.command = {
+            command: 'gltf.clearAllAnimationByteStrides',
+            arguments: [diagnostic],
+            title: CLEAR_ALL_ANIMATION_BYTESTRIDES
+        };
+        action.diagnostics = [diagnostic];
+        action.isPreferred = true;
+        return action;
+    }
+
+    public static clearAllAnimationByteStrides(diagnostic: vscode.Diagnostic, map: JsonMap<GLTF2.GLTF>,
+        textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
+        const pointers = map.pointers;
+
+        // Make sure we don't try to delete the same key twice.
+        const touchedBufferIds: number[] = [];
+
+        let gltf = map.data;
+        const numAnimations = gltf.animations ? gltf.animations.length : 0;
+        for (let a = 0; a < numAnimations; ++a) {
+            const animation = gltf.animations[a];
+            const numSamplers = animation.samplers.length;
+            for (let s = 0; s < numSamplers; ++s) {
+                const sampler = animation.samplers[s];
+                const accessorId = sampler.output;
+                const bufferViewId = gltf.accessors[accessorId].bufferView;
+                if (bufferViewId !== undefined) {
+                    let bufferViewKey = '/bufferViews/' + bufferViewId;
+                    if (pointers.hasOwnProperty(bufferViewKey + '/byteStride') &&
+                        touchedBufferIds.indexOf(bufferViewId) < 0) {
+                        let range = clearRangeOfJsonKey(map, bufferViewKey, 'byteStride');
+                        edit.delete(range);
+                        touchedBufferIds.push(bufferViewId);
+                    }
+                }
+            }
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////
+    // ACCESSOR_JOINTS_USED_ZERO_WEIGHT
 
     private createCommandClearUnusedJoints(diagnostic: vscode.Diagnostic): vscode.CodeAction {
         const action = new vscode.CodeAction(CLEAR_UNUSED_JOINTS, vscode.CodeActionKind.QuickFix);
@@ -344,7 +403,7 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
         textEditor: vscode.TextEditor): Promise<void> {
         const document = textEditor.document;
         const pointers = map.pointers;
-        let bestKey = this.getBestKeyFromDiagnostic(diagnostic, map, textEditor);
+        let bestKey = getBestKeyFromDiagnostic(diagnostic, map, textEditor);
 
         if (bestKey.indexOf('/attributes/JOINTS') < 0) {
             throw new Error("This quick-fix command should be used on a mesh primitive attribute JOINTS_*");
@@ -408,9 +467,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
 
         // The underlying buffer can now replace its predecessor.
         let updatedBuffer = (jointsData as any).buffer as ArrayBuffer;
-        const eol = (document.eol === vscode.EndOfLine.CRLF) ? '\r\n' : '\n';
-        const tabSize = textEditor.options.tabSize as number;
-        const space = textEditor.options.insertSpaces ? (new Array(tabSize + 1).join(' ')) : '\t';
+        const insertables = new Insertables(textEditor);
+        const eol = insertables.eol;
+        const indent = insertables.indent;
 
         // Try to work out a good default name.
         let jointsBufferView = map.data.bufferViews[jointsAccessor.bufferView];
@@ -466,9 +525,9 @@ export class GltfActionProvider implements vscode.CodeActionProvider {
                     }
 
                     const pointer = pointers[bufferKey];
-                    let newJson = eol + space + space + space + '"uri": ' + replacementUri + ',';
-                    let insert = pointer.value.pos + 1;
-                    edit.insert(document.positionAt(insert), newJson);
+                    let insertPos = getInsertPointForKey(map, bufferKey);
+                    let newJson = ',' + eol + indent + indent + indent + '"uri": ' + replacementUri;
+                    edit.insert(document.positionAt(insertPos), newJson);
                     let pos = new vscode.Position(pointer.value.line + 1, 0);
                     textEditor.selection = new vscode.Selection(pos, pos);
                     textEditor.revealRange(new vscode.Range(pos, pos),
