@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for glTF and GLB 3D models",
-    "version": "2.3.14",
+    "version": "2.3.15",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {

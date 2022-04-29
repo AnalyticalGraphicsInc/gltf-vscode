@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.15 - UNRELEASED
+### 2.3.15 - 2022-04-28
 
 * Added a pair of "Quick Fixes" for `ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE`. [#242](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/242)
 * Update Babylon to 5.4.0.
