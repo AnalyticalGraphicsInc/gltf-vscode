@@ -159,7 +159,8 @@ const gltfMimeTypes: any = {
     'image/webp' : ['webp'],
     'image/vnd-ms.dds' : ['dds'],
     'text/plain' : ['glsl', 'vert', 'vs', 'frag', 'fs', 'txt'],
-    'audio/wav' : ['wav']
+    'audio/wav' : ['wav'],
+    'application/gltf-buffer' : ['glbuf', 'glbin']
 };
 
 export function guessFileExtension(mimeType: string): string {
