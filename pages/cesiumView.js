@@ -169,20 +169,24 @@ window.CesiumView = function() {
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
         }));
 
-        Cesium.when(model.readyPromise).then(function(model) {
-            if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
-                model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
+        model.readyPromise.then(function(model) {
+            try {
+                if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
+                    model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
+                }
+
+                if (resetCamera) {
+                    setCamera(scene, model);
+                }
+
+                updateAnimations(model);
+                updateArticulations(model);
+
+                mainViewModel.onReady();
+            } catch (ex) {
+                mainViewModel.showErrorMessage(ex);
             }
-
-            if (resetCamera) {
-                setCamera(scene, model);
-            }
-
-            updateAnimations(model);
-            updateArticulations(model);
-
-            mainViewModel.onReady();
-        }).otherwise(function(e) {
+        }, function(e) {
             mainViewModel.showErrorMessage(e);
         });
     }
