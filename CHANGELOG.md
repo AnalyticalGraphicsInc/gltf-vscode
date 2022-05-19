@@ -1,5 +1,14 @@
 # Change Log
 
+### 2.3.16 - UNRELEASED
+
+* Update Babylon to 5.6.1.
+* Update Cesium to 1.93.0.
+* Update Filament to 1.22.0.
+* Update ThreeJS to r140.2.
+* Update gltf-import-export to 1.0.19, preserving certain MIME types from GLB. [gltf-import-export#18](https://github.com/najadojo/gltf-import-export/issues/18).
+* Update Khronos glTF-Validator to 2.0.0-dev.3.8. [KhronosGroup/glTF-Validator#185](https://github.com/KhronosGroup/glTF-Validator/pull/185)
+
 ### 2.3.15 - 2022-04-28
 
 * Added a pair of "Quick Fixes" for `ANIMATION_SAMPLER_ACCESSOR_WITH_BYTESTRIDE`. [#242](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/242)
