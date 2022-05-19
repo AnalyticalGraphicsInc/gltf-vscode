@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.16 - UNRELEASED
+### 2.3.16 - 2022-05-19
 
 * Update Babylon to 5.6.1.
 * Update Cesium to 1.93.0.
