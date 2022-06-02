@@ -24,8 +24,11 @@ node_modules/cesium/Build/Cesium/Workers/*oog*
 node_modules/cesium/Build/CesiumUnminified/**
 node_modules/cesium/Source/**
 node_modules/cesium/*.md
+node_modules/draco3dgltf/draco_encoder*
+node_modules/gltf-import-export/node_modules/**
 node_modules/gltumble/node_modules/**
 node_modules/three/build/three.js
+node_modules/three/build/three.cjs
 node_modules/three/build/three.min.js
 node_modules/three/examples/fonts/**
 node_modules/three/examples/js/**
@@ -36,7 +39,6 @@ node_modules/three/examples/jsm/libs/**
 !node_modules/three/examples/jsm/libs/zstddec.module.js
 node_modules/three/examples/jsm/loaders/ifc/**
 node_modules/three/examples/jsm/loaders/lwo/**
-node_modules/three/examples/jsm/loaders/obj2/**
 node_modules/three/examples/jsm/loaders/FBXLoader.js
 node_modules/three/examples/jsm/loaders/ColladaLoader.js
 node_modules/three/examples/jsm/loaders/VRMLLoader.js
