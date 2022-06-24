@@ -1,5 +1,9 @@
 # Change Log
 
+### 2.3.17 - UNRELEASED
+
+* Update Khronos glTF-Validator to 2.0.0-dev.3.9. [KhronosGroup/glTF-Validator#191](https://github.com/KhronosGroup/glTF-Validator/pull/191)
+
 ### 2.3.16 - 2022-05-19
 
 * Update Babylon to 5.6.1.
