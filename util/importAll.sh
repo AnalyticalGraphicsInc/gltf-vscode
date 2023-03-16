@@ -11,8 +11,12 @@ echo "~~~ KHR_lights_punctual ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
+echo "~~~ KHR_materials_emissive_strength ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
 echo "~~~ KHR_materials_ior ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_ior/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_ior -s ../../
+echo "~~~ KHR_materials_iridescence ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_iridescence/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_iridescence -s ../../
 echo "~~~ KHR_materials_sheen ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_sheen/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_sheen -s ../../
 echo "~~~ KHR_materials_specular ~~~"
@@ -45,10 +49,8 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 # PBR Next
 # Any extensions listed here require a particular branch to be checked out before importing.
 #
-echo "~~~ KHR_materials_emissive_strength ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
-echo "~~~ KHR_materials_iridescence ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_iridescence/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_iridescence -s ../../
+echo "~~~ KHR_materials_anisotropy ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
 
 # Vendor and Multi-vendor extensions
 #
