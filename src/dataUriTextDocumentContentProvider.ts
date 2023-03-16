@@ -3,14 +3,14 @@ import * as path from 'path';
 import * as Url from 'url';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
-import * as draco3dgltf from 'draco3dgltf';
+import { createDecoderModule as createDracoDecoderModule } from 'draco3dgltf';
 import { getBuffer } from 'gltf-import-export';
 import { sprintf } from 'sprintf-js';
 import { getFromJsonPointer, btoa, atob, getAccessorData, AccessorTypeToNumComponents, getAccessorElement } from './utilities';
 import { GLTF2 } from './GLTF2';
 
 let decoderModule;
-draco3dgltf.createDecoderModule({}).then(function(module) {
+createDracoDecoderModule({}).then(function(module) {
     decoderModule = module;
 });
 

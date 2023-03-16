@@ -2,7 +2,9 @@
 
 ### 2.3.17 - UNRELEASED
 
+* Add draft schema for `KHR_materials_anisotropy`.
 * Update Khronos glTF-Validator to 2.0.0-dev.3.9. [KhronosGroup/glTF-Validator#191](https://github.com/KhronosGroup/glTF-Validator/pull/191)
+* Update Draco decoder to 1.5.6.
 
 ### 2.3.16 - 2022-05-19
 
