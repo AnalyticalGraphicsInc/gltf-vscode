@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for glTF and GLB 3D models",
-    "version": "2.3.16",
+    "version": "2.3.17",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.47.0"
+        "vscode": "^1.75.0"
     },
     "categories": [
         "Formatters",
@@ -29,15 +29,7 @@
         "theme": "dark"
     },
     "activationEvents": [
-        "onView:gltfOutline",
-        "onLanguage:json",
-        "onCommand:gltf.inspectData",
-        "onCommand:gltf.importUri",
-        "onCommand:gltf.exportUri",
-        "onCommand:gltf.previewModel",
-        "onCommand:gltf.validateFile",
-        "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile"
+        "onLanguage:json"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -394,14 +386,14 @@
     "devDependencies": {
         "@types/mocha": "^9.0.0",
         "@types/node": "^14.0.23",
-        "@types/vscode": "^1.47.0",
+        "@types/vscode": "^1.75.0",
         "@typescript-eslint/eslint-plugin": "^3.6.1",
         "@typescript-eslint/parser": "^3.6.1",
         "ajv": "^8.6.3",
         "eslint": "^7.5.0",
         "eslint-plugin-html": "^6.0.2",
         "mocha": "^9.1.3",
-        "typescript": "^4.4.4",
+        "typescript": "^5.1.3",
         "yargs": "^17.2.1"
     },
     "dependencies": {
