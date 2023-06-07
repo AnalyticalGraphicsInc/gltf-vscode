@@ -133,7 +133,7 @@ window.CesiumView = function() {
         resize();
         var currentTime = clock.tick();
         scene.render(currentTime);
-        Cesium.requestAnimationFrame(startRenderLoop);
+        requestAnimationFrame(startRenderLoop);
 
         if (fixLogo) {
             fixLogo = false;
@@ -162,15 +162,17 @@ window.CesiumView = function() {
     function loadModel(gltfContent, gltfRootPath, resetCamera) {
         scene.primitives.removeAll();
 
-        var model = scene.primitives.add(new Cesium.Model({
+        console.log('Cesium: load model');
+        Cesium.Model.fromGltfAsync({
             gltf: gltfContent,
             basePath: gltfRootPath,
             forwardAxis: Cesium.Axis.X,
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
-        }));
-
-        model.readyPromise.then(function(model) {
+        }).then(function(model) {
+            console.log('Cesium: model ready');
             try {
+                scene.primitives.add(model);
+                /*
                 if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
                     model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
                 }
@@ -178,15 +180,18 @@ window.CesiumView = function() {
                 if (resetCamera) {
                     setCamera(scene, model);
                 }
+                */
 
-                updateAnimations(model);
-                updateArticulations(model);
+                //updateAnimations(model);
+                //updateArticulations(model);
 
                 mainViewModel.onReady();
             } catch (ex) {
+                console.error(ex);
                 mainViewModel.showErrorMessage(ex);
             }
         }, function(e) {
+            console.error(e);
             mainViewModel.showErrorMessage(e);
         });
     }
@@ -213,6 +218,7 @@ window.CesiumView = function() {
             return false;
         }, false);
 
+        console.log('Cesium: start preview');
         scene = new Cesium.Scene({
             canvas: canvas,
             creditContainer: document.getElementById('cesiumCreditContainer')
@@ -220,10 +226,11 @@ window.CesiumView = function() {
         scene.rethrowRenderErrors = true;
         scene.camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;
         scene.backgroundColor = Cesium.Color.SLATEGRAY;
-        scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit(Cesium.VERSION, true));
+        scene.frameState.creditDisplay.addStaticCredit(new Cesium.Credit(Cesium.VERSION, true));
 
         enabled = true;
         startRenderLoop();
+        console.log('Cesium: start render loop');
 
         var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
