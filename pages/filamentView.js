@@ -70,7 +70,7 @@ export class FilamentView {
         Filament.assets.model = textEncoder.encode(gltfContent);
 
         const loader = engine.createAssetLoader();
-        const asset = this.asset = loader.createAssetFromJson('model');
+        const asset = this.asset = loader.createAsset('model');
         this._updateCenterAndZoom();
 
         const onDone = () => {
@@ -87,8 +87,8 @@ export class FilamentView {
             }
             this._updateCenterAndZoom();
 
-            this.animator = asset.getAnimator();
-            this.animationCount = asset.getAnimator().getAnimationCount();
+            this.animator = asset.getAssetInstances()[0].getAnimator();
+            this.animationCount = this.animator.getAnimationCount();
             this.koAnimations = [];
             for (let i = 0; i < this.animationCount; ++i ) {
                 var anim = {
