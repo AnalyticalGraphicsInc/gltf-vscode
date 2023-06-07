@@ -400,15 +400,15 @@
         "babylonjs": "6.6.1",
         "babylonjs-inspector": "6.6.1",
         "babylonjs-loaders": "6.6.1",
-        "cesium": "^1.93.0",
+        "cesium": "1.93.0",
         "draco3dgltf": "1.5.6",
-        "filament": "^1.22.0",
-        "gltf-import-export": "1.0.19",
+        "filament": "^1.36.0",
+        "gltf-import-export": "1.0.22",
         "gltf-validator": "2.0.0-dev.3.9",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.140.2",
+        "three": "^0.153.0",
         "vscode-languageclient": "^5.2.1"
     }
 }

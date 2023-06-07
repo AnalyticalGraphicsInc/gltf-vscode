@@ -8,9 +8,9 @@ const fileNames = [
     'examples/jsm/loaders/GLTFLoader.js',
     'examples/jsm/loaders/RGBELoader.js',
     'examples/jsm/loaders/KTX2Loader.js',
-    'examples/jsm/loaders/BasisTextureLoader.js',
     'examples/jsm/loaders/DRACOLoader.js',
-    'examples/jsm/controls/OrbitControls.js'
+    'examples/jsm/controls/OrbitControls.js',
+    'examples/jsm/utils/BufferGeometryUtils.js'
 ];
 
 function main() {
