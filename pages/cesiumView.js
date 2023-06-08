@@ -72,7 +72,7 @@ window.CesiumView = function() {
     }
 
     function updateAnimations(model) {
-        var gltfAnimations = model.gltf.animations || [];
+        var gltfAnimations = model.loader?.components?.animations || [];
         var animations = [];
 
         for (var i = 0; i < gltfAnimations.length; i++) {
@@ -170,19 +170,22 @@ window.CesiumView = function() {
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
         }).then(function(model) {
             console.log('Cesium: model ready');
+            window.ed_model = model;
             try {
                 scene.primitives.add(model);
                 /*
                 if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
                     model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
                 }
+                console.log('got one');
 
                 if (resetCamera) {
                     setCamera(scene, model);
                 }
+                console.log('got two');
                 */
 
-                //updateAnimations(model);
+                updateAnimations(model);
                 //updateArticulations(model);
 
                 mainViewModel.onReady();
