@@ -5,7 +5,9 @@ window.CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;
+    var finalizeLoading = false;
     var scene = null;
+    var model = null;
     var canvas = null;
     var fixLogo = true;
 
@@ -71,8 +73,8 @@ window.CesiumView = function() {
         });
     }
 
-    function updateAnimations(model) {
-        var gltfAnimations = model.loader?.components?.animations || [];
+    function updateAnimations() {
+        var gltfAnimations = model.loader.components?.animations || [];
         var animations = [];
 
         for (var i = 0; i < gltfAnimations.length; i++) {
@@ -88,7 +90,7 @@ window.CesiumView = function() {
         mainViewModel.anyAnimChanged();
     }
 
-    function updateArticulations(model) {
+    function updateArticulations() {
         articulationsViewModel.articulations = Object.keys(model._runtime.articulationsByName).map(function(articulationName) {
             return {
                 name: articulationName,
@@ -135,6 +137,21 @@ window.CesiumView = function() {
         scene.render(currentTime);
         requestAnimationFrame(startRenderLoop);
 
+        if (finalizeLoading && model?.loader?.components) {
+            var bs;
+            try {
+                bs = model.boundingSphere;
+            // eslint-disable-next-line no-empty
+            } catch (ex) {
+            }
+
+            if (bs) {
+                console.log('finalize loading');
+                finalizeLoading = false;
+                finalizeModelLoad();
+            }
+        }
+
         if (fixLogo) {
             fixLogo = false;
             const element = document.querySelector('.cesium-credit-logoContainer img');
@@ -144,14 +161,15 @@ window.CesiumView = function() {
         }
     }
 
-    function setCamera(scene, model) {
+    function setCamera() {
         var controller = scene.screenSpaceCameraController;
         controller.ellipsoid = Cesium.Ellipsoid.UNIT_SPHERE;
         controller.enableTilt = false;
         var r = model.boundingSphere.radius;
         controller.minimumZoomDistance = 0.0;
 
-        var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
+        var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix,
+            model.boundingSphere.center, new Cesium.Cartesian3());
         var heading = Cesium.Math.toRadians(10);
         var pitch = Cesium.Math.toRadians(-15);
         var range = r * 2.5;
@@ -159,36 +177,40 @@ window.CesiumView = function() {
         scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
     }
 
-    function loadModel(gltfContent, gltfRootPath, resetCamera) {
+    function finalizeModelLoad() {
+        if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
+            model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
+        }
+        console.log('got one');
+
+        setCamera();
+        console.log('got two');
+
+        updateAnimations();
+        //updateArticulations(model);
+
+        mainViewModel.onReady();
+    }
+
+    function loadModel(gltfContent, gltfRootPath) {
         scene.primitives.removeAll();
 
         console.log('Cesium: load model');
+        finalizeLoading = false;
         Cesium.Model.fromGltfAsync({
             gltf: gltfContent,
             basePath: gltfRootPath,
             forwardAxis: Cesium.Axis.X,
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
-        }).then(function(model) {
+        }).then(function(m) {
+            model = m;
             console.log('Cesium: model ready');
             window.ed_model = model;
             try {
                 scene.primitives.add(model);
-                /*
-                if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
-                    model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
-                }
-                console.log('got one');
 
-                if (resetCamera) {
-                    setCamera(scene, model);
-                }
-                console.log('got two');
-                */
-
-                updateAnimations(model);
-                //updateArticulations(model);
-
-                mainViewModel.onReady();
+                // When possible, finish setting up matrix & animations.
+                finalizeLoading = true;
             } catch (ex) {
                 console.error(ex);
                 mainViewModel.showErrorMessage(ex);
@@ -209,6 +231,7 @@ window.CesiumView = function() {
         mainViewModel.animations([]);
         mainViewModel.engineUI('blankTemplate');
         scene = scene && scene.destroy();
+        model = null;
     };
 
     this.startPreview = function() {
@@ -222,6 +245,7 @@ window.CesiumView = function() {
         }, false);
 
         console.log('Cesium: start preview');
+        model = null;
         scene = new Cesium.Scene({
             canvas: canvas,
             creditContainer: document.getElementById('cesiumCreditContainer')
@@ -239,7 +263,7 @@ window.CesiumView = function() {
 
         try {
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-            loadModel(gltfContent, gltfRootPath, true);
+            loadModel(gltfContent, gltfRootPath);
         }
         catch (ex) {
             mainViewModel.showErrorMessage(ex);
