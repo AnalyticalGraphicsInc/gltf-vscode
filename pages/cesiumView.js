@@ -91,15 +91,16 @@ window.CesiumView = function() {
     }
 
     function updateArticulations() {
-        articulationsViewModel.articulations = Object.keys(model._runtime.articulationsByName).map(function(articulationName) {
+        var gltfArticulations = model.loader.components?.articulations || [];
+        articulationsViewModel.articulations = gltfArticulations.map(function(articulation) {
             return {
-                name: articulationName,
-                stages: model._runtime.articulationsByName[articulationName].stages.map(function(stage) {
+                name: articulation.name,
+                stages: articulation.stages.map(function(stage) {
                     var stageModel = {
                         name: stage.name,
                         minimum: stage.minimumValue,
                         maximum: stage.maximumValue,
-                        current: stage.currentValue
+                        current: stage.initialValue
                     };
                     Cesium.knockout.track(stageModel);
                     Cesium.knockout.defineProperty(stageModel, 'currentText', {
@@ -112,7 +113,7 @@ window.CesiumView = function() {
                         }
                     });
                     Cesium.knockout.getObservable(stageModel, 'current').subscribe(function(newValue) {
-                        model.setArticulationStage(articulationName + ' ' + stage.name, +newValue);
+                        model.setArticulationStage(articulation.name + ' ' + stage.name, +newValue);
                         model.applyArticulations();
                     });
                     return stageModel;
@@ -138,15 +139,14 @@ window.CesiumView = function() {
         requestAnimationFrame(startRenderLoop);
 
         if (finalizeLoading && model?.loader?.components) {
-            var bs;
+            var hasBoundingSphere;
             try {
-                bs = model.boundingSphere;
+                hasBoundingSphere = model.boundingSphere;
             // eslint-disable-next-line no-empty
             } catch (ex) {
             }
 
-            if (bs) {
-                console.log('finalize loading');
+            if (hasBoundingSphere) {
                 finalizeLoading = false;
                 finalizeModelLoad();
             }
@@ -168,26 +168,22 @@ window.CesiumView = function() {
         var r = model.boundingSphere.radius;
         controller.minimumZoomDistance = 0.0;
 
-        var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix,
-            model.boundingSphere.center, new Cesium.Cartesian3());
         var heading = Cesium.Math.toRadians(10);
         var pitch = Cesium.Math.toRadians(-15);
         var range = r * 2.5;
 
-        scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
+        scene.camera.lookAt(model.boundingSphere.center, new Cesium.HeadingPitchRange(heading, pitch, range));
     }
 
     function finalizeModelLoad() {
         if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
             model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
         }
-        console.log('got one');
 
         setCamera();
-        console.log('got two');
 
         updateAnimations();
-        //updateArticulations(model);
+        updateArticulations(model);
 
         mainViewModel.onReady();
     }
@@ -195,7 +191,6 @@ window.CesiumView = function() {
     function loadModel(gltfContent, gltfRootPath) {
         scene.primitives.removeAll();
 
-        console.log('Cesium: load model');
         finalizeLoading = false;
         Cesium.Model.fromGltfAsync({
             gltf: gltfContent,
@@ -204,8 +199,6 @@ window.CesiumView = function() {
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
         }).then(function(m) {
             model = m;
-            console.log('Cesium: model ready');
-            window.ed_model = model;
             try {
                 scene.primitives.add(model);
 
@@ -244,7 +237,6 @@ window.CesiumView = function() {
             return false;
         }, false);
 
-        console.log('Cesium: start preview');
         model = null;
         scene = new Cesium.Scene({
             canvas: canvas,
@@ -257,7 +249,6 @@ window.CesiumView = function() {
 
         enabled = true;
         startRenderLoop();
-        console.log('Cesium: start render loop');
 
         var gltfRootPath = document.getElementById('gltfRootPath').textContent;
 
