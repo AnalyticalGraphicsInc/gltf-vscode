@@ -11,11 +11,11 @@
     "properties" : {
         "anisotropyStrength" : {
             "type" : "number",
-            "description" : "",
+            "description" : "The anisotropy strength. When anisotropyTexture is present, this value is multiplied by the blue channel.",
             "default" : 0,
             "minimum" : 0,
             "maximum" : 1,
-            "short_description" : "The anisotropy strength. When anisotropyTexture is present, this value is multiplied by the blue channel."
+            "short_description" : "Anisotropic strength"
         },
         "anisotropyRotation" : {
             "type" : "number",
