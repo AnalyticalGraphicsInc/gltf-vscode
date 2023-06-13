@@ -9,7 +9,11 @@ server/src/**
 engines/Cesium/**
 engines/CesiumUnminified/**
 engines/*/README.md
+node_modules/@cesium/**
+node_modules/@zip.js/**
 node_modules/babylonjs-loaders/babylonjs.loaders.js
+node_modules/babylonjs-materials/**
+node_modules/cesium/.husky/**
 node_modules/cesium/Build/Cesium/Assets/IAU2006_XYS/IAU2006_XYS_?.json
 node_modules/cesium/Build/Cesium/Assets/IAU2006_XYS/IAU2006_XYS_1[0-5].json
 node_modules/cesium/Build/Cesium/Assets/IAU2006_XYS/IAU2006_XYS_1[7-9].json
@@ -21,12 +25,14 @@ node_modules/cesium/Build/Cesium/Widgets/**
 node_modules/cesium/Build/Cesium/Workers/*eometry*
 node_modules/cesium/Build/Cesium/Workers/Transforms*
 node_modules/cesium/Build/Cesium/Workers/*oog*
+node_modules/cesium/Build/Cesium/index.*
 node_modules/cesium/Build/CesiumUnminified/**
 node_modules/cesium/Source/**
 node_modules/cesium/*.md
 node_modules/draco3dgltf/draco_encoder*
 node_modules/gltf-import-export/node_modules/**
 node_modules/gltumble/node_modules/**
+node_modules/pako/**
 node_modules/three/build/three.js
 node_modules/three/build/three.cjs
 node_modules/three/build/three.min.js
