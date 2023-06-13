@@ -132,6 +132,12 @@ function initPreview()
         mainViewModel.showErrorMessage(message);
     });
 
+    // Disallow the WebView context menu, which has copy/paste controls.
+    var content = document.getElementById('content');
+    content.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+
     window.addEventListener('message', function(event) {
         switch (event.data.command) {
             case 'refresh': {
