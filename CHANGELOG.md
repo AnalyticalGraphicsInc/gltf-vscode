@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.3.17 - UNRELEASED
+### 2.4.0 - 2023-06-14
 
 * Add JSON schema for `KHR_materials_anisotropy`.
 * Update Babylon to 6.6.1.
