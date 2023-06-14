@@ -29,7 +29,7 @@ node_modules/cesium/Build/Cesium/index.*
 node_modules/cesium/Build/CesiumUnminified/**
 node_modules/cesium/Source/**
 node_modules/cesium/*.md
-node_modules/draco3dgltf/draco_encoder*
+node_modules/draco3dgltf/draco_encoder.wasm
 node_modules/gltf-import-export/node_modules/**
 node_modules/gltumble/node_modules/**
 node_modules/pako/**
