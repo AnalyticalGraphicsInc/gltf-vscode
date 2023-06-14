@@ -593,7 +593,7 @@ export class GltfInspectData implements vscode.TreeDataProvider<Node> {
         this._onDidChangeTreeData.fire(undefined);
     }
 
-    private updateSelection(panel: GltfPreviewPanel, selection: Node[]): void {
+    private updateSelection(panel: GltfPreviewPanel, selection: readonly Node[]): void {
         const vertices = selection.filter(node => node.type === NodeType.Vertex).map((node: VertexNode) => node.index);
 
         const triangles = selection.filter(node => node.type === NodeType.Triangle).map((node: TriangleNode) => ({ index: node.index, vertices: node.vertices }));

@@ -5,7 +5,9 @@ window.CesiumView = function() {
 
     // Tracks if this engine is currently the active engine.
     var enabled = false;
+    var finalizeLoading = false;
     var scene = null;
+    var model = null;
     var canvas = null;
     var fixLogo = true;
 
@@ -71,8 +73,8 @@ window.CesiumView = function() {
         });
     }
 
-    function updateAnimations(model) {
-        var gltfAnimations = model.gltf.animations || [];
+    function updateAnimations() {
+        var gltfAnimations = model.loader.components?.animations || [];
         var animations = [];
 
         for (var i = 0; i < gltfAnimations.length; i++) {
@@ -88,16 +90,17 @@ window.CesiumView = function() {
         mainViewModel.anyAnimChanged();
     }
 
-    function updateArticulations(model) {
-        articulationsViewModel.articulations = Object.keys(model._runtime.articulationsByName).map(function(articulationName) {
+    function updateArticulations() {
+        var gltfArticulations = model.loader.components?.articulations || [];
+        articulationsViewModel.articulations = gltfArticulations.map(function(articulation) {
             return {
-                name: articulationName,
-                stages: model._runtime.articulationsByName[articulationName].stages.map(function(stage) {
+                name: articulation.name,
+                stages: articulation.stages.map(function(stage) {
                     var stageModel = {
                         name: stage.name,
                         minimum: stage.minimumValue,
                         maximum: stage.maximumValue,
-                        current: stage.currentValue
+                        current: stage.initialValue
                     };
                     Cesium.knockout.track(stageModel);
                     Cesium.knockout.defineProperty(stageModel, 'currentText', {
@@ -110,7 +113,7 @@ window.CesiumView = function() {
                         }
                     });
                     Cesium.knockout.getObservable(stageModel, 'current').subscribe(function(newValue) {
-                        model.setArticulationStage(articulationName + ' ' + stage.name, +newValue);
+                        model.setArticulationStage(articulation.name + ' ' + stage.name, +newValue);
                         model.applyArticulations();
                     });
                     return stageModel;
@@ -133,7 +136,21 @@ window.CesiumView = function() {
         resize();
         var currentTime = clock.tick();
         scene.render(currentTime);
-        Cesium.requestAnimationFrame(startRenderLoop);
+        requestAnimationFrame(startRenderLoop);
+
+        if (finalizeLoading && model?.loader?.components) {
+            var hasBoundingSphere;
+            try {
+                hasBoundingSphere = model.boundingSphere;
+            // eslint-disable-next-line no-empty
+            } catch (ex) {
+            }
+
+            if (hasBoundingSphere) {
+                finalizeLoading = false;
+                finalizeModelLoad();
+            }
+        }
 
         if (fixLogo) {
             fixLogo = false;
@@ -144,49 +161,55 @@ window.CesiumView = function() {
         }
     }
 
-    function setCamera(scene, model) {
+    function setCamera() {
         var controller = scene.screenSpaceCameraController;
         controller.ellipsoid = Cesium.Ellipsoid.UNIT_SPHERE;
         controller.enableTilt = false;
         var r = model.boundingSphere.radius;
         controller.minimumZoomDistance = 0.0;
 
-        var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
         var heading = Cesium.Math.toRadians(10);
         var pitch = Cesium.Math.toRadians(-15);
         var range = r * 2.5;
 
-        scene.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
+        scene.camera.lookAt(model.boundingSphere.center, new Cesium.HeadingPitchRange(heading, pitch, range));
     }
 
-    function loadModel(gltfContent, gltfRootPath, resetCamera) {
+    function finalizeModelLoad() {
+        if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
+            model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
+        }
+
+        setCamera();
+
+        updateAnimations();
+        updateArticulations(model);
+
+        mainViewModel.onReady();
+    }
+
+    function loadModel(gltfContent, gltfRootPath) {
         scene.primitives.removeAll();
 
-        var model = scene.primitives.add(new Cesium.Model({
+        finalizeLoading = false;
+        Cesium.Model.fromGltfAsync({
             gltf: gltfContent,
             basePath: gltfRootPath,
             forwardAxis: Cesium.Axis.X,
             scale: 100  // Increasing the scale allows the camera to get much closer to small models.
-        }));
-
-        model.readyPromise.then(function(model) {
+        }).then(function(m) {
+            model = m;
             try {
-                if (Cesium.Cartesian3.magnitude(Cesium.Cartesian3.subtract(model.boundingSphere.center, Cesium.Cartesian3.ZERO, new Cesium.Cartesian3())) < 5000000) {
-                    model.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(new Cesium.Cartesian3.fromDegrees(0.0, 89.98, 0.0));
-                }
+                scene.primitives.add(model);
 
-                if (resetCamera) {
-                    setCamera(scene, model);
-                }
-
-                updateAnimations(model);
-                updateArticulations(model);
-
-                mainViewModel.onReady();
+                // When possible, finish setting up matrix & animations.
+                finalizeLoading = true;
             } catch (ex) {
+                console.error(ex);
                 mainViewModel.showErrorMessage(ex);
             }
         }, function(e) {
+            console.error(e);
             mainViewModel.showErrorMessage(e);
         });
     }
@@ -201,6 +224,7 @@ window.CesiumView = function() {
         mainViewModel.animations([]);
         mainViewModel.engineUI('blankTemplate');
         scene = scene && scene.destroy();
+        model = null;
     };
 
     this.startPreview = function() {
@@ -213,6 +237,7 @@ window.CesiumView = function() {
             return false;
         }, false);
 
+        model = null;
         scene = new Cesium.Scene({
             canvas: canvas,
             creditContainer: document.getElementById('cesiumCreditContainer')
@@ -220,7 +245,7 @@ window.CesiumView = function() {
         scene.rethrowRenderErrors = true;
         scene.camera.constrainedAxis = Cesium.Cartesian3.UNIT_Z;
         scene.backgroundColor = Cesium.Color.SLATEGRAY;
-        scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit(Cesium.VERSION, true));
+        scene.frameState.creditDisplay.addStaticCredit(new Cesium.Credit(Cesium.VERSION, true));
 
         enabled = true;
         startRenderLoop();
@@ -229,7 +254,7 @@ window.CesiumView = function() {
 
         try {
             var gltfContent = JSON.parse(document.getElementById('gltf').textContent);
-            loadModel(gltfContent, gltfRootPath, true);
+            loadModel(gltfContent, gltfRootPath);
         }
         catch (ex) {
             mainViewModel.showErrorMessage(ex);

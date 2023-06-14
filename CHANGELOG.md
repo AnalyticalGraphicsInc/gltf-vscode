@@ -2,7 +2,14 @@
 
 ### 2.3.17 - UNRELEASED
 
+* Add JSON schema for `KHR_materials_anisotropy`.
+* Update Babylon to 6.6.1.
+* Update Cesium to 1.106.1.
+* Update Filament to 1.36.0.
+* Update ThreeJS to r153.0.
+* Update gltf-import-export to 1.0.22. Fixes [#245](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/245)
 * Update Khronos glTF-Validator to 2.0.0-dev.3.9. [KhronosGroup/glTF-Validator#191](https://github.com/KhronosGroup/glTF-Validator/pull/191)
+* Update Draco decoder to 1.5.6.
 
 ### 2.3.16 - 2022-05-19
 

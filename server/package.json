@@ -1,7 +1,7 @@
 {
     "name": "gltf-language-server",
     "description": "glTF Language Server",
-    "version": "2.3.16",
+    "version": "2.3.17",
     "author": "Analytical Graphics, Inc. and outside contributors",
     "license": "Apache-2.0",
     "engines": {
@@ -15,7 +15,7 @@
         "gltf-validator": "2.0.0-dev.3.9",
         "json-source-map": "0.6.1",
         "vscode-languageserver": "^5.2.1",
-        "vscode-uri": "^3.0.3"
+        "vscode-uri": "^3.0.7"
     },
     "scripts": {
         "preinstall": "touch installServerIntoExtension && rm installServerIntoExtension*",

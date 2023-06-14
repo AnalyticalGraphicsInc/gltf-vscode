@@ -2,7 +2,7 @@
     "name": "gltf-vscode",
     "displayName": "glTF Tools",
     "description": "Tools for glTF and GLB 3D models",
-    "version": "2.3.16",
+    "version": "2.3.17",
     "publisher": "cesium",
     "license": "Apache-2.0",
     "repository": {
@@ -17,7 +17,7 @@
     ],
     "icon": "images/gltf.png",
     "engines": {
-        "vscode": "^1.47.0"
+        "vscode": "^1.75.0"
     },
     "categories": [
         "Formatters",
@@ -29,15 +29,7 @@
         "theme": "dark"
     },
     "activationEvents": [
-        "onView:gltfOutline",
-        "onLanguage:json",
-        "onCommand:gltf.inspectData",
-        "onCommand:gltf.importUri",
-        "onCommand:gltf.exportUri",
-        "onCommand:gltf.previewModel",
-        "onCommand:gltf.validateFile",
-        "onCommand:gltf.exportGlbFile",
-        "onCommand:gltf.importGlbFile"
+        "onLanguage:json"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -394,29 +386,29 @@
     "devDependencies": {
         "@types/mocha": "^9.0.0",
         "@types/node": "^14.0.23",
-        "@types/vscode": "^1.47.0",
+        "@types/vscode": "^1.75.0",
         "@typescript-eslint/eslint-plugin": "^3.6.1",
         "@typescript-eslint/parser": "^3.6.1",
         "ajv": "^8.6.3",
         "eslint": "^7.5.0",
         "eslint-plugin-html": "^6.0.2",
         "mocha": "^9.1.3",
-        "typescript": "^4.4.4",
+        "typescript": "^5.1.3",
         "yargs": "^17.2.1"
     },
     "dependencies": {
-        "babylonjs": "5.6.1",
-        "babylonjs-inspector": "5.6.1",
-        "babylonjs-loaders": "5.6.1",
-        "cesium": "^1.93.0",
-        "draco3dgltf": "1.5.2",
-        "filament": "^1.22.0",
-        "gltf-import-export": "1.0.19",
+        "babylonjs": "6.6.1",
+        "babylonjs-inspector": "6.6.1",
+        "babylonjs-loaders": "6.6.1",
+        "cesium": "1.106.1",
+        "draco3dgltf": "1.5.6",
+        "filament": "^1.36.0",
+        "gltf-import-export": "1.0.22",
         "gltf-validator": "2.0.0-dev.3.9",
         "gltumble": "^1.0.1",
         "json-source-map": "0.6.1",
         "sprintf-js": "1.1.2",
-        "three": "^0.140.2",
+        "three": "^0.153.0",
         "vscode-languageclient": "^5.2.1"
     }
 }

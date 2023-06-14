@@ -13,6 +13,13 @@
         "name" : {},
         "extensions" : {
             "properties" : {
+                "KHR_materials_anisotropy" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_anisotropy/glTF.KHR_materials_anisotropy.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_clearcoat" : {
                     "allOf" : [
                         {

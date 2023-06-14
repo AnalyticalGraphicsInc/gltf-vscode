@@ -1,6 +1,6 @@
 # glTF Tools Extension for Visual Studio Code
 
-[![GitHub issues](https://img.shields.io/github/issues/AnalyticalGraphicsInc/gltf-vscode.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues) [![GitHub license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/LICENSE.md) [![VS Code marketplace](https://vsmarketplacebadge.apphb.com/installs/cesium.gltf-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode)
+[![GitHub issues](https://img.shields.io/github/issues/AnalyticalGraphicsInc/gltf-vscode.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues) [![GitHub license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/AnalyticalGraphicsInc/gltf-vscode/blob/master/LICENSE.md) [![VS Code marketplace](https://img.shields.io/static/v1?label=VS%20Code%20Marketplace&message=gltf-vscode&color=blue)](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode)
 
 ## Preview and debug glTF 3D models directly in the editor
 
@@ -238,6 +238,7 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 
 * `KHR_draco_mesh_compression`
 * `KHR_lights_punctual`
+* `KHR_materials_anisotropy`
 * `KHR_materials_clearcoat`
 * `KHR_materials_emissive_strength`
 * `KHR_materials_ior`
