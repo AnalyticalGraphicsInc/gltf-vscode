@@ -15,13 +15,13 @@
             "default" : 0,
             "minimum" : 0,
             "maximum" : 1,
-            "short_description" : "Anisotropic strength"
+            "short_description" : "The anisotropy strength."
         },
         "anisotropyRotation" : {
             "type" : "number",
             "description" : "The rotation of the anisotropy in tangent, bitangent space, measured in radians counter-clockwise from the tangent. When anisotropyTexture is present, anisotropyRotation provides additional rotation to the vectors in the texture.",
             "default" : 0,
-            "short_description" : "Anisotropic rotation"
+            "short_description" : "The rotation of the anisotropy."
         },
         "anisotropyTexture" : {
             "allOf" : [
@@ -30,7 +30,7 @@
                 }
             ],
             "description" : "The anisotropy texture. Red and green channels represent the anisotropy direction in [-1, 1] tangent, bitangent space, to be rotated by anisotropyRotation. The blue channel contains strength as [0, 1] to be multiplied by anisotropyStrength.",
-            "short_description" : "Anisotropy texture"
+            "short_description" : "The anisotropy texture."
         },
         "extensions" : {},
         "extras" : {}
