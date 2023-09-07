@@ -253,12 +253,12 @@
                 },
                 {
                     "command": "gltf.importGlbFile",
-                    "when": "resourceExtname == .glb",
+                    "when": "resourceExtname == .glb || resourceExtname == .vrm",
                     "group": "glTF"
                 },
                 {
                     "command": "gltf.validateFile",
-                    "when": "resourceExtname == .gltf || resourceExtname == .glb",
+                    "when": "resourceExtname == .gltf || resourceExtname == .glb || resourceExtname == .vrm",
                     "group": "glTF"
                 }
             ],
