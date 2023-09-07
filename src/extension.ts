@@ -380,6 +380,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 defaultUri: vscode.Uri.file(glbPath),
                 filters: {
                     'Binary glTF': ['glb'],
+                    'VRM': ['vrm'],
                     'All files': ['*']
                 }
             };
@@ -440,9 +441,11 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.importGlbFile', async (fileUri) => {
 
-        if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) || !fileUri.fsPath.endsWith('.glb')) {
-            if ((vscode.window.activeTextEditor !== undefined) &&
-                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb'))
+        if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) || !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.glb'))) {
+            if ((vscode.window.activeTextEditor !== undefined) && (
+                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.glb')) ||
+                (vscode.window.activeTextEditor.document.uri.fsPath.endsWith('.vrm'))
+            )
             ) {
                 fileUri = vscode.window.activeTextEditor.document.uri;
             } else {
@@ -451,6 +454,7 @@ export function activate(context: vscode.ExtensionContext): void {
                     openLabel: 'Import',
                     filters: {
                         'Binary glTF': ['glb'],
+                        'VRM (as Binary glTF)': ['vrm'],
                         'All files': ['*']
                     }
                 };
@@ -473,7 +477,7 @@ export function activate(context: vscode.ExtensionContext): void {
             }
             let getTargetFilename = async (): Promise<string> => {
                 // Compose a target filename
-                let targetFilename = fileUri.fsPath.replace('.glb', '.gltf');
+                let targetFilename = fileUri.fsPath.endsWith('.glb') ? fileUri.fsPath.replace('.glb', '.gltf') : fileUri.fsPath.replace('.vrm', '.gltf') ;
                 if (!vscode.workspace.getConfiguration('glTF').get('alwaysOverwriteDefaultFilename')) {
                     const options: vscode.SaveDialogOptions = {
                         defaultUri: vscode.Uri.file(targetFilename),
@@ -505,12 +509,13 @@ export function activate(context: vscode.ExtensionContext): void {
     //
     context.subscriptions.push(vscode.commands.registerCommand('gltf.validateFile', async (fileUri) => {
         if (typeof fileUri === 'undefined' || !(fileUri instanceof vscode.Uri) ||
-            !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.gltf'))) {
+            !(fileUri.fsPath.endsWith('.glb') || fileUri.fsPath.endsWith('.vrm') || fileUri.fsPath.endsWith('.gltf'))) {
             const options: vscode.OpenDialogOptions = {
                 canSelectMany: false,
                 openLabel: 'Validate',
                 filters: {
                     'glTF Files': ['gltf', 'glb'],
+                    'VRM Files': ['vrm'],
                     'All files': ['*']
                 }
             };
