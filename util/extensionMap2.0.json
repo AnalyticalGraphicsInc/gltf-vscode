@@ -67,7 +67,8 @@
         "title": "Mesh Extensions",
         "extensions": {
             "KHR_xmp": "node.KHR_xmp.schema.json",
-            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json",
+            "EXT_mesh_manifold": "mesh.EXT_mesh_manifold.schema.json"
         }
     },
     "mesh.primitive": {
