@@ -3,6 +3,8 @@
 ### 2.4.1 - UNRELEASED
 
 * Update Babylon to 7.17.2.
+* Update Cesium to 1.119.0.
+* Update Draco decoder to 1.5.7.
 * Add JSON schema for `EXT_mesh_manifold`.
 
 ### 2.4.0 - 2023-06-14

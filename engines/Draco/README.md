@@ -1,3 +1,3 @@
 Files downloaded from:
 
-https://github.com/google/draco/tree/master/javascript
+https://github.com/google/draco/tree/main/javascript
