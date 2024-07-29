@@ -32,7 +32,7 @@ interface ParseResult {
 }
 
 let documentsToHandle: Map<TextDocument, ParseResult> = new Map<TextDocument, ParseResult>();
-let debounceTimer: NodeJS.Timer;
+let debounceTimer: NodeJS.Timeout;
 
 /**
  * Attempt to parse a JSON document into a map of JSON pointers.
@@ -78,16 +78,16 @@ connection.onInitialize((): InitializeResult => {
 });
 
 // The settings interface describe the server relevant settings part
-interface GltfSettings {
-    Validation: ValidatorSettings;
-}
-
 interface ValidatorSettings {
     enable: boolean;
     debounce: number;
     maxIssues: number;
     ignoredIssues: Array<string>;
     severityOverrides: object;
+}
+
+interface GltfSettings {
+    Validation: ValidatorSettings;
 }
 
 let currentSettings: GltfSettings;
