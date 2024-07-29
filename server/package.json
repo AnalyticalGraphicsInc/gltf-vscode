@@ -15,7 +15,7 @@
         "gltf-validator": "2.0.0-dev.3.9",
         "json-source-map": "0.6.1",
         "vscode-languageserver": "^5.2.1",
-        "vscode-uri": "^3.0.7"
+        "vscode-uri": "^3.0.8"
     },
     "scripts": {
         "preinstall": "touch installServerIntoExtension && rm installServerIntoExtension*",
