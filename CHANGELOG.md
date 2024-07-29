@@ -4,6 +4,7 @@
 
 * Update Babylon to 7.17.2.
 * Update Cesium to 1.119.0.
+* Update ThreeJS to r167.0.
 * Update Draco decoder to 1.5.7.
 * Add JSON schema for `EXT_mesh_manifold`.
 
