@@ -87,7 +87,7 @@ export class FilamentView {
             }
             this._updateCenterAndZoom();
 
-            this.animator = asset.getAssetInstances()[0].getAnimator();
+            this.animator = asset.getInstance().getAnimator();
             this.animationCount = this.animator.getAnimationCount();
             this.koAnimations = [];
             for (let i = 0; i < this.animationCount; ++i ) {

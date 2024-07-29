@@ -402,7 +402,7 @@
         "babylonjs-loaders": "7.17.2",
         "cesium": "1.119.0",
         "draco3dgltf": "1.5.7",
-        "filament": "^1.36.0",
+        "filament": "1.53.1",
         "gltf-import-export": "1.0.22",
         "gltf-validator": "2.0.0-dev.3.9",
         "gltumble": "^1.0.1",
