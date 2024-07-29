@@ -1,5 +1,10 @@
 # Change Log
 
+### 2.4.1 - UNRELEASED
+
+* Update Babylon to 7.17.2.
+* Add JSON schema for `EXT_mesh_manifold`.
+
 ### 2.4.0 - 2023-06-14
 
 * Add JSON schema for `KHR_materials_anisotropy`.
