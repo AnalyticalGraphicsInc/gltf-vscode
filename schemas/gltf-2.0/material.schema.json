@@ -23,28 +23,28 @@
                 "KHR_materials_clearcoat" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_clearcoat/glTF.KHR_materials_clearcoat.schema.json"
+                            "$ref" : "extensions/KHR_materials_clearcoat/material.KHR_materials_clearcoat.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_emissive_strength" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_emissive_strength/glTF.KHR_materials_emissive_strength.schema.json"
+                            "$ref" : "extensions/KHR_materials_emissive_strength/material.KHR_materials_emissive_strength.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_ior" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_ior/glTF.KHR_materials_ior.schema.json"
+                            "$ref" : "extensions/KHR_materials_ior/material.KHR_materials_ior.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_iridescence" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_iridescence/glTF.KHR_materials_iridescence.schema.json"
+                            "$ref" : "extensions/KHR_materials_iridescence/material.KHR_materials_iridescence.schema.json"
                         }
                     ]
                 },
@@ -58,35 +58,35 @@
                 "KHR_materials_sheen" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_sheen/glTF.KHR_materials_sheen.schema.json"
+                            "$ref" : "extensions/KHR_materials_sheen/material.KHR_materials_sheen.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_specular" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_specular/glTF.KHR_materials_specular.schema.json"
+                            "$ref" : "extensions/KHR_materials_specular/material.KHR_materials_specular.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_transmission" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_transmission/glTF.KHR_materials_transmission.schema.json"
+                            "$ref" : "extensions/KHR_materials_transmission/material.KHR_materials_transmission.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_unlit" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_unlit/glTF.KHR_materials_unlit.schema.json"
+                            "$ref" : "extensions/KHR_materials_unlit/material.KHR_materials_unlit.schema.json"
                         }
                     ]
                 },
                 "KHR_materials_volume" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_volume/glTF.KHR_materials_volume.schema.json"
+                            "$ref" : "extensions/KHR_materials_volume/material.KHR_materials_volume.schema.json"
                         }
                     ]
                 },

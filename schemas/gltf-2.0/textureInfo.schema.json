@@ -29,7 +29,7 @@
                 "KHR_texture_transform" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_texture_transform/KHR_texture_transform.textureInfo.schema.json"
+                            "$ref" : "extensions/KHR_texture_transform/textureInfo.KHR_texture_transform.schema.json"
                         }
                     ]
                 }

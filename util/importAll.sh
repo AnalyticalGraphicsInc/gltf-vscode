@@ -68,3 +68,6 @@ echo "~~~ AGI_articulations ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/AGI_articulations/schema -o ../schemas/gltf-2.0/extensions/AGI_articulations -s ../../
 echo "~~~ AGI_stk_metadata ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/AGI_stk_metadata/schema -o ../schemas/gltf-2.0/extensions/AGI_stk_metadata -s ../../
+
+echo "--- Validate all external references in JSON schemas ---"
+./validateSchema.js -s ../schemas/glTF.chooser.schema.json
