@@ -256,6 +256,7 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 * `KHR_xmp_json_ld`
 * `EXT_lights_image_based`
 * `EXT_mesh_gpu_instancing`
+* `EXT_mesh_manifold`
 * `EXT_meshopt_compression`
 * `EXT_texture_webp`
 * `AGI_articulations`

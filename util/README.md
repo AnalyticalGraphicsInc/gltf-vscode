@@ -24,18 +24,20 @@ This folder contains a NodeJS script `importSchema.js` that will read in the off
 
 * Whitespace - The whitespace in the schema is changed as a side-effect of parsing and re-serializing the schema in this script.
 
+## validateSchema.js
+
+This is a final check at the end of `importAll.sh` to ensure that all external file references between schemas are to existing files.
+
 # Extensions
 
 To add a new extension schema here, once the extension's schema is merged into the main glTF repository, follow these steps:
 
-1. Create a new folder under `schemas/glTF-2.0/extensions` with the name of the extension being added.
+1. Edit `util/extensionMap2.0.json` to assign the new extension schema to one of the glTF core schema extension objects.
 
-2. Edit `util/importAll.sh` to include a command to import the extension's schema into the new folder.  (Running it is optional at this point.)
+2. Edit `util/importAll.sh` to include a command to import the extension's schema.
 
-3. Edit `util/extensionMap2.0.json` to assign the new extension schema to one of the glTF core schema extension objects.
+3. Run `./importAll.sh` from the `util` folder, to pick up edits from above.
 
-4. Run (or re-run) `./importAll.sh` from the `util` folder, to pick up edits from both steps 2 and 3.
-
-5. Add the extension to the list of supported extension schemas in the main `README.md` file.
+4. Add the extension to the list of supported extension schemas in the main `README.md` file.
 
 Now, build and launch this VSCode extension, and it should offer autocomplete and tooltips for the newly added glTF extension.

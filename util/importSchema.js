@@ -220,6 +220,12 @@ function main() {
         return;
     }
 
+    if (!fs.existsSync(options.outputPath))
+    {
+        console.log("### Creating folder: " + options.outputPath);
+        fs.mkdirSync(options.outputPath);
+    }
+
     var files = fs.readdirSync(options.schemaPath);
     files.forEach(function(file) {
         if (file.endsWith('.schema.json')) {

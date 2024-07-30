@@ -48,7 +48,7 @@
     "material": {
         "title": "Material Extensions",
         "extensions": {
-            "KHR_materials_anisotropy": "glTF.KHR_materials_anisotropy.schema.json",
+            "KHR_materials_anisotropy": "material.KHR_materials_anisotropy.schema.json",
             "KHR_materials_clearcoat": "material.KHR_materials_clearcoat.schema.json",
             "KHR_materials_emissive_strength": "material.KHR_materials_emissive_strength.schema.json",
             "KHR_materials_ior": "material.KHR_materials_ior.schema.json",

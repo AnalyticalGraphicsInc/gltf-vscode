@@ -16,7 +16,7 @@
                 "KHR_materials_anisotropy" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_anisotropy/glTF.KHR_materials_anisotropy.schema.json"
+                            "$ref" : "extensions/KHR_materials_anisotropy/material.KHR_materials_anisotropy.schema.json"
                         }
                     ]
                 },

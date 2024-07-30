@@ -81,10 +81,10 @@ function validateObject(parentFile, folder, data, options) {
 
 function validateFile(fullPath, options) {
     checkedFiles.push(fullPath);
+    console.log(fullPath);
+
     let file = path.basename(fullPath);
     let folder = path.dirname(fullPath);
-
-    console.log(fullPath);
     let schema = JSON.parse(fs.readFileSync(fullPath));
 
     validateObject(file, folder, schema, options);

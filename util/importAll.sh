@@ -9,6 +9,8 @@ echo "~~~ KHR_draco_mesh_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_draco_mesh_compression/schema -o ../schemas/gltf-2.0/extensions/KHR_draco_mesh_compression -s ../../
 echo "~~~ KHR_lights_punctual ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
+echo "~~~ KHR_materials_anisotropy ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
 echo "~~~ KHR_materials_emissive_strength ~~~"
@@ -49,10 +51,6 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 # PBR Next
 # Any extensions listed here require a particular branch to be checked out before importing.
 #
-#echo "~~~ KHR_materials_anisotropy ~~~"
-#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
-echo "~~~ EXT_mesh_manifold ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_manifold/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_manifold -s ../../
 
 # Vendor and Multi-vendor extensions
 #
@@ -60,6 +58,8 @@ echo "~~~ EXT_lights_image_based ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
 echo "~~~ EXT_mesh_gpu_instancing ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_gpu_instancing -s ../../
+echo "~~~ EXT_mesh_manifold ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_manifold/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_manifold -s ../../
 echo "~~~ EXT_meshopt_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_meshopt_compression/schema -o ../schemas/gltf-2.0/extensions/EXT_meshopt_compression -s ../../
 echo "~~~ EXT_texture_webp ~~~"
