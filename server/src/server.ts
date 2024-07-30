@@ -190,7 +190,7 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
     if (parseResult.parseable) {
         if (!parseResult.jsonMap) {
             parseResult.jsonMap = tryGetJsonMap(textDocument, gltfText);
-            if (!parseResult.jsonMap) {
+            if ((!parseResult.jsonMap) || (!parseResult.jsonMap.data)) {
                 parseResult.parseable = false;
                 let diagnostics: Diagnostic[] = [getDiagnostic({
                     message: 'Error parsing JSON document.',
