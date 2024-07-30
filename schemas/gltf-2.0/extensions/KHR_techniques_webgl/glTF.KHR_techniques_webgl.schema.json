@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "KHR_techniques_webgl glTF extension",
+    "title" : "KHR_techniques_webgl glTF extension -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "Instances of shading techniques with external shader programs along with their parameterized values.  Shading techniques describe data types and semantics for GLSL vertex and fragment shader programs.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"

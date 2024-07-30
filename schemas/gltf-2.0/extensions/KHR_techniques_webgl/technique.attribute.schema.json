@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "Attribute",
+    "title" : "Attribute -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "An attribute input to a technique and the corresponding semantic.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"

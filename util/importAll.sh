@@ -42,11 +42,11 @@ echo "~~~ KHR_xmp_json_ld ~~~"
 # Archived extensions
 #
 echo "~~~ KHR_materials_pbrSpecularGlossiness (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../ -a KHR_materials_specular
 echo "~~~ KHR_techniques_webgl (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../ -a "glTF PBR materials"
 echo "~~~ KHR_xmp (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../ -a KHR_xmp_json_ld
 
 # PBR Next
 # Any extensions listed here require a particular branch to be checked out before importing.

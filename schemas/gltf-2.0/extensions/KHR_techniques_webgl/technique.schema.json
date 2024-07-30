@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "Technique",
+    "title" : "Technique -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "A template for material appearances.",
     "allOf" : [
         {
             "$ref" : "../../glTFChildOfRootProperty.schema.json"

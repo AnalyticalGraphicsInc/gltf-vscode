@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "KHR_materials_pbrSpecularGlossiness glTF extension",
+    "title" : "KHR_materials_pbrSpecularGlossiness glTF extension -- DO NOT USE. Archived extension, superseded by KHR_materials_specular.",
     "type" : "object",
-    "description" : "glTF extension that defines the specular-glossiness material model from Physically-Based Rendering (PBR) methodology.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"

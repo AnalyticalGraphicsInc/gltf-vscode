@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "Program",
+    "title" : "Program -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "A shader program, including its vertex and fragment shaders.",
     "allOf" : [
         {
             "$ref" : "../../glTFChildOfRootProperty.schema.json"

@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "KHR_techniques_webgl material extension",
+    "title" : "KHR_techniques_webgl material extension -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "The technique to use for a material and any additional uniform values.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"
