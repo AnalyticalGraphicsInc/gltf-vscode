@@ -19,6 +19,12 @@
             "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
+    "animation.channel.target": {
+        "title": "Animation Channel Target Extensions",
+        "extensions": {
+            "KHR_animation_pointer": "animation.channel.target.KHR_animation_pointer.schema.json"
+        }
+    },
     "asset": {
         "title": "Asset Extensions",
         "extensions": {

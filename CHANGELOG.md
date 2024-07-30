@@ -7,7 +7,8 @@
 * Update Filament to 1.53.1.
 * Update ThreeJS to r167.0.
 * Update Draco decoder to 1.5.7.
-* Add JSON schema for `EXT_mesh_manifold`.
+* Add JSON schemas for `KHR_animation_pointer`, `KHR_materials_dispersion`, `EXT_mesh_manifold`.
+* Marked three old extensions as "archived" in JSON schema, and named their replacements.
 
 ### 2.4.0 - 2023-06-14
 
