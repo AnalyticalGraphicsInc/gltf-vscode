@@ -41,15 +41,16 @@ let debounceTimer: NodeJS.Timeout;
  * Catch and report any parsing errors encountered.
  *
  * @param textDocument The document to parse
+ * @param gltfText The text of the document
  * @return A map of JSON pointers to document text locations, or `undefined`
  */
-function tryGetJsonMap(textDocument: TextDocument): JsonMap {
+function tryGetJsonMap(textDocument: TextDocument, gltfText: string): JsonMap {
     try {
         // NOTE: jsonMap.parse() makes a bad assumption that every `\t` char is
         // four columns, and it's not configurable. But we need character offset,
         // not column index, so here we replace every `\t` with a single space.
         // The resulting "columns" are actually chars-within-line counts.
-        return jsonMap.parse(textDocument.getText().replace(everySingleTab, ' '));
+        return jsonMap.parse(gltfText.replace(everySingleTab, ' '));
     } catch (ex) {
         console.warn('Error parsing glTF JSON document: ' + textDocument.uri);
     }
@@ -139,7 +140,6 @@ documents.onDidClose(change => {
  */
 function scheduleParsing(textDocument: TextDocument): void {
     if (isLocalGltf(textDocument)) {
-        console.log('schedule ' + textDocument.uri);
         documentsToHandle.set(textDocument, { jsonMap: null, parseable: true});
         if (debounceTimer) {
             clearTimeout(debounceTimer);
@@ -158,7 +158,6 @@ function scheduleParsing(textDocument: TextDocument): void {
  * @param textDocument The document to un-schedule
  */
 function unscheduleParsing(textDocument: TextDocument): void {
-    console.log('un-schedule ' + textDocument.uri);
     documentsToHandle.delete(textDocument);
 }
 
@@ -171,7 +170,6 @@ function unscheduleParsing(textDocument: TextDocument): void {
 function clearTextDocument(textDocument: TextDocument): void {
     unscheduleParsing(textDocument);
     if (isLocalGltf(textDocument)) {
-        console.log('disable validation ' + textDocument.uri);
         const diagnostics: Diagnostic[] = [];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     }
@@ -183,8 +181,6 @@ function clearTextDocument(textDocument: TextDocument): void {
  * @param textDocument The document to validate
  */
 function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument): void {
-    console.log('validate ' + textDocument.uri);
-
     const fileName = URI.parse(textDocument.uri).fsPath;
     const baseName = path.basename(fileName);
 
@@ -193,7 +189,7 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
 
     if (parseResult.parseable) {
         if (!parseResult.jsonMap) {
-            parseResult.jsonMap = tryGetJsonMap(textDocument);
+            parseResult.jsonMap = tryGetJsonMap(textDocument, gltfText);
             if (!parseResult.jsonMap) {
                 parseResult.parseable = false;
                 let diagnostics: Diagnostic[] = [getDiagnostic({

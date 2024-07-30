@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Url from 'url';
-import * as jsonMap from 'json-source-map';
 import { sprintf } from 'sprintf-js';
 import { GLTF2 } from './GLTF2';
-import { AccessorTypeToNumComponents, ComponentTypeToBytesPerElement } from './utilities';
+import { AccessorTypeToNumComponents, ComponentTypeToBytesPerElement, parseJsonMap } from './utilities';
 import { GltfWindow } from './gltfWindow';
 
 export declare type GltfNodeType = 'animation' | 'material' | 'mesh' | 'node' | 'scene' | 'skeleton' | 'skin' | 'texture' | 'root';
@@ -137,7 +136,7 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
 
         this.editor = this.gltfWindow.activeTextEditor;
         if (this.editor) {
-            let mapResult = jsonMap.parse(this.editor.document.getText());
+            let mapResult = parseJsonMap(this.editor.document.getText());
             this.gltf = mapResult.data;
             this.pointers = mapResult.pointers;
             if (this.gltf && this.gltf.asset && this.gltf.asset.version) {
@@ -191,7 +190,6 @@ export class GltfOutline implements vscode.TreeDataProvider<GltfNode> {
             this.tree = null;
             this.gltf = null;
             this.pointers = null;
-            console.log("Can't parse glTF into tree: " + ex.toString());
         }
         this._onDidChangeTreeData.fire(undefined);
     }
