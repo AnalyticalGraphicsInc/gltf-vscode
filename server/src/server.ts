@@ -21,6 +21,8 @@ let documents: TextDocuments = new TextDocuments();
 // for open, change and close text document events
 documents.listen(connection);
 
+const everySingleTab = new RegExp('\\t', 'g');
+
 interface JsonMap {
     data: any;
     pointers: any;
@@ -43,7 +45,11 @@ let debounceTimer: NodeJS.Timeout;
  */
 function tryGetJsonMap(textDocument: TextDocument): JsonMap {
     try {
-        return jsonMap.parse(textDocument.getText());
+        // NOTE: jsonMap.parse() makes a bad assumption that every `\t` char is
+        // four columns, and it's not configurable. But we need character offset,
+        // not column index, so here we replace every `\t` with a single space.
+        // The resulting "columns" are actually chars-within-line counts.
+        return jsonMap.parse(textDocument.getText().replace(everySingleTab, ' '));
     } catch (ex) {
         console.warn('Error parsing glTF JSON document: ' + textDocument.uri);
     }

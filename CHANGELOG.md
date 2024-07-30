@@ -9,6 +9,7 @@
 * Update Draco decoder to 1.5.7.
 * Add JSON schemas for `KHR_animation_pointer`, `KHR_materials_dispersion`, `EXT_mesh_manifold`.
 * Marked three old extensions as "archived" in JSON schema, and named their replacements.
+* Fixed issue with error reporting columns confused by tabs. [#246](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/246)
 
 ### 2.4.0 - 2023-06-14
 
