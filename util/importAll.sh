@@ -55,6 +55,8 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 # PBR Next
 # Any extensions listed here require a particular branch to be checked out before importing.
 #
+#echo "~~~ KHR_materials_diffuse_transmission ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_diffuse_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_diffuse_transmission -s ../../
 
 # Vendor and Multi-vendor extensions
 #

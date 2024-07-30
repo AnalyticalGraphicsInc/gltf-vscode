@@ -27,6 +27,13 @@
                         }
                     ]
                 },
+                "KHR_materials_diffuse_transmission" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_diffuse_transmission/glTF.KHR_materials_diffuse_transmission.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_dispersion" : {
                     "allOf" : [
                         {
