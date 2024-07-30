@@ -181,25 +181,26 @@ function clearTextDocument(textDocument: TextDocument): void {
  * @param textDocument The document to validate
  */
 function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument): void {
+    if (parseResult.jsonMap || !parseResult.parseable) {
+        // Apparently the validator already ran on this ParseResult, not fully de-bounced somehow.
+        return;
+    }
+
     const fileName = URI.parse(textDocument.uri).fsPath;
     const baseName = path.basename(fileName);
 
     const gltfText = textDocument.getText();
     const folderName = path.resolve(fileName, '..');
 
-    if (parseResult.parseable) {
-        if (!parseResult.jsonMap) {
-            parseResult.jsonMap = tryGetJsonMap(textDocument, gltfText);
-            if ((!parseResult.jsonMap) || (!parseResult.jsonMap.data)) {
-                parseResult.parseable = false;
-                let diagnostics: Diagnostic[] = [getDiagnostic({
-                    message: 'Error parsing JSON document.',
-                    isFromLanguageServer: true
-                }, {data: null, pointers: null})];
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
-            }
-        }
+    parseResult.jsonMap = tryGetJsonMap(textDocument, gltfText);
+    if ((!parseResult.jsonMap) || (!parseResult.jsonMap.data)) {
+        parseResult.parseable = false;
+        let diagnostics: Diagnostic[] = [getDiagnostic({
+            message: 'Error parsing JSON document.',
+            isFromLanguageServer: true
+        }, {data: null, pointers: null})];
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        return;
     }
 
     if ((!parseResult.jsonMap.data.asset) || (!parseResult.jsonMap.data.asset.version) || (parseResult.jsonMap.data.asset.version[0] === '1')) {
