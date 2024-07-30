@@ -27,6 +27,13 @@
                         }
                     ]
                 },
+                "KHR_materials_dispersion" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_materials_dispersion/material.KHR_materials_dispersion.schema.json"
+                        }
+                    ]
+                },
                 "KHR_materials_emissive_strength" : {
                     "allOf" : [
                         {

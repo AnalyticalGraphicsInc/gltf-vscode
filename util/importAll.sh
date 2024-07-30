@@ -13,6 +13,8 @@ echo "~~~ KHR_materials_anisotropy ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
+echo "~~~ KHR_materials_dispersion ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_dispersion/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_dispersion -s ../../
 echo "~~~ KHR_materials_emissive_strength ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
 echo "~~~ KHR_materials_ior ~~~"

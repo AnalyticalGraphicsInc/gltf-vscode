@@ -240,6 +240,7 @@ Certain glTF 2.0 extensions are supported by JSON schema validation in VSCode.  
 * `KHR_lights_punctual`
 * `KHR_materials_anisotropy`
 * `KHR_materials_clearcoat`
+* `KHR_materials_dispersion`
 * `KHR_materials_emissive_strength`
 * `KHR_materials_ior`
 * `KHR_materials_iridescence`
