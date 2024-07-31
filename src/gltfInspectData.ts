@@ -50,22 +50,12 @@ interface AccessorVectorNode extends AccessorElementNode {
     values: number[];
 }
 
-interface AccessorMatrixNode extends AccessorElementNode {
-    rows: AccessorMatrixRowNode[];
-}
-
 interface AccessorMatrixRowNode extends AccessorElementNode {
     values: number[];
 }
 
-interface VerticesNode extends Node {
-    numVertices: number;
-    nodes: VertexNode[];
-}
-
-interface VertexNode extends Node {
-    index: number;
-    attributeNodes: VertexAttributeNode[];
+interface AccessorMatrixNode extends AccessorElementNode {
+    rows: AccessorMatrixRowNode[];
 }
 
 interface VertexAttributeNode extends Node {
@@ -73,8 +63,14 @@ interface VertexAttributeNode extends Node {
     values: number[];
 }
 
-interface TrianglesNode extends Node {
-    nodes: TriangleNode[];
+interface VertexNode extends Node {
+    index: number;
+    attributeNodes: VertexAttributeNode[];
+}
+
+interface VerticesNode extends Node {
+    numVertices: number;
+    nodes: VertexNode[];
 }
 
 interface TriangleNode extends Node {
@@ -82,8 +78,8 @@ interface TriangleNode extends Node {
     vertices: [number, number, number];
 }
 
-interface LinesNode extends Node {
-    nodes: LineNode[];
+interface TrianglesNode extends Node {
+    nodes: TriangleNode[];
 }
 
 interface LineNode extends Node {
@@ -91,13 +87,17 @@ interface LineNode extends Node {
     vertices: [number, number];
 }
 
-interface PointsNode extends Node {
-    nodes: PointNode[];
+interface LinesNode extends Node {
+    nodes: LineNode[];
 }
 
 interface PointNode extends Node {
     index: number;
     vertex: number;
+}
+
+interface PointsNode extends Node {
+    nodes: PointNode[];
 }
 
 function isFloatAccessor(accessor: GLTF2.Accessor): boolean {
