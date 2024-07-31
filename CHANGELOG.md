@@ -11,6 +11,7 @@
 * Marked three old extensions as "archived" in JSON schema, and named their replacements.
 * Fixed issue with error reporting columns confused by tabs. [#246](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/246)
 * Added support for treating VRM files (*.vrm) as GLB files, based on [#259](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/259)
+* Updated "Go To Definition" to work with `KHR_animation_pointer` pointers and `EXT_mesh_gpu_instancing` attributes.
 
 ### 2.4.0 - 2023-06-14
 

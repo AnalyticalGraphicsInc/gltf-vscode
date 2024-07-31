@@ -418,6 +418,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     let currentPath = '';
     let currentAnimationPath: string;
     for (let i = firstValidIndex; i < numPathSegments; ++i) {
+        let previousPart = pathSplit[i - 1];
         let part = pathSplit[i];
         currentPath += '/' + part;
         result = result[part];
@@ -448,7 +449,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 }
                 return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
             }
-            else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
+            else if (previousPart === 'attributes') {
                 if (inDraco) {
                     let uri = makeDataUri(textDocumentPosition, currentPath);
                     return makeLocation(undefined, uri);
@@ -480,6 +481,9 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 return makeLocation(pathData.jsonMap.pointers['/cameras/' + result]);
             } else if (part === 'fragmentShader' || part === 'vertexShader') {
                 return makeLocation(pathData.jsonMap.pointers['/shaders/' + result]);
+            } else if (part === 'pointer' && previousPart === 'KHR_animation_pointer' &&
+                pathData.jsonMap.pointers.hasOwnProperty(result)) {
+                return makeLocation(pathData.jsonMap.pointers[result]);
             }
         }
         else if (part === 'nodes' || part === 'children' || part === 'joints') {
