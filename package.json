@@ -400,7 +400,7 @@
         "babylonjs": "7.17.2",
         "babylonjs-inspector": "7.17.2",
         "babylonjs-loaders": "7.17.2",
-        "cesium": "1.119.0",
+        "cesium": "1.120.0",
         "draco3dgltf": "1.5.7",
         "filament": "1.53.1",
         "gltf-import-export": "1.0.22",

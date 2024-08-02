@@ -3,7 +3,7 @@
 ### 2.4.1 - UNRELEASED
 
 * Update Babylon to 7.17.2.
-* Update Cesium to 1.119.0.
+* Update Cesium to 1.120.0.
 * Update Filament to 1.53.1.
 * Update ThreeJS to r167.0.
 * Update Draco decoder to 1.5.7.
