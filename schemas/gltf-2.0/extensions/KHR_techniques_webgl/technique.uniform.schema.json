@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "Uniform",
+    "title" : "Uniform -- DO NOT USE. Archived extension, superseded by glTF PBR materials.",
     "type" : "object",
-    "description" : "A uniform input to a technique, and an optional semantic and value.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"

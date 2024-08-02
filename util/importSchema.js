@@ -39,6 +39,11 @@ function parseArguments(args) {
                 alias: 's',
                 describe: 'shared=PATH, Shared glTF schemas come from this folder.',
                 type: 'string'
+            },
+            'archived': {
+                alias: 'a',
+                describe: 'Mark schema as superseded by the named parameter.',
+                type: 'string'
             }
         }).parse(args);
 
@@ -55,7 +60,8 @@ function parseArguments(args) {
         schemaPath: schemaPath,
         outputPath: outputPath,
         extensionsTable: extensionsTable,
-        sharedFolder: argv.s
+        sharedFolder: argv.s,
+        archived: argv.a
     };
 }
 
@@ -119,17 +125,20 @@ function transformEnums(data) {
     }
 }
 
-function upgradeDescriptions(data) {
+function upgradeDescriptions(data, options) {
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
             var val = data[key];
             if (typeof(val) === 'object') {
-                upgradeDescriptions(val);
+                upgradeDescriptions(val, options);
             }
         }
     }
 
-    if (data.title && data.title === 'Texture Info' && data.description) {
+    if (options.archived && data.title) {
+        data.title += ' -- DO NOT USE. Archived extension, superseded by ' + options.archived + '.';
+        delete data.description;
+    } else if (data.title && data.title === 'Texture Info' && data.description) {
         // textureInfo.schema.json has a vague description "Reference to a texture"
         // that overwrites more specific descriptions from the referring parents.
         // So, we remove that here, and VSCode picks up better descriptions.
@@ -198,7 +207,7 @@ function transformFile(file, options) {
     var schema = JSON.parse(fs.readFileSync(inputFile));
 
     transformEnums(schema);
-    upgradeDescriptions(schema);
+    upgradeDescriptions(schema, options);
 
     if (options.sharedFolder) {
         transformSharedFolder(schema, options);
@@ -218,6 +227,12 @@ function main() {
 
     if (!options) {
         return;
+    }
+
+    if (!fs.existsSync(options.outputPath))
+    {
+        console.log("### Creating folder: " + options.outputPath);
+        fs.mkdirSync(options.outputPath);
     }
 
     var files = fs.readdirSync(options.schemaPath);

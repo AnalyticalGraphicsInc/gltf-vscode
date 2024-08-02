@@ -65,7 +65,7 @@ export class ThreeView {
         loader.setDRACOLoader( dracoLoader );
 
         var extensionRootPath = document.getElementById('extensionRootPath').textContent;
-        var basisPath = extensionRootPath + '/node_modules/three/examples/js/libs/basis/';
+        var basisPath = extensionRootPath + '/node_modules/three/examples/jsm/libs/basis/';
         loader.setKTX2Loader( new KTX2Loader().setTranscoderPath( basisPath ).detectSupport( renderer ) );
 
         var cameraPos = new THREE.Vector3(-0.2, 0.4, 1.4);

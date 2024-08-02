@@ -14,11 +14,6 @@ createDracoDecoderModule({}).then(function(module) {
     decoderModule = module;
 });
 
-interface QueryDataUri {
-    viewColumn?: string;
-    previewHtml?: string;
-}
-
 export class DataUriTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _context: vscode.ExtensionContext;

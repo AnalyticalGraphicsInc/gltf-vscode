@@ -1,8 +1,7 @@
 {
     "$schema" : "http://json-schema.org/draft-04/schema",
-    "title" : "KHR_xmp glTF extension",
+    "title" : "KHR_xmp glTF extension -- DO NOT USE. Archived extension, superseded by KHR_xmp_json_ld.",
     "type" : "object",
-    "description" : "Metadata about the glTF asset.",
     "allOf" : [
         {
             "$ref" : "../../glTFProperty.schema.json"

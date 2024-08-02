@@ -5,12 +5,18 @@ echo "~~~ glTF 1.0 ~~~"
 ./importSchema.js -i ../../glTF/specification/1.0/schema -o ../schemas/gltf-1.0
 echo "~~~ glTF 2.0 ~~~"
 ./importSchema.js -i ../../glTF/specification/2.0/schema -o ../schemas/gltf-2.0 -e extensionMap2.0.json
+echo "~~~ KHR_animation_pointer ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_animation_pointer/schema -o ../schemas/gltf-2.0/extensions/KHR_animation_pointer -s ../../
 echo "~~~ KHR_draco_mesh_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_draco_mesh_compression/schema -o ../schemas/gltf-2.0/extensions/KHR_draco_mesh_compression -s ../../
 echo "~~~ KHR_lights_punctual ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_lights_punctual/schema -o ../schemas/gltf-2.0/extensions/KHR_lights_punctual -s ../../
+echo "~~~ KHR_materials_anisotropy ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
 echo "~~~ KHR_materials_clearcoat ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_clearcoat/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_clearcoat -s ../../
+echo "~~~ KHR_materials_dispersion ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_dispersion/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_dispersion -s ../../
 echo "~~~ KHR_materials_emissive_strength ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_emissive_strength/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_emissive_strength -s ../../
 echo "~~~ KHR_materials_ior ~~~"
@@ -40,17 +46,17 @@ echo "~~~ KHR_xmp_json_ld ~~~"
 # Archived extensions
 #
 echo "~~~ KHR_materials_pbrSpecularGlossiness (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_pbrSpecularGlossiness -s ../../ -a KHR_materials_specular
 echo "~~~ KHR_techniques_webgl (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_techniques_webgl/schema -o ../schemas/gltf-2.0/extensions/KHR_techniques_webgl -s ../../ -a "glTF PBR materials"
 echo "~~~ KHR_xmp (Archived) ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../
+./importSchema.js -i ../../glTF/extensions/2.0/Archived/KHR_xmp/schema -o ../schemas/gltf-2.0/extensions/KHR_xmp -s ../../ -a KHR_xmp_json_ld
 
 # PBR Next
 # Any extensions listed here require a particular branch to be checked out before importing.
 #
-echo "~~~ KHR_materials_anisotropy ~~~"
-./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_anisotropy/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_anisotropy -s ../../
+#echo "~~~ KHR_materials_diffuse_transmission ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_diffuse_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_diffuse_transmission -s ../../
 
 # Vendor and Multi-vendor extensions
 #
@@ -58,6 +64,8 @@ echo "~~~ EXT_lights_image_based ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
 echo "~~~ EXT_mesh_gpu_instancing ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_gpu_instancing -s ../../
+echo "~~~ EXT_mesh_manifold ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_manifold/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_manifold -s ../../
 echo "~~~ EXT_meshopt_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_meshopt_compression/schema -o ../schemas/gltf-2.0/extensions/EXT_meshopt_compression -s ../../
 echo "~~~ EXT_texture_webp ~~~"
@@ -66,3 +74,6 @@ echo "~~~ AGI_articulations ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/AGI_articulations/schema -o ../schemas/gltf-2.0/extensions/AGI_articulations -s ../../
 echo "~~~ AGI_stk_metadata ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/AGI_stk_metadata/schema -o ../schemas/gltf-2.0/extensions/AGI_stk_metadata -s ../../
+
+echo "--- Validate all external references in JSON schemas ---"
+./validateSchema.js -s ../schemas/glTF.chooser.schema.json

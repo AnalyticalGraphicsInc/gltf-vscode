@@ -200,6 +200,12 @@ export interface JsonMap<T> {
     };
 }
 
+// NOTE: jsonMap.parse() makes a bad assumption that every `\t` char is
+// four columns, and it's not configurable. But we need character offset,
+// not column index, so here we replace every `\t` with a single space.
+// The resulting "columns" are actually chars-within-line counts.
+const everySingleTab = new RegExp('\\t', 'g');
+
 export function parseJsonMap(content: string): JsonMap<GLTF2.GLTF> {
-    return jsonMap.parse(content);
+    return jsonMap.parse(content.replace(everySingleTab, ' '));
 }

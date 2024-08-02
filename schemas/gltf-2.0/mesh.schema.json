@@ -42,6 +42,13 @@
                             "$ref" : "extensions/KHR_xmp_json_ld/KHR_xmp_json_ld.schema.json"
                         }
                     ]
+                },
+                "EXT_mesh_manifold" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_mesh_manifold/mesh.EXT_mesh_manifold.schema.json"
+                        }
+                    ]
                 }
             }
         },

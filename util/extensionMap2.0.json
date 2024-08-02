@@ -19,6 +19,12 @@
             "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
     },
+    "animation.channel.target": {
+        "title": "Animation Channel Target Extensions",
+        "extensions": {
+            "KHR_animation_pointer": "animation.channel.target.KHR_animation_pointer.schema.json"
+        }
+    },
     "asset": {
         "title": "Asset Extensions",
         "extensions": {
@@ -48,17 +54,19 @@
     "material": {
         "title": "Material Extensions",
         "extensions": {
-            "KHR_materials_anisotropy": "glTF.KHR_materials_anisotropy.schema.json",
-            "KHR_materials_clearcoat": "glTF.KHR_materials_clearcoat.schema.json",
-            "KHR_materials_emissive_strength": "glTF.KHR_materials_emissive_strength.schema.json",
-            "KHR_materials_ior": "glTF.KHR_materials_ior.schema.json",
-            "KHR_materials_iridescence": "glTF.KHR_materials_iridescence.schema.json",
+            "KHR_materials_anisotropy": "material.KHR_materials_anisotropy.schema.json",
+            "KHR_materials_clearcoat": "material.KHR_materials_clearcoat.schema.json",
+            "KHR_materials_diffuse_transmission": "glTF.KHR_materials_diffuse_transmission.schema.json",
+            "KHR_materials_dispersion": "material.KHR_materials_dispersion.schema.json",
+            "KHR_materials_emissive_strength": "material.KHR_materials_emissive_strength.schema.json",
+            "KHR_materials_ior": "material.KHR_materials_ior.schema.json",
+            "KHR_materials_iridescence": "material.KHR_materials_iridescence.schema.json",
             "KHR_materials_pbrSpecularGlossiness": "glTF.KHR_materials_pbrSpecularGlossiness.schema.json",
-            "KHR_materials_sheen": "glTF.KHR_materials_sheen.schema.json",
-            "KHR_materials_specular": "glTF.KHR_materials_specular.schema.json",
-            "KHR_materials_transmission": "glTF.KHR_materials_transmission.schema.json",
-            "KHR_materials_unlit": "glTF.KHR_materials_unlit.schema.json",
-            "KHR_materials_volume": "glTF.KHR_materials_volume.schema.json",
+            "KHR_materials_sheen": "material.KHR_materials_sheen.schema.json",
+            "KHR_materials_specular": "material.KHR_materials_specular.schema.json",
+            "KHR_materials_transmission": "material.KHR_materials_transmission.schema.json",
+            "KHR_materials_unlit": "material.KHR_materials_unlit.schema.json",
+            "KHR_materials_volume": "material.KHR_materials_volume.schema.json",
             "KHR_xmp": "node.KHR_xmp.schema.json",
             "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
@@ -67,7 +75,8 @@
         "title": "Mesh Extensions",
         "extensions": {
             "KHR_xmp": "node.KHR_xmp.schema.json",
-            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
+            "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json",
+            "EXT_mesh_manifold": "mesh.EXT_mesh_manifold.schema.json"
         }
     },
     "mesh.primitive": {
@@ -106,7 +115,7 @@
     "textureInfo": {
         "title": "Texture Info Extensions",
         "extensions": {
-            "KHR_texture_transform": "KHR_texture_transform.textureInfo.schema.json"
+            "KHR_texture_transform": "textureInfo.KHR_texture_transform.schema.json"
         }
     }
 }

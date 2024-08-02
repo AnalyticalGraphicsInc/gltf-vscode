@@ -21,6 +21,8 @@ let documents: TextDocuments = new TextDocuments();
 // for open, change and close text document events
 documents.listen(connection);
 
+const everySingleTab = new RegExp('\\t', 'g');
+
 interface JsonMap {
     data: any;
     pointers: any;
@@ -32,18 +34,23 @@ interface ParseResult {
 }
 
 let documentsToHandle: Map<TextDocument, ParseResult> = new Map<TextDocument, ParseResult>();
-let debounceTimer: NodeJS.Timer;
+let debounceTimer: NodeJS.Timeout;
 
 /**
  * Attempt to parse a JSON document into a map of JSON pointers.
  * Catch and report any parsing errors encountered.
  *
  * @param textDocument The document to parse
+ * @param gltfText The text of the document
  * @return A map of JSON pointers to document text locations, or `undefined`
  */
-function tryGetJsonMap(textDocument: TextDocument): JsonMap {
+function tryGetJsonMap(textDocument: TextDocument, gltfText: string): JsonMap {
     try {
-        return jsonMap.parse(textDocument.getText());
+        // NOTE: jsonMap.parse() makes a bad assumption that every `\t` char is
+        // four columns, and it's not configurable. But we need character offset,
+        // not column index, so here we replace every `\t` with a single space.
+        // The resulting "columns" are actually chars-within-line counts.
+        return jsonMap.parse(gltfText.replace(everySingleTab, ' '));
     } catch (ex) {
         console.warn('Error parsing glTF JSON document: ' + textDocument.uri);
     }
@@ -78,16 +85,16 @@ connection.onInitialize((): InitializeResult => {
 });
 
 // The settings interface describe the server relevant settings part
-interface GltfSettings {
-    Validation: ValidatorSettings;
-}
-
 interface ValidatorSettings {
     enable: boolean;
     debounce: number;
     maxIssues: number;
     ignoredIssues: Array<string>;
     severityOverrides: object;
+}
+
+interface GltfSettings {
+    Validation: ValidatorSettings;
 }
 
 let currentSettings: GltfSettings;
@@ -133,7 +140,6 @@ documents.onDidClose(change => {
  */
 function scheduleParsing(textDocument: TextDocument): void {
     if (isLocalGltf(textDocument)) {
-        console.log('schedule ' + textDocument.uri);
         documentsToHandle.set(textDocument, { jsonMap: null, parseable: true});
         if (debounceTimer) {
             clearTimeout(debounceTimer);
@@ -152,7 +158,6 @@ function scheduleParsing(textDocument: TextDocument): void {
  * @param textDocument The document to un-schedule
  */
 function unscheduleParsing(textDocument: TextDocument): void {
-    console.log('un-schedule ' + textDocument.uri);
     documentsToHandle.delete(textDocument);
 }
 
@@ -165,7 +170,6 @@ function unscheduleParsing(textDocument: TextDocument): void {
 function clearTextDocument(textDocument: TextDocument): void {
     unscheduleParsing(textDocument);
     if (isLocalGltf(textDocument)) {
-        console.log('disable validation ' + textDocument.uri);
         const diagnostics: Diagnostic[] = [];
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     }
@@ -177,7 +181,10 @@ function clearTextDocument(textDocument: TextDocument): void {
  * @param textDocument The document to validate
  */
 function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument): void {
-    console.log('validate ' + textDocument.uri);
+    if (parseResult.jsonMap || !parseResult.parseable) {
+        // Apparently the validator already ran on this ParseResult, not fully de-bounced somehow.
+        return;
+    }
 
     const fileName = URI.parse(textDocument.uri).fsPath;
     const baseName = path.basename(fileName);
@@ -185,19 +192,15 @@ function parseTextDocument(parseResult: ParseResult, textDocument: TextDocument)
     const gltfText = textDocument.getText();
     const folderName = path.resolve(fileName, '..');
 
-    if (parseResult.parseable) {
-        if (!parseResult.jsonMap) {
-            parseResult.jsonMap = tryGetJsonMap(textDocument);
-            if (!parseResult.jsonMap) {
-                parseResult.parseable = false;
-                let diagnostics: Diagnostic[] = [getDiagnostic({
-                    message: 'Error parsing JSON document.',
-                    isFromLanguageServer: true
-                }, {data: null, pointers: null})];
-                connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-                return;
-            }
-        }
+    parseResult.jsonMap = tryGetJsonMap(textDocument, gltfText);
+    if ((!parseResult.jsonMap) || (!parseResult.jsonMap.data)) {
+        parseResult.parseable = false;
+        let diagnostics: Diagnostic[] = [getDiagnostic({
+            message: 'Error parsing JSON document.',
+            isFromLanguageServer: true
+        }, {data: null, pointers: null})];
+        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        return;
     }
 
     if ((!parseResult.jsonMap.data.asset) || (!parseResult.jsonMap.data.asset.version) || (parseResult.jsonMap.data.asset.version[0] === '1')) {
@@ -415,6 +418,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
     let currentPath = '';
     let currentAnimationPath: string;
     for (let i = firstValidIndex; i < numPathSegments; ++i) {
+        let previousPart = pathSplit[i - 1];
         let part = pathSplit[i];
         currentPath += '/' + part;
         result = result[part];
@@ -445,7 +449,7 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 }
                 return makeLocation(pathData.jsonMap.pointers['/accessors/' + result]);
             }
-            else if (part === 'POSITION' || part === 'NORMAL' || part === 'TANGENT'|| part === 'TEXCOORD_0' || part === 'TEXCOORD_1' || part === 'COLOR_0' || part === 'JOINTS_0' || part === 'WEIGHTS_0') {
+            else if (previousPart === 'attributes') {
                 if (inDraco) {
                     let uri = makeDataUri(textDocumentPosition, currentPath);
                     return makeLocation(undefined, uri);
@@ -477,6 +481,9 @@ connection.onDefinition((textDocumentPosition: TextDocumentPositionParams): Loca
                 return makeLocation(pathData.jsonMap.pointers['/cameras/' + result]);
             } else if (part === 'fragmentShader' || part === 'vertexShader') {
                 return makeLocation(pathData.jsonMap.pointers['/shaders/' + result]);
+            } else if (part === 'pointer' && previousPart === 'KHR_animation_pointer' &&
+                pathData.jsonMap.pointers.hasOwnProperty(result)) {
+                return makeLocation(pathData.jsonMap.pointers[result]);
             }
         }
         else if (part === 'nodes' || part === 'children' || part === 'joints') {

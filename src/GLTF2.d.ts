@@ -384,19 +384,6 @@ export namespace GLTF2 {
         sparse?: AccessorSparse;
     }
     /**
-     * Targets an animation's sampler at a node's property
-     */
-    interface AnimationChannel extends Property {
-        /**
-         * The index of a sampler in this animation used to compute the value for the target
-         */
-        sampler: number;
-        /**
-         * The index of the node and TRS property to target
-         */
-        target: AnimationChannelTarget;
-    }
-    /**
      * The index of the node and TRS property that an animation channel targets
      */
     interface AnimationChannelTarget extends Property {
@@ -408,6 +395,19 @@ export namespace GLTF2 {
          * The name of the node's TRS property to modify, or the weights of the Morph Targets it instantiates
          */
         path: AnimationChannelTargetPath;
+    }
+    /**
+     * Targets an animation's sampler at a node's property
+     */
+    interface AnimationChannel extends Property {
+        /**
+         * The index of a sampler in this animation used to compute the value for the target
+         */
+        sampler: number;
+        /**
+         * The index of the node and TRS property to target
+         */
+        target: AnimationChannelTarget;
     }
     /**
      * Combines input and output accessors with an interpolation algorithm to define a keyframe graph (but not its target)
@@ -573,6 +573,19 @@ export namespace GLTF2 {
          * The index of the bufferView that contains the image. Use this instead of the image's uri property
          */
         bufferView?: number;
+    }
+    /**
+     * Reference to a texture
+     */
+    interface TextureInfo {
+        /**
+         * The index of the texture
+         */
+        index: number;
+        /**
+         * The set index of texture's TEXCOORD attribute used for texture coordinate mapping
+         */
+        texCoord?: number;
     }
     /**
      * Material Normal Texture Info
@@ -800,19 +813,6 @@ export namespace GLTF2 {
          * The index of the image used by this texture
          */
         source: number;
-    }
-    /**
-     * Reference to a texture
-     */
-    interface TextureInfo {
-        /**
-         * The index of the texture
-         */
-        index: number;
-        /**
-         * The set index of texture's TEXCOORD attribute used for texture coordinate mapping
-         */
-        texCoord?: number;
     }
     /**
      * The root object for a glTF asset

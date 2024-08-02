@@ -38,7 +38,17 @@
                 }
             ]
         },
-        "extensions" : {},
+        "extensions" : {
+            "properties" : {
+                "KHR_animation_pointer" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/KHR_animation_pointer/animation.channel.target.KHR_animation_pointer.schema.json"
+                        }
+                    ]
+                }
+            }
+        },
         "extras" : {}
     },
     "required" : [

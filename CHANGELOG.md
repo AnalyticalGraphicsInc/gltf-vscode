@@ -1,5 +1,18 @@
 # Change Log
 
+### 2.4.1 - UNRELEASED
+
+* Update Babylon to 7.17.2.
+* Update Cesium to 1.120.0.
+* Update Filament to 1.53.1.
+* Update ThreeJS to r167.0.
+* Update Draco decoder to 1.5.7.
+* Add JSON schemas for `KHR_animation_pointer`, `KHR_materials_diffuse_transmission`, `KHR_materials_dispersion`, and `EXT_mesh_manifold`.
+* Marked three old extensions as "archived" in JSON schema, and named their replacements.
+* Fixed issue with error reporting columns confused by tabs. [#246](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/246)
+* Added support for treating VRM files (*.vrm) as GLB files, based on [#259](https://github.com/AnalyticalGraphicsInc/gltf-vscode/pull/259)
+* Updated "Go To Definition" to work with `KHR_animation_pointer` pointers and `EXT_mesh_gpu_instancing` attributes.
+
 ### 2.4.0 - 2023-06-14
 
 * Add JSON schema for `KHR_materials_anisotropy`.
