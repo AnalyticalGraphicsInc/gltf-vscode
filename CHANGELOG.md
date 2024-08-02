@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.4.1 - UNRELEASED
+### 2.5.0 - 2024-08-02
 
 * Update Babylon to 7.17.2.
 * Update Cesium to 1.120.0.
