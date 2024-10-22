@@ -33,14 +33,14 @@
         },
         "iridescenceThicknessMinimum" : {
             "type" : "number",
-            "description" : "The minimum thickness of the thin-film layer given in nanometers. The value **MUST** be less than or equal to the value of `iridescenceThicknessMaximum`.",
+            "description" : "The minimum thickness of the thin-film layer given in nanometers.",
             "default" : 100,
             "minimum" : 0,
             "short_description" : "The minimum thickness of the thin-film layer given in nanometers."
         },
         "iridescenceThicknessMaximum" : {
             "type" : "number",
-            "description" : "The maximum thickness of the thin-film layer given in nanometers. The value **MUST** be greater than or equal to the value of `iridescenceThicknessMinimum`.",
+            "description" : "The maximum thickness of the thin-film layer given in nanometers.",
             "default" : 400,
             "minimum" : 0,
             "short_description" : "The maximum thickness of the thin-film layer given in nanometers."
