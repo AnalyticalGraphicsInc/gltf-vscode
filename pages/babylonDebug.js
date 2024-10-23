@@ -102,7 +102,7 @@ window.BabylonDebug = function (scene) {
     };
 
     function getJsonPointer(node, predicate) {
-        const jsonPointers = node.metadata && node.metadata.gltf && node.metadata.gltf.pointers;
+        const jsonPointers = node?._internalMetadata?.gltf?.pointers;
         if (jsonPointers) {
             for (const jsonPointer of jsonPointers) {
                 if (!predicate || predicate(jsonPointer)) {

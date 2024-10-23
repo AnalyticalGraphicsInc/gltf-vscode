@@ -21,7 +21,7 @@ export class GltfWindow {
         vscode.window.registerTreeDataProvider('gltfOutline', this._gltfOutline);
 
         this._gltfInspectData = new GltfInspectData(context, this);
-        this._gltfInspectData.setTreeView(vscode.window.createTreeView('gltfInspectData', { treeDataProvider: this._gltfInspectData }));
+        this._gltfInspectData.setTreeView(vscode.window.createTreeView('gltfInspectData', { treeDataProvider: this._gltfInspectData, canSelectMany: true }));
 
         vscode.window.onDidChangeActiveTextEditor(() => {
             // Wait a frame before updating to ensure all window states are updated.
