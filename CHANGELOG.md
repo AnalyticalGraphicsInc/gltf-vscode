@@ -1,6 +1,6 @@
 # Change Log
 
-### 2.5.1 - UNRELEASED
+### 2.5.1 - 2024-10-23
 
 * Fixed an issue with BabylonJS mesh debugging. [#268](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/268)
 * Fixed Meshopt decompression in BabylonJS and ThreeJS.

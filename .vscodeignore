@@ -43,6 +43,7 @@ node_modules/three/examples/jsm/libs/**
 !node_modules/three/examples/jsm/libs/ktx-parse.module.js
 !node_modules/three/examples/jsm/libs/zstddec.module.js
 !node_modules/three/examples/jsm/libs/basis/**
+!node_modules/three/examples/jsm/libs/meshopt*
 node_modules/three/examples/jsm/lights/**
 node_modules/three/examples/jsm/loaders/lwo/**
 node_modules/three/examples/jsm/loaders/FBXLoader.js
