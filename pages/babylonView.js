@@ -83,9 +83,10 @@
             var babylonPath = extensionRootPath + '/engines/Babylon/';
             var basisPath = extensionRootPath + '/engines/Basis/';
 
-            // via https://github.com/BabylonJS/Babylon.js/blob/cfde2ef094705213bf95547b5d1a2ef0adae79ec/localDev/index-views.html#L127-L138
-            BABYLON.GLTF2.Loader.Extensions.EXT_meshopt_compression.DecoderPath =
-                babylonPath + "meshopt_decoder.js";
+            // via https://github.com/BabylonJS/Babylon.js/blob/89160087d244a7b64bb559b444bcc2ca13fafd4e/packages/tools/tests/test/playwright/visualizationPlaywright.utils.ts#L168-L170
+            BABYLON.MeshoptCompression.Configuration.decoder = {
+                url: babylonPath + "meshopt_decoder.js"
+            };
 
             BABYLON.KhronosTextureContainer2.URLConfig = {
                 jsDecoderModule: babylonPath + "babylon.ktx2Decoder.js",
