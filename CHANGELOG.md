@@ -3,7 +3,9 @@
 ### 2.5.1 - UNRELEASED
 
 * Fixed an issue with BabylonJS mesh debugging. [#268](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/268)
+* Fixed Meshopt decompression in BabylonJS and ThreeJS.
 * Update Khronos glTF-Validator to 2.0.0-dev.3.10. [KhronosGroup/glTF-Validator#240](https://github.com/KhronosGroup/glTF-Validator/pull/240)
+* Update JSON schema for `KHR_materials_iridescence` to latest.
 
 ### 2.5.0 - 2024-08-02
 

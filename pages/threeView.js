@@ -5,6 +5,7 @@ import { RGBELoader } from '../node_modules/three/examples/jsm/loaders/RGBELoade
 import { KTX2Loader } from '../node_modules/three/examples/jsm/loaders/KTX2Loader.js';
 import { DRACOLoader } from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { MeshoptDecoder } from '../node_modules/three/examples/jsm/libs/meshopt_decoder.module.js';
 
 export class ThreeView {
     constructor() {
@@ -63,6 +64,7 @@ export class ThreeView {
         dracoLoader.setDecoderPath(dracoLoaderPath);
 
         loader.setDRACOLoader( dracoLoader );
+        loader.setMeshoptDecoder( MeshoptDecoder );
 
         var extensionRootPath = document.getElementById('extensionRootPath').textContent;
         var basisPath = extensionRootPath + '/node_modules/three/examples/jsm/libs/basis/';
