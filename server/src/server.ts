@@ -526,7 +526,8 @@ const colorFactorNames = [
     'diffuseFactor',
     'specularFactor',
     'emissiveFactor',
-    'attenuationColor'
+    'attenuationColor',
+    'multiscatterColor'
 ];
 
 connection.onHover((textDocumentPosition: TextDocumentPositionParams): Hover => {
