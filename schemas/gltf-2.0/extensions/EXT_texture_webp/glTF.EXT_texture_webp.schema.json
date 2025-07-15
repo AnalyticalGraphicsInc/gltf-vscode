@@ -15,7 +15,7 @@
                     "$ref" : "../../glTFid.schema.json"
                 }
             ],
-            "description" : "The index of the images node which points to a WebP image."
+            "description" : "The index of the WebP image."
         },
         "extensions" : {},
         "extras" : {}

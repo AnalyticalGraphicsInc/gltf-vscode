@@ -57,6 +57,8 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 #
 #echo "~~~ KHR_materials_diffuse_transmission ~~~"
 #./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_diffuse_transmission/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_diffuse_transmission -s ../../
+#echo "~~~ KHR_materials_volume_scatter ~~~"
+#./importSchema.js -i ../../glTF/extensions/2.0/Khronos/KHR_materials_volume_scatter/schema -o ../schemas/gltf-2.0/extensions/KHR_materials_volume_scatter -s ../../
 
 # Vendor and Multi-vendor extensions
 #

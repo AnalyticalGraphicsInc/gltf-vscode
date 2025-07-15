@@ -67,6 +67,7 @@
             "KHR_materials_transmission": "material.KHR_materials_transmission.schema.json",
             "KHR_materials_unlit": "material.KHR_materials_unlit.schema.json",
             "KHR_materials_volume": "material.KHR_materials_volume.schema.json",
+            "KHR_materials_volume_scatter": "glTF.KHR_materials_volume_scatter.schema.json",
             "KHR_xmp": "node.KHR_xmp.schema.json",
             "KHR_xmp_json_ld": "KHR_xmp_json_ld.schema.json"
         }
