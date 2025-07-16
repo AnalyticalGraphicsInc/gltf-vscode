@@ -195,6 +195,13 @@
                         }
                     ]
                 },
+                "EXT_lights_ies" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_lights_ies/glTF.EXT_lights_ies.schema.json"
+                        }
+                    ]
+                },
                 "EXT_lights_image_based" : {
                     "allOf" : [
                         {

@@ -149,6 +149,13 @@
                         }
                     ]
                 },
+                "EXT_lights_ies" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_lights_ies/node.EXT_lights_ies.schema.json"
+                        }
+                    ]
+                },
                 "EXT_mesh_gpu_instancing" : {
                     "allOf" : [
                         {

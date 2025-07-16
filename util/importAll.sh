@@ -62,6 +62,8 @@ echo "~~~ KHR_xmp (Archived) ~~~"
 
 # Vendor and Multi-vendor extensions
 #
+echo "~~~ EXT_lights_ies ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_ies/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_ies -s ../../
 echo "~~~ EXT_lights_image_based ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_lights_image_based/schema -o ../schemas/gltf-2.0/extensions/EXT_lights_image_based -s ../../
 echo "~~~ EXT_mesh_gpu_instancing ~~~"
@@ -70,6 +72,8 @@ echo "~~~ EXT_mesh_manifold ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_mesh_manifold/schema -o ../schemas/gltf-2.0/extensions/EXT_mesh_manifold -s ../../
 echo "~~~ EXT_meshopt_compression ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_meshopt_compression/schema -o ../schemas/gltf-2.0/extensions/EXT_meshopt_compression -s ../../
+echo "~~~ EXT_texture_astc ~~~"
+./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_texture_astc/schema -o ../schemas/gltf-2.0/extensions/EXT_texture_astc -s ../../
 echo "~~~ EXT_texture_webp ~~~"
 ./importSchema.js -i ../../glTF/extensions/2.0/Vendor/EXT_texture_webp/schema -o ../schemas/gltf-2.0/extensions/EXT_texture_webp -s ../../
 echo "~~~ AGI_articulations ~~~"

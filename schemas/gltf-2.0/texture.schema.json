@@ -36,6 +36,13 @@
                         }
                     ]
                 },
+                "EXT_texture_astc" : {
+                    "allOf" : [
+                        {
+                            "$ref" : "extensions/EXT_texture_astc/texture.EXT_texture_astc.schema.json"
+                        }
+                    ]
+                },
                 "EXT_texture_webp" : {
                     "allOf" : [
                         {
