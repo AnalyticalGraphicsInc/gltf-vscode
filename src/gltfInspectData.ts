@@ -422,15 +422,15 @@ function getIndicesNode(fileName: string, gltf: GLTF2.GLTF, numVertices: number,
     }
 }
 
-function getIconPath(context: vscode.ExtensionContext, name: string): { light: string, dark: string} {
+function getIconPath(context: vscode.ExtensionContext, name: string): { light: vscode.Uri, dark: vscode.Uri} {
     return {
-        light: context.asAbsolutePath(path.join('resources', 'light', `${name}.svg`)),
-        dark: context.asAbsolutePath(path.join('resources', 'dark', `${name}.svg`))
+        light: vscode.Uri.parse(context.asAbsolutePath(path.join('resources', 'light', `${name}.svg`))),
+        dark: vscode.Uri.parse(context.asAbsolutePath(path.join('resources', 'dark', `${name}.svg`)))
     };
 }
 
 export class GltfInspectData implements vscode.TreeDataProvider<Node> {
-    private readonly _iconPaths: { [nodeType: number]: { light: string, dark: string } } = {};
+    private readonly _iconPaths: { [nodeType: number]: { light: vscode.Uri, dark: vscode.Uri } } = {};
     private _gltfWindow: GltfWindow;
     private _treeView: vscode.TreeView<Node>;
     private _fileName: string;
