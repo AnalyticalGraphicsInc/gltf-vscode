@@ -11,7 +11,7 @@ var yargs = require('yargs');
 // such that tooltips and auto-complete suggestions are shown for each enum value.
 
 function parseArguments(args) {
-    var argv = yargs
+    var argv = yargs(args)
         .usage('Usage: node $0 -i inputPath -o outputPath')
         .example('node $0 -i ../../gltf/specification/1.0/schema -o ../schemas/gltf-1.0')
         .help('h')
@@ -45,7 +45,7 @@ function parseArguments(args) {
                 describe: 'Mark schema as superseded by the named parameter.',
                 type: 'string'
             }
-        }).parse(args);
+        }).parse();
 
     var schemaPath = argv.i;
     var outputPath = argv.o;

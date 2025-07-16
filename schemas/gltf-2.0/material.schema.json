@@ -107,7 +107,7 @@
                 "KHR_materials_volume_scatter" : {
                     "allOf" : [
                         {
-                            "$ref" : "extensions/KHR_materials_volume_scatter/glTF.KHR_materials_volume_scatter.schema.json"
+                            "$ref" : "extensions/KHR_materials_volume_scatter/material.KHR_materials_volume_scatter.schema.json"
                         }
                     ]
                 },

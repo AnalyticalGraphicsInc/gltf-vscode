@@ -10,7 +10,7 @@ let yargs = require('yargs');
 let checkedFiles = [];
 
 function parseArguments(args) {
-    let argv = yargs
+    let argv = yargs(args)
         .usage('Usage: node $0 -p path')
         .example('node $0 -p ../schemas/gltf-2.0')
         .help('h')
@@ -22,7 +22,7 @@ function parseArguments(args) {
                 normalize: true,
                 type: 'string'
             }
-        }).parse(args);
+        }).parse();
 
     let schemaPath = argv.s;
 
