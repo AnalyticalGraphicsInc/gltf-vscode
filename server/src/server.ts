@@ -1,8 +1,9 @@
 import {
-    IPCMessageReader, IPCMessageWriter, createConnection, IConnection, TextDocuments, TextDocument,
+    IPCMessageReader, IPCMessageWriter, createConnection, TextDocuments, TextDocumentSyncKind,
     Diagnostic, DiagnosticSeverity, InitializeResult, Position, Range, TextDocumentPositionParams,
     Hover, MarkupContent, MarkupKind, Location
-} from 'vscode-languageserver';
+} from 'vscode-languageserver/node';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { URI } from 'vscode-uri';
 import * as Url from 'url';
 import * as path from 'path';
@@ -11,11 +12,11 @@ import * as jsonMap from 'json-source-map';
 import * as gltfValidator from 'gltf-validator';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport
-let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
+let connection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
-let documents: TextDocuments = new TextDocuments();
+let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
@@ -75,7 +76,7 @@ connection.onInitialize((): InitializeResult => {
     return {
         capabilities: {
             // Tell the client that the server works in FULL text document sync mode
-            textDocumentSync: documents.syncKind,
+            textDocumentSync: TextDocumentSyncKind.Full,
             // Tell the client we provide hovers
             hoverProvider: true,
             // Tell the client we provide definitions

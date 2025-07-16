@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import { DataUriTextDocumentContentProvider } from './dataUriTextDocumentContentProvider';
 import { ConvertGLBtoGltfLoadFirst, ConvertToGLB, getBuffer } from 'gltf-import-export';
 import { GltfActionProvider } from './gltfActionProvider';
@@ -100,7 +100,8 @@ export function activateServer(context: vscode.ExtensionContext): void {
     };
 
     // Create the language client and start the client.
-    let disposable = new LanguageClient('gltfLanguageServer', 'glTF Language Server', serverOptions, clientOptions).start();
+    let disposable = new LanguageClient('gltfLanguageServer', 'glTF Language Server', serverOptions, clientOptions);
+    disposable.start();
 
     // Push the disposable to the context's subscriptions so that the
     // client can be deactivated on extension deactivation
