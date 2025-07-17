@@ -79,6 +79,10 @@ export function getAccessorData(fileName: string, gltf: GLTF2.GLTF, accessor: GL
     }
 
     const buffer = getBuffer(gltf, bufferView.buffer, fileName);
+    if (!buffer) {
+        return undefined;
+    }
+
     const bufferOffset = bufferView.byteOffset || 0;
     const bufferLength = bufferView.byteLength;
     const bufferStride = bufferView.byteStride;

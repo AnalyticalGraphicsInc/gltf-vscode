@@ -2,10 +2,7 @@
 
 ### 2.5.2 - 2025-07-17
 
-Error: Cannot read properties of null (reading 'subarray') (Alt-D in mesh)
-
-Re-test if BabylonJS vertex selection works.
-
+* Update Babylon to 8.17.0.
 * Update Cesium to 1.131.0.
 * Update Filament to 1.53.4.
 * Update ThreeJS to r178.0.
