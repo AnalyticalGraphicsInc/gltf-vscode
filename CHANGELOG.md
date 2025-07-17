@@ -8,6 +8,7 @@ Re-test if BabylonJS vertex selection works.
 
 * Update Cesium to 1.131.0.
 * Update Filament to 1.53.4.
+* Update ThreeJS to r178.0.
 * Add JSON schemas for `EXT_lights_ies`, `EXT_texture_astc`, and the current draft of `KHR_materials_volume_scatter`.
 * Update VSCode engine API bindings to ^1.98.0.
 * Update VSCode language client & server to ^9.0.1.
