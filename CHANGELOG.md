@@ -1,5 +1,17 @@
 # Change Log
 
+### 2.5.2 - 2025-07-17
+
+Error: Cannot read properties of null (reading 'subarray') (Alt-D in mesh)
+
+Re-test if BabylonJS vertex selection works.
+
+* Update Cesium to 1.131.0.
+* Update Filament to 1.53.4.
+* Add JSON schemas for `EXT_lights_ies`, `EXT_texture_astc`, and the current draft of `KHR_materials_volume_scatter`.
+* Update VSCode engine API bindings to ^1.98.0.
+* Update VSCode language client & server to ^9.0.1.
+
 ### 2.5.1 - 2024-10-23
 
 * Fixed an issue with BabylonJS mesh debugging. [#268](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/268)
