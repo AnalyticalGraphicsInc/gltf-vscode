@@ -363,12 +363,14 @@
                 {
                     "id": "gltfOutline",
                     "name": "Outline",
-                    "when": "gltfActive"
+                    "when": "gltfActive",
+                    "icon": "resources/dark/inspect.svg"
                 },
                 {
                     "id": "gltfInspectData",
                     "name": "Inspect Data",
-                    "when": "gltfActive"
+                    "when": "gltfActive",
+                    "icon": "resources/dark/inspect.svg"
                 }
             ]
         }

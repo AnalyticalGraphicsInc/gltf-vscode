@@ -120,14 +120,14 @@ connection.onDidChangeConfiguration((change) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-    if (currentSettings.Validation.enable) {
+    if (currentSettings?.Validation.enable) {
         scheduleParsing(change.document);
     }
 });
 
 // Turn off validation of closed documents.
 documents.onDidClose(change => {
-    if (currentSettings.Validation.enable) {
+    if (currentSettings?.Validation.enable) {
         unscheduleParsing(change.document);
     }
     // A text document was closed we clear the diagnostics

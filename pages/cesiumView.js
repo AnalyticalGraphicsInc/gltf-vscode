@@ -40,7 +40,7 @@ window.CesiumView = function() {
     });
 
     function resize() {
-        var zoomFactor = Cesium.defaultValue(window.devicePixelRatio, 1.0);
+        var zoomFactor = window.devicePixelRatio ?? 1.0;
         var width = canvas.clientWidth * zoomFactor;
         var height = canvas.clientHeight * zoomFactor;
 
