@@ -29,6 +29,7 @@
         "theme": "dark"
     },
     "activationEvents": [
+        "onCommand:ktx2hdr.openWebgpuDemo",
         "onLanguage:json"
     ],
     "main": "./out/src/extension",
@@ -121,6 +122,10 @@
             }
         },
         "commands": [
+            {
+                "command": "ktx2hdr.openWebgpuDemo",
+                "title": "KTX2 HDR: Open WebGPU Demo"
+            },
             {
                 "command": "gltf.inspectData",
                 "title": "glTF: Inspect Data"

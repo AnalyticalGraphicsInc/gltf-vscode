@@ -180,6 +180,20 @@ html, body {
     top: -100vh;
 }
 
+.gltf-extra-button {
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: #444;
+    color: white;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+.gltf-extra-button:hover {
+    background: #555;
+}
+
+
 .angleBox {
     display: inline-block;
     position: relative;

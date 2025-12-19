@@ -1,0 +1,41 @@
+{
+    "name": "ktx2-hdr-webgpu-scratch",
+    "displayName": "KTX2 HDR WebGPU Scratch",
+    "publisher": "you",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.93.0"
+    },
+    "activationEvents": [
+        "onCommand:ktx2hdr.openWebgpuDemo",
+        "onCommand:ktx2hdr.testValidator"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "ktx2hdr.openWebgpuDemo",
+                "title": "Open WebGPU Demo"
+            },
+            {
+                "command": "ktx2hdr.testValidator",
+                "title": "Test glTF Validator"
+            }
+        ]
+    },
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "start": "npm run watch"
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.1",
+        "@types/vscode": "^1.93.0",
+        "tslib": "^2.6.2",
+        "typescript": "^5.4.5"
+    },
+    "dependencies": {
+        "gltf-validator": "^2.0.0-dev.3.10"
+    }
+}

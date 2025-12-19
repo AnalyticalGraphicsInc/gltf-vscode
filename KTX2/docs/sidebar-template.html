@@ -1,0 +1,89 @@
+<h3 style="margin:0 0 8px 0; font-weight:600; font-family:monospace;">KTX2 HDR Preview</h3>
+
+<div id="log" style="width:100%; padding:6px 8px; background:#111; color:#ddd; font:12px monospace; border-radius:6px; box-sizing:border-box; margin-bottom:12px; max-height:120px; overflow-y:auto; display:none;"></div>
+
+<div style="margin-bottom:8px;">
+  <label style="display:block; font-size:12px;">Exposure (EV)</label>
+  <input id="ev" type="range" min="-10" max="10" step="0.1" value="0" style="width:100%" />
+  <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px;">
+    <div id="evv">0</div>
+    <div id="stat" style="opacity:0.9"></div>
+  </div>
+</div>
+
+<div style="margin-top:8px; margin-bottom:8px;">
+  <label style="display:block; font-size:12px;">Open file</label>
+  <input id="file" type="file" accept="image/png, image/jpeg, image/webp, .ktx2" style="width:100%" />
+</div>
+
+<div style="margin-top:8px; margin-bottom:8px;">
+  <label style="display:block; font-size:12px; margin-bottom:4px;">Texture filtering</label>
+  <select id="filterMode" style="width:100%; padding:4px; background:#222; color:#ddd; border:1px solid #444; border-radius:4px; font:12px monospace;">
+    <option value="trilinear">Trilinear (smooth, mip blend)</option>
+    <option value="bilinear">Bilinear (smooth, sharp mips)</option>
+    <option value="nearest">Nearest (sharp/pixelated)</option>
+    <option value="anisotropic">Anisotropic (high quality)</option>
+  </select>
+</div>
+
+<div id="mip-controls" style="margin-top:8px; display:none;">
+  <label style="font-size:12px; display:block; margin-bottom:6px;">Mipmap preview</label>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <input id="mipSlider" type="range" min="0" max="0" value="0" step="1" style="flex:1" />
+    <div id="mipLabel" style="width:28px; text-align:center;">0</div>
+  </div>
+  <div style="margin-top:6px; display:flex; align-items:center; gap:8px; font-size:12px;">
+    <input id="mipOnly" type="checkbox" /> <label for="mipOnly">Show only selected mip</label>
+  </div>
+</div>
+
+<div style="margin-top:8px;">
+  <label style="font-size:12px; display:block; margin-bottom:6px;">Channel mix</label>
+  <div style="display:grid; gap:6px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <label style="color:#f88; width:12px; font:11px monospace;">R</label>
+      <input id="channelR" type="range" min="0" max="2" step="0.01" value="1" style="flex:1" />
+      <span id="channelRVal" style="width:32px; text-align:right; font:11px monospace;">1.00</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <label style="color:#8f8; width:12px; font:11px monospace;">G</label>
+      <input id="channelG" type="range" min="0" max="2" step="0.01" value="1" style="flex:1" />
+      <span id="channelGVal" style="width:32px; text-align:right; font:11px monospace;">1.00</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <label style="color:#88f; width:12px; font:11px monospace;">B</label>
+      <input id="channelB" type="range" min="0" max="2" step="0.01" value="1" style="flex:1" />
+      <span id="channelBVal" style="width:32px; text-align:right; font:11px monospace;">1.00</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <label style="color:#ddd; width:12px; font:11px monospace;">A</label>
+      <input id="channelA" type="range" min="0" max="2" step="0.01" value="0" style="flex:1" />
+      <span id="channelAVal" style="width:32px; text-align:right; font:11px monospace;">0.00</span>
+    </div>
+    <button id="channelReset" style="padding:4px 8px; background:#333; color:#ddd; border:1px solid #555; border-radius:4px; cursor:pointer; font:11px monospace; margin-top:4px;">Reset channels</button>
+  </div>
+</div>
+
+<div id="meta" style="margin-top:12px; white-space:pre-wrap; font-size:12px; opacity:0.9;"></div>
+
+<div id="texInfo" style="margin-top:12px; padding:8px; background:#0d0d0d; border-radius:4px; font-size:11px; display:none;">
+  <div style="font-weight:bold; margin-bottom:6px; color:#aaa;">Texture Info</div>
+  <div id="texInfoContent" style="line-height:1.5;"></div>
+</div>
+
+<hr style="margin:12px 0 12px 0; border:0; height:1px; background:rgba(255,255,255,0.04);" />
+
+<div style="font-size:12px; color:#999;">
+  <div>Tips:</div>
+  <ul style="padding-left:18px; margin-top:6px;">
+    <li>Use Mip slider to inspect individual mip levels.</li>
+    <li>Drag and drop files onto the page to load them.</li>
+  </ul>
+</div>
+
+<hr style="margin:12px 0 12px 0; border:0; height:1px; background:rgba(255,255,255,0.04);" />
+
+<div style="margin-top:8px;">
+  <label style="font-size:12px; display:block; margin-bottom:4px;">Log</label>
+  <div id="appLog" style="width:100%; padding:6px 8px; background:#0a0a0a; color:#aaa; font:11px monospace; border-radius:4px; box-sizing:border-box; max-height:150px; overflow-y:auto; border:1px solid #333; display:none;"></div>
+</div>

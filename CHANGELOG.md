@@ -1,5 +1,34 @@
 # Change Log
 
+### 2.6.0 - UNRELEASED
+
+* Added “Open KTX2 Viewer” button to the glTF preview panel.
+* Integrated a fully featured WebGPU-powered KTX2 viewer with:
+  * Tonemapping controls:
+    * Reinhard
+    * Hable (ACES approximation)
+    * ACES2025-1
+  * Texture filtering modes:
+    * Trilinear (Smooth, MipBlend)
+    * Bilinear (Smooth, SharpMips)
+    * Nearest (Sharp / Pixelated)
+    * Anisotropic (High Quality)
+  * Mipmap inspector: interactive slider to preview individual mip levels
+  * RGBA Channel Mixer: interactive slider to preview R / G / B / A channels
+* Added detailed Texture Info Panel displaying:
+  * Dimensions
+  * GPU format
+  * Total mip levels
+  * Estimated GPU memory usage
+  * Supercompression mode
+  * KVD metadata breakdown
+  * DFD metadata breakdown
+* Added support for the following ktx2 texture formats inside the viewer:
+  * 2D BC1–BC7
+  * ETC1S + UASTC
+  * BC6H
+  * HDR 4K textures
+
 ### 2.5.1 - 2024-10-23
 
 * Fixed an issue with BabylonJS mesh debugging. [#268](https://github.com/AnalyticalGraphicsInc/gltf-vscode/issues/268)

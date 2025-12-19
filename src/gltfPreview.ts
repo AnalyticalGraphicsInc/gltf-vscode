@@ -181,6 +181,10 @@ export class GltfPreview extends ContextBase {
 
     private onDidReceiveMessage(panel: GltfPreviewPanelInfo, message: any): void {
         switch (message.command) {
+            case 'launchKtxViewer': {
+                vscode.commands.executeCommand('ktx2hdr.openWebgpuDemo');
+                break;
+            }
             case 'select': {
                 const pointer = panel._jsonMap.pointers[message.jsonPointer];
                 const document = panel.textEditor.document;

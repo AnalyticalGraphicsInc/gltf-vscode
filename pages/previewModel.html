@@ -41,6 +41,11 @@
                     data-bind="checked: $parent.animPlayAllNone, checkedValue: $data" /><span data-bind="text: $data"></span></label>
             </div>
         </div>
+        <div class="rowUI">
+            <button data-bind="click: launchKtxViewer" class="gltf-extra-button">
+                Open KTX2 Viewer
+            </button>
+        </div>
         <div data-bind="template: { name: engineUI }"></div>
         <div class="bottomUI" data-bind="click: toggleControls"><span data-bind="text: controlText()"></span></div>
     </div>

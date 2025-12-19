@@ -176,4 +176,8 @@ function initPreview()
 }
 
 window.addEventListener('load', initPreview, false);
+
+window.launchKtxViewer = function() {
+    window.vscode.postMessage({ command: 'launchKtxViewer' });
+};
 })();
