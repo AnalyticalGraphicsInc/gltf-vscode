@@ -15,6 +15,7 @@
         var skybox = null;
         var skyboxBlur = 0.0;
         var backgroundSubscription = null;
+        var axisSubscription = null;
         var debug = null;
 
         /**
@@ -31,6 +32,10 @@
             if (backgroundSubscription) {
                 backgroundSubscription.dispose();
                 backgroundSubscription = null;
+            }
+            if (axisSubscription) {
+                axisSubscription.dispose();
+                axisSubscription = null;
             }
 
             mainViewModel.animations([]);
@@ -167,6 +172,25 @@
                 }
                 applyBackground(mainViewModel.showBackground());
                 backgroundSubscription = mainViewModel.showBackground.subscribe(applyBackground);
+
+                function updateAxisOrientation(isZUp) {
+                    scene.activeCamera.upVector = isZUp ? new BABYLON.Vector3(0, 0, 1) : new BABYLON.Vector3(0, 1, 0);
+                    var rotationMatrix = isZUp ? BABYLON.Matrix.RotationX(-Math.PI / 2) : BABYLON.Matrix.Identity();
+                    if (scene.environmentTexture) {
+                        scene.environmentTexture.setReflectionTextureMatrix(rotationMatrix);
+                    }
+                    if (skybox && skybox.material && skybox.material.reflectionTexture) {
+                        skybox.material.reflectionTexture.setReflectionTextureMatrix(rotationMatrix);
+                    }
+                    scene.materials.forEach(mat => {
+                        if (mat.reflectionTexture) {
+                            mat.reflectionTexture.setReflectionTextureMatrix(rotationMatrix);
+                        }
+                        if (mat.markDirty) mat.markDirty();
+                    });
+                }
+                updateAxisOrientation(mainViewModel.isZUp());
+                axisSubscription = mainViewModel.isZUp.subscribe(updateAxisOrientation);
 
                 engine.runRenderLoop(render);
 

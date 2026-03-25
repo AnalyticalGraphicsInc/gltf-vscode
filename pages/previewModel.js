@@ -43,6 +43,7 @@ var mainViewModel = window.mainViewModel = {
     showControls: ko.observable(true),
     hasBackground: ko.observable(false),
     showBackground: ko.observable(false),
+    isZUp: ko.observable(false),
     toggleControls: () => mainViewModel.showControls(!mainViewModel.showControls()),
     controlText: () => (mainViewModel.showControls() ? 'Close Controls' : 'Open Controls'),
     animations: ko.observableArray([]),

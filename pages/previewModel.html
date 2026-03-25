@@ -27,6 +27,13 @@
                 <span>Show Background</span>
             </label>
         </div>
+        <div class="rowUI" data-bind="visible: selectedEngine() && selectedEngine().name === 'Babylon.js'">
+            <label class="checkboxLabel" data-bind="css: { active: isZUp() }">
+                <input type="checkbox" data-bind="checked: isZUp" />
+                <span class="angleBox"><span></span></span>
+                <span>Z-Up Axis</span>
+            </label>
+        </div>
         <div class="rowUI" style="display: none;" data-bind="visible: animations().length > 0">
             <div class="smallHeading">animations:</div>
             <div class="embeddedList" data-bind="foreach: animations">
